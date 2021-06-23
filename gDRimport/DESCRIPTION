@@ -6,7 +6,7 @@ Date: 2021-06-22
 Authors@R: c(person("Bartosz", "Czech", role=c("aut")), 
              person("Arkadiusz", "Gladki", role=c("aut")),
              person("Marc", "Hafner", role=c("aut")),
-             person("Sergiu, "Mocanu", role=c("aut")),
+             person("Sergiu", "Mocanu", role=c("aut")),
              person("Dariusz", "Scigocki", role=c("aut"),
              person("Allison", "Voung", role=c("aut"))
 Description: Package for handling import of dose-response data
