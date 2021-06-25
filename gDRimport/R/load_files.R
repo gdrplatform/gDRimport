@@ -907,9 +907,9 @@ check_metadata_names <-
 #'
 #' This function reads file from the EnVision Workstation
 #'
-#' @param file
-#' @param nrows
-#' @param seps
+#' @param file  input file from EnVision
+#' @param nrows maximum number of file rows to be processed
+#' @param seps potential field separators of the input file
 #'
 #' @return
 #' @export

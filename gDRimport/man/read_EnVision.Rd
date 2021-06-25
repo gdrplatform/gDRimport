@@ -7,7 +7,11 @@
 read_EnVision(file, nrows = 10000, seps = c(",", "\\t"))
 }
 \arguments{
-\item{seps}{}
+\item{file}{input file from EnVision}
+
+\item{nrows}{maximum number of file rows to be processed}
+
+\item{seps}{potential field separators of the input file}
 }
 \value{
 
