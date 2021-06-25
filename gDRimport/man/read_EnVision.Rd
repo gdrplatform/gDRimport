@@ -7,10 +7,6 @@
 read_EnVision(file, nrows = 10000, seps = c(",", "\\t"))
 }
 \arguments{
-\item{file}{}
-
-\item{nrows}{}
-
 \item{seps}{}
 }
 \value{
