@@ -16,15 +16,15 @@ load_data <-
            df_template_files,
            results_file,
            instrument = "EnVision") {
-    
+
     assertthat::assert_that(is.character(manifest_file), msg = "'manifest_file' must be a character vector")
     assertthat::assert_that(assertthat::is.readable(manifest_file), msg = "'manifest_file' must be a readable path")
-    assertthat::assert_that(is.character(df_template_files) || is.data.frame(df_template_files), 
+    assertthat::assert_that(is.character(df_template_files) || is.data.frame(df_template_files),
                 msg = "'df_template_files' must be a character vector or data.frame")
-    assertthat::assert_that(is.character(results_file) || is.data.frame(results_file), 
+    assertthat::assert_that(is.character(results_file) || is.data.frame(results_file),
                 msg = "'results_file' must be a character vector or data.frame")
     assertthat::assert_that(assertthat::is.string(instrument), msg = "'instrument' must be a character vector")
-    
+
     if (is.data.frame(df_template_files)) {
       # for the shiny app
       template_file <- df_template_files$datapath
@@ -34,11 +34,11 @@ load_data <-
       template_filename <- df_template_files
       is_readable_v(template_filename)
     }
-    
+
     manifest <- load_manifest(manifest_file)
     treatments <- load_templates(df_template_files)
     data <- load_results(results_file, instrument)
-    
+
     # check the all template files are available
     if (!all(unique(manifest$Template[manifest$Barcode %in% data$Barcode])
              %in% basename(template_filename))) {
@@ -72,10 +72,10 @@ load_manifest <- function(manifest_file) {
                          "xlsx",
                          "xls",
                          "tsv")
-  
+
   # Asserts:
   assertthat::assert_that(is.character(manifest_file), msg = "'manifest_file' must be a character vector")
-  
+
   # read files
   manifest_data <- lapply(manifest_file, function(x) {
     manifest_ext <- tools::file_ext(x)
@@ -92,7 +92,7 @@ load_manifest <- function(manifest_file) {
                                    "text/tab-separated-values",
                                    "tsv")) {
       df <- tryCatch({
-        utils::read.table(x, sep = "\t", header = TRUE, na.strings=c("", "NA")) %>%
+        utils::read.table(x, sep = "\t", header = TRUE, na.strings = c("", "NA")) %>%
           stats::na.omit()
       }, error = function(e) {
         stop(sprintf(
@@ -111,7 +111,7 @@ load_manifest <- function(manifest_file) {
       )
     }
   })
-  
+
   # replace Time by Duration for backwards compatibility
   manifest_data <- lapply(manifest_data, function(x) {
     if ("Time" %in% colnames(x)) {
@@ -120,26 +120,26 @@ load_manifest <- function(manifest_file) {
     }
     return(x)
   })
-  
+
   # check default headers are in each df
-  dump <- sapply(1:length(manifest_file),
+  dump <- sapply(seq_along(manifest_file),
                  function(i)
                    check_metadata_names(
                      colnames(manifest_data[[i]]),
                      df_name = manifest_file[[i]],
                      df_type = "manifest"
                    ))
-  
+
   cat_manifest_data <- as.data.frame(data.table::rbindlist(manifest_data))
   colnames(cat_manifest_data) <-
     check_metadata_names(colnames(cat_manifest_data), "manifest")
-  
+
   # check that barcodes are unique
   if (dim(cat_manifest_data)[1] != length(unique(cat_manifest_data$Barcode)))
     stop("Barcodes in Manifest must be unique!")
-  
+
   cat_manifest_data$Template <- basename(cat_manifest_data$Template)
-  
+
   futile.logger::flog.info("Manifest loaded successfully")
   return(cat_manifest_data)
 }
@@ -152,10 +152,10 @@ load_manifest <- function(manifest_file) {
 #' @param df_template_files data.frame, with datapaths and names of results file(s)
 #' or character with file path of templates file(s)
 #' @export
-load_templates <- function (df_template_files) {
+load_templates <- function(df_template_files) {
   # Assertions:
   stopifnot(any(inherits(df_template_files, "data.frame"), checkmate::test_character(df_template_files)))
-  
+
   # template_file is a string or a vector of strings
   if (is.data.frame(df_template_files)) {
     # for the shiny app
@@ -165,7 +165,7 @@ load_templates <- function (df_template_files) {
     template_file <- df_template_files
     template_filename <- basename(template_file)
   }
-  
+
   all_templates <- data.frame()
   if (any(grepl("\\.xlsx?$", template_filename))) {
     idx <- grepl("\\.xlsx?$", template_filename)
@@ -181,11 +181,11 @@ load_templates <- function (df_template_files) {
       load_templates_tsv(template_file[idx], template_filename[idx])
     all_templates <- rbind(all_templates, all_templates_2)
   }
-  
+
   all_templates$Gnumber <- standardize_record_values(all_templates$Gnumber, dictionary = DICTIONARY)
-  
+
   return(all_templates)
-  
+
 }
 
 
@@ -211,7 +211,7 @@ load_results <-
       results_filename <- basename(results_file)
     }
     stopifnot(sapply(results_file, file.exists))
-    
+
     if (instrument == "EnVision") {
       all_results <-
         load_results_EnVision(results_file)
@@ -237,18 +237,18 @@ load_templates_tsv <-
     # Assertions:
     checkmate::assert_character(template_file)
     checkmate::assert_character(template_filename, null.ok = TRUE)
-    
-    
+
+
     if (is.null(template_filename))
       template_filename <- basename(template_file)
-    
+
     # read columns in files
     templates <- lapply(template_file, function(x)
-      utils::read.table(x, sep = "\t", header = TRUE, na.strings=c("", "NA")) %>%
+      utils::read.table(x, sep = "\t", header = TRUE, na.strings = c("", "NA")) %>%
         stats::na.omit())
     names(templates) <- template_filename
     # check WellRow/WellColumn is present in each df
-    dump <- sapply(1:length(template_file),
+    dump <- sapply(seq_along(template_file),
                    function(i)
                      if (!(all(
                        gDRutils::get_identifier("well_position") %in% colnames(templates[[i]])
@@ -258,17 +258,17 @@ load_templates_tsv <-
                                                 gDRutils::get_identifier("well_position"))
                      })
     # check drug_identifier is present in each df
-    dump <- sapply(1:length(template_file),
+    dump <- sapply(seq_along(template_file),
                    function(i)
                      check_metadata_names(
                        setdiff(colnames(templates[[i]]), gDRutils::get_identifier("well_position")),
                        df_name = template_filename[[i]],
                        df_type = "template"
                      ))
-    
+
     metadata_fields <- NULL
     all_templates <- data.frame()
-    for (iF in 1:length(template_file)) {
+    for (iF in seq_along(template_file)) {
       futile.logger::flog.info("Loading %s", template_filename[iF])
       # first check that the sheet names are ok
       # identify drug_identifier sheet (case insensitive)
@@ -300,7 +300,7 @@ load_templates_tsv <-
                              df_name = template_filename[iF],
                              df_type = "template_treatment")
       }
-      
+
       df_template <- templates[[iF]]
       for (iS in colnames(df_template)) {
         # check if metadata field already exist and correct capitalization if needed
@@ -323,7 +323,7 @@ load_templates_tsv <-
         check_metadata_names(colnames(df_template),
                              df_name = template_filename[iF])
       all_templates <- rbind(all_templates, df_template)
-      
+
     }
     futile.logger::flog.info("Templates loaded successfully!")
     return(all_templates)
@@ -343,23 +343,23 @@ load_templates_xlsx <-
     # Assertions:
     checkmate::assert_character(template_file)
     checkmate::assert_character(template_filename, null.ok = TRUE)
-    
+
     if (is.null(template_filename))
       template_filename <- basename(template_file)
     # read sheets in files
     template_sheets <- lapply(template_file, readxl::excel_sheets)
     # check drug_identifier is present in each df
-    dump <- sapply(1:length(template_file),
+    dump <- sapply(seq_along(template_file),
                    function(i)
                      check_metadata_names(
                        template_sheets[[i]],
                        df_name = template_file[[i]],
                        df_type = "template"
                      ))
-    
+
     metadata_fields <- NULL
     all_templates <- data.frame()
-    for (iF in 1:length(template_file)) {
+    for (iF in seq_along(template_file)) {
       futile.logger::flog.info("Loading", template_filename[iF])
       # first check that the sheet names are ok
       # identify drug_identifier sheet (case insensitive)
@@ -420,29 +420,29 @@ load_templates_xlsx <-
       })
       # get the plate size
       n_row <-
-        2 ** ceiling(log2(max(which(
+        2 ^ ceiling(log2(max(which(
           apply(!is.na(df), 1, any)
         ))))
       n_col <-
-        1.5 * 2 ** ceiling(log2(max(which(
+        1.5 * 2 ^ ceiling(log2(max(which(
           apply(!is.na(df), 2, any)
         )) / 1.5))
       n_row <- max(n_row, n_col / 1.5)
       n_col <- max(1.5 * n_row, n_col)
       plate_range <-
         ifelse(n_col < 26, paste0("A1:", LETTERS[n_col], n_row), "A1:AV32")
-      
+
       # need to adapt for 1536 well plates
       df_template <-
-        base::expand.grid(WellRow = LETTERS[1:n_row], WellColumn = 1:n_col)
-      
+        base::expand.grid(WellRow = LETTERS[seq_len(n_row)], WellColumn = seq_len(n_col))
+
       for (iS in template_sheets[[iF]]) {
         tryCatch({
           df <- as.data.frame(
             readxl::read_excel(
               template_file[[iF]],
               sheet = iS,
-              col_names = paste0("x", 1:n_col),
+              col_names = paste0("x", seq_len(n_col)),
               range = plate_range
             )
           )
@@ -453,7 +453,7 @@ load_templates_xlsx <-
             e
           ))
         })
-        df$WellRow <- LETTERS[1:n_row]
+        df$WellRow <- LETTERS[seq_len(n_row)]
         df_melted <- reshape2::melt(df, id.vars = "WellRow")
         # check if metadata field already exist and correct capitalization if needed
         if (!(iS %in% metadata_fields)) {
@@ -480,7 +480,7 @@ load_templates_xlsx <-
         check_metadata_names(colnames(df_template),
                              df_name = template_filename[iF])
       all_templates <- as.data.frame(data.table::rbindlist(list(all_templates, df_template), fill = TRUE))
-      
+
     }
     futile.logger::flog.info("Templates loaded successfully!")
     return(all_templates)
@@ -497,14 +497,14 @@ load_results_tsv <-
   function(results_file) {
     # results_file is a string or a vector of strings
     results_filename <- basename(results_file)
-    
+
     # read all files
     all_results <- data.frame()
-    for (iF in 1:length(results_file)) {
+    for (iF in seq_along(results_file)) {
       futile.logger::flog.info("Reading file", results_file[iF])
       tryCatch({
         df <-
-        utils::read.table(results_file[iF], sep = "\t", header = TRUE, na.strings=c("", "NA")) %>%
+        utils::read.table(results_file[iF], sep = "\t", header = TRUE, na.strings = c("", "NA")) %>%
           stats::na.omit()
       }, error = function(e) {
         stop(sprintf("Error reading %s", results_file[[iF]]))
@@ -514,13 +514,13 @@ load_results_tsv <-
         tryCatch({
           # likely a csv file
           df <-
-            utils::read.csv(results_file[iF], header = TRUE, na.strings=c("", "NA")) %>%
+            utils::read.csv(results_file[iF], header = TRUE, na.strings = c("", "NA")) %>%
             stats::na.omit()
         }, error = function(e) {
           stop(sprintf("Error reading %s", results_file[[iF]]))
         })
       }
-      
+
       for (coln in c("Barcode",
                      gDRutils::get_identifier("well_position"),
                      "ReadoutValue")) {
@@ -535,18 +535,18 @@ load_results_tsv <-
       }
       if (!("BackgroundValue" %in% colnames(df)))
         df$BackgroundValue <- 0
-      
+
       futile.logger::flog.info("File %s read; %d wells", results_filename[iF], dim(df)[1])
       all_results <- rbind(all_results, df)
-      
+
       futile.logger::flog.info("File done")
     }
-    
+
     if (dim(unique(df[, c("Barcode", gDRutils::get_identifier("well_position"))]))[1] !=
         dim(df[, c("Barcode", gDRutils::get_identifier("well_position"))])[1]) {
       futile.logger::flog.error("Multiple rows with the same Barcode and Well across all files")
     }
-    
+
     return(all_results)
   }
 
@@ -560,15 +560,15 @@ load_results_EnVision <-
   function(results_file) {
     # Assertions:
     checkmate::assert_character(results_file)
-    
+
     results_filename <- basename(results_file)
     # results_file is a string or a vector of strings
-    
+
     # test if the result files are .tsv or .xls(x) files
     isExcel <- sapply(results_file, function(x) {
       return(tools::file_ext(x) %in% c("xlsx", "xls"))
     })
-    
+
     # read sheets in files; warning if more than one sheet (unexpected but can be handled)
     results_sheets <- vector("list", length(results_file))
     results_sheets[!isExcel] <- 0
@@ -578,10 +578,10 @@ load_results_EnVision <-
       futile.logger::flog.warn("Multiple sheets in result file: %s",
                                results_file[lapply(results_sheets, length) > 1])
     }
-    
+
     # read all files and sheets
     all_results <- data.frame()
-    for (iF in 1:length(results_file)) {
+    for (iF in seq_along(results_file)) {
       for (iS in results_sheets[[iF]]) {
         futile.logger::flog.info("Reading file %s, sheet %s", results_file[[iF]], iS)
         if (iS == 0) {
@@ -613,47 +613,47 @@ load_results_EnVision <-
               stop(sprintf("Error reading %s, sheet %s", results_file[[iF]], iS))
             })
             colnames(df) <-
-              col_names <- paste0("x", 1:dim(df)[2])
+              col_names <- paste0("x", seq_len(dim(df)[2]))
           }
           df <-
-            df[,!apply(df[1:24,], 2, function(x)
+            df[, !apply(df[1:24, ], 2, function(x)
               all(is.na(x)))]
           # remove extra columns
           # limit to first 24 rows in case Protocol information is
           # exported which generate craps at the end of the file
         }
-        
+
         # not empty rows
         # before discarding the rows; move ''Background information'' in the next row
         Bckd_info_idx <-
-          which(as.data.frame(df)[, 1] %in% 'Background information')
+          which(as.data.frame(df)[, 1] %in% "Background information")
         if (length(Bckd_info_idx) > 0) {
-          df[Bckd_info_idx + 1, 1] = df[Bckd_info_idx, 1]
-          df[Bckd_info_idx, 1] = ''
+          df[Bckd_info_idx + 1, 1] <- df[Bckd_info_idx, 1]
+          df[Bckd_info_idx, 1] <- ""
         }
-        
+
         if (isEdited) {
           # need to do some heuristic to find where the data is
           full_rows <-
-            !apply(df[,-6:-1], 1, function(x)
+            !apply(df[, -6:-1], 1, function(x)
               all(is.na(x)))
           # don't consider the first columns as these may be metadata
           # if big gap, delete what is at the bottom (Protocol information)
           gaps <-
             min(which(full_rows)[(diff(which(full_rows)) > 20)] + 1, dim(df)[1])
           df <-
-            df[which(full_rows)[which(full_rows) <= gaps],] # remove extra rows
-          
+            df[which(full_rows)[which(full_rows) <= gaps], ] # remove extra rows
+
           # get the plate size
           n_col <-
-            1.5 * 2 ** ceiling(log2((dim(df)[2] - 2) / 1.5)) # -2 ot have some buffer
+            1.5 * 2 ^ ceiling(log2((dim(df)[2] - 2) / 1.5)) # -2 ot have some buffer
           n_row <- n_col / 1.5
-          
+
           # add empty column to complete plate (assume left column is #1)
           if (ncol(df) < n_col) {
             df[, (ncol(df) + 1):n_col] <- NA
           }
-          
+
           # get the barcode(s) in the sheet; expected in column C (third one)
           Barcode_idx <-
             which(as.data.frame(df)[, 3] %in% "Barcode")
@@ -664,7 +664,7 @@ load_results_EnVision <-
               ref_bckgrd <-
                 which(as.data.frame(df)[iB + (1:4), 1] %in% "Background information")
               readout_offset <- 1 + ref_bckgrd
-              stopifnot(as.character(df[iB + ref_bckgrd, 4]) %in% 'Signal')
+              stopifnot(as.character(df[iB + ref_bckgrd, 4]) %in% "Signal")
               BackgroundValue <-
                 as.numeric(df[iB + ref_bckgrd + 1, 4])
             } else {
@@ -673,13 +673,13 @@ load_results_EnVision <-
               readout_offset <- 1
               BackgroundValue <- 0
             }
-            
+
             # check the structure of file is ok
             check_values <-
               as.matrix(df[iB + readout_offset + c(0, 1, n_row, n_row + iB + readout_offset), n_col])
-            
+
             Barcode <- as.character(df[iB + 1, 3])
-            if (any(c(is.na(check_values[2:3]),!is.na(check_values[c(1, 4)])))) {
+            if (any(c(is.na(check_values[2:3]), !is.na(check_values[c(1, 4)])))) {
               stop(
                 sprintf(
                   "In result file %s (sheet %s) readout values are misplaced for plate %s",
@@ -689,10 +689,10 @@ load_results_EnVision <-
                 )
               )
             }
-            
+
             readout <-
-              as.matrix(df[iB + readout_offset + (1:n_row), 1:n_col])
-            
+              as.matrix(df[iB + readout_offset + seq_len(n_row), 1:n_col])
+
             # check that the plate size is consistent and contains values
             if (any(is.na(readout))) {
               stop(
@@ -704,12 +704,12 @@ load_results_EnVision <-
                 )
               )
             }
-            
+
             df_results <- data.frame(
               Barcode = Barcode,
-              WellRow = LETTERS[1:n_row],
+              WellRow = LETTERS[seq_len(n_row)],
               WellColumn = as.vector(t(matrix(
-                1:n_col, n_col, n_row
+                seq_len(n_col), n_col, n_row
               ))),
               ReadoutValue = as.numeric(as.vector(readout)),
               BackgroundValue = BackgroundValue
@@ -718,15 +718,15 @@ load_results_EnVision <-
                                      as.character(df[iB + 1, 3]),
                                      dim(df_results)[1])
             all_results <- rbind(all_results, df_results)
-	  }
+            }
           } else {
             # proper original EnVision file
-            n_row = fInfo$n_row
-            n_col = fInfo$n_col
-            Barcode = df[3, 3]
+            n_row <- fInfo$n_row
+            n_col <- fInfo$n_col
+            Barcode <- df[3, 3]
             readout <-
-              as.matrix(df[4 + (1:n_row), 1:n_col])
-            
+              as.matrix(df[4 + seq_len(n_row), seq_len(n_col)])
+
             if (any(as.data.frame(df)[, 1] %in% "Background information")) {
               ref_bckgrd <-
                 which(as.data.frame(df)[, 1] %in% "Background information")
@@ -736,12 +736,12 @@ load_results_EnVision <-
               # export without background information
               BackgroundValue <- 0
             }
-          
+
           df_results <- data.frame(
             Barcode = Barcode,
-            WellRow = LETTERS[1:n_row],
+            WellRow = LETTERS[seq_len(n_row)],
             WellColumn = as.vector(t(matrix(
-              1:n_col, n_col, n_row
+              seq_len(n_col), n_col, n_row
             ))),
             ReadoutValue = as.numeric(as.vector(readout)),
             BackgroundValue = BackgroundValue
@@ -755,7 +755,7 @@ load_results_EnVision <-
           ))
           all_results <- rbind(all_results, df_results)
         }
-        
+
       }
       futile.logger::flog.info("File done")
     }
@@ -782,7 +782,7 @@ check_metadata_names <-
     checkmate::assert_character(col_df)
     checkmate::assert_character(df_name)
     checkmate::assert_character(df_type, null.ok = TRUE)
-    
+
     # first check for required column names
     if (!is.null(df_type)) {
       if (df_type == "manifest") {
@@ -792,12 +792,13 @@ check_metadata_names <-
       } else if (df_type == "template_treatment") {
         expected_headers <- c(gDRutils::get_identifier("drug"), "Concentration")
       }
-      
+
       headersOK <- toupper(expected_headers) %in% toupper(col_df)
       if (any(!headersOK)) {
         stop(
           sprintf(
-            "Template does not contains all expected headers for a '%s'. '%s' is/are required. Please correct your template.",
+            "Template does not contains all expected headers for a '%s'.
+            '%s' is/are required. Please correct your template.",
             df_type,
             toString(expected_headers[!(expected_headers %in% col_df)])
           )
@@ -812,7 +813,8 @@ check_metadata_names <-
         if (length(n_drug) != length(n_conc)) {
           stop(
             sprintf(
-              "Template file(s) %s do/does not contain the same number of Gnumber_* and Concentration_* sheets. Gnumber_* and Concentration_* sheets are required.
+              "Template file(s) %s do/does not contain the same number of Gnumber_* and Concentration_* sheets.
+              Gnumber_* and Concentration_* sheets are required.
               Please correct your template.",
               df_name
             )
@@ -836,10 +838,10 @@ check_metadata_names <-
     }
     check_headers <-
       setdiff(gDRutils::get_header("reserved"), gDRutils::get_identifier("well_position"))
-    
-    
+
+
     corrected_names <- col_df
-    
+
     # remove spaces and convert to WordUppercase
     names_spaces <- regexpr("\\s", corrected_names) > 0
     if (any(names_spaces)) {
@@ -857,7 +859,7 @@ check_metadata_names <-
         toString(corrected_names[names_spaces])
       )
     }
-    
+
     # check for wrong metadata field names (including dash, starting with number, ... )
     bad_names <-
       regexpr("\\W", corrected_names) > 0 |
@@ -871,10 +873,10 @@ check_metadata_names <-
         )
       )
     }
-    
+
     # common headers that are written in a specific way
     # throw warning if close match and correct upper/lower case for consistency
-    for (i in 1:length(gDRutils::get_header("controlled"))) {
+    for (i in seq_along(gDRutils::get_header("controlled"))) {
       case_match <- setdiff(
         grep(paste0(gDRutils::get_header("controlled")[i], "$"), corrected_names, ignore.case = TRUE),
         grep(paste0(gDRutils::get_header("controlled")[i], "$"), corrected_names)
@@ -887,7 +889,7 @@ check_metadata_names <-
                                  gDRutils::get_header("controlled")[i])
       }
     }
-    
+
     # check for headers that are reserved for downstream analyses
     if (any(corrected_names %in% check_headers)) {
       stop(sprintf(
@@ -896,7 +898,7 @@ check_metadata_names <-
         df_name
       ))
     }
-    
+
     return(corrected_names)
   }
 
@@ -905,25 +907,25 @@ check_metadata_names <-
 #'
 #' This function reads file from the EnVision Workstation
 #'
-#' @param file 
-#' @param nrows 
-#' @param seps 
+#' @param file
+#' @param nrows
+#' @param seps
 #'
 #' @return
 #' @export
 #'
-read_EnVision = function(file,
+read_EnVision <- function(file,
                          nrows = 10000,
-                         seps = c(',', '\t')) {
+                         seps = c(",", "\t")) {
   # Assertions:
   checkmate::assert_string(file)
   checkmate::assert_number(nrows)
   checkmate::assert_character(seps)
   con <- file(file)
   open(con)
-  
+
   results.list <- list()
-  
+
   current.line <- 1
   while (length(line <-
                 readLines(con, n = 1, warn = FALSE)) > 0 & current.line < nrows) {
@@ -931,7 +933,7 @@ read_EnVision = function(file,
     current.line <- current.line + 1
   }
   close(con)
-  
+
   n_sep <- colSums(vapply(seps, function(sep) {
     vapply(results.list[1:10], function(line)
       length(unlist(strsplit(line, split = sep))),
@@ -942,11 +944,11 @@ read_EnVision = function(file,
     stop(sprintf("Can't guess separator of the delimited file: %s", file))
   }
   sep <- names(sep)
-  
+
   results.list <-
     lapply(results.list, function(line)
       unlist(strsplit(line, split = sep)))
-  
+
   # identify if original csv file or not
   if (which(vapply(results.list, function(x)
     grepl("Plate information", x[1]), logical(1))) != 1) {
@@ -960,12 +962,12 @@ read_EnVision = function(file,
   isEdited <- (length(results.list[[1]]) > 1) |
     !any(vapply(results.list, function(x)
       grepl("EnVision Workstation", x[1]), logical(1)))
-  
+
   if (isEdited) {
     # may be altered and miss columns
     n_col <- max(vapply(results.list[5:10], length, integer(length =
                                                              1)))
-    n_col <- 1.5 * 2 ** ceiling(log2((n_col - 1) / 1.5))
+    n_col <- 1.5 * 2 ^ ceiling(log2((n_col - 1) / 1.5))
     n_row <- which(vapply(results.list, function(x) {
       grepl("Basic assay information", x[1]) |
         grepl("Plate information", x[1])
@@ -992,20 +994,20 @@ read_EnVision = function(file,
       stop(sprintf("Error reading %s: wrong plate size", results_file[[iF]]))
     }
   }
-  
+
   # pad the lines with NA if not full before creating the dataframe
   results.list <- lapply(results.list, function(x) {
     if (length(x) < n_col) {
       x <- c(x, array(NA, n_col - length(x)))
     } else if (length(x) > n_col) {
-      x <- x[1:n_col]
+      x <- x[seq_len(n_col)]
     }
-    x[x == '' & !is.na(x)] <- NA
+    x[x == "" & !is.na(x)] <- NA
     return(x)
   })
   df_ <- as.data.frame(do.call(rbind, results.list), stringsAsFactors = F)
-  colnames(df_) <- paste0('x', 1:n_col)
-  
+  colnames(df_) <- paste0("x", seq_len(n_col))
+
   rownames(df_) <- NULL
   return(list(
     df = df_,
