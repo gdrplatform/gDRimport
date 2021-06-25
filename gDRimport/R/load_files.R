@@ -73,8 +73,8 @@ load_manifest <- function(manifest_file) {
                          "xls",
                          "tsv")
 
-  # Asserts:
   assertthat::assert_that(is.character(manifest_file), msg = "'manifest_file' must be a character vector")
+  checkmate::assert_file_exists(manifest_file)
 
   # read files
   manifest_data <- lapply(manifest_file, function(x) {
@@ -210,7 +210,7 @@ load_results <-
       results_file <- df_results_files
       results_filename <- basename(results_file)
     }
-    stopifnot(sapply(results_file, file.exists))
+    checkmate::assert_file_exists(results_file)
 
     if (instrument == "EnVision") {
       all_results <-
