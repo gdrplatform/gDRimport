@@ -165,6 +165,8 @@ load_templates <- function(df_template_files) {
     template_file <- df_template_files
     template_filename <- basename(template_file)
   }
+  
+  checkmate::assert_file_exists(template_file)
 
   all_templates <- data.frame()
   if (any(grepl("\\.xlsx?$", template_filename))) {

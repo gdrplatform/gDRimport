@@ -62,3 +62,35 @@ test_that("load_results", {
   expect_error(load_results(r_files, "invalid_instrument"), err_msg2, fixed = TRUE)
 })
 
+
+test_that("load_templates", {
+
+  # valid output returned for the two xlsx files
+  t_files <-
+    c(
+      system.file(package = "gDRimport", "extdata", "data1", "Template_7daytreated.xlsx"),
+      system.file(package = "gDRimport", "extdata", "data1", "Template_Untreated.xlsx")
+    )
+  t_tbl <- gDRimport::load_templates(df_template_files = c(t_files))
+  ## check with reference
+  ## reference obtained with: write.csv2(t_tbl,file = "ref_template_treated_untreated_xlsx.csv",row.names = FALSE) # nolint
+  ref_file <- system.file(package = "gDRimport", "extdata", "data1", "ref_template_treated_untreated_xlsx.csv")
+  ref_tbl <- read.csv2(ref_file)
+  expect_equal(standardize_df(t_tbl), standardize_df(ref_tbl))
+  
+  # valid output returned for data.frame input
+  df_templates <- data.frame(datapath = t_files, name = basename(t_files))
+  res_t_tbl <- gDRimport::load_templates(df_templates)
+  expect_equal(standardize_df(res_t_tbl), standardize_df(ref_tbl))
+  
+  # valid output is returned for a single xlsx file
+  t_tbl2 <- gDRimport::load_templates(df_template_files = c(t_files[1]))
+  ## check with reference
+  ref_file2 <- system.file(package = "gDRimport", "extdata", "data1", "ref_template_treated_xlsx.csv")
+  ref_tbl2 <- read.csv2(ref_file2)
+  expect_equal(standardize_df(t_tbl2), standardize_df(ref_tbl2))
+  
+  # expected error(s) returned
+  err_msg1 <- "Assertion on 'template_file' failed: File does not exist: '/non/existent_file'."
+  expect_error(load_templates(c(t_files[1], "/non/existent_file")),err_msg1)
+})
