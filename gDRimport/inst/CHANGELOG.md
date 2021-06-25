@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+#### [0.0.4] - 2021-06-25
+- add exemplary EnVision data
+
 #### [0.0.3] - 2021-06-25
 - move functions related to reading template from gDRcore package
 
