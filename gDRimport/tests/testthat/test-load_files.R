@@ -27,7 +27,7 @@ test_that("load_results", {
   td1 <- get_test_data1()
 
   # valid output returned for the two xlsx files
-  res_tbl <- gDRimport::load_results(df_results_files = c(td1$r_files))
+  res_tbl <- load_results(df_results_files = c(td1$r_files))
   ## check with reference
   ## reference obtained with: write.csv2(res_tbl,file = "ref_RawData_day0_day7_xlsx.csv",row.names = FALSE) # nolint
   ref_tbl <- read.csv2(td1$ref_r1_r2)
@@ -35,11 +35,11 @@ test_that("load_results", {
   
   # valid output returned for data.frame input
   df_results <- data.frame(datapath = td1$r_files, name = basename(td1$r_files))
-  res_df_tbl <- gDRimport::load_results(df_results)
+  res_df_tbl <- load_results(df_results)
   expect_equal(res_df_tbl, ref_tbl)
   
   # valid output is returned for a single xlsx file
-  res_tbl2 <- gDRimport::load_results(df_results_files = c(td1$r_files[1]))
+  res_tbl2 <- load_results(df_results_files = c(td1$r_files[1]))
   ## check with reference
   ref_tbl2 <- read.csv2(td1$ref_r1)
   expect_equal(res_tbl2, ref_tbl2)
@@ -60,7 +60,7 @@ test_that("load_templates", {
   td1 <- get_test_data1()
 
   # valid output returned for the two xlsx files
-  t_tbl <- gDRimport::load_templates(df_template_files = c(td1$t_files))
+  t_tbl <- load_templates(df_template_files = c(td1$t_files))
   ## check with reference
   ## reference obtained with: write.csv2(t_tbl,file = "ref_template_treated_untreated_xlsx.csv",row.names = FALSE) # nolint
   ref_tbl <- read.csv2(td1$ref_t1_t2)
@@ -68,11 +68,11 @@ test_that("load_templates", {
   
   # valid output returned for data.frame input
   df_templates <- data.frame(datapath = td1$t_files, name = basename(td1$t_files))
-  res_t_tbl <- gDRimport::load_templates(df_templates)
+  res_t_tbl <- load_templates(df_templates)
   expect_equal(standardize_df(res_t_tbl), standardize_df(ref_tbl))
   
   # valid output is returned for a single xlsx file
-  t_tbl2 <- gDRimport::load_templates(df_template_files = c(td1$t_files[1]))
+  t_tbl2 <- load_templates(df_template_files = c(td1$t_files[1]))
   ## check with reference
   ref_tbl2 <- read.csv2(td1$ref_t1)
   expect_equal(standardize_df(t_tbl2), standardize_df(ref_tbl2))
