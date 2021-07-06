@@ -1,6 +1,8 @@
 <h3 align = "left"><strong>Changelog</strong></h3>
 
 All notable changes to this project will be documented in this file.
+#### [0.0.6] - 2021-07-06
+- remove nested repo structure
 
 #### [0.0.5] - 2021-06-28
 - add unit tests
