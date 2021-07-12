@@ -73,7 +73,7 @@ write_ref_data_df <- function(lData, outDir, prefix = "ref") {
   checkmate::assert_string(outDir)
   checkmate::assert_string(prefix)
 
-  myL <- lapply(1:length(lData), function(x) {
+  myL <- lapply(seq_along(lData), function(x) {
     outFile <- file.path(outDir, paste0(prefix, "_lData_", names(lData)[x], ".tsv"))
     write.table(lData[[x]], outFile, sep = "\t", quote = FALSE, row.names = FALSE)
   })
