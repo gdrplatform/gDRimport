@@ -103,13 +103,13 @@ write_ref_data_se <- function(se, outDir, prefix = "ref") {
 
   #df_raw_data from metadata
   outFile <- file.path(outDir, paste0(prefix, "_df_raw_data.tsv"))
-  write.table(metadata(se)$df_raw_data, outFile, sep = "\t", quote = FALSE, row.names = FALSE)
+  write.table(S4Vectors::metadata(se)$df_raw_data, outFile, sep = "\t", quote = FALSE, row.names = FALSE)
 
 
-  keys_yaml <- yaml::as.yaml(metadata(se)$Keys)
+  keys_yaml <- yaml::as.yaml(S4Vectors::metadata(se)$Keys)
   yaml::write_yaml(keys_yaml, file.path(outDir, paste0(prefix,"_keys.yaml")))
 
-  row_maps_yaml <- yaml::as.yaml(metadata(se)$row_maps)
+  row_maps_yaml <- yaml::as.yaml(S4Vectors::metadata(se)$row_maps)
   yaml::write_yaml(row_maps_yaml, file.path(outDir, paste0(prefix,"_row_maps.yaml")))
 }
 
