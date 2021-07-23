@@ -46,7 +46,9 @@ read_ref_data <- function(inDir, prefix = "ref") {
   checkmate::assert_string(prefix)
 
   files <- list.files(inDir, paste0(prefix, "_.+\\.tsv$"), full.names = TRUE)
-  lFiles <- lapply(files, function(x) { read.table(x, sep = "\t", header = TRUE)})
+  lFiles <- lapply(files, function(x) {
+    read.table(x, sep = "\t", header = TRUE)
+    })
   names(lFiles) <- gsub("\\.tsv", "", gsub(paste0("^", prefix, "_"), "", basename(files)))
   refKeys <- yaml::read_yaml(file.path(inDir, paste0(prefix, "_keys.yaml")))
   refRowMaps <- yaml::read_yaml(file.path(inDir, paste0(prefix, "_row_maps.yaml")))
@@ -98,7 +100,13 @@ write_ref_data_se <- function(se, outDir, prefix = "ref") {
   #assays
   myL <- lapply(SummarizedExperiment::assayNames(se), function(x) {
     outFile <- file.path(outDir, paste0(prefix, "_assay_", x, ".tsv"))
-    write.table(gDRutils::assay_to_dt(se, x, merge_metrics = TRUE), outFile, sep = "\t", quote = FALSE, row.names = FALSE)
+    write.table(
+      gDRutils::convert_se_assay_to_dt(se, x, merge_metrics = TRUE),
+      outFile,
+      sep = "\t",
+      quote = FALSE,
+      row.names = FALSE
+    )
   })
 
   #df_raw_data from metadata
@@ -107,10 +115,10 @@ write_ref_data_se <- function(se, outDir, prefix = "ref") {
 
 
   keys_yaml <- yaml::as.yaml(S4Vectors::metadata(se)$Keys)
-  yaml::write_yaml(keys_yaml, file.path(outDir, paste0(prefix,"_keys.yaml")))
+  yaml::write_yaml(keys_yaml, file.path(outDir, paste0(prefix, "_keys.yaml")))
 
   row_maps_yaml <- yaml::as.yaml(S4Vectors::metadata(se)$row_maps)
-  yaml::write_yaml(row_maps_yaml, file.path(outDir, paste0(prefix,"_row_maps.yaml")))
+  yaml::write_yaml(row_maps_yaml, file.path(outDir, paste0(prefix, "_row_maps.yaml")))
 }
 
 #' save_file_type_info

@@ -11,10 +11,10 @@ context("load_files")
   
   # expected error(s) returned
   err_msg1 <- "Assertion on 'manifest_file' failed: File does not exist: '/non/existent_file'."
-  expect_error(load_manifest("/non/existent_file"),err_msg1)
+  expect_error(load_manifest("/non/existent_file"), err_msg1)
   
   err_msg2 <- "'manifest_file' must be a character vector"
-  expect_error(load_manifest(c(2,3)), err_msg2)
+  expect_error(load_manifest(c(2, 3)), err_msg2)
  
   err_msg3 <- "Barcodes in Manifest must be unique!" 
   expect_error(load_manifest(c(td1$m_file, td1$m_file)), err_msg3)
@@ -46,7 +46,7 @@ test_that("load_results", {
   
   # expected error(s) returned
   err_msg1 <- "Assertion on 'results_file' failed: File does not exist: '/non/existent_file'."
-  expect_error(load_results(c(td1$r_files[1], "/non/existent_file")),err_msg1)
+  expect_error(load_results(c(td1$r_files[1], "/non/existent_file")), err_msg1)
   
   # expected error(s) returned
   err_msg2 <- "Assertion on 'instrument' failed: Must comply to pattern '^EnVision$|^long_tsv$'."
@@ -79,7 +79,7 @@ test_that("load_templates", {
   
   # expected error(s) returned
   err_msg1 <- "Assertion on 'template_file' failed: File does not exist: '/non/existent_file'."
-  expect_error(load_templates(c(td1$t_files[1], "/non/existent_file")),err_msg1)
+  expect_error(load_templates(c(td1$t_files[1], "/non/existent_file")), err_msg1)
 })
   
 test_that("load_data", {
@@ -99,17 +99,17 @@ test_that("load_data", {
   
   # expected error(s) returned - manifest
   err_msg1 <- "'manifest_file' must be a readable path"
-  expect_error(load_data("/non/existent_file", td1$t_files, td1$r_files),err_msg1)
+  expect_error(load_data("/non/existent_file", td1$t_files, td1$r_files), err_msg1)
   
   err_msg2 <- "'manifest_file' must be a character vector"
-  expect_error(load_data(c(2,3), td1$t_files, td1$r_files),err_msg2)
+  expect_error(load_data(c(2, 3), td1$t_files, td1$r_files), err_msg2)
  
   err_msg3 <- "Barcodes in Manifest must be unique!" 
   expect_error(load_manifest(c(td1$m_file, td1$m_file)), err_msg3)
   
   # expected error(s) returned - templates
   err_msg4 <- "Following path(s) with no read permission found: '/non/existent_file'"
-  expect_error(load_data(td1$m_file, c(td1$r_files[1], "/non/existent_file"), td1$r_files),err_msg4, fixed = TRUE)
+  expect_error(load_data(td1$m_file, c(td1$r_files[1], "/non/existent_file"), td1$r_files), err_msg4, fixed = TRUE)
   
   # expected error(s) returned
   err_msg5 <- "Assertion on 'instrument' failed: Must comply to pattern '^EnVision$|^long_tsv$'."
@@ -117,6 +117,6 @@ test_that("load_data", {
   
   # expected error(s) returned - results
   err_msg6 <- "Assertion on 'results_file' failed: File does not exist: '/non/existent_file'."
-  expect_error(load_data(td1$m_file, td1$t_files, c(td1$r_files[1], "/non/existent_file")),err_msg6)
+  expect_error(load_data(td1$m_file, td1$t_files, c(td1$r_files[1], "/non/existent_file")), err_msg6)
   
 })
