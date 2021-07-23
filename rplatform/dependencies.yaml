@@ -40,7 +40,7 @@ pkgs:
     source: GITHUB
   gDRutils:
     ver: '>=1.0.7'
-    url: gdrplatform/gDRstyle
+    url: gdrplatform/gDRutils
     ref: master
     subdir: gDRutils
     source: GITHUB
