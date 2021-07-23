@@ -23,6 +23,8 @@ pkgs:
     source: CRAN
   reshape2:
     source: CRAN
+  futile.logger:
+    source: CRAN
   lintr:
     ver: '>=1.0.0'
     url: https://github.com/jimhester/lintr.git
