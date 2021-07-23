@@ -23,7 +23,13 @@ pkgs:
     source: CRAN
   reshape2:
     source: CRAN
+  assertthat:
+    source: CRAN
   futile.logger:
+    source: CRAN
+  readxl:
+    source: CRAN
+  stringi:
     source: CRAN
   lintr:
     ver: '>=1.0.0'
