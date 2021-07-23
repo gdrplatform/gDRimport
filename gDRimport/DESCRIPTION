@@ -27,6 +27,7 @@ Imports:
     tools,
     utils
 Suggests:
+    knitr
 VignetteBuilder: knitr
 ByteCompile: TRUE
 RoxygenNote: 7.1.1
