@@ -9,7 +9,7 @@ Authors@R: c(person("Arkadiusz", "Gladki", role=c("aut", "cre"), email="arkadius
              person("Sergiu", "Mocanu", role=c("aut")),
              person("Dariusz", "Scigocki", role=c("aut")),
              person("Allison", "Voung", role=c("aut")))
-Description: Package for handling import of dose-response data
+Description: Prepare raw drug response data for downstream processing.
 License: file GNE_LICENSE
 LazyLoad: yes
 Depends: 
@@ -27,7 +27,8 @@ Imports:
     tools,
     utils
 Suggests:
-    knitr
+    knitr,
+    testthat
 VignetteBuilder: knitr
 ByteCompile: TRUE
 RoxygenNote: 7.1.1

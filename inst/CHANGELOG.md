@@ -1,6 +1,8 @@
 <h3 align = "left"><strong>Changelog</strong></h3>
 
 All notable changes to this project will be documented in this file.
+#### [0.0.6] - 2021-07-06
+- remove nested repo structure
 
 #### [0.0.7] - 2021-07-23
 - 's/assay_to_dt/convert_se_assay_to_dt/' in write_ref_data_se
