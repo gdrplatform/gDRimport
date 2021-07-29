@@ -1,0 +1,45 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+#
+# See https://github.com/r-lib/actions/tree/master/examples#readme for
+# additional example workflows available for the R community.
+
+name: R
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04 
+    container: rocker/verse:4.1.0
+    env:
+      GITHUB_TOKEN: ${{ secrets.PRIVATE_ACCESS_TOKEN }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Copy deps configuration
+        run: |
+          mkdir -p /mnt/vol/
+          cp rplatform/dependencies.yaml /mnt/vol/
+
+      - name: Cache R packages
+        uses: actions/cache@v1
+        with:
+          path: '/usr/local/lib/R/site-library'
+          key: ${{ runner.os }}-${{ hashFiles('gDRimport/DESCRIPTION') }}
+      
+      - name: Install dependencies
+        run: Rscript rplatform/install_all_deps.R
+      
+      - name: R CMD check
+        run: Rscript -e "rcmdcheck::rcmdcheck('gDRimport', args = '--no-manual', error_on = 'error')"
+        env: 
+          _R_CHECK_FORCE_SUGGESTS_: false
+
+      - name: Lint code
+        run: Rscript -e "gDRstyle::lintPkg('gDRimport')"
