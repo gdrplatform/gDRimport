@@ -116,7 +116,7 @@ load_manifest <- function(manifest_file) {
   manifest_data <- lapply(manifest_data, function(x) {
     if ("Time" %in% colnames(x)) {
       colnames(x)[colnames(x) == "Time"] <-
-        gDRutils::get_identifier("duration")
+        gDRutils::get_env_identifiers("duration")
     }
     return(x)
   })
@@ -253,17 +253,17 @@ load_templates_tsv <-
     dump <- sapply(seq_along(template_file),
                    function(i)
                      if (!(all(
-                       gDRutils::get_identifier("well_position") %in% colnames(templates[[i]])
+                       gDRutils::get_env_identifiers("well_position") %in% colnames(templates[[i]])
                      ))) {
                        futile.logger::flog.info("%s missing, %s as header",
                                                 template_filename[[i]],
-                                                gDRutils::get_identifier("well_position"))
+                                                gDRutils::get_env_identifiers("well_position"))
                      })
     # check drug_identifier is present in each df
     dump <- sapply(seq_along(template_file),
                    function(i)
                      check_metadata_names(
-                       setdiff(colnames(templates[[i]]), gDRutils::get_identifier("well_position")),
+                       setdiff(colnames(templates[[i]]), gDRutils::get_env_identifiers("well_position")),
                        df_name = template_filename[[i]],
                        df_type = "template"
                      ))
@@ -274,7 +274,7 @@ load_templates_tsv <-
       futile.logger::flog.info("Loading %s", template_filename[iF])
       # first check that the sheet names are ok
       # identify drug_identifier sheet (case insensitive)
-      Gnumber_idx <- grep(paste0(gDRutils::get_identifier("drug"), "$"),
+      Gnumber_idx <- grep(paste0(gDRutils::get_env_identifiers("drug"), "$"),
                           colnames(templates[[iF]]),
                           ignore.case = TRUE)
       Conc_idx <-
@@ -285,15 +285,15 @@ load_templates_tsv <-
           stop(sprintf(
             "In untreated template file %s, sheet name must be %",
             template_file[[iF]],
-            gDRutils::get_identifier("drug")
+            gDRutils::get_env_identifiers("drug")
           ))
         }
-        df <- templates[[iF]][, gDRutils::get_identifier("drug")]
-        if (!(all(toupper(df)[!is.na(df)]) %in% toupper(gDRutils::get_identifier("untreated_tag")))) {
+        df <- templates[[iF]][, gDRutils::get_env_identifiers("drug")]
+        if (!(all(toupper(df)[!is.na(df)]) %in% toupper(gDRutils::get_env_identifiers("untreated_tag")))) {
           stop(sprintf(
             "In untreated template file %s, entries must be %s",
             template_file[[iF]],
-            paste(gDRutils::get_identifier("untreated_tag"), collapse = " or ")
+            paste(gDRutils::get_env_identifiers("untreated_tag"), collapse = " or ")
           ))
         }
       } else {
@@ -365,7 +365,7 @@ load_templates_xlsx <-
       futile.logger::flog.info("Loading", template_filename[iF])
       # first check that the sheet names are ok
       # identify drug_identifier sheet (case insensitive)
-      Gnumber_idx <- grep(paste0(gDRutils::get_identifier("drug"), "$"),
+      Gnumber_idx <- grep(paste0(gDRutils::get_env_identifiers("drug"), "$"),
                           template_sheets[[iF]],
                           ignore.case = TRUE)
       Conc_idx <-
@@ -376,7 +376,7 @@ load_templates_xlsx <-
           stop(sprintf(
             "In untreated template file %s, sheet name must be %",
             template_file[[iF]],
-            gDRutils::get_identifier("drug")
+            gDRutils::get_env_identifiers("drug")
           ))
         }
         tryCatch({
@@ -391,13 +391,13 @@ load_templates_xlsx <-
           stop(sprintf("Error loading template. See logs: %s", e))
         })
         if (!(all(toupper(unlist(df)[!is.na(unlist(df))]) %in%
-                  toupper(gDRutils::get_identifier(
+                  toupper(gDRutils::get_env_identifiers(
                     "untreated_tag"
                   ))))) {
           stop(sprintf(
             "In untreated template file %s, entries must be %s",
             template_file[[iF]],
-            paste(gDRutils::get_identifier("untreated_tag"), collapse = " or ")
+            paste(gDRutils::get_env_identifiers("untreated_tag"), collapse = " or ")
           ))
         }
       } else {
@@ -524,14 +524,14 @@ load_results_tsv <-
       }
 
       for (coln in c("Barcode",
-                     gDRutils::get_identifier("well_position"),
+                     gDRutils::get_env_identifiers("well_position"),
                      "ReadoutValue")) {
         if (!(coln %in% colnames(df))) {
           futile.logger::flog.error("%s needs to be a column of %s", coln, results_filename[iF])
         }
       }
-      if (dim(unique(df[, c("Barcode", gDRutils::get_identifier("well_position"))]))[1] !=
-          dim(df[, c("Barcode", gDRutils::get_identifier("well_position"))])[1]) {
+      if (dim(unique(df[, c("Barcode", gDRutils::get_env_identifiers("well_position"))]))[1] !=
+          dim(df[, c("Barcode", gDRutils::get_env_identifiers("well_position"))])[1]) {
         futile.logger::flog.error("Multiple rows with the same Barcode and Well in %s",
                                   results_filename[iF])
       }
@@ -544,8 +544,8 @@ load_results_tsv <-
       futile.logger::flog.info("File done")
     }
 
-    if (dim(unique(df[, c("Barcode", gDRutils::get_identifier("well_position"))]))[1] !=
-        dim(df[, c("Barcode", gDRutils::get_identifier("well_position"))])[1]) {
+    if (dim(unique(df[, c("Barcode", gDRutils::get_env_identifiers("well_position"))]))[1] !=
+        dim(df[, c("Barcode", gDRutils::get_env_identifiers("well_position"))])[1]) {
       futile.logger::flog.error("Multiple rows with the same Barcode and Well across all files")
     }
 
@@ -790,9 +790,9 @@ check_metadata_names <-
       if (df_type == "manifest") {
         expected_headers <- gDRutils::get_header("manifest")
       } else if (df_type == "template") {
-        expected_headers <- gDRutils::get_identifier("drug")
+        expected_headers <- gDRutils::get_env_identifiers("drug")
       } else if (df_type == "template_treatment") {
-        expected_headers <- c(gDRutils::get_identifier("drug"), "Concentration")
+        expected_headers <- c(gDRutils::get_env_identifiers("drug"), "Concentration")
       }
 
       headersOK <- toupper(expected_headers) %in% toupper(col_df)
@@ -809,7 +809,7 @@ check_metadata_names <-
       if (df_type == "template_treatment") {
         # assess if multiple drugs and proper pairing
         n_drug <-
-          agrep(gDRutils::get_identifier("drug"), col_df, ignore.case = TRUE)
+          agrep(gDRutils::get_env_identifiers("drug"), col_df, ignore.case = TRUE)
         n_conc <-
           agrep("Concentration", col_df, ignore.case = TRUE)
         if (length(n_drug) != length(n_conc)) {
@@ -824,7 +824,7 @@ check_metadata_names <-
         }
         if (length(n_drug) > 1) {
           trt_sheets <- c(
-            paste0(gDRutils::get_identifier("drug"), "_",
+            paste0(gDRutils::get_env_identifiers("drug"), "_",
                    2:length(n_drug)),
             paste0("Concentration_", 2:length(n_conc))
           )
@@ -839,7 +839,7 @@ check_metadata_names <-
       }
     }
     check_headers <-
-      setdiff(gDRutils::get_header("reserved"), gDRutils::get_identifier("well_position"))
+      setdiff(gDRutils::get_header("reserved"), gDRutils::get_env_identifiers("well_position"))
 
 
     corrected_names <- col_df
