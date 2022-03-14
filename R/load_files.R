@@ -184,7 +184,8 @@ load_templates <- function(df_template_files) {
     all_templates <- rbind(all_templates, all_templates_2)
   }
 
-  all_templates$Gnumber <- standardize_record_values(all_templates$Gnumber, dictionary = DICTIONARY)
+  all_templates[[gDRutils::get_env_identifiers("drug")]] <- 
+    standardize_record_values(all_templates[[gDRutils::get_env_identifiers("drug")]], dictionary = DICTIONARY)
 
   return(all_templates)
 
@@ -800,7 +801,7 @@ check_metadata_names <-
         stop(
           sprintf(
             "Template does not contains all expected headers for a '%s'.
-            '%s' is/are required. Please correct your template.",
+            '%s' is/are required. Please correct your template or change the identifiers.",
             df_type,
             toString(expected_headers[!(expected_headers %in% col_df)])
           )
