@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+#### [0.0.8] - 2022-03-24
+- Fix hardcoded identifiers
+- Update error message for custom column names
+
 #### [0.0.7] - 2021-07-23
 - 's/assay_to_dt/convert_se_assay_to_dt/' in write_ref_data_se
 - fix linter issues
