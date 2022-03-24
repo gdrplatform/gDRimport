@@ -101,7 +101,7 @@ write_ref_data_se <- function(se, outDir, prefix = "ref") {
   myL <- lapply(SummarizedExperiment::assayNames(se), function(x) {
     outFile <- file.path(outDir, paste0(prefix, "_assay_", x, ".tsv"))
     write.table(
-      gDRutils::convert_se_assay_to_dt(se, x, merge_metrics = TRUE),
+      gDRutils::convert_se_assay_to_dt(se, x),
       outFile,
       sep = "\t",
       quote = FALSE,
