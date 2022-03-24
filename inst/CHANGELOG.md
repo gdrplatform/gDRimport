@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+#### [0.0.10] - 2022-03-24
+- Fix hardcoded identifiers
+- Update error message for custom column names
+
 #### [0.0.9] - 2021-09-10
 - switch from `get_identifier` to `get_env_identifiers`
 
