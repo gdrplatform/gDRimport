@@ -4,10 +4,12 @@
 \alias{load_results_tsv}
 \title{Load results from tsv}
 \usage{
-load_results_tsv(results_file)
+load_results_tsv(results_file, headers)
 }
 \arguments{
 \item{results_file}{character, file path(s) to template(s)}
+
+\item{headers}{list of headers identified in the manifest}
 }
 \description{
 This functions loads and checks the results file(s)

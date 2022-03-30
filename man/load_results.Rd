@@ -4,13 +4,15 @@
 \alias{load_results}
 \title{Load results}
 \usage{
-load_results(df_results_files, instrument = "EnVision")
+load_results(df_results_files, instrument = "EnVision", headers = NULL)
 }
 \arguments{
 \item{df_results_files}{data.frame, with datapaths and names of results file(s)
 or character with file path of results file(s)}
 
 \item{instrument}{character}
+
+\item{headers}{list of headers identified in the manifest file}
 }
 \description{
 This functions loads and checks the results file(s)

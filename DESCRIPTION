@@ -9,6 +9,7 @@ Authors@R: c(person("Arkadiusz", "Gladki", role=c("aut", "cre"), email="arkadius
              person("Sergiu", "Mocanu", role=c("aut")),
              person("Dariusz", "Scigocki", role=c("aut")),
              person("Allison", "Voung", role=c("aut")))
+Maintainer: gDR team <gdr-support-d@gene.com>
 Description: Prepare raw drug response data for downstream processing.
 License: file GNE_LICENSE
 LazyLoad: yes
@@ -31,7 +32,7 @@ Suggests:
     testthat
 VignetteBuilder: knitr
 ByteCompile: TRUE
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 SwitchrLibrary: gDRimport
 DeploySubPath: gDRimport
 Encoding: UTF-8
