@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+#### [0.0.11] - 2022-03-30
+- Add support for Plate as an equivalent of Barcode
+
 #### [0.0.10] - 2022-03-24
 - Fix hardcoded identifiers
 - Update error message for custom column names
