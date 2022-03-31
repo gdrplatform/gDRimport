@@ -126,10 +126,9 @@ load_manifest <- function(manifest_file) {
     return(x)
   })
 
-  headers <- lapply(gDRutils::get_header("manifest"),
-                    function(x) intersect(x, unique(names(do.call(rbind, manifest_data)))))
   
-  
+  headers <- gDRutils::validate_identifiers(do.call(rbind, manifest_data), req_ids = "barcode")
+
   # check default headers are in each df
   dump <- sapply(seq_along(manifest_file),
                  function(i)
