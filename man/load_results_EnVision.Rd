@@ -4,10 +4,12 @@
 \alias{load_results_EnVision}
 \title{Load results from xlsx}
 \usage{
-load_results_EnVision(results_file)
+load_results_EnVision(results_file, headers = NULL)
 }
 \arguments{
 \item{results_file}{character, file path(s) to template(s)}
+
+\item{headers}{list of headers identified in the manifest}
 }
 \description{
 This functions loads and checks the results file(s)

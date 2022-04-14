@@ -35,17 +35,21 @@ load_data <-
       is_readable_v(template_filename)
     }
 
-    manifest <- load_manifest(manifest_file)
+    manifest_list <- load_manifest(manifest_file)
+    manifest <- manifest_list$data
+    headers <- manifest_list$headers
     treatments <- load_templates(df_template_files)
-    data <- load_results(results_file, instrument)
+    data <- load_results(results_file, instrument, headers = headers)
 
-    # check the all template files are available
-    if (!all(unique(manifest$Template[manifest$Barcode %in% data$Barcode])
+      # check the all template files are available
+    if (!all(unique(manifest[[headers[["template"]]]][manifest[[headers[["barcode"]]]] %in%
+                                                      data[[headers[["barcode"]]]]])
              %in% basename(template_filename))) {
       stop(sprintf(
         "Some template files are missing: %s",
         toString(setdiff(
-          unique(manifest$Template[manifest$Barcode %in% data$Barcode]),
+          unique(manifest[[headers[["template"]]]][manifest[[headers[["barcode"]]]] %in%
+                                                     data[[headers[["barcode"]]]]]),
           basename(template_filename)
         ))
       ))
@@ -76,6 +80,7 @@ load_manifest <- function(manifest_file) {
   assertthat::assert_that(is.character(manifest_file), msg = "'manifest_file' must be a character vector")
   checkmate::assert_file_exists(manifest_file)
 
+  
   # read files
   manifest_data <- lapply(manifest_file, function(x) {
     manifest_ext <- tools::file_ext(x)
@@ -111,7 +116,7 @@ load_manifest <- function(manifest_file) {
       )
     }
   })
-
+  
   # replace Time by Duration for backwards compatibility
   manifest_data <- lapply(manifest_data, function(x) {
     if ("Time" %in% colnames(x)) {
@@ -120,6 +125,9 @@ load_manifest <- function(manifest_file) {
     }
     return(x)
   })
+
+  
+  headers <- gDRutils::validate_identifiers(do.call(rbind, manifest_data), req_ids = "barcode")
 
   # check default headers are in each df
   dump <- sapply(seq_along(manifest_file),
@@ -135,13 +143,14 @@ load_manifest <- function(manifest_file) {
     check_metadata_names(colnames(cat_manifest_data), "manifest")
 
   # check that barcodes are unique
-  if (dim(cat_manifest_data)[1] != length(unique(cat_manifest_data$Barcode)))
+  if (dim(cat_manifest_data)[1] != length(unique(cat_manifest_data[[headers[["barcode"]]]])))
     stop("Barcodes in Manifest must be unique!")
 
-  cat_manifest_data$Template <- basename(cat_manifest_data$Template)
+  cat_manifest_data[[headers[["template"]]]] <- basename(cat_manifest_data[[headers[["template"]]]])
 
   futile.logger::flog.info("Manifest loaded successfully")
-  return(cat_manifest_data)
+  return(list(data = cat_manifest_data,
+              headers = headers))
 }
 
 
@@ -199,12 +208,14 @@ load_templates <- function(df_template_files) {
 #' @param df_results_files  data.frame, with datapaths and names of results file(s)
 #' or character with file path of results file(s)
 #' @param instrument character
+#' @param headers list of headers identified in the manifest file
 #' @export
 #'
 load_results <-
-  function(df_results_files, instrument = "EnVision") {
+  function(df_results_files, instrument = "EnVision", headers = NULL) {
     stopifnot(any(inherits(df_results_files, "data.frame"), checkmate::test_character(df_results_files)))
     checkmate::assert_string(instrument, pattern = "^EnVision$|^long_tsv$")
+    checkmate::assert_list(headers, null.ok = TRUE)
     if (is.data.frame(df_results_files)) {
       # for the shiny app
       results_file <- df_results_files$datapath
@@ -217,12 +228,14 @@ load_results <-
 
     if (instrument == "EnVision") {
       all_results <-
-        load_results_EnVision(results_file)
+        load_results_EnVision(results_file, headers = headers)
     } else if (instrument == "long_tsv") {
       all_results <-
-        load_results_tsv(results_file)
+        load_results_tsv(results_file, headers = headers)
+    } else {
+      stop("Unrecognized instrument type.")
     }
-    return(all_results)
+    return(unique(all_results))
   }
 
 
@@ -495,9 +508,10 @@ load_templates_xlsx <-
 #' This functions loads and checks the results file(s)
 #'
 #' @param results_file character, file path(s) to template(s)
+#' @param headers list of headers identified in the manifest
 #'
 load_results_tsv <-
-  function(results_file) {
+  function(results_file, headers) {
     # results_file is a string or a vector of strings
     results_filename <- basename(results_file)
 
@@ -524,15 +538,15 @@ load_results_tsv <-
         })
       }
 
-      for (coln in c("Barcode",
+      for (coln in c(headers[["barcode"]],
                      gDRutils::get_env_identifiers("well_position"),
                      "ReadoutValue")) {
         if (!(coln %in% colnames(df))) {
           futile.logger::flog.error("%s needs to be a column of %s", coln, results_filename[iF])
         }
       }
-      if (dim(unique(df[, c("Barcode", gDRutils::get_env_identifiers("well_position"))]))[1] !=
-          dim(df[, c("Barcode", gDRutils::get_env_identifiers("well_position"))])[1]) {
+      if (dim(unique(df[, c(headers[["barcode"]], gDRutils::get_env_identifiers("well_position"))]))[1] !=
+          dim(df[, c(headers[["barcode"]], gDRutils::get_env_identifiers("well_position"))])[1]) {
         futile.logger::flog.error("Multiple rows with the same Barcode and Well in %s",
                                   results_filename[iF])
       }
@@ -545,8 +559,8 @@ load_results_tsv <-
       futile.logger::flog.info("File done")
     }
 
-    if (dim(unique(df[, c("Barcode", gDRutils::get_env_identifiers("well_position"))]))[1] !=
-        dim(df[, c("Barcode", gDRutils::get_env_identifiers("well_position"))])[1]) {
+    if (dim(unique(df[, c(headers[["barcode"]], gDRutils::get_env_identifiers("well_position"))]))[1] !=
+        dim(df[, c(headers[["barcode"]], gDRutils::get_env_identifiers("well_position"))])[1]) {
       futile.logger::flog.error("Multiple rows with the same Barcode and Well across all files")
     }
 
@@ -559,8 +573,9 @@ load_results_tsv <-
 #' This functions loads and checks the results file(s)
 #'
 #' @param results_file character, file path(s) to template(s)
+#' @param headers list of headers identified in the manifest
 load_results_EnVision <-
-  function(results_file) {
+  function(results_file, headers = NULL) {
     # Assertions:
     checkmate::assert_character(results_file)
 
@@ -658,8 +673,9 @@ load_results_EnVision <-
           }
 
           # get the barcode(s) in the sheet; expected in column C (third one)
+          barcode_col <- grep(headers[["barcode"]], as.data.frame(df))
           Barcode_idx <-
-            which(as.data.frame(df)[, 3] %in% "Barcode")
+            which(as.data.frame(df)[, barcode_col] %in% headers[["barcode"]])
           # run through all plates
           for (iB in Barcode_idx) {
             # two type of format depending on where Background information is placed
@@ -681,14 +697,14 @@ load_results_EnVision <-
             check_values <-
               as.matrix(df[iB + readout_offset + c(0, 1, n_row, n_row + iB + readout_offset), n_col])
 
-            Barcode <- as.character(df[iB + 1, 3])
+            Barcode <- as.character(df[iB + 1, barcode_col])
             if (any(c(is.na(check_values[2:3]), !is.na(check_values[c(1, 4)])))) {
               stop(
                 sprintf(
                   "In result file %s (sheet %s) readout values are misplaced for plate %s",
                   results_filename[[iF]],
                   iS,
-                  as.character(df[iB + 1, 3])
+                  as.character(df[iB + 1, barcode_col])
                 )
               )
             }
@@ -703,7 +719,7 @@ load_results_EnVision <-
                   "In result file %s (sheet %s) readout values are misplaced for plate %s",
                   results_filename[[iF]],
                   iS,
-                  as.character(df[iB + 1, 3])
+                  as.character(df[iB + 1, barcode_col])
                 )
               )
             }
@@ -717,8 +733,10 @@ load_results_EnVision <-
               ReadoutValue = as.numeric(as.vector(readout)),
               BackgroundValue = BackgroundValue
             )
+            names(df_results)[1] <- headers[["barcode"]]
+            
             futile.logger::flog.info("Plate %s read; %d wells",
-                                     as.character(df[iB + 1, 3]),
+                                     as.character(df[iB + 1, barcode_col]),
                                      dim(df_results)[1])
             all_results <- rbind(all_results, df_results)
             }
@@ -726,7 +744,7 @@ load_results_EnVision <-
             # proper original EnVision file
             n_row <- fInfo$n_row
             n_col <- fInfo$n_col
-            Barcode <- df[3, 3]
+            Barcode <- df[3, barcode_col]
             readout <-
               as.matrix(df[4 + seq_len(n_row), seq_len(n_col)])
 
@@ -796,7 +814,8 @@ check_metadata_names <-
         expected_headers <- c(gDRutils::get_env_identifiers("drug"), "Concentration")
       }
 
-      headersOK <- toupper(expected_headers) %in% toupper(col_df)
+      upperHeaders <- lapply(expected_headers, toupper)
+      headersOK <- vapply(upperHeaders, function(x) any(x %in% toupper(col_df)), FUN.VALUE = logical(1))
       if (any(!headersOK)) {
         stop(
           sprintf(
