@@ -14,14 +14,14 @@ echo ">>>>> OWNER OF THE REPOSITORY"
 sudo chown -R `id -u` $CORE_DIR
 
 echo ">>>>>>>> RUNNING LINT"
-Rscript -e "gDRstyle::lintPkgDirs('/mnt/vol/gDRimport')"
+Rscript -e "gDRstyle::lintPkgDirs('/mnt/vol')"
 
 echo ">>>>> RUNNING UNIT TESTS"
-Rscript -e "testthat::test_local(path = '/mnt/vol/gDRimport', stop_on_failure = TRUE) "
+Rscript -e "testthat::test_local(path = '/mnt/vol', stop_on_failure = TRUE) "
 
 echo ">>>>> RUNNING CHECK"
-R CMD build /mnt/vol/gDRimport &&
+R CMD build /mnt/volt &&
     R CMD check gDRimport_*.tar.gz --no-vignettes --no-examples --no-manual
 
 echo ">>>>>>>> RUNNING CHECK DEPENDENCIES"
-Rscript -e "gDRstyle::checkDependencies(desc_path='/mnt/vol/gDRimport/DESCRIPTION', dep_path='/mnt/vol/rplatform/dependencies.yaml')"
+Rscript -e "gDRstyle::checkDependencies(desc_path='/mnt/vol/DESCRIPTION', dep_path='/mnt/vol/rplatform/dependencies.yaml')"
