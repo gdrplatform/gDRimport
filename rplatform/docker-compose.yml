@@ -1,0 +1,21 @@
+# NOTE: this yml is used to run your project using docker compose
+# you can freely modify it except for following variables:
+# IMAGE_FULLNAME, RSTUDIO_CONTAINER_NAME, RSTUDIO_VOLUME_MOUNT_POINT, LISTEN_PORT, RSTUDIO_PORT
+# which are dynamically passed here from RPlatform
+
+version: "3"
+
+services:
+  # service name 'shinyapp' must stay unchanged
+  shinyapp:
+    image: ${IMAGE_FULLNAME}
+    container_name: ${RSTUDIO_CONTAINER_NAME}
+    # uncomment following to add custom docker exec command
+    # command: ["sh", "-c", "/mnt/vol/rplatform/run_tests.sh"]
+    working_dir: ${RSTUDIO_VOLUME_MOUNT_POINT}
+    user: root
+    volumes:
+      - .:${RSTUDIO_VOLUME_MOUNT_POINT}
+      - ..:/home/rstudio/projects:z
+    ports:
+      - ${LISTEN_PORT}:${RSTUDIO_PORT}
