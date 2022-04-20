@@ -1,8 +1,8 @@
 Package: gDRimport
 Type: Package
 Title: Package for handling import of dose-response data
-Version: 0.0.11
-Date: 2022-03-30
+Version: 0.0.12
+Date: 2022-04-20
 Authors@R: c(person("Arkadiusz", "Gladki", role=c("aut", "cre"), email="arkadiusz.gladki@contractors.roche.com"),
              person("Bartosz", "Czech", role=c("aut")), 
              person("Marc", "Hafner", role=c("aut")),
@@ -20,7 +20,7 @@ Imports:
     checkmate,
     data.table,
     futile.logger,
-    gDRutils,
+    gDRutils (>= 1.0.39),
     readxl,
     reshape2,
     stats,
@@ -28,6 +28,8 @@ Imports:
     tools,
     utils
 Suggests:
+    gDRtestData (>= 1.0.12),
+    gDRstyle (>= 0.0.8),
     knitr,
     testthat
 VignetteBuilder: knitr
