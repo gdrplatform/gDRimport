@@ -1,7 +1,7 @@
 Package: gDRimport
 Type: Package
 Title: Package for handling import of dose-response data
-Version: 0.0.12
+Version: 0.0.13
 Date: 2022-04-21
 Authors@R: c(person("Arkadiusz", "Gladki", role=c("aut", "cre"), email="arkadiusz.gladki@contractors.roche.com"),
              person("Bartosz", "Czech", role=c("aut")), 
@@ -13,14 +13,12 @@ Maintainer: gDR team <gdr-support-d@gene.com>
 Description: Prepare raw drug response data for downstream processing.
 License: file GNE_LICENSE
 LazyLoad: yes
-Depends: 
-    R (>= 2.10)
 Imports:
     assertthat,
     checkmate,
     data.table,
     futile.logger,
-    gDRutils,
+    gDRutils (>= 1.0.39),
     readxl,
     reshape2,
     stats,
@@ -28,7 +26,10 @@ Imports:
     tools,
     utils
 Suggests:
+    gDRtestData (>= 1.0.12),
+    gDRstyle (>= 0.0.8),
     knitr,
+    purrr,
     testthat
 VignetteBuilder: knitr
 ByteCompile: TRUE

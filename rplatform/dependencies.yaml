@@ -1,54 +1,21 @@
 pkgs:
-  BumpyMatrix:
-    source: Bioc
-    ver: "3.13"
-  IRanges:
-    source: Bioc
-    ver: "3.13"
-  S4Vectors:
-    source: Bioc
-    ver: "3.13"
-  SummarizedExperiment:
-    source: Bioc
-    ver: "3.13"
-  pkgload:
-    source: CRAN
-  roxygen2:
-    source: CRAN
-  checkmate:
-    source: CRAN
-  data.table:
-    source: CRAN
-  drc:
-    source: CRAN
-  reshape2:
-    source: CRAN
-  assertthat:
-    source: CRAN
-  futile.logger:
-    source: CRAN
-  readxl:
-    source: CRAN
-  stringi:
-    source: CRAN
-  lintr:
-    ver: '>=1.0.0'
-    url: https://github.com/jimhester/lintr.git
-  gDRtestData:
-    ver: '>=1.0.0'
-    url: gdrplatform/gDRtestData
-    ref: master
-    subdir: gDRtestData
-    source: GITHUB
-  gDRstyle:
-    ver: '>=0.0.3'
-    url: gdrplatform/gDRstyle
-    ref: main
-    subdir: ~
-    source: GITHUB
   gDRutils:
-    ver: '>=1.0.7'
+    ver: '>=1.0.39'
     url: gdrplatform/gDRutils
     ref: master
     subdir: gDRutils
     source: GITHUB
+  gDRstyle:
+    ver: '>=0.0.8'
+    url: gdrplatform/gDRstyle
+    ref: main
+    subdir: ~
+    source: GITHUB
+  gDRtestData:
+    ver: '>=1.0.12'
+    url: gdrplatform/gDRtestData
+    ref: master
+    subdir: gDRtestData
+    source: GITHUB
+  purrr:
+    source: CRAN

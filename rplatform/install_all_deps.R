@@ -1,17 +1,17 @@
 # Settings
-repos <- c(CRAN = "https://cran.r-project.org")
+repos <- c(
+CRAN = "https://cran.microsoft.com/snapshot/2021-08-25"
+)
 options(repos = repos)
 essential_pkgs <- list(
-  list(name = "git2r", version = "0.28.0"),
-  list(name = "yaml", version = "2.2.1"),
-  list(name = "BiocManager", version = "1.30.16"),
-  list(name = "curl", version = "4.3.2")
+  list(name = "git2r"),
+  list(name = "yaml"),
+  list(name = "BiocManager"),
+  list(name = "curl")
 )
 base_dir <- "/mnt/vol"
 deps_yaml <- file.path(base_dir, "/dependencies.yaml")
 use_ssh <- FALSE
-# ssh_key_pub <- "/home/rstudio/.ssh/id_rsa.pub"
-# ssh_key_priv <- "/home/rstudio/.ssh/id_rsa"
 
 # Auxiliary functions
 verify_version <- function(name, required_version) {
