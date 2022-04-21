@@ -4,7 +4,11 @@
 \alias{load_results}
 \title{Load results}
 \usage{
-load_results(df_results_files, instrument = "EnVision", headers = NULL)
+load_results(
+  df_results_files,
+  instrument = "EnVision",
+  headers = gDRutils::get_env_identifiers()
+)
 }
 \arguments{
 \item{df_results_files}{data.frame, with datapaths and names of results file(s)
