@@ -13,8 +13,6 @@ Maintainer: gDR team <gdr-support-d@gene.com>
 Description: Prepare raw drug response data for downstream processing.
 License: file GNE_LICENSE
 LazyLoad: yes
-Depends: 
-    R (>= 2.10)
 Imports:
     assertthat,
     checkmate,
@@ -31,6 +29,7 @@ Suggests:
     gDRtestData (>= 1.0.12),
     gDRstyle (>= 0.0.8),
     knitr,
+    purrr,
     testthat
 VignetteBuilder: knitr
 ByteCompile: TRUE
