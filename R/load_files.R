@@ -212,7 +212,7 @@ load_templates <- function(df_template_files) {
 #' @export
 #'
 load_results <-
-  function(df_results_files, instrument = "EnVision", headers = NULL) {
+  function(df_results_files, instrument = "EnVision", headers = gDRutils::get_env_identifiers()) {
     stopifnot(any(inherits(df_results_files, "data.frame"), checkmate::test_character(df_results_files)))
     checkmate::assert_string(instrument, pattern = "^EnVision$|^long_tsv$")
     checkmate::assert_list(headers, null.ok = TRUE)
@@ -575,7 +575,7 @@ load_results_tsv <-
 #' @param results_file character, file path(s) to template(s)
 #' @param headers list of headers identified in the manifest
 load_results_EnVision <-
-  function(results_file, headers = NULL) {
+  function(results_file, headers = gDRutils::get_env_identifiers()) {
     # Assertions:
     checkmate::assert_character(results_file)
 

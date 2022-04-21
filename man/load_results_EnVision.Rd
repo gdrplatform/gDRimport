@@ -4,7 +4,7 @@
 \alias{load_results_EnVision}
 \title{Load results from xlsx}
 \usage{
-load_results_EnVision(results_file, headers = NULL)
+load_results_EnVision(results_file, headers = gDRutils::get_env_identifiers())
 }
 \arguments{
 \item{results_file}{character, file path(s) to template(s)}

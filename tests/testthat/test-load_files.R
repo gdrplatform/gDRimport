@@ -7,7 +7,7 @@ context("load_files")
  
   # valid output returned for "manifest.xlsx" 
   m_df <- load_manifest(td1$m_file)
-  expect_identical(td1$ref_m_df, m_df)
+  expect_identical(td1$ref_m_df, m_df$data)
   
   # expected error(s) returned
   err_msg1 <- "Assertion on 'manifest_file' failed: File does not exist: '/non/existent_file'."
