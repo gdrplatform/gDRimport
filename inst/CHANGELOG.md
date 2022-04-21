@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+#### [0.0.12] - 2022-04-21
+- Fix unit tests
+
 #### [0.0.11] - 2022-03-30
 - Add support for Plate as an equivalent of Barcode
 
