@@ -20,7 +20,7 @@ echo ">>>>> RUNNING UNIT TESTS"
 Rscript -e "testthat::test_local(path = '/mnt/vol', stop_on_failure = TRUE) "
 
 echo ">>>>> RUNNING CHECK"
-R CMD build /mnt/volt &&
+R CMD build /mnt/vol &&
     R CMD check gDRimport_*.tar.gz --no-vignettes --no-examples --no-manual
 
 echo ">>>>>>>> RUNNING CHECK DEPENDENCIES"
