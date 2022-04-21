@@ -44,3 +44,4 @@ test_that("read_ref_data and write_ref_data_df works as expected", {
   write_ref_data_se(testSE, dir)
   expect_true(file.exists(file.path(dir, "ref_df_raw_data.tsv")))
 })
+
