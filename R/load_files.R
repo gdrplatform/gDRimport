@@ -214,7 +214,7 @@ load_templates <- function(df_template_files) {
 load_results <-
   function(df_results_files, instrument = "EnVision", headers = gDRutils::get_env_identifiers()) {
     stopifnot(any(inherits(df_results_files, "data.frame"), checkmate::test_character(df_results_files)))
-    checkmate::assert_string(instrument, pattern = "^EnVision$|^long_tsv$")
+    checkmate::assert_string(instrument, pattern = "^EnVision$|^long_tsv$|^Tecan$")
     checkmate::assert_list(headers, null.ok = TRUE)
     if (is.data.frame(df_results_files)) {
       # for the shiny app
@@ -232,6 +232,9 @@ load_results <-
     } else if (instrument == "long_tsv") {
       all_results <-
         load_results_tsv(results_file, headers = headers)
+    } else if (instrument == "Tecan") {
+      all_results <-
+        load_results_Tecan(results_file, headers = headers)
     } else {
       stop("Unrecognized instrument type.")
     }
@@ -568,7 +571,7 @@ load_results_tsv <-
   }
 
 
-#' Load results from xlsx
+#' Load envision results from xlsx
 #'
 #' This functions loads and checks the results file(s)
 #'
@@ -780,6 +783,79 @@ load_results_EnVision <-
       }
       futile.logger::flog.info("File done")
     }
+    return(all_results)
+  }
+
+
+#' Load tecan results from xlsx
+#'
+#' This functions loads and checks the results file(s)
+#'
+#' @param results_file character, file path(s) to template(s)
+#' @param headers list of headers identified in the manifest
+load_results_Tecan <-
+  function(results_file, headers = gDRutils::get_env_identifiers()) {
+    # Assertions:
+    checkmate::assert_character(results_file)
+    results_filename <- basename(results_file)
+    # test if the result files are .tsv or .xls(x) files
+    isExcel <- sapply(results_file, function(x) {
+      return(tools::file_ext(x) %in% c("xlsx", "xls"))
+    })
+    # read sheets in files; in the Tecan format each sheet is a plate 
+    results_sheets <- readxl::excel_sheets(results_file)
+    if (length(results_sheets) <1) {
+      futile.logger::flog.error("No data sheet found in: %s",
+                                results_file)
+    }
+    # read all plates  
+    all_results <- data.frame()
+    for (iS in seq_along(results_sheets)) {
+      futile.logger::flog.info("Reading file %s, sheet %s", results_file, results_sheets[[iS]])
+      # read the content of each plate
+      tryCatch({
+        df <- readxl::read_excel(results_file,
+                                 sheet = results_sheets[[iS]],
+                                 col_names = FALSE)
+      }, error = function(e) {
+        stop(sprintf("Error reading %s, sheet %s", results_file[[iF]], iS))
+      })
+      
+      # find the indicator ("<>") that identifies where plate readings are
+      ind <- which( df=="<>", arr.ind=TRUE)
+      # remove text above "<>" 
+      dfm <- df[(ind[1]):nrow(df), ind[2]:ncol(df)]
+      # remove text after data matrix ends, as identified by first na value
+      ind <- which(is.na(dfm),arr.ind=TRUE)[1]
+      dfm <- dfm[1:ind-1, 1:ncol(dfm)]
+      
+      # rows and columns in data matrix with row and col names
+      n_row <- nrow(dfm)
+      n_col <- ncol(dfm)
+      readout <- as.data.frame(dfm[2:n_row, 2:n_col])
+      rownames(readout) <- t(dfm[2:n_row,1])
+      colnames(readout) <- dfm[1,2:n_col]
+      # rows and columns in readout matrix
+      n_row <- nrow(readout)
+      n_col <- ncol(readout)
+      # get well identifiers (numbers and letters) from layout
+      WellRow <-  rownames(readout)
+      WellColumn <- strtoi(colnames(readout))
+      
+      # results data frame for plate
+      df_results <- data.frame(
+        Barcode = results_sheets[iS],
+        WellRow = WellRow,
+        WellColumn =  as.vector(t(matrix(
+          WellColumn, n_col, n_row
+        ))),
+        ReadoutValue = as.numeric(as.vector(as.matrix(readout))),
+        BackgroundValue = 0 ## Tecan users report negligible background readigns, usually is not recorded
+      )
+      names(df_results)[1] <-headers[['barcode']]
+      # add plate to overall results
+      all_results <- rbind(all_results, df_results)
+    } 
     return(all_results)
   }
 

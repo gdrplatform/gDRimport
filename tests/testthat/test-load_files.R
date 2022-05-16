@@ -19,6 +19,13 @@ context("load_files")
   err_msg3 <- "Barcodes in Manifest must be unique!" 
   expect_error(load_manifest(c(td1$m_file, td1$m_file)), err_msg3)
   
+  #get test data2
+  td2 <- get_test_data2()
+  
+  # valid output returned for "manifest.xlsx" 
+  m_df <- load_manifest(td2$m_file)
+  expect_identical(td2$ref_m_df, m_df$data)
+  
 })
 
 test_that("load_results", {
@@ -49,7 +56,7 @@ test_that("load_results", {
   expect_error(load_results(c(td1$r_files[1], "/non/existent_file")), err_msg1)
   
   # expected error(s) returned
-  err_msg2 <- "Assertion on 'instrument' failed: Must comply to pattern '^EnVision$|^long_tsv$'."
+  err_msg2 <- "Assertion on 'instrument' failed: Must comply to pattern '^EnVision$|^long_tsv$|^Tecan$'."
   expect_error(load_results(td1$r_files, "invalid_instrument"), err_msg2, fixed = TRUE)
 })
 
@@ -112,7 +119,7 @@ test_that("load_data", {
   expect_error(load_data(td1$m_file, c(td1$r_files[1], "/non/existent_file"), td1$r_files), err_msg4, fixed = TRUE)
   
   # expected error(s) returned
-  err_msg5 <- "Assertion on 'instrument' failed: Must comply to pattern '^EnVision$|^long_tsv$'."
+  err_msg5 <- "Assertion on 'instrument' failed: Must comply to pattern '^EnVision$|^long_tsv$|^Tecan$'."
   expect_error(load_data(td1$m_file, td1$t_files, td1$r_files, "invalid_instrument"), err_msg5, fixed = TRUE)
   
   # expected error(s) returned - results
