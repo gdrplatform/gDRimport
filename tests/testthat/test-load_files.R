@@ -9,6 +9,14 @@ context("load_files")
   m_df <- load_manifest(td1$m_file)
   expect_identical(td1$ref_m_df, m_df$data)
   
+  #get test data2
+  td2 <- get_test_data2()
+  
+  # valid output returned for "manifest.xlsx" 
+  m_df <- load_manifest(td2$m_file)
+  ref_m_df <- readRDS(td2$ref_m_df)
+  expect_identical(m_df, ref_m_df)
+  
   # expected error(s) returned
   err_msg1 <- "Assertion on 'manifest_file' failed: File does not exist: '/non/existent_file'."
   expect_error(load_manifest("/non/existent_file"), err_msg1)
@@ -18,13 +26,6 @@ context("load_files")
  
   err_msg3 <- "Barcodes in Manifest must be unique!" 
   expect_error(load_manifest(c(td1$m_file, td1$m_file)), err_msg3)
-  
-  #get test data2
-  td2 <- get_test_data2()
-  
-  # valid output returned for "manifest.xlsx" 
-  m_df <- load_manifest(td2$m_file)
-  expect_identical(td2$ref_m_df, m_df$data)
   
 })
 
@@ -50,6 +51,15 @@ test_that("load_results", {
   ## check with reference
   ref_tbl2 <- read.csv2(td1$ref_r1)
   expect_equal(res_tbl2, ref_tbl2)
+  
+  # get test_data2
+  td2 <- get_test_data2()
+  
+  # valid output returned for Tecan format
+  res_tbl3 <- load_results(df_results_files = c(td2$r_files), instrument='Tecan')
+  ## check with reference
+  ref_tbl3 <- readRDS(td2$ref_r_df)
+  expect_equal(res_tbl3, ref_tbl3)
   
   # expected error(s) returned
   err_msg1 <- "Assertion on 'results_file' failed: File does not exist: '/non/existent_file'."
@@ -78,11 +88,14 @@ test_that("load_templates", {
   res_t_tbl <- load_templates(df_templates)
   expect_equal(standardize_df(res_t_tbl), standardize_df(ref_tbl))
   
-  # valid output is returned for a single xlsx file
-  t_tbl2 <- load_templates(df_template_files = c(td1$t_files[1]))
+  # get test_data2
+  td2 <- get_test_data2()
+  
+  # valid output is returned for xlsx files
+  res_t_tbl3 <- load_templates(df_template_files = c(td2$t_files))
   ## check with reference
-  ref_tbl2 <- read.csv2(td1$ref_t1)
-  expect_equal(standardize_df(t_tbl2), standardize_df(ref_tbl2))
+  ref_tbl3 <- readRDS(td2$ref_t_df)
+  expect_equal(standardize_df(res_t_tbl3), standardize_df(ref_tbl3))
   
   # expected error(s) returned
   err_msg1 <- "Assertion on 'template_file' failed: File does not exist: '/non/existent_file'."
@@ -103,6 +116,20 @@ test_that("load_data", {
   # valid output returned for results 
   ref_tbl <- read.csv2(td1$ref_r1_r2)
   expect_equal(l_tbl$data, ref_tbl)
+  
+  #get test_data2
+  td2 <- get_test_data2()
+  
+  l_tbl2 <- load_data(td2$m_file, td2$t_files, td2$r_files, instrument='Tecan') 
+  # valid output returned for manifest
+  ref_m_df <- readRDS(td2$ref_m_df)
+  expect_identical(ref_m_df$data, l_tbl2$manifest)
+  # valid output returned for templates
+  ref_t_df <- readRDS(td2$ref_t_df)
+  expect_equal(standardize_df(ref_t_df), standardize_df(l_tbl2$treatments))
+  # valid output returned for results 
+  ref_r_df <- readRDS(td2$ref_r_df)
+  expect_equal(l_tbl2$data, ref_r_df)
   
   # expected error(s) returned - manifest
   err_msg1 <- "'manifest_file' must be a readable path"

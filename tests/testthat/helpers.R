@@ -46,6 +46,9 @@ get_test_data2 <-
       t_files =
         c(
           file.path(ddir, "D300_trt_Tecan_96_well_plates.xlsx")
-        )
+        ),
+      ref_m_df = file.path(ddir, "ref_manifest_Tecan_96_well_plates.RDS"),
+      ref_r_df = file.path(ddir, "ref_RawData_Tecan_96_well_plates.RDS"),
+      ref_t_df = file.path(ddir, "ref_D300_trt_Tecan_96_well_plates.RDS")
     )
   }
