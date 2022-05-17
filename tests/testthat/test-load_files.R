@@ -56,7 +56,7 @@ test_that("load_results", {
   td2 <- get_test_data2()
   
   # valid output returned for Tecan format
-  res_tbl3 <- load_results(df_results_files = c(td2$r_files), instrument='Tecan')
+  res_tbl3 <- load_results(df_results_files = c(td2$r_files), instrument = "Tecan")
   ## check with reference
   ref_tbl3 <- readRDS(td2$ref_r_df)
   expect_equal(res_tbl3, ref_tbl3)
@@ -120,7 +120,7 @@ test_that("load_data", {
   #get test_data2
   td2 <- get_test_data2()
   
-  l_tbl2 <- load_data(td2$m_file, td2$t_files, td2$r_files, instrument='Tecan') 
+  l_tbl2 <- load_data(td2$m_file, td2$t_files, td2$r_files, instrument = "Tecan") 
   # valid output returned for manifest
   ref_m_df <- readRDS(td2$ref_m_df)
   expect_identical(ref_m_df$data, l_tbl2$manifest)
@@ -154,3 +154,4 @@ test_that("load_data", {
   expect_error(load_data(td1$m_file, td1$t_files, c(td1$r_files[1], "/non/existent_file")), err_msg6)
   
 })
+

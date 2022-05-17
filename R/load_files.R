@@ -808,7 +808,7 @@ load_results_Tecan <-
     })
     # read sheets in files; in the Tecan format each sheet is a plate 
     results_sheets <- readxl::excel_sheets(results_file)
-    if (length(results_sheets) <1) {
+    if (length(results_sheets)<1) {
       futile.logger::flog.error("No data sheet found in: %s",
                                 results_file)
     }
@@ -826,24 +826,24 @@ load_results_Tecan <-
       })
       
       # find the indicator ("<>") that identifies where plate readings are
-      ind <- which( df=="<>", arr.ind=TRUE)
+      ind <- which(df == "<>", arr.ind = TRUE)
       # remove text above "<>" 
       dfm <- df[(ind[1]):nrow(df), ind[2]:ncol(df)]
       # remove text after data matrix ends, as identified by first na value
       ind <- which(is.na(dfm),arr.ind=TRUE)[1]
-      dfm <- dfm[1:ind-1, 1:ncol(dfm)]
+      dfm <- dfm[1:ind - 1, 1:ncol(dfm)]
       
       # rows and columns in data matrix with row and col names
       n_row <- nrow(dfm)
       n_col <- ncol(dfm)
       readout <- as.data.frame(dfm[2:n_row, 2:n_col])
-      rownames(readout) <- t(dfm[2:n_row,1])
-      colnames(readout) <- dfm[1,2:n_col]
+      rownames(readout) <- t(dfm[2:n_row, 1])
+      colnames(readout) <- dfm[1, 2:n_col]
       # rows and columns in readout matrix
       n_row <- nrow(readout)
       n_col <- ncol(readout)
       # get well identifiers (numbers and letters) from layout
-      WellRow <-  rownames(readout)
+      WellRow <- rownames(readout)
       WellColumn <- strtoi(colnames(readout))
       
       # results data frame for plate
@@ -854,9 +854,9 @@ load_results_Tecan <-
           WellColumn, n_col, n_row
         ))),
         ReadoutValue = as.numeric(as.vector(as.matrix(readout))),
-        BackgroundValue = 0 ## Tecan users report negligible background readigns, usually is not recorded
+        BackgroundValue = 0 ## Tecan users report negligible background readings, usually background is not recorded
       )
-      names(df_results)[1] <-headers[['barcode']]
+      names(df_results)[1] <- headers[["barcode"]]
       # add plate to overall results
       all_results <- rbind(all_results, df_results)
     } 
