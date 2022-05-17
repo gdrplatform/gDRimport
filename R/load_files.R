@@ -808,7 +808,7 @@ load_results_Tecan <-
     })
     # read sheets in files; in the Tecan format each sheet is a plate 
     results_sheets <- readxl::excel_sheets(results_file)
-    if (length(results_sheets)<1) {
+    if (length(results_sheets) < 1) {
       futile.logger::flog.error("No data sheet found in: %s",
                                 results_file)
     }
@@ -830,7 +830,7 @@ load_results_Tecan <-
       # remove text above "<>" 
       dfm <- df[(ind[1]):nrow(df), ind[2]:ncol(df)]
       # remove text after data matrix ends, as identified by first na value
-      ind <- which(is.na(dfm),arr.ind=TRUE)[1]
+      ind <- which(is.na(dfm), arr.ind = TRUE)[1]
       dfm <- dfm[1:ind - 1, 1:ncol(dfm)]
       
       # rows and columns in data matrix with row and col names

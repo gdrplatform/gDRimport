@@ -17,3 +17,4 @@ test_that("assert_utils", {
   expect_error(is_readable_v(c(td2$m_file, "/non/existent/file")), err_msg1, fixed = TRUE)
   
 })
+

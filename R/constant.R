@@ -3,3 +3,4 @@ DICTIONARY <- list(
   Vehicle = "vehicle",
   vehcle = "vehicle"
 )
+
