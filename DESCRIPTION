@@ -8,7 +8,7 @@ Authors@R: c(person("Arkadiusz", "Gladki", role=c("aut", "cre"), email="arkadius
              person("Marc", "Hafner", role=c("aut")),
              person("Sergiu", "Mocanu", role=c("aut")),
              person("Dariusz", "Scigocki", role=c("aut")),
-             person("Allison", "Voung", role=c("aut"))),
+             person("Allison", "Voung", role=c("aut")),
              person("Luca", "Gerosa", role=c("aut")))
 Maintainer: gDR team <gdr-support-d@gene.com>
 Description: Prepare raw drug response data for downstream processing.
