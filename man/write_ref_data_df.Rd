@@ -13,9 +13,6 @@ write_ref_data_df(lData, outDir, prefix = "ref")
 
 \item{prefix}{a prefix of reference file names ('ref' by default)}
 }
-\value{
-
-}
 \description{
 Write reference dataframe
 }

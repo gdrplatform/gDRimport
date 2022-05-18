@@ -575,7 +575,7 @@ load_results_tsv <-
 #'
 #' This functions loads and checks the results file(s)
 #'
-#' @param results_file character, file path(s) to template(s)
+#' @param results_file character, file path(s) to results file(s)
 #' @param headers list of headers identified in the manifest
 load_results_EnVision <-
   function(results_file, headers = gDRutils::get_env_identifiers()) {
@@ -793,19 +793,21 @@ load_results_EnVision <-
 
 #' Load tecan results from xlsx
 #'
-#' This functions loads and checks the results file(s)
+#' This functions loads and checks the results file
 #'
-#' @param results_file character, file path(s) to template(s)
+#' @param results_file string, file path to a result file
 #' @param headers list of headers identified in the manifest
 load_results_Tecan <-
   function(results_file, headers = gDRutils::get_env_identifiers()) {
     # Assertions:
-    checkmate::assert_character(results_file)
-    results_filename <- basename(results_file)
-    # test if the result files are .tsv or .xls(x) files
-    isExcel <- sapply(results_file, function(x) {
-      return(tools::file_ext(x) %in% c("xlsx", "xls"))
-    })
+    checkmate::assert_string(results_file)
+    
+    # check the result files is a .xls(x) file
+    isExcel <- tools::file_ext(results_file) %in% c("xlsx", "xls")
+    if (!isExcel){
+      futile.logger::flog.error("Results file for Tecan importer must be a 'xls(x)' file: %s",
+                                results_file)
+    }  
     # read sheets in files; in the Tecan format each sheet is a plate 
     results_sheets <- readxl::excel_sheets(results_file)
     if (length(results_sheets) < 1) {
