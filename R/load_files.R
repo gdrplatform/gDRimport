@@ -804,7 +804,7 @@ load_results_Tecan <-
     
     # check the result files is a .xls(x) file
     isExcel <- tools::file_ext(results_file) %in% c("xlsx", "xls")
-    if (!isExcel){
+    if (!isExcel) {
       futile.logger::flog.error("Results file for Tecan importer must be a 'xls(x)' file: %s",
                                 results_file)
     }  
