@@ -2,12 +2,12 @@
 % Please edit documentation in R/load_files.R
 \name{load_results_EnVision}
 \alias{load_results_EnVision}
-\title{Load results from xlsx}
+\title{Load envision results from xlsx}
 \usage{
 load_results_EnVision(results_file, headers = gDRutils::get_env_identifiers())
 }
 \arguments{
-\item{results_file}{character, file path(s) to template(s)}
+\item{results_file}{character, file path(s) to results file(s)}
 
 \item{headers}{list of headers identified in the manifest}
 }

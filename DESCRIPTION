@@ -1,14 +1,15 @@
 Package: gDRimport
 Type: Package
 Title: Package for handling import of dose-response data
-Version: 0.0.13
+Version: 0.0.14
 Date: 2022-04-21
 Authors@R: c(person("Arkadiusz", "Gladki", role=c("aut", "cre"), email="arkadiusz.gladki@contractors.roche.com"),
              person("Bartosz", "Czech", role=c("aut")), 
              person("Marc", "Hafner", role=c("aut")),
              person("Sergiu", "Mocanu", role=c("aut")),
              person("Dariusz", "Scigocki", role=c("aut")),
-             person("Allison", "Voung", role=c("aut")))
+             person("Allison", "Voung", role=c("aut")),
+             person("Luca", "Gerosa", role=c("aut")))
 Maintainer: gDR team <gdr-support-d@gene.com>
 Description: Prepare raw drug response data for downstream processing.
 License: file GNE_LICENSE
@@ -33,7 +34,7 @@ Suggests:
     testthat
 VignetteBuilder: knitr
 ByteCompile: TRUE
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.0
 SwitchrLibrary: gDRimport
 DeploySubPath: gDRimport
 Encoding: UTF-8

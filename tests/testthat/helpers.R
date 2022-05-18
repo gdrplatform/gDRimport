@@ -1,4 +1,4 @@
-### helper fucnctions ###
+### helper functions ###
 get_test_data1 <-
   function(data_dir = system.file(package = "gDRimport", "extdata", "data1")) {
     
@@ -36,3 +36,20 @@ get_test_data1 <-
       ref_t1 = file.path(ddir, "ref_template_treated_xlsx.csv")
     )
   }
+
+get_test_data2 <-
+  function(data_dir = system.file(package = "gDRimport", "extdata", "data2")) {
+    ddir <- system.file(package = "gDRimport", "extdata", "data2")
+    list(
+      m_file = file.path(ddir, "manifest_Tecan_96_well_plates.xlsx"),
+      r_files = file.path(ddir, "RawData_Tecan_96_well_plates.xlsx"),
+      t_files =
+        c(
+          file.path(ddir, "D300_trt_Tecan_96_well_plates.xlsx")
+        ),
+      ref_m_df = file.path(ddir, "ref_manifest_Tecan_96_well_plates.RDS"),
+      ref_r_df = file.path(ddir, "ref_RawData_Tecan_96_well_plates.RDS"),
+      ref_t_df = file.path(ddir, "ref_D300_trt_Tecan_96_well_plates.RDS")
+    )
+  }
+
