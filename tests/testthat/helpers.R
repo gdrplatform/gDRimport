@@ -53,3 +53,13 @@ get_test_data2 <-
     )
   }
 
+get_test_data3 <-
+  function(data_dir = system.file(package = "gDRimport", "extdata", "data3")) {
+    ddir <- system.file(package = "gDRimport", "extdata", "data3")
+    list(
+      d300_96w_file = file.path(ddir, "D300_96_well_plate_example.tdd"),
+      d300_384w_file = file.path(ddir, "D300_384_well_plate_example.tdd"),
+      ref_d300_96w_file = file.path(ddir, "ref_D300_96_well_plate_example.RDS"),
+      ref_d300_384w_file = file.path(ddir, "ref_D300_384_well_plate_example.RDS")
+    )
+  }
