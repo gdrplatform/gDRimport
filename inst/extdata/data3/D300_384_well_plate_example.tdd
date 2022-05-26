@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Protocol>
   <!--Protocol files are intended for programmatic access.  File format may change without notice.-->
   <Version>3.1</Version>
@@ -8,14 +8,14 @@
   <MassConcentrationUnit>mg_mL</MassConcentrationUnit>
   <Fluids>
     <Fluid ID="0">
-      <Name>'0084-1 mM</Name>
+      <Name>Drug_00001</Name>
       <ByVol>False</ByVol>
       <Concentration>1000</Concentration>
       <ConcentrationUnit>mM</ConcentrationUnit>
       <ClassID>0</ClassID>
     </Fluid>
     <Fluid ID="4">
-      <Name>'0084-1 mM - 1:200</Name>
+      <Name>Drug_00001 - 1:200</Name>
       <RootFluidID>0</RootFluidID>
       <DilutionFactor>200</DilutionFactor>
       <ByVol>False</ByVol>
@@ -25,7 +25,7 @@
       <Color>16</Color>
     </Fluid>
     <Fluid ID="1">
-      <Name>'2235-1 mM</Name>
+      <Name>Drug_00002</Name>
       <ByVol>False</ByVol>
       <Concentration>1000</Concentration>
       <ConcentrationUnit>mM</ConcentrationUnit>
@@ -33,7 +33,7 @@
       <Color>1</Color>
     </Fluid>
     <Fluid ID="5">
-      <Name>'2235-1 mM - 1:40</Name>
+      <Name>Drug_00002 - 1:40</Name>
       <RootFluidID>1</RootFluidID>
       <DilutionFactor>40</DilutionFactor>
       <ByVol>False</ByVol>
@@ -43,7 +43,7 @@
       <Color>23</Color>
     </Fluid>
     <Fluid ID="2">
-      <Name>'0735-0.1 mM</Name>
+      <Name>Drug_00003</Name>
       <ByVol>False</ByVol>
       <Concentration>100</Concentration>
       <ConcentrationUnit>mM</ConcentrationUnit>
@@ -51,7 +51,7 @@
       <Color>2</Color>
     </Fluid>
     <Fluid ID="11">
-      <Name>'0735-0.1 mM - 1:80</Name>
+      <Name>Drug_00003 - 1:80</Name>
       <RootFluidID>2</RootFluidID>
       <DilutionFactor>80</DilutionFactor>
       <ByVol>False</ByVol>
@@ -61,7 +61,7 @@
       <Color>1</Color>
     </Fluid>
     <Fluid ID="3">
-      <Name>Erlot-1 mM</Name>
+      <Name>Drug_00004</Name>
       <ByVol>False</ByVol>
       <Concentration>1000</Concentration>
       <ConcentrationUnit>mM</ConcentrationUnit>
@@ -69,7 +69,7 @@
       <Color>3</Color>
     </Fluid>
     <Fluid ID="9">
-      <Name>Erlot-1 mM - 1:500</Name>
+      <Name>Drug_00004 - 1:500</Name>
       <RootFluidID>3</RootFluidID>
       <DilutionFactor>500</DilutionFactor>
       <ByVol>False</ByVol>
@@ -79,7 +79,7 @@
       <Color>27</Color>
     </Fluid>
     <Fluid ID="7">
-      <Name>'0077-1 mM</Name>
+      <Name>Drug_00005</Name>
       <ByVol>False</ByVol>
       <Concentration>1000</Concentration>
       <ConcentrationUnit>mM</ConcentrationUnit>
@@ -87,7 +87,7 @@
       <Color>7</Color>
     </Fluid>
     <Fluid ID="6">
-      <Name>'0077-1 mM - 1:500</Name>
+      <Name>Drug_00005 - 1:500</Name>
       <RootFluidID>7</RootFluidID>
       <DilutionFactor>500</DilutionFactor>
       <ByVol>False</ByVol>
@@ -97,7 +97,7 @@
       <Color>25</Color>
     </Fluid>
     <Fluid ID="8">
-      <Name>'1971-10mM</Name>
+      <Name>Drug_00006</Name>
       <ByVol>False</ByVol>
       <Concentration>10000</Concentration>
       <ConcentrationUnit>mM</ConcentrationUnit>
@@ -105,7 +105,7 @@
       <Color>8</Color>
     </Fluid>
     <Fluid ID="10">
-      <Name>'1971-10mM - 1:100</Name>
+      <Name>Drug_00006 - 1:100</Name>
       <RootFluidID>8</RootFluidID>
       <DilutionFactor>100</DilutionFactor>
       <ByVol>False</ByVol>
