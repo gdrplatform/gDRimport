@@ -26,16 +26,11 @@ test_that("import_D300", {
   # get test_data3
   td3 <- get_test_data3()
   
+  # set directories for output and reference files
   dest_paths <- list(td3$dest_path_d300_96w,  
                      td3$dest_path_d300_384w)
-  # dest_paths <-  list("./output_files_96w/output",  
-  #                    "./output_files_384w/output")
-  # dest_paths <-  list("./output_files_96w/reference",  
-  #                     "./output_files_384w/reference")
   ref_paths <- list(td3$ref_output_path_d300_96w,  
                      td3$ref_output_path_d300_384w)
-  # ref_paths <-  list("./output_files_96w/reference",  
-  #                    "./output_files_384w/reference")
   
   #for 96 and 384 well plates
   for (k in 1:length(dest_paths)) {
