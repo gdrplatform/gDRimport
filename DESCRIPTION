@@ -26,7 +26,8 @@ Imports:
     stringi,
     tools,
     utils,
-    XML
+    XML,
+    xlsx
 Suggests:
     gDRtestData (>= 1.0.12),
     gDRstyle (>= 0.0.8),
