@@ -44,12 +44,12 @@ test_that("import_D300", {
       dir.create(dest_path, recursive = TRUE)
     } 
     # clean files from output directory 
-    unlink(file.path(dest_path,"*"))
+    unlink(file.path(dest_path, "*"))
     # run import_D300
     import_D300(td3$d300_96w_file, td3$Gnum_96w_file, dest_path)
     
     # test every output file against reference file 
-    list_files <- list.files(path=dest_path)
+    list_files <- list.files(path = dest_path)
     for (i in 1:length(list_files)) {
       output_file_path <- file.path(dest_path, list_files[i])
       ref_file_path <- file.path(ref_path, list_files[i])
@@ -71,3 +71,4 @@ test_that("import_D300", {
     }
   }
 })
+

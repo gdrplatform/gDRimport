@@ -21,75 +21,77 @@ parse_D300 <-
                             msg = "Mismatch between the units for ConcentrationUnit and MolarityConcentrationUnit")
     
     #extract information for every fluid (i.e. drugs)
-    fluids  <- XML::xpathSApply(top, ".//Fluids", XML::xmlChildren)
+    fluids <- XML::xpathSApply(top, ".//Fluids", XML::xmlChildren)
     nfluids <- length(fluids)
-    drug_cols <- c('ID', 'Name', 'Stock_Conc', 'Stock_Unit')
+    drug_cols <- c("ID", "Name", "Stock_Conc", "Stock_Unit")
     df_drug <- data.frame(matrix(ncol = length(drug_cols), nrow = 0))
     colnames(df_drug)<-drug_cols 
     for (fi in 1:nfluids) {
-      id <- XML::xmlAttrs(top[['Fluids']][fi][['Fluid']])
-      name <- XML::xmlValue(top[['Fluids']][fi][['Fluid']][['Name']])
-      stock_conc <- XML::xmlValue(top[['Fluids']][fi][['Fluid']][['Concentration']])
-      conc_unit <- XML::xmlValue(top[['Fluids']][fi][['Fluid']][['ConcentrationUnit']])
+      id <- XML::xmlAttrs(top[["Fluids"]][fi][["Fluid"]])
+      name <- XML::xmlValue(top[["Fluids"]][fi][["Fluid"]][["Name"]])
+      stock_conc <- XML::xmlValue(top[["Fluids"]][fi][["Fluid"]][["Concentration"]])
+      conc_unit <- XML::xmlValue(top[["Fluids"]][fi][["Fluid"]][["ConcentrationUnit"]])
       df_drug_entry <- data.frame(t(c(id, name, stock_conc, conc_unit)))
       colnames(df_drug_entry) <- drug_cols
       df_drug <- rbind(df_drug, df_drug_entry)
     }
     #convert unit volumes to uL 
-    vol_unit  <- XML::xmlValue(top[['VolumeUnit']])
-    if (vol_unit == 'nL') {
-      vol_conversion<- 1e-3;
-      vol_unit_conv='µL'
-    }else if(volumeUnit == 'µL') {
-      vol_conversion<- 1;
-      vol_unit_conv='µL'
-    }else if (volumeUnit == 'mL') {
-      vol_conversion<- 1e3;
-      vol_unit_conv='µL'
+    vol_unit  <- XML::xmlValue(top[["VolumeUnit"]])
+    if (vol_unit == "nL") {
+      vol_conversion <- 1e-3
+      vol_unit_conv <- "µL"
+    }else if (volumeUnit == "µL") {
+      vol_conversion <- 1
+      vol_unit_conv <- "µL"
+    }else if (volumeUnit == "mL") {
+      vol_conversion <- 1e3
+      vol_unit_conv <- "µL"
     }else{
       stop(sprintf("Error with %s unit in VolumeUnit, not supported.",vol_unit))
     }
     # ff there is DMSO backfill defined throw a warning, support not yet implemented
     backfills <- XML::xpathSApply(top, ".//Backfills/Backfill", XML::xmlChildren)
-    if (length(backfills)>0){
-      warning('Backfill identified in D300 but not supported.')
+    if (length(backfills)>0) {
+      warning("Backfill identified in D300 but not supported.")
     }
     #initialize data.frame for treatments
-    trt_cols <- c('D300_Plate_N', 'D300_Barcode', 'Dimension', 'Row', 'Col', 'Volume','Volume_Unit', 'ID', 'Concentration', 'Unit')
+    trt_cols <- c("D300_Plate_N", "D300_Barcode", "Dimension", "Row", "Col", 
+                  "Volume","Volume_Unit", "ID", "Concentration", "Unit")
     df_trt <- data.frame(matrix(ncol = length(trt_cols), nrow = 0))
     colnames(df_trt)<-trt_cols 
     #extract drug dispensing information for each plate 
     plates <- XML::xpathSApply(top, ".//Plates", XML::xmlChildren)
     nplates <- length(plates)
-    for (pi in 1:nplates){
+    for (pi in 1:nplates) {
       #plate info
-      rows_plate <- XML::xmlValue(top[['Plates']][pi][['Plate']][['Rows']])
-      cols_plate <- XML::xmlValue(top[['Plates']][pi][['Plate']][['Cols']])
-      plate_dim <- paste('(',rows_plate,',',cols_plate,')', sep='')
-      assay_vol <- as.double(XML::xmlValue(top[['Plates']][pi][['Plate']][['AssayVolume']]))
+      rows_plate <- XML::xmlValue(top[["Plates"]][pi][["Plate"]][["Rows"]])
+      cols_plate <- XML::xmlValue(top[["Plates"]][pi][["Plate"]][["Cols"]])
+      plate_dim <- paste("(", rows_plate, ",", cols_plate,")", sep = "")
+      assay_vol <- as.double(XML::xmlValue(top[["Plates"]][pi][["Plate"]][["AssayVolume"]]))
       assay_vol_conv <- as.double(assay_vol) * vol_conversion
-      barcode_plate <- XML::xmlValue(top[['Plates']][pi][['Plate']][['Name']])
+      barcode_plate <- XML::xmlValue(top[["Plates"]][pi][["Plate"]][["Name"]])
       #this check if the plate is randomize should probably be changed 
-      randomize <- XML::xmlValue(top[['Plates']][pi][['Plate']][['Randomize']])
-      if (randomize!=''){
-        warning('Randomization of D300 plate possibly detected, but not supported yet.')
+      randomize <- XML::xmlValue(top[["Plates"]][pi][["Plate"]][["Randomize"]])
+      if (randomize != "") {
+        warning("Randomization of D300 plate possibly detected, but not supported yet.")
       }
       
       #extract drug dispensing information for each well 
-      wells<- XML::xpathSApply(top[['Plates']][pi][['Plate']], ".//Wells", XML::xmlChildren)
+      wells <- XML::xpathSApply(top[["Plates"]][pi][["Plate"]], ".//Wells", XML::xmlChildren)
       nwells <- length(wells)
-      for (wi in 1:nwells){
+      for (wi in 1:nwells) {
         #indexes of row and col start from zero, so add one
-        well_attr <-XML::xmlAttrs(top[['Plates']][pi][['Plate']][['Wells']][wi][['Well']])
-        row_well <- strtoi(well_attr[['Row']]) +1
-        col_well = strtoi(well_attr[['Col']]) +1
+        well_attr <-XML::xmlAttrs(top[["Plates"]][pi][["Plate"]][["Wells"]][wi][["Well"]])
+        row_well <- strtoi(well_attr[["Row"]]) +1
+        col_well <- strtoi(well_attr[["Col"]]) +1
         
         #extract information each fluid delivered in well 
-        fluids <- XML::xpathSApply(top[['Plates']][pi][['Plate']][['Wells']][wi][['Well']], ".//Fluid", XML::xmlChildren)
+        fluids <- XML::xpathSApply(top[["Plates"]][pi][["Plate"]][["Wells"]][wi][["Well"]], 
+                                   ".//Fluid", XML::xmlChildren)
         nfluids <- length(fluids)
-        for (fi in 1:nfluids){
-          id_fluid <- XML::xmlAttrs(top[['Plates']][pi][['Plate']][['Wells']][wi][['Well']][[fi]])
-          conc_fluid <-  XML::xmlValue(top[['Plates']][pi][['Plate']][['Wells']][wi][['Well']][[fi]])
+        for (fi in 1:nfluids) {
+          id_fluid <- XML::xmlAttrs(top[["Plates"]][pi][["Plate"]][["Wells"]][wi][["Well"]][[fi]])
+          conc_fluid <- XML::xmlValue(top[["Plates"]][pi][["Plate"]][["Wells"]][wi][["Well"]][[fi]])
           #define single entry
           df_trt_entry <- data.frame(t(c(pi, 
                                          barcode_plate, 
@@ -108,7 +110,7 @@ parse_D300 <-
     }
     
     #merge to return a unique dataset
-    df_D300<-merge(df_trt, df_drug, by.x='ID', by.y='ID', all.x=TRUE)
+    df_D300 <- merge(df_trt, df_drug, by.x = "ID", by.y = "ID", all.x = TRUE)
     return(df_D300)
   }
 
@@ -148,10 +150,10 @@ import_D300 <-
     #parse D300 file 
     treatment <- parse_D300(D300_file)
     #map names to Gnumber
-    treatment <- merge(treatment, df_D300_Gnum, by.x='Name', by.y='D300_Label', all.x=TRUE)
+    treatment <- merge(treatment, df_D300_Gnum, by.x = "Name", by.y = "D300_Label", all.x = TRUE)
     #if barcode is missing, use ID instead
     idx <- is.na(treatment$D300_Barcode)
-    treatment[idx, c('D300_Barcode')] <- treatment[idx, c('D300_Plate_N')]
+    treatment[idx, c("D300_Barcode")] <- treatment[idx, c("D300_Plate_N")]
     #extract unique barcodes
     uid <- unique(treatment$D300_Plate_N)
     #create a treatment file for each plates
@@ -161,10 +163,12 @@ import_D300 <-
       idx <- (treatment$D300_Plate_N == uid[i])
       trt_filt <- treatment[idx, ]
       #create a list with Gnumber and Concentration 
-      trt_filt$Gnumber_Concentration <- apply(trt_filt, 1, function(x) list(x['Gnumber'], x['Concentration']))
-      trt_gnumber_conc <- reshape2::dcast(trt_filt, Row ~ Col, value.var = c("Gnumber_Concentration"), fun.aggregate = list)
+      trt_filt$Gnumber_Concentration <- apply(trt_filt, 1, function(x) list(x["Gnumber"], x["Concentration"]))
+      trt_gnumber_conc <- reshape2::dcast(trt_filt, Row ~ Col, 
+                                          value.var = c("Gnumber_Concentration"), 
+                                          fun.aggregate = list)
       rownames(trt_gnumber_conc) <- trt_gnumber_conc$Row
-      trt_gnumber_conc <- dplyr::select(trt_gnumber_conc, -c('Row'))
+      trt_gnumber_conc <- dplyr::select(trt_gnumber_conc, -c("Row"))
       #count number of drugs,conc in each well 
       trt_n_drugs <- apply(trt_gnumber_conc, c(1, 2), function(x) length(x[[1]]))
       max_drugs <- max(trt_n_drugs)
@@ -176,30 +180,30 @@ import_D300 <-
       #for each drug create a Gnumber and Concentration information for each well
       for (j in 1:max_drugs) {
         #create empty text matrix
-        gnum_txt <- rep(c(''), each = max_row_idx * max_col_idx)
+        gnum_txt <- rep(c(""), each = max_row_idx * max_col_idx)
         dim(gnum_txt) <- c(max_row_idx, max_col_idx)     
-        conc_txt <- rep(c(''), each = max_row_idx * max_col_idx)
+        conc_txt <- rep(c(""), each = max_row_idx * max_col_idx)
         dim(conc_txt) <- c(max_row_idx, max_col_idx)     
         #for each row and column
         for (ri in 1:length(row_idx)) {
           for (ci in 1:length(col_idx)) {
             #extract the drugs in that row, col 
             drug_entry <- trt_gnumber_conc[[ri, ci]]
-            if (length(drug_entry)>=j){
+            if (length(drug_entry) >= j) {
               gnum_txt_now <- trt_gnumber_conc[[ri, ci]][[j]][[1]]
               conc_txt_now <- trt_gnumber_conc[[ri, ci]][[j]][[2]]
-              if (gnum_txt_now %in% c('vehicle','untreated')) {
+              if (gnum_txt_now %in% c("vehicle", "untreated")) {
                 #replace concentration to zero if that drugs is associated to vehicle or untreated (e.g. DMSO)
                 gnum_txt[row_idx[ri], col_idx[ci]] <- gnum_txt_now
                 conc_txt[row_idx[ri], col_idx[ci]] <- 0.0
               } else {
-                gnum_txt[row_idx[ri], col_idx[ci]] <- trt_gnumber_conc[[ri,ci]][[j]][[1]]
-                conc_txt[row_idx[ri], col_idx[ci]] <- trt_gnumber_conc[[ri,ci]][[j]][[2]]
+                gnum_txt[row_idx[ri], col_idx[ci]] <- trt_gnumber_conc[[ri, ci]][[j]][[1]]
+                conc_txt[row_idx[ri], col_idx[ci]] <- trt_gnumber_conc[[ri, ci]][[j]][[2]]
               }
             } else {
               #if there is no 2nd, 3rd etc.. drug specified, set the corresponding entry to untreated
-              gnum_txt[row_idx[ri],col_idx[ci]] <- 'untreated'
-              conc_txt[row_idx[ri],col_idx[ci]] <- 0.0
+              gnum_txt[row_idx[ri], col_idx[ci]] <- "untreated"
+              conc_txt[row_idx[ri], col_idx[ci]] <- 0.0
             }
           }
         }
@@ -209,27 +213,27 @@ import_D300 <-
         conc_sheet <- data.frame(conc_txt)
         
         #create sheet name 
-        if (j==1){
-          gnum_sname <- 'Gnumber'
-          conc_sname <- 'Concentration'
+        if (j == 1) {
+          gnum_sname <- "Gnumber"
+          conc_sname <- "Concentration"
         }else{
-          gnum_sname <- sprintf('Gnumber_%d', j)
-          conc_sname <- sprintf('Concentration_%d', j)
+          gnum_sname <- sprintf("Gnumber_%d", j)
+          conc_sname <- sprintf("Concentration_%d", j)
         }
         
         #write sheets in excel file 
-        treat_file <- sprintf('trt_P%s.xlsx', uid[i])
+        treat_file <- sprintf("trt_P%s.xlsx", uid[i])
         xlsx::write.xlsx(gnumber_sheet, 
                          file.path(destination_path, treat_file), 
                          gnum_sname,
-                         col.names=FALSE, 
-                         row.names=FALSE,
+                         col.names = FALSE, 
+                         row.names = FALSE,
                          append = TRUE) 
         xlsx::write.xlsx(conc_sheet, 
                          file.path(destination_path, treat_file), 
                          conc_sname, 
-                         col.names=FALSE, 
-                         row.names=FALSE,
+                         col.names = FALSE, 
+                         row.names = FALSE,
                          append = TRUE) 
       }
     }
