@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+#### [0.0.15] - 2022-05-25
+- Add parse_D300
+- Add import_D300
+- Add tests for parse_D300
+- Add tests for import_D300
+
 #### [0.0.14] - 2022-05-18
 - Add load_results_Tecan
 - Add tests for load_results_Tecan

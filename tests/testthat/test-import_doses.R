@@ -26,7 +26,7 @@ test_that("import_D300", {
   # get test_data3
   td3 <- get_test_data3()
   
-  # set directories for output and reference files
+  # set directories for output and reference
   dest_paths <- list(td3$dest_path_d300_96w,  
                      td3$dest_path_d300_384w)
   ref_paths <- list(td3$ref_output_path_d300_96w,  
@@ -56,9 +56,9 @@ test_that("import_D300", {
       #load sheets
       output_sheets <- readxl::excel_sheets(output_file_path)
       ref_sheets <- readxl::excel_sheets(ref_file_path) 
-      #test sheets identical 
+      #test sheet names are identical 
       expect_equal(output_sheets, ref_sheets)
-      #check sheets are identical
+      #test content of sheets is identical
       for (j in 1:length(output_sheets)) {
           output_sheet <- readxl::read_excel(output_file_path,
                                              sheet = output_sheets[[j]],
