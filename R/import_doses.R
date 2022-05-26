@@ -25,7 +25,7 @@ parse_D300 <-
     nfluids <- length(fluids)
     drug_cols <- c("ID", "Name", "Stock_Conc", "Stock_Unit")
     df_drug <- data.frame(matrix(ncol = length(drug_cols), nrow = 0))
-    colnames(df_drug)<-drug_cols 
+    colnames(df_drug) <- drug_cols 
     for (fi in 1:nfluids) {
       id <- XML::xmlAttrs(top[["Fluids"]][fi][["Fluid"]])
       name <- XML::xmlValue(top[["Fluids"]][fi][["Fluid"]][["Name"]])
@@ -47,18 +47,18 @@ parse_D300 <-
       vol_conversion <- 1e3
       vol_unit_conv <- "µL"
     }else{
-      stop(sprintf("Error with %s unit in VolumeUnit, not supported.",vol_unit))
+      stop(sprintf("Error with %s unit in VolumeUnit, not supported.", vol_unit))
     }
     # ff there is DMSO backfill defined throw a warning, support not yet implemented
     backfills <- XML::xpathSApply(top, ".//Backfills/Backfill", XML::xmlChildren)
-    if (length(backfills)>0) {
+    if (length(backfills) > 0) {
       warning("Backfill identified in D300 but not supported.")
     }
     #initialize data.frame for treatments
     trt_cols <- c("D300_Plate_N", "D300_Barcode", "Dimension", "Row", "Col", 
-                  "Volume","Volume_Unit", "ID", "Concentration", "Unit")
+                  "Volume", "Volume_Unit", "ID", "Concentration", "Unit")
     df_trt <- data.frame(matrix(ncol = length(trt_cols), nrow = 0))
-    colnames(df_trt)<-trt_cols 
+    colnames(df_trt) <- trt_cols 
     #extract drug dispensing information for each plate 
     plates <- XML::xpathSApply(top, ".//Plates", XML::xmlChildren)
     nplates <- length(plates)
@@ -66,7 +66,7 @@ parse_D300 <-
       #plate info
       rows_plate <- XML::xmlValue(top[["Plates"]][pi][["Plate"]][["Rows"]])
       cols_plate <- XML::xmlValue(top[["Plates"]][pi][["Plate"]][["Cols"]])
-      plate_dim <- paste("(", rows_plate, ",", cols_plate,")", sep = "")
+      plate_dim <- paste("(", rows_plate, ",", cols_plate, ")", sep = "")
       assay_vol <- as.double(XML::xmlValue(top[["Plates"]][pi][["Plate"]][["AssayVolume"]]))
       assay_vol_conv <- as.double(assay_vol) * vol_conversion
       barcode_plate <- XML::xmlValue(top[["Plates"]][pi][["Plate"]][["Name"]])
@@ -81,9 +81,9 @@ parse_D300 <-
       nwells <- length(wells)
       for (wi in 1:nwells) {
         #indexes of row and col start from zero, so add one
-        well_attr <-XML::xmlAttrs(top[["Plates"]][pi][["Plate"]][["Wells"]][wi][["Well"]])
-        row_well <- strtoi(well_attr[["Row"]]) +1
-        col_well <- strtoi(well_attr[["Col"]]) +1
+        well_attr <- XML::xmlAttrs(top[["Plates"]][pi][["Plate"]][["Wells"]][wi][["Well"]])
+        row_well <- strtoi(well_attr[["Row"]]) + 1
+        col_well <- strtoi(well_attr[["Col"]]) + 1
         
         #extract information each fluid delivered in well 
         fluids <- XML::xpathSApply(top[["Plates"]][pi][["Plate"]][["Wells"]][wi][["Well"]], 
@@ -134,7 +134,8 @@ import_D300 <-
     assertthat::assert_that(is.character(destination_path), msg = "'destination_path' must be a character vector")
     assertthat::assert_that(assertthat::is.readable(D300_file), msg = "'D300_file' must be a readable path")
     assertthat::assert_that(assertthat::is.readable(Gnum_file), msg = "'Gnum_file' must be a readable path")
-    assertthat::assert_that(assertthat::is.readable(destination_path), msg = "'destination_path' must be a readable path")
+    assertthat::assert_that(assertthat::is.readable(destination_path), 
+                            msg = "'destination_path' must be a readable path")
     
     #load a file that maps D300 labels to Gnumbers
     D300_Gnumber_sheets <- readxl::excel_sheets(Gnum_file)
