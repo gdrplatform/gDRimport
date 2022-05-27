@@ -232,7 +232,7 @@ import_D300 <-
         
         #add worksheets for gnumber and concentrations
         openxlsx::addWorksheet(wb, gnum_sname)
-        openxlsx::writeData(wb, sheet = (j * 2) -1, gnumber_sheet, colNames = FALSE)
+        openxlsx::writeData(wb, sheet = (j * 2) - 1, gnumber_sheet, colNames = FALSE)
         openxlsx::addWorksheet(wb, conc_sname)
         openxlsx::writeData(wb, sheet = (j * 2), conc_sheet, colNames = FALSE)
       }
