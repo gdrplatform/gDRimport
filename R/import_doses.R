@@ -42,11 +42,11 @@ parse_D300 <-
     vol_unit_conv <- "µL"
     if (vol_unit == "nL") {
       vol_conversion <- 1e-3
-    }else if (volumeUnit == "µL") {
+    } else if (volumeUnit == "µL") {
       vol_conversion <- 1
-    }else if (volumeUnit == "mL") {
+    } else if (volumeUnit == "mL") {
       vol_conversion <- 1e3
-    }else{
+    } else {
       stop(sprintf("Error with %s unit in VolumeUnit, not supported.", vol_unit))
     }
     
@@ -64,9 +64,9 @@ parse_D300 <-
     #extract drug dispensing information for each plate 
     plates <- XML::xpathSApply(top, ".//Plates", XML::xmlChildren)
     nplates <- length(plates)
-    for (pi in seq_len(nplates)) {
+    for (pli in seq_len(nplates)) {
 
-      plate <- top[["Plates"]][pi][["Plate"]]
+      plate <- top[["Plates"]][pli][["Plate"]]
       #plate info
       rows_plate <- XML::xmlValue(plate[["Rows"]])
       cols_plate <- XML::xmlValue(plate[["Cols"]])
@@ -98,7 +98,7 @@ parse_D300 <-
           id_fluid <- XML::xmlAttrs(well[[fi]])
           conc_fluid <- XML::xmlValue(well[[fi]])
           #define single entry
-          df_trt_entry <- data.frame(t(c(pi, 
+          df_trt_entry <- data.frame(t(c(pli, 
                                          barcode_plate, 
                                          plate_dim, 
                                          row_well,
@@ -225,7 +225,7 @@ import_D300 <-
         if (j == 1) {
           gnum_sname <- "Gnumber"
           conc_sname <- "Concentration"
-        }else{
+        } else {
           gnum_sname <- sprintf("Gnumber_%d", j)
           conc_sname <- sprintf("Concentration_%d", j)
         }
