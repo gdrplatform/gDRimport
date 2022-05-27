@@ -31,6 +31,10 @@ test_that("import_D300", {
                      td3$dest_path_d300_384w)
   ref_paths <- list(td3$ref_output_path_d300_96w,  
                      td3$ref_output_path_d300_384w)
+  d300_files <- list(td3$d300_96w_file,  
+                     td3$d300_384w_file)
+  Gnum_files <- list(td3$Gnum_96w_file,  
+                     td3$Gnum_384w_file)  
   
   #for 96 and 384 well plates
   for (k in 1:length(dest_paths)) {
@@ -38,6 +42,8 @@ test_that("import_D300", {
     # validate output files for D300 examples
     dest_path <- dest_paths[[k]]
     ref_path <- ref_paths[[k]]
+    D300_file <- d300_files[[k]]
+    Gnum_file <- Gnum_files[[k]]
     
     # create directory if not existing
     if (!file.exists(dest_path)) {
@@ -46,7 +52,7 @@ test_that("import_D300", {
     # clean files from output directory 
     unlink(file.path(dest_path, "*"))
     # run import_D300
-    import_D300(td3$d300_96w_file, td3$Gnum_96w_file, dest_path)
+    import_D300(D300_file, Gnum_file, dest_path)
     
     # test every output file against reference file 
     list_files <- list.files(path = dest_path)

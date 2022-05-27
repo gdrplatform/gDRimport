@@ -165,6 +165,9 @@ import_D300 <-
     #create a treatment file for each plates
     for (i in seq_along(uid)) {
       
+      #create workesheet
+      wb <- openxlsx::createWorkbook()
+      
       #filter only that plate
       idx <- (treatment$D300_Plate_N == uid[i])
       trt_filt <- treatment[idx, ]
@@ -227,21 +230,16 @@ import_D300 <-
           conc_sname <- sprintf("Concentration_%d", j)
         }
         
-        #write sheets in excel file 
-        treat_file <- sprintf("trt_P%s.xlsx", uid[i])
-        xlsx::write.xlsx(gnumber_sheet, 
-                         file.path(destination_path, treat_file), 
-                         gnum_sname,
-                         col.names = FALSE, 
-                         row.names = FALSE,
-                         append = TRUE) 
-        xlsx::write.xlsx(conc_sheet, 
-                         file.path(destination_path, treat_file), 
-                         conc_sname, 
-                         col.names = FALSE, 
-                         row.names = FALSE,
-                         append = TRUE) 
+        #add worksheets for gnumber and concentrations
+        openxlsx::addWorksheet(wb, gnum_sname)
+        openxlsx::writeData(wb, sheet = (j * 2) -1, gnumber_sheet, colNames = FALSE)
+        openxlsx::addWorksheet(wb, conc_sname)
+        openxlsx::writeData(wb, sheet = (j * 2), conc_sheet, colNames = FALSE)
       }
+      
+      #save excel file
+      treat_file <- sprintf("trt_P%s.xlsx", uid[i])
+      openxlsx::saveWorkbook(wb, file.path(destination_path, treat_file), overwrite = TRUE)
     }
   }
 
