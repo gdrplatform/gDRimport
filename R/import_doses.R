@@ -162,6 +162,8 @@ import_D300 <-
     treatment[idx, c("D300_Barcode")] <- treatment[idx, c("D300_Plate_N")]
     #extract unique barcodes
     uid <- unique(treatment$D300_Plate_N)
+    #get tags
+    untreated_tags <- gDRutils::get_env_identifiers("untreated_tag")
     #create a treatment file for each plates
     for (i in seq_along(uid)) {
       
@@ -201,7 +203,7 @@ import_D300 <-
             if (length(drug_entry) >= j) {
               gnum_txt_now <- trt_gnumber_conc[[ri, ci]][[j]][[1]]
               conc_txt_now <- trt_gnumber_conc[[ri, ci]][[j]][[2]]
-              if (gnum_txt_now %in% gDRutils::get_env_identifiers("untreated_tag")) {
+              if (gnum_txt_now %in% untreated_tags) {
                 #replace concentration to zero if that drugs is associated to vehicle or untreated (e.g. DMSO)
                 gnum_txt[row_idx[ri], col_idx[ci]] <- gnum_txt_now
                 conc_txt[row_idx[ri], col_idx[ci]] <- 0.0
@@ -211,7 +213,7 @@ import_D300 <-
               }
             } else {
               #if there is no 2nd, 3rd etc.. drug specified, set the corresponding entry to untreated
-              gnum_txt[row_idx[ri], col_idx[ci]] <- "untreated"
+              gnum_txt[row_idx[ri], col_idx[ci]] <- untreated_tags[[1]]
               conc_txt[row_idx[ri], col_idx[ci]] <- 0.0
             }
           }
