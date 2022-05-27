@@ -201,7 +201,7 @@ import_D300 <-
             if (length(drug_entry) >= j) {
               gnum_txt_now <- trt_gnumber_conc[[ri, ci]][[j]][[1]]
               conc_txt_now <- trt_gnumber_conc[[ri, ci]][[j]][[2]]
-              if (gnum_txt_now %in% c("vehicle", "untreated")) {
+              if (gnum_txt_now %in% gDRutils::get_env_identifiers("untreated_tag")) {
                 #replace concentration to zero if that drugs is associated to vehicle or untreated (e.g. DMSO)
                 gnum_txt[row_idx[ri], col_idx[ci]] <- gnum_txt_now
                 conc_txt[row_idx[ri], col_idx[ci]] <- 0.0
