@@ -24,18 +24,20 @@ parse_D300 <-
     fluids <- XML::xpathSApply(top, ".//Fluids", XML::xmlChildren)
     nfluids <- length(fluids)
     drug_cols <- c("ID", "Name", "Stock_Conc", "Stock_Unit")
-    df_drug <- data.frame(matrix(ncol = length(drug_cols), nrow = 0))
-    colnames(df_drug) <- drug_cols 
+    df_drug <- vector("list", nfluids)
     for (fi in seq_len(nfluids)) {
       fluid <- top[["Fluids"]][fi][["Fluid"]]
       id <- XML::xmlAttrs(fluid)
       name <- XML::xmlValue(fluid[["Name"]])
       stock_conc <- XML::xmlValue(fluid[["Concentration"]])
       conc_unit <- XML::xmlValue(fluid[["ConcentrationUnit"]])
-      df_drug_entry <- data.frame(t(c(id, name, stock_conc, conc_unit)))
-      colnames(df_drug_entry) <- drug_cols
-      df_drug <- rbind(df_drug, df_drug_entry)
+      df_drug[[fi]] <- data.frame(t(c(id, 
+                                     name, 
+                                     stock_conc, 
+                                     conc_unit)))
+      colnames(df_drug[[fi]]) <- drug_cols
     }
+    df_drug <- do.call("rbind", df_drug)
     
     #convert unit volumes to uL 
     vol_unit  <- XML::xmlValue(top[["VolumeUnit"]])
