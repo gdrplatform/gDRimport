@@ -167,6 +167,10 @@ import_D300 <-
   }
 
 get_conversion_factor <- function(from, to = "µL") {
+  if (to != "µL") {
+    stop(sprintf("conversion to unit '%s' not supported"))
+  }
+
   switch(from, {
     "nL" = 1e-3,
     "µL" = 1,
