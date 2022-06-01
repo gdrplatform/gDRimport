@@ -34,7 +34,7 @@ parse_D300 <-
     
     id_col <- "ID"
     df_drug <- get_D300_XML_drugs(top, id_col)
-    df_trt <- get_D300_XML_treatments(top, id_col)
+    df_trt <- get_D300_XML_treatments(top, id_col, vol_unit, conc_unit)
     
     df_D300 <- merge(df_trt, df_drug, by.x = id_col, by.y = id_col, all.x = TRUE)
     df_D300
@@ -168,7 +168,7 @@ import_D300 <-
 
 get_conversion_factor <- function(from, to = "µL") {
   if (to != "µL") {
-    stop(sprintf("conversion to unit '%s' not supported"))
+    stop(sprintf("conversion to unit '%s' not supported", to))
   }
 
   # nolint start
@@ -211,7 +211,7 @@ get_D300_XML_drugs <-
   }    
 
 get_D300_XML_treatments <-
-  function(xml_tree_root, id_col = "ID") {
+  function(xml_tree_root, id_col = "ID", vol_unit, conc_unit) {
 
     #initialize data.frame for treatments
     trt_cols <- c("D300_Plate_N", "D300_Barcode", "Dimension", "Row", "Col", 
@@ -256,6 +256,7 @@ get_D300_XML_treatments <-
         for (fi in seq_len(nfluids)) {
           id_fluid <- XML::xmlAttrs(well[[fi]])
           conc_fluid <- XML::xmlValue(well[[fi]])
+          
           #define single entry
           df_trt_entry <- data.frame(t(c(pli, 
                                          barcode_plate, 
