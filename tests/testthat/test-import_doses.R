@@ -78,3 +78,14 @@ test_that("import_D300", {
   }
 })
 
+
+test_that("get_conversion_factor  works as expected", {
+  expect_error(gDRimport:::get_conversion_factor("nL", "mL"), regexp = "conversion to unit 'mL' not supported")
+  expect_error(gDRimport:::get_conversion_factor("L", "µL"), regexp = "unsupported conversion factor: 'L'")
+
+  expect_equal(gDRimport:::get_conversion_factor("nL", "µL"), 1e-3)
+})
+
+test_that("convert_units works as expected", {
+  expect_equal(gDRimport:::convert_units(1000, from = "mL", to = "µL"), 1000000)
+})
