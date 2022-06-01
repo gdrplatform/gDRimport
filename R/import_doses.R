@@ -171,12 +171,14 @@ get_conversion_factor <- function(from, to = "µL") {
     stop(sprintf("conversion to unit '%s' not supported"))
   }
 
-  switch(from, {
+  # nolint start
+  switch(from,
     "nL" = 1e-3,
     "µL" = 1,
     "mL" = 1e3,
     stop(sprintf("unsupported conversion factor: '%s'", from))
-  })
+  )
+  # nolint end
 }
 
 convert_units <- function(x, from, to) {
@@ -184,87 +186,91 @@ convert_units <- function(x, from, to) {
   as.double(x) * conversion_factor
 }
 
-get_D300_XML_drugs <- function(xml_tree_root, id_col = "ID") {
-  drug_cols <- c(id_col, "Name", "Stock_Conc", "Stock_Unit")
+get_D300_XML_drugs <-
+  function(xml_tree_root, id_col = "ID") {
 
-  #extract information for every fluid (i.e. drugs)
-  fluids <- XML::xpathSApply(xml_tree_root, ".//Fluids", XML::xmlChildren)
-  nfluids <- length(fluids)
-  df_drug <- vector("list", nfluids)
-  for (fi in seq_len(nfluids)) {
-    fluid <- xml_tree_root[["Fluids"]][fi][["Fluid"]]
-    id <- XML::xmlAttrs(fluid)
-    name <- XML::xmlValue(fluid[["Name"]])
-    stock_conc <- XML::xmlValue(fluid[["Concentration"]])
-    conc_unit <- XML::xmlValue(fluid[["ConcentrationUnit"]])
-    df_drug[[fi]] <- data.frame(t(c(id, 
-                                   name, 
-                                   stock_conc, 
-                                   conc_unit)))
-    colnames(df_drug[[fi]]) <- drug_cols
-  }
-  do.call("rbind", df_drug)
-}    
+    drug_cols <- c(id_col, "Name", "Stock_Conc", "Stock_Unit")
 
-get_D300_XML_treatments <- function(xml_tree_root, id_col = "ID") {
-  #initialize data.frame for treatments
-  trt_cols <- c("D300_Plate_N", "D300_Barcode", "Dimension", "Row", "Col", 
-                "Volume", "Volume_Unit", id_col, "Concentration", "Unit")
-  df_trt <- data.frame(matrix(ncol = length(trt_cols), nrow = 0))
-  colnames(df_trt) <- trt_cols 
-
-  #extract drug dispensing information for each plate 
-  plates <- XML::xpathSApply(xml_tree_root, ".//Plates", XML::xmlChildren)
-  nplates <- length(plates)
-  for (pli in seq_len(nplates)) {
-    plate <- xml_tree_root[["Plates"]][pli][["Plate"]]
-
-    #plate info
-    rows_plate <- XML::xmlValue(plate[["Rows"]])
-    cols_plate <- XML::xmlValue(plate[["Cols"]])
-    plate_dim <- sprintf("(%s,%s)", rows_plate, cols_plate)
-    assay_vol <- XML::xmlValue(plate[["AssayVolume"]])
-    desired_unit <- "µL"
-    assay_vol_conv <- convert_units(assay_vol, from = vol_unit, to = desired_unit)
-    barcode_plate <- XML::xmlValue(plate[["Name"]])
-    # check if the plate is randomized; should probably be changed 
-    randomize <- XML::xmlValue(plate[["Randomize"]])
-    if (randomize != "") {
-      warning("Randomization of D300 plate possibly detected, but not supported yet.")
+    #extract information for every fluid (i.e. drugs)
+    fluids <- XML::xpathSApply(xml_tree_root, ".//Fluids", XML::xmlChildren)
+    nfluids <- length(fluids)
+    df_drug <- vector("list", nfluids)
+    for (fi in seq_len(nfluids)) {
+      fluid <- xml_tree_root[["Fluids"]][fi][["Fluid"]]
+      id <- XML::xmlAttrs(fluid)
+      name <- XML::xmlValue(fluid[["Name"]])
+      stock_conc <- XML::xmlValue(fluid[["Concentration"]])
+      conc_unit <- XML::xmlValue(fluid[["ConcentrationUnit"]])
+      df_drug[[fi]] <- data.frame(t(c(id, 
+                                     name, 
+                                     stock_conc, 
+                                     conc_unit)))
+      colnames(df_drug[[fi]]) <- drug_cols
     }
-    
-    #extract drug dispensing information for each well 
-    wells <- XML::xpathSApply(plate, ".//Wells", XML::xmlChildren)
-    nwells <- length(wells)
-    for (wi in seq_len(nwells)) {
+    do.call("rbind", df_drug)
+  }    
+
+get_D300_XML_treatments <-
+  function(xml_tree_root, id_col = "ID") {
+
+    #initialize data.frame for treatments
+    trt_cols <- c("D300_Plate_N", "D300_Barcode", "Dimension", "Row", "Col", 
+                  "Volume", "Volume_Unit", id_col, "Concentration", "Unit")
+    df_trt <- data.frame(matrix(ncol = length(trt_cols), nrow = 0))
+    colnames(df_trt) <- trt_cols 
+
+    #extract drug dispensing information for each plate 
+    plates <- XML::xpathSApply(xml_tree_root, ".//Plates", XML::xmlChildren)
+    nplates <- length(plates)
+    for (pli in seq_len(nplates)) {
+      plate <- xml_tree_root[["Plates"]][pli][["Plate"]]
+
+      #plate info
+      rows_plate <- XML::xmlValue(plate[["Rows"]])
+      cols_plate <- XML::xmlValue(plate[["Cols"]])
+      plate_dim <- sprintf("(%s,%s)", rows_plate, cols_plate)
+      assay_vol <- XML::xmlValue(plate[["AssayVolume"]])
+      desired_unit <- "µL"
+      assay_vol_conv <- convert_units(assay_vol, from = vol_unit, to = desired_unit)
+      barcode_plate <- XML::xmlValue(plate[["Name"]])
+      # check if the plate is randomized; should probably be changed 
+      randomize <- XML::xmlValue(plate[["Randomize"]])
+      if (randomize != "") {
+        warning("Randomization of D300 plate possibly detected, but not supported yet.")
+      }
       
-      well <- plate[["Wells"]][wi][["Well"]]
-      #indexes of row and col start from zero, so add one
-      well_attr <- XML::xmlAttrs(well)
-      row_well <- strtoi(well_attr[["Row"]]) + 1
-      col_well <- strtoi(well_attr[["Col"]]) + 1
-      
-      #extract information each fluid delivered in well 
-      fluids <- XML::xpathSApply(well, ".//Fluid", XML::xmlChildren)
-      nfluids <- length(fluids)
-      for (fi in seq_len(nfluids)) {
-        id_fluid <- XML::xmlAttrs(well[[fi]])
-        conc_fluid <- XML::xmlValue(well[[fi]])
-        #define single entry
-        df_trt_entry <- data.frame(t(c(pli, 
-                                       barcode_plate, 
-                                       plate_dim, 
-                                       row_well,
-                                       col_well,
-                                       assay_vol_conv,
-                                       desired_unit,
-                                       id_fluid,
-                                       conc_fluid,
-                                       conc_unit)))
-        colnames(df_trt_entry) <- trt_cols
-        df_trt <- rbind(df_trt, df_trt_entry)
+      #extract drug dispensing information for each well 
+      wells <- XML::xpathSApply(plate, ".//Wells", XML::xmlChildren)
+      nwells <- length(wells)
+      for (wi in seq_len(nwells)) {
+        
+        well <- plate[["Wells"]][wi][["Well"]]
+        #indexes of row and col start from zero, so add one
+        well_attr <- XML::xmlAttrs(well)
+        row_well <- strtoi(well_attr[["Row"]]) + 1
+        col_well <- strtoi(well_attr[["Col"]]) + 1
+        
+        #extract information each fluid delivered in well 
+        fluids <- XML::xpathSApply(well, ".//Fluid", XML::xmlChildren)
+        nfluids <- length(fluids)
+        for (fi in seq_len(nfluids)) {
+          id_fluid <- XML::xmlAttrs(well[[fi]])
+          conc_fluid <- XML::xmlValue(well[[fi]])
+          #define single entry
+          df_trt_entry <- data.frame(t(c(pli, 
+                                         barcode_plate, 
+                                         plate_dim, 
+                                         row_well,
+                                         col_well,
+                                         assay_vol_conv,
+                                         desired_unit,
+                                         id_fluid,
+                                         conc_fluid,
+                                         conc_unit)))
+          colnames(df_trt_entry) <- trt_cols
+          df_trt <- rbind(df_trt, df_trt_entry)
+        }
       }
     }
+    df_trt
   }
-  df_trt
-}
