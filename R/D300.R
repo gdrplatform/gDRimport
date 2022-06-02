@@ -7,6 +7,10 @@
 #' @param destination_path character, path to folder where template 
 #' files will be generated
 #'
+#' @return
+#' Create one Excel file per plate. Each sheet in each plate file describes 
+#' the drugs and corrresponding concentrations of what was tested in each well.
+#'
 #' @export
 #'
 import_D300 <-
@@ -22,6 +26,11 @@ import_D300 <-
 
     treatment <- merge_D300_w_metadata(D300, Gnums)
 
+    req_cols <- c("Row", "Col")
+    if (!all(present <- req_cols %in% colnames(treatment))) {
+      stop(sprintf("missing required columns from D300 file: '%s'", paste0(req_cols[!present], collapse = ", ")))
+    }
+
     uplates <- unique(treatment$D300_Plate_N)
 
     untreated_tags <- gDRutils::get_env_identifiers("untreated_tag")
@@ -29,10 +38,9 @@ import_D300 <-
     for (i in seq_along(uplates)) {
       wb <- openxlsx::createWorkbook()
       
-      #filter only that plate
-      idx <- (treatment$D300_Plate_N == uplates[i])
+      # Filter to 1 plate.
+      idx <- treatment$D300_Plate_N == uplates[i]
       trt_filt <- treatment[idx, ]
-
       #create a list with Gnumber and Concentration 
       trt_filt$Gnumber_Concentration <- apply(trt_filt, 1, function(x) list(x["Gnumber"], x["Concentration"]))
       trt_gnumber_conc <- reshape2::dcast(trt_filt, Row ~ Col, 
@@ -45,6 +53,8 @@ import_D300 <-
       trt_n_drugs <- apply(trt_gnumber_conc, c(1, 2), function(x) length(x[[1]]))
       max_drugs <- max(trt_n_drugs)
 
+      # Note: Conversion to integer is important as natural sorting by string will
+      # result in unordered columns like ("10", "11", "2", "3", "4" etc.)
       col_idx <- strtoi(colnames(trt_gnumber_conc))
       row_idx <- strtoi(rownames(trt_gnumber_conc))
       nrow <- max(row_idx) 
@@ -53,6 +63,7 @@ import_D300 <-
       
       #for each drug create a Gnumber and Concentration information for each well
       for (j in seq_len(max_drugs)) {
+
         conc_mat <- drug_mat <- matrix(rep("", nwells), nrow = nrow, ncol = ncol)
 
         for (m in seq_along(row_idx)) {
@@ -81,7 +92,7 @@ import_D300 <-
         
         drug_data <- data.frame(drug_mat)
         conc_data <- data.frame(conc_mat)
-        
+
         drug_sname <- "Gnumber"
         conc_sname <- "Concentration"
         if (j != 1L) {
