@@ -1,23 +1,23 @@
 context("import_doses")
 
-test_that("parse_D300", {
+test_that("parse_D300_xml", {
   
   # get test_data3
   td3 <- get_test_data3()
   
   # valid output returned for the D300 96 well plate example
-  dose_df <- parse_D300(td3$d300_96w_file)
+  dose_df <- parse_D300_xml(td3$d300_96w_file)
   ref_dose_df <- readRDS(td3$ref_d300_96w_file)
   expect_identical(dose_df, ref_dose_df)
   
   # valid output returned for the D300 348 well plate example
-  dose_df <- parse_D300(td3$d300_384w_file)
+  dose_df <- parse_D300_xml(td3$d300_384w_file)
   ref_dose_df <- readRDS(td3$ref_d300_384w_file)
   expect_identical(dose_df, ref_dose_df)
   
   # expected error(s) returned
   err_msg1 <- "'D300_file' must be a readable path"
-  expect_error(parse_D300("/non/existent_file"), err_msg1)
+  expect_error(parse_D300_xml("/non/existent_file"), err_msg1)
   
 })
 
@@ -88,4 +88,28 @@ test_that("get_conversion_factor  works as expected", {
 
 test_that("convert_units works as expected", {
   expect_equal(gDRimport:::convert_units(1000, from = "mL", to = "µL"), 1000000)
+})
+
+#######
+# Gnum
+#######
+
+#test_that("gDRimport:::parse_D300_metadata_file works as expected", {
+#  gDRimport:::parse_D300_metadata_file() # TODO: Fill me!
+#})
+
+
+#######
+# Utils
+#######
+
+test_that("gDRimport:::fill_NA works as expected", {
+  n <- 5
+  df <- data.frame(a = rep(NA, n), b = seq(n))
+  obs <- gDRimport:::fill_NA(df, "a", "b")
+  expect_equal(obs$a, df$b)
+
+  obs2 <- gDRimport:::fill_NA(df, "b", "a")
+  expect_equal(obs2$b, df$b)
+  expect_equal(obs2$a, df$a)
 })
