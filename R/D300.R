@@ -18,9 +18,9 @@ import_D300 <-
     
     Gnums <- parse_D300_metadata_file(metadata_file)
     D300 <- parse_D300_xml(D300_file)
-    treatment <- merge_D300_w_metadata(D300, Gnums)
+    D300 <- fill_NA(D300, from = "D300_Barcode", with = "D300_Plate_N")
 
-    treatment <- fill_NA(treatment, from = "D300_Barcode", with = "D300_Plate_N")
+    treatment <- merge_D300_w_metadata(D300, Gnums)
 
     uplates <- unique(treatment$D300_Plate_N)
 
