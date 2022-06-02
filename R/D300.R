@@ -58,7 +58,7 @@ import_D300 <-
         for (m in seq_along(row_idx)) {
           for (n in seq_along(col_idx)) {
 
-            drug_entry <- trt_drugber_conc[[m, n]]
+            drug_entry <- trt_gnumber_conc[[m, n]]
             if (length(drug_entry) >= j) {
               drug <- drug_entry[[j]][[1]]
               conc <- drug_entry[[j]][[2]]
