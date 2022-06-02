@@ -58,24 +58,22 @@ import_D300 <-
         for (m in seq_along(row_idx)) {
           for (n in seq_along(col_idx)) {
 
-            #extract the drugs in that row, col 
             drug_entry <- trt_gnumber_conc[[m, n]]
             if (length(drug_entry) >= j) {
-              gnum_mat_now <- trt_gnumber_conc[[m, n]][[j]][[1]]
-              conc_mat_now <- trt_gnumber_conc[[m, n]][[j]][[2]]
-              if (gnum_mat_now %in% untreated_tags) {
-                #replace concentration to zero if that drugs is associated to vehicle or untreated (e.g. DMSO)
-                gnum <- gnum_mat_now
+              gnum <- drug_entry[[j]][[1]]
+              conc <- drug_entry[[j]][[2]]
+
+              # Vehicle or untreated drugs assigned concentration zero.
+              if (gnum %in% untreated_tags) {
                 conc <- 0.0
-              } else {
-                gnum <- trt_gnumber_conc[[m, n]][[j]][[1]]
-                conc <- trt_gnumber_conc[[m, n]][[j]][[2]]
               }
+
             } else {
               #if there is no 2nd, 3rd etc.. drug specified, set the corresponding entry to untreated
               gnum <- untreated_tags[[1]]
               conc <- 0.0
             }
+
             conc_mat[row_idx[m], col_idx[n]] <- conc
             gnum_mat[row_idx[m], col_idx[n]] <- gnum
           }
