@@ -53,44 +53,44 @@ import_D300 <-
       
       #for each drug create a Gnumber and Concentration information for each well
       for (j in seq_len(max_drugs)) {
-        conc_mat <- gnum_mat <- matrix(rep("", nwells), nrow = nrow, ncol = ncol)
+        conc_mat <- drug_mat <- matrix(rep("", nwells), nrow = nrow, ncol = ncol)
 
         for (m in seq_along(row_idx)) {
           for (n in seq_along(col_idx)) {
 
-            drug_entry <- trt_gnumber_conc[[m, n]]
+            drug_entry <- trt_drugber_conc[[m, n]]
             if (length(drug_entry) >= j) {
-              gnum <- drug_entry[[j]][[1]]
+              drug <- drug_entry[[j]][[1]]
               conc <- drug_entry[[j]][[2]]
 
               # Vehicle or untreated drugs assigned concentration zero.
-              if (gnum %in% untreated_tags) {
+              if (drug %in% untreated_tags) {
                 conc <- 0.0
               }
 
             } else {
               #if there is no 2nd, 3rd etc.. drug specified, set the corresponding entry to untreated
-              gnum <- untreated_tags[[1]]
+              drug <- untreated_tags[[1]]
               conc <- 0.0
             }
 
             conc_mat[row_idx[m], col_idx[n]] <- conc
-            gnum_mat[row_idx[m], col_idx[n]] <- gnum
+            drug_mat[row_idx[m], col_idx[n]] <- drug
           }
         }
         
-        gnum_data <- data.frame(gnum_mat)
+        drug_data <- data.frame(drug_mat)
         conc_data <- data.frame(conc_mat)
         
-        gnum_sname <- "Gnumber"
+        drug_sname <- "Gnumber"
         conc_sname <- "Concentration"
         if (j != 1L) {
-          gnum_sname <- paste0(gnum_sname, "_", j)
+          drug_sname <- paste0(drug_sname, "_", j)
           conc_sname <- paste0(conc_sname, "_", j)
         }
         
-        openxlsx::addWorksheet(wb, gnum_sname)
-        openxlsx::writeData(wb, sheet = (j * 2) - 1, gnum_data, colNames = FALSE)
+        openxlsx::addWorksheet(wb, drug_sname)
+        openxlsx::writeData(wb, sheet = (j * 2) - 1, drug_data, colNames = FALSE)
         openxlsx::addWorksheet(wb, conc_sname)
         openxlsx::writeData(wb, sheet = (j * 2), conc_data, colNames = FALSE)
       }
