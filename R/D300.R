@@ -1,3 +1,129 @@
+#' Import D300
+#'
+#' This functions takes a D300 file and generates corresponding template files
+#'
+#' @param D300_file character, file path to D300 file
+#' @param metadata_file character, file path to file with mapping from D300 names to Gnumbers 
+#' @param destination_path character, path to folder where template 
+#' files will be generated
+#'
+#' @export
+#'
+import_D300 <-
+  function(D300_file, metadata_file, destination_path) {
+    # Assertions.
+    assertthat::assert_that(is.character(destination_path), msg = "'destination_path' must be a character vector")
+    assertthat::assert_that(assertthat::is.readable(destination_path), 
+                            msg = "'destination_path' must be a readable path")
+    
+    Gnums <- parse_D300_metadata_file(metadata_file)
+    D300 <- parse_D300_xml(D300_file)
+    treatment <- merge_D300_w_metadata(D300, Gnums)
+
+    treatment <- fill_NA(treatment, from = "D300_Barcode", with = "D300_Plate_N")
+
+    uplates <- unique(treatment$D300_Plate_N)
+
+    untreated_tags <- gDRutils::get_env_identifiers("untreated_tag")
+    #create a treatment file for each plates
+    for (i in seq_along(uplates)) {
+      wb <- openxlsx::createWorkbook()
+      
+      #filter only that plate
+      idx <- (treatment$D300_Plate_N == uplates[i])
+      trt_filt <- treatment[idx, ]
+
+      #create a list with Gnumber and Concentration 
+      trt_filt$Gnumber_Concentration <- apply(trt_filt, 1, function(x) list(x["Gnumber"], x["Concentration"]))
+      trt_gnumber_conc <- reshape2::dcast(trt_filt, Row ~ Col, 
+                                          value.var = c("Gnumber_Concentration"), 
+                                          fun.aggregate = list)
+      rownames(trt_gnumber_conc) <- trt_gnumber_conc$Row
+      trt_gnumber_conc <- trt_gnumber_conc[, setdiff(colnames(trt_gnumber_conc), "Row")]
+
+      #count number of drugs,conc in each well 
+      trt_n_drugs <- apply(trt_gnumber_conc, c(1, 2), function(x) length(x[[1]]))
+      max_drugs <- max(trt_n_drugs)
+
+      col_idx <- strtoi(colnames(trt_gnumber_conc))
+      row_idx <- strtoi(rownames(trt_gnumber_conc))
+      nrow <- max(row_idx) 
+      ncol <- max(col_idx)
+      nwells <- nrow * ncol
+      
+      #for each drug create a Gnumber and Concentration information for each well
+      for (j in seq_len(max_drugs)) {
+        conc_mat <- gnum_mat <- matrix(rep("", nwells), nrow = nrow, ncol = ncol)
+
+        for (m in seq_along(row_idx)) {
+          for (n in seq_along(col_idx)) {
+
+            #extract the drugs in that row, col 
+            drug_entry <- trt_gnumber_conc[[m, n]]
+            if (length(drug_entry) >= j) {
+              gnum_mat_now <- trt_gnumber_conc[[m, n]][[j]][[1]]
+              conc_mat_now <- trt_gnumber_conc[[m, n]][[j]][[2]]
+              if (gnum_mat_now %in% untreated_tags) {
+                #replace concentration to zero if that drugs is associated to vehicle or untreated (e.g. DMSO)
+                gnum <- gnum_mat_now
+                conc <- 0.0
+              } else {
+                gnum <- trt_gnumber_conc[[m, n]][[j]][[1]]
+                conc <- trt_gnumber_conc[[m, n]][[j]][[2]]
+              }
+            } else {
+              #if there is no 2nd, 3rd etc.. drug specified, set the corresponding entry to untreated
+              gnum <- untreated_tags[[1]]
+              conc <- 0.0
+            }
+            conc_mat[row_idx[m], col_idx[n]] <- conc
+            gnum_mat[row_idx[m], col_idx[n]] <- gnum
+          }
+        }
+        
+        gnum_data <- data.frame(gnum_mat)
+        conc_data <- data.frame(conc_mat)
+        
+        gnum_sname <- "Gnumber"
+        conc_sname <- "Concentration"
+        if (j != 1L) {
+          gnum_sname <- paste0(gnum_sname, "_", j)
+          conc_sname <- paste0(conc_sname, "_", j)
+        }
+        
+        openxlsx::addWorksheet(wb, gnum_sname)
+        openxlsx::writeData(wb, sheet = (j * 2) - 1, gnum_data, colNames = FALSE)
+        openxlsx::addWorksheet(wb, conc_sname)
+        openxlsx::writeData(wb, sheet = (j * 2), conc_data, colNames = FALSE)
+      }
+      
+      fname <- sprintf("trt_P%s.xlsx", uplates[i])
+      openxlsx::saveWorkbook(wb, file.path(destination_path, fname), overwrite = TRUE)
+    }
+  }
+
+
+merge_D300_w_metadata <- function(D300, Gnums) {
+  validate_columns <- function(col, df) {
+    if (!col %in% colnames(df)) {
+      stop(sprintf("missing required column: '%s' in '%s'", col, quote(df)))
+    }
+    invisible(NULL)
+  }
+
+  merge_trt_col <- "Name"
+  validate_columns(merge_trt_col, D300)
+
+  merge_metadata_col <- "D300_Label"
+  validate_columns(merge_metadata_col, Gnums)
+
+  merge(D300, Gnums, by.x = merge_trt_col, by.y = merge_metadata_col, all.x = TRUE)
+}
+
+#########
+# D300
+#########
+
 #' Parse D300
 #'
 #' This function parses a D300 *.tdd file (XML format) into a data.frame
@@ -8,9 +134,8 @@
 #
 #' @export
 #'
-parse_D300 <- 
-  function(D300_file) {
-    
+parse_D300_xml <- function(D300_file) {
+    assertthat::assert_that(is.character(D300_file), msg = "'D300_file' must be a character vector")
     assertthat::assert_that(assertthat::is.readable(D300_file), msg = "'D300_file' must be a readable path")
     
     # Open D300 XML format.
@@ -41,151 +166,6 @@ parse_D300 <-
   }
 
 
-#' Import D300
-#'
-#' This functions takes a D300 file and generates corresponding template files
-#'
-#' @param D300_file character, file path to D300 file
-#' @param Gnum_file character, file path to file with mapping from D300 names to Gnumbers 
-#' @param destination_path character, path to folder where template 
-#' files will be generated
-#'
-#' @export
-#'
-import_D300 <-
-  function(D300_file, Gnum_file, destination_path) {
-    
-    assertthat::assert_that(is.character(D300_file), msg = "'D300_file' must be a character vector")
-    assertthat::assert_that(is.character(Gnum_file), msg = "'Gnum_file' must be a character vector")
-    assertthat::assert_that(is.character(destination_path), msg = "'destination_path' must be a character vector")
-    assertthat::assert_that(assertthat::is.readable(D300_file), msg = "'D300_file' must be a readable path")
-    assertthat::assert_that(assertthat::is.readable(Gnum_file), msg = "'Gnum_file' must be a readable path")
-    assertthat::assert_that(assertthat::is.readable(destination_path), 
-                            msg = "'destination_path' must be a readable path")
-    
-    #load a file that maps D300 labels to Gnumbers
-    D300_Gnumber_sheets <- readxl::excel_sheets(Gnum_file)
-    #check there is just one sheet
-    if (length(D300_Gnumber_sheets) != 1) {
-      futile.logger::flog.error("No or too many data sheets found in: %s",
-                                D300_Gnum_file)
-    }
-    #load mapping
-    df_D300_Gnum <- readxl::read_excel(Gnum_file,
-                                       sheet = D300_Gnumber_sheets[[1]],
-                                       col_names = TRUE)
-    #parse D300 file 
-    treatment <- parse_D300(D300_file)
-    #map names to Gnumber
-    treatment <- merge(treatment, df_D300_Gnum, by.x = "Name", by.y = "D300_Label", all.x = TRUE)
-    #if barcode is missing, use ID instead
-    idx <- is.na(treatment$D300_Barcode)
-    treatment[idx, c("D300_Barcode")] <- treatment[idx, c("D300_Plate_N")]
-    #extract unique barcodes
-    uid <- unique(treatment$D300_Plate_N)
-    #get tags
-    untreated_tags <- gDRutils::get_env_identifiers("untreated_tag")
-    #create a treatment file for each plates
-    for (i in seq_along(uid)) {
-      
-      #create workesheet
-      wb <- openxlsx::createWorkbook()
-      
-      #filter only that plate
-      idx <- (treatment$D300_Plate_N == uid[i])
-      trt_filt <- treatment[idx, ]
-      #create a list with Gnumber and Concentration 
-      trt_filt$Gnumber_Concentration <- apply(trt_filt, 1, function(x) list(x["Gnumber"], x["Concentration"]))
-      trt_gnumber_conc <- reshape2::dcast(trt_filt, Row ~ Col, 
-                                          value.var = c("Gnumber_Concentration"), 
-                                          fun.aggregate = list)
-      rownames(trt_gnumber_conc) <- trt_gnumber_conc$Row
-      trt_gnumber_conc <- dplyr::select(trt_gnumber_conc, -c("Row"))
-      #count number of drugs,conc in each well 
-      trt_n_drugs <- apply(trt_gnumber_conc, c(1, 2), function(x) length(x[[1]]))
-      max_drugs <- max(trt_n_drugs)
-      col_idx <- strtoi(colnames(trt_gnumber_conc))
-      row_idx <- strtoi(rownames(trt_gnumber_conc))
-      max_row_idx <- max(row_idx) 
-      max_col_idx <- max(col_idx)
-      
-      #for each drug create a Gnumber and Concentration information for each well
-      for (j in seq_len(max_drugs)) {
-        #create empty text matrix
-        gnum_txt <- rep(c(""), each = max_row_idx * max_col_idx)
-        dim(gnum_txt) <- c(max_row_idx, max_col_idx)     
-        conc_txt <- rep(c(""), each = max_row_idx * max_col_idx)
-        dim(conc_txt) <- c(max_row_idx, max_col_idx)     
-        #for each row and column
-        for (ri in seq_along(row_idx)) {
-          for (ci in seq_along(col_idx)) {
-            #extract the drugs in that row, col 
-            drug_entry <- trt_gnumber_conc[[ri, ci]]
-            if (length(drug_entry) >= j) {
-              gnum_txt_now <- trt_gnumber_conc[[ri, ci]][[j]][[1]]
-              conc_txt_now <- trt_gnumber_conc[[ri, ci]][[j]][[2]]
-              if (gnum_txt_now %in% untreated_tags) {
-                #replace concentration to zero if that drugs is associated to vehicle or untreated (e.g. DMSO)
-                gnum_txt[row_idx[ri], col_idx[ci]] <- gnum_txt_now
-                conc_txt[row_idx[ri], col_idx[ci]] <- 0.0
-              } else {
-                gnum_txt[row_idx[ri], col_idx[ci]] <- trt_gnumber_conc[[ri, ci]][[j]][[1]]
-                conc_txt[row_idx[ri], col_idx[ci]] <- trt_gnumber_conc[[ri, ci]][[j]][[2]]
-              }
-            } else {
-              #if there is no 2nd, 3rd etc.. drug specified, set the corresponding entry to untreated
-              gnum_txt[row_idx[ri], col_idx[ci]] <- untreated_tags[[1]]
-              conc_txt[row_idx[ri], col_idx[ci]] <- 0.0
-            }
-          }
-        }
-        
-        #create data.frame Gnumber and Concentrations to crate excell files
-        gnumber_sheet <- data.frame(gnum_txt)
-        conc_sheet <- data.frame(conc_txt)
-        
-        #create sheet name 
-        if (j == 1) {
-          gnum_sname <- "Gnumber"
-          conc_sname <- "Concentration"
-        } else {
-          gnum_sname <- sprintf("Gnumber_%d", j)
-          conc_sname <- sprintf("Concentration_%d", j)
-        }
-        
-        #add worksheets for gnumber and concentrations
-        openxlsx::addWorksheet(wb, gnum_sname)
-        openxlsx::writeData(wb, sheet = (j * 2) - 1, gnumber_sheet, colNames = FALSE)
-        openxlsx::addWorksheet(wb, conc_sname)
-        openxlsx::writeData(wb, sheet = (j * 2), conc_sheet, colNames = FALSE)
-      }
-      
-      #save excel file
-      treat_file <- sprintf("trt_P%s.xlsx", uid[i])
-      openxlsx::saveWorkbook(wb, file.path(destination_path, treat_file), overwrite = TRUE)
-    }
-  }
-
-get_conversion_factor <- function(from, to = "µL") {
-  if (to != "µL") {
-    stop(sprintf("conversion to unit '%s' not supported", to))
-  }
-
-  # nolint start
-  switch(from,
-    "nL" = 1e-3,
-    "µL" = 1,
-    "mL" = 1e3,
-    stop(sprintf("unsupported conversion factor: '%s'", from))
-  )
-  # nolint end
-}
-
-convert_units <- function(x, from, to) {
-  conversion_factor <- get_conversion_factor(from, to) 
-  as.double(x) * conversion_factor
-}
-
 get_D300_XML_drugs <-
   function(xml_tree_root, id_col = "ID") {
 
@@ -209,6 +189,7 @@ get_D300_XML_drugs <-
     }
     do.call("rbind", df_drug)
   }    
+
 
 get_D300_XML_treatments <-
   function(xml_tree_root, id_col = "ID", vol_unit, conc_unit) {
@@ -275,3 +256,59 @@ get_D300_XML_treatments <-
     }
     df_trt
   }
+
+
+get_conversion_factor <- function(from, to = "µL") {
+  if (to != "µL") {
+    stop(sprintf("conversion to unit '%s' not supported", to))
+  }
+
+  # nolint start
+  switch(from,
+    "nL" = 1e-3,
+    "µL" = 1,
+    "mL" = 1e3,
+    stop(sprintf("unsupported conversion factor: '%s'", from))
+  )
+  # nolint end
+}
+
+
+convert_units <- function(x, from, to) {
+  conversion_factor <- get_conversion_factor(from, to) 
+  as.double(x) * conversion_factor
+}
+
+#########
+# Gnum
+#########
+
+parse_D300_metadata_file <- function(metadata_file) {
+  D300_Gnum_sheets <- readxl::excel_sheets(metadata_file)
+  nsheets <- length(D300_Gnum_sheets)
+
+  # Assertions.
+  assertthat::assert_that(is.character(metadata_file), msg = "'metadata_file' must be a character vector")
+  assertthat::assert_that(assertthat::is.readable(metadata_file), msg = "'metadata_file' must be a readable path")
+
+  if (nsheets != 1L) {
+    futile.logger::flog.error("only one data sheet is supported, found '%s' sheets in '%s'",
+                              nsheets, metadata_file)
+  }
+
+  metadata <- readxl::read_excel(metadata_file,
+                                     sheet = D300_Gnum_sheets[[1]],
+                                     col_names = TRUE)
+  metadata
+}
+
+
+#########
+# Utils
+#########
+
+fill_NA <- function(x, from, with) {
+  idx <- is.na(x[[from]])
+  x[idx, from] <- x[idx, with]
+  x
+}
