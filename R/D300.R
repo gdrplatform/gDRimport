@@ -156,15 +156,15 @@ parse_D300_xml <- function(D300_file) {
     }
     
     id_col <- "ID"
-    df_drug <- get_D300_XML_drugs(top, id_col)
-    df_trt <- get_D300_XML_treatments(top, id_col, vol_unit, conc_unit)
+    df_drug <- get_D300_xml_drugs(top, id_col)
+    df_trt <- get_D300_xml_treatments(top, id_col, vol_unit, conc_unit)
     
     df_D300 <- merge(df_trt, df_drug, by.x = id_col, by.y = id_col, all.x = TRUE)
     df_D300
   }
 
 
-get_D300_XML_drugs <-
+get_D300_xml_drugs <-
   function(xml_tree_root, id_col = "ID") {
 
     drug_cols <- c(id_col, "Name", "Stock_Conc", "Stock_Unit")
@@ -189,7 +189,7 @@ get_D300_XML_drugs <-
   }    
 
 
-get_D300_XML_treatments <-
+get_D300_xml_treatments <-
   function(xml_tree_root, id_col = "ID", vol_unit, conc_unit) {
 
     #initialize data.frame for treatments
