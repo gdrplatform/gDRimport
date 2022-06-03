@@ -10,6 +10,14 @@
 #' @return
 #' Create one Excel file per plate. Each sheet in each plate file describes 
 #' the drugs and corrresponding concentrations of what was tested in each well.
+#' @details
+#' For example, wells treated with 2 drugs in combination will result in 4 sheets per plate.
+#' \itemize{
+#'  \item{Sheet 1: Drug 1}
+#'  \item{Sheet 2: Conc of Drug 1}
+#'  \item{Sheet 3: Drug 2}
+#'  \item{Sheet 4: Conc of Drug 2}
+#' }
 #'
 #' @export
 #'
@@ -34,13 +42,13 @@ import_D300 <-
     uplates <- unique(treatment$D300_Plate_N)
 
     untreated_tags <- gDRutils::get_env_identifiers("untreated_tag")
-    #create a treatment file for each plates
     for (i in seq_along(uplates)) {
       wb <- openxlsx::createWorkbook()
       
       # Filter to 1 plate.
       idx <- treatment$D300_Plate_N == uplates[i]
       trt_filt <- treatment[idx, ]
+
       #create a list with Gnumber and Concentration 
       trt_filt$Gnumber_Concentration <- apply(trt_filt, 1, function(x) list(x["Gnumber"], x["Concentration"]))
       trt_gnumber_conc <- reshape2::dcast(trt_filt, Row ~ Col, 
@@ -51,7 +59,7 @@ import_D300 <-
 
       #count number of drugs,conc in each well 
       trt_n_drugs <- apply(trt_gnumber_conc, c(1, 2), function(x) length(x[[1]]))
-      max_drugs <- max(trt_n_drugs)
+      max_drugs_per_well <- max(trt_n_drugs)
 
       # Note: Conversion to integer is important as natural sorting by string will
       # result in unordered columns like ("10", "11", "2", "3", "4" etc.)
@@ -62,7 +70,7 @@ import_D300 <-
       nwells <- nrow * ncol
       
       #for each drug create a Gnumber and Concentration information for each well
-      for (j in seq_len(max_drugs)) {
+      for (j in seq_len(max_drugs_per_well)) {
 
         conc_mat <- drug_mat <- matrix(rep("", nwells), nrow = nrow, ncol = ncol)
 
