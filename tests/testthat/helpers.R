@@ -61,6 +61,8 @@ get_test_data3 <-
       d300_384w_file = file.path(ddir, "D300_384_well_plate_example.tdd"),
       Gnum_96w_file = file.path(ddir, "Gnumber_D300_96_well_plate.xlsx"),
       Gnum_384w_file = file.path(ddir, "Gnumber_D300_384_well_plate.xlsx"),
+      ref_Gnum_96w_file = file.path(ddir, "ref_Gnumber_D300_96_well_plate.RDS"),
+      ref_Gnum_384w_file = file.path(ddir, "ref_Gnumber_D300_384_well_plate.RDS"),
       ref_d300_96w_file = file.path(ddir, "ref_D300_96_well_plate_example.RDS"),
       ref_d300_384w_file = file.path(ddir, "ref_D300_384_well_plate_example.RDS"),
       dest_path_d300_96w = file.path(ddir, "output_files_96w", "output"),

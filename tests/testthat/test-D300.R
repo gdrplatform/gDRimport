@@ -94,9 +94,20 @@ test_that("convert_units works as expected", {
 # Gnum
 #######
 
-#test_that("gDRimport:::parse_D300_metadata_file works as expected", {
-#  gDRimport:::parse_D300_metadata_file() # TODO: Fill me!
-#})
+test_that("gDRimport:::parse_D300_metadata_file works as expected", {
+  
+  # get test_data3
+  td3 <- get_test_data3()
+  
+  # test Gnum files
+  Gnum_96w_file <- gDRimport:::parse_D300_metadata_file(td3$Gnum_96w_file) 
+  ref_Gnum_96w_file <- readRDS(td3$ref_Gnum_96w_file)
+  expect_equal(Gnum_96w_file, ref_Gnum_96w_file)
+  
+  Gnum_384w_file <- gDRimport:::parse_D300_metadata_file(td3$Gnum_384w_file) 
+  ref_Gnum_384w_file <- readRDS(td3$ref_Gnum_384w_file)
+  expect_equal(Gnum_384w_file, ref_Gnum_384w_file)
+})
 
 
 #######
