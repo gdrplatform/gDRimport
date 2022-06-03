@@ -41,7 +41,11 @@ import_D300 <-
 
     uplates <- unique(treatment$D300_Plate_N)
 
+    #standard identifiers
     untreated_tags <- gDRutils::get_env_identifiers("untreated_tag")
+    drug_identifier <- gDRutils::get_env_identifiers("drug") 
+    conc_identifier <- gDRutils::get_env_identifiers("concentration")
+    
     for (i in seq_along(uplates)) {
       wb <- openxlsx::createWorkbook()
       
@@ -50,7 +54,7 @@ import_D300 <-
       trt_filt <- treatment[idx, ]
 
       #create a list with Gnumber and Concentration 
-      trt_filt$Gnumber_Concentration <- apply(trt_filt, 1, function(x) list(x["Gnumber"], x["Concentration"]))
+      trt_filt$Gnumber_Concentration <- apply(trt_filt, 1, function(x) list(x[drug_identifier], x[conc_identifier]))
       trt_gnumber_conc <- reshape2::dcast(trt_filt, Row ~ Col, 
                                           value.var = c("Gnumber_Concentration"), 
                                           fun.aggregate = list)
@@ -101,8 +105,8 @@ import_D300 <-
         drug_data <- data.frame(drug_mat)
         conc_data <- data.frame(conc_mat)
 
-        drug_sname <- "Gnumber"
-        conc_sname <- "Concentration"
+        drug_sname <- drug_identifier
+        conc_sname <- conc_identifier
         if (j != 1L) {
           drug_sname <- paste0(drug_sname, "_", j)
           conc_sname <- paste0(conc_sname, "_", j)
