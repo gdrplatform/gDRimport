@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+#### [1.3.1] - 2022-06-03
+- Add support to load drug doses from D300 .tdd files
+
 #### [1.3.0] - 2022-06-02
 - Release
 

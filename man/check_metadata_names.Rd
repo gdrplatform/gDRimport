@@ -13,6 +13,9 @@ check_metadata_names(col_df, df_name = "", df_type = NULL)
 
 \item{df_type}{a type of a dataframe (NULL by default)}
 }
+\value{
+
+}
 \description{
 Check whether all metadata names are correct
 }
