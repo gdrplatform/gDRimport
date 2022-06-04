@@ -2,11 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
-#### [0.0.15] - 2022-05-25
-- Add parse_D300
-- Add import_D300
-- Add tests for parse_D300
-- Add tests for import_D300
+#### [1.3.1] - 2022-06-03
+- Add support to load drug doses from D300 .tdd files
+
+#### [1.3.0] - 2022-06-02
+- Release
 
 #### [0.0.14] - 2022-05-18
 - Add load_results_Tecan
