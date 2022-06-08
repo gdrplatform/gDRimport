@@ -584,7 +584,6 @@ load_results_EnVision <-
 
     results_filename <- basename(results_file)
     # results_file is a string or a vector of strings
-
     # test if the result files are .tsv or .xls(x) files
     isExcel <- sapply(results_file, function(x) {
       return(tools::file_ext(x) %in% c("xlsx", "xls"))
@@ -637,7 +636,7 @@ load_results_EnVision <-
               col_names <- paste0("x", seq_len(dim(df)[2]))
           }
           df <-
-            df[, !apply(df[1:24, ], 2, function(x)
+            df[, !apply(df[1:35, ], 2, function(x)
               all(is.na(x)))]
           # remove extra columns
           # limit to first 24 rows in case Protocol information is
@@ -658,17 +657,31 @@ load_results_EnVision <-
           full_rows <-
             !apply(df[, -6:-1], 1, function(x)
               all(is.na(x)))
+          
+          # get the plate size
+          n_col <-
+            1.5 * 2 ^ ceiling(log2((dim(df)[2] - 2) / 1.5)) # -2 ot have some buffer
+          n_row <- n_col / 1.5
+          
+          # manually add full rows
+          plate_row <- which(as.data.frame(df)[, 1] %in% "Plate information")
+          spacer_rows <- unlist(lapply(plate_row, function(x) c(x + 1, x + 2, x + 4 + n_row)))
+          data_rows <- unlist(lapply(plate_row, function(x) (x + 4):(x + 4 + n_row - 1)))
+          
+          #fill up data_rows
+          for (i in data_rows){
+            df[i, which(is.na(df[i, ]))] <- "0"
+          }
+          
+          full_rows_index <- sort(union(spacer_rows, data_rows))
+          
           # don't consider the first columns as these may be metadata
           # if big gap, delete what is at the bottom (Protocol information)
           gaps <-
             min(which(full_rows)[(diff(which(full_rows)) > 20)] + 1, dim(df)[1])
           df <-
-            df[which(full_rows)[which(full_rows) <= gaps], ] # remove extra rows
+            df[full_rows_index[which(full_rows_index <= gaps)],] # remove extra rows
 
-          # get the plate size
-          n_col <-
-            1.5 * 2 ^ ceiling(log2((dim(df)[2] - 2) / 1.5)) # -2 ot have some buffer
-          n_row <- n_col / 1.5
 
           # add empty column to complete plate (assume left column is #1)
           if (ncol(df) < n_col) {
@@ -698,10 +711,9 @@ load_results_EnVision <-
 
             # check the structure of file is ok
             check_values <-
-              as.matrix(df[iB + readout_offset + c(0, 1, n_row, n_row + iB + readout_offset), n_col])
-
+              as.matrix(df[iB + readout_offset + c(0, 1, n_row, n_row + 1), n_col])
             Barcode <- as.character(df[iB + 1, barcode_col])
-            if (any(c(is.na(check_values[2:3]), !is.na(check_values[c(1, 4)])))) {
+            if (any(c(is.na(check_values[2:3]), !is.na(check_values[4])))) {
               stop(
                 sprintf(
                   "In result file %s (sheet %s) readout values are misplaced for plate %s",
@@ -713,7 +725,7 @@ load_results_EnVision <-
             }
 
             readout <-
-              as.matrix(df[iB + readout_offset + seq_len(n_row), 1:n_col])
+              as.matrix(df[iB + readout_offset + seq_len(n_row), seq_len(n_col)])
 
             # check that the plate size is consistent and contains values
             if (any(is.na(readout))) {
