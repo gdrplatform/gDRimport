@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+#### [1.3.1] - 2022-06-08
+- Extend the logic for loading EnVision data for other plate size
+
 #### [1.3.0] - 2022-06-02
 - Release
 
