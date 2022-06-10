@@ -653,10 +653,6 @@ load_results_EnVision <-
         }
 
         if (isEdited) {
-          # need to do some heuristic to find where the data is
-          full_rows <-
-            !apply(df[, -6:-1], 1, function(x)
-              all(is.na(x)))
           
           # get the plate size
           plate_dim <- .get_plate_size(df)
@@ -665,33 +661,50 @@ load_results_EnVision <-
           
           # manually add full rows
           plate_row <- which(as.data.frame(df)[, 1] %in% "Plate information")
-          spacer_rows <- unlist(lapply(plate_row, function(x) c(x + 1, x + 2, x + 4 + n_row)))
+          spacer_rows <- grep("[[:alpha:]]", as.data.frame(df)[, 1])
           data_rows <- unlist(lapply(plate_row, function(x) (x + 4):(x + 4 + n_row - 1)))
+          
+          fill_rows <- intersect(which(apply(df, 1, function(x) all(is.na(x)))), data_rows)
+          df[fill_rows, ] <- "0"
           
           #fill up data_rows
           for (i in data_rows) {
             df[i, c(is.na(df[i, ]))] <- "0"
           }
           
-          full_rows_index <- sort(union(spacer_rows, data_rows))
+          
+          # need to do some heuristic to find where the data is
+          full_rows <-
+            !apply(df[, -6:-1], 1, function(x)
+              all(is.na(as.numeric(x))))# get the barcode(s) in the sheet; expected in column C (third one)
+          
+          barcode_col <- grep(headers[["barcode"]], as.data.frame(df))[1]
+          Barcode_idx <-
+            which(unlist(as.data.frame(df)[, barcode_col]) %in% headers[["barcode"]])
+          
+          additional_rows <- c(Barcode_idx, Bckd_info_idx + 1)
+          
+          full_rows_index <- unique(sort(c(additional_rows, additional_rows + 1,
+                                    setdiff(which(full_rows), spacer_rows))))
           
           # don't consider the first columns as these may be metadata
           # if big gap, delete what is at the bottom (Protocol information)
           gaps <-
             min(which(full_rows)[(diff(which(full_rows)) > 20)] + 1, dim(df)[1])
+          
           df <-
-            df[full_rows_index[full_rows_index <= gaps], ] # remove extra rows
+            df[full_rows_index[full_rows_index <= gaps], ]
 
+          
+          Barcode_idx <-
+            which(unlist(as.data.frame(df)[, barcode_col]) %in% headers[["barcode"]])
 
           # add empty column to complete plate (assume left column is #1)
           if (ncol(df) < n_col) {
             df[, (ncol(df) + 1):n_col] <- NA
           }
 
-          # get the barcode(s) in the sheet; expected in column C (third one)
-          barcode_col <- grep(headers[["barcode"]], as.data.frame(df))
-          Barcode_idx <-
-            which(as.data.frame(df)[, barcode_col] %in% headers[["barcode"]])
+          
           # run through all plates
           for (iB in Barcode_idx) {
             # two type of format depending on where Background information is placed
@@ -705,6 +718,7 @@ load_results_EnVision <-
             } else {
               # export without background information
               # case of " Exported with EnVision Workstation version 1.13.3009.1409 "
+              ref_bckgrd <- 0
               readout_offset <- 1
               BackgroundValue <- 0
             }
@@ -717,7 +731,9 @@ load_results_EnVision <-
             Barcode <- as.character(df[iB + 1, barcode_col])
 
             readout <-
-              as.matrix(df[iB + readout_offset + seq_len(n_row), seq_len(n_col)])
+              as.matrix(df[iB + ref_bckgrd + seq_len(n_row) + 1, seq_len(n_col)])
+            
+            stopifnot(dim(readout) == plate_dim)
 
             # check that the plate size is consistent and contains values
             if (any(is.na(readout))) {
