@@ -155,3 +155,51 @@ test_that("load_data", {
   
 })
 
+test_that(".get_plate_size works as expected", {
+  df <- readxl::read_excel(system.file("extdata/data1/RawData_day7.xlsx", package = "gDRimport"))
+  size <- .get_plate_size(df)
+  expect_length(size, 2)
+  expect_equal(product(size), 384)
+})
+
+test_that(".check_file_structure works as expected", {
+  df <- readxl::read_excel(system.file("extdata/data1/RawData_day7.xlsx", package = "gDRimport"))
+  df <-
+    df[, !apply(df[1:35, ], 2, function(x)
+      all(is.na(x)))]
+  if (length(Bckd_info_idx) > 0) {
+    df[Bckd_info_idx + 1, 1] <- df[Bckd_info_idx, 1]
+    df[Bckd_info_idx, 1] <- ""
+  }
+  plate_row <- which(as.data.frame(df)[, 1] %in% "Plate information")
+  spacer_rows <- unlist(lapply(plate_row, function(x) c(x + 1, x + 2, x + 4 + n_row)))
+  data_rows <- unlist(lapply(plate_row, function(x) (x + 4):(x + 4 + n_row - 1)))
+  #fill up data_rows
+  for (i in data_rows) {
+    df[i, c(is.na(df[i, ]))] <- "0"
+  }
+  full_rows_index <- sort(union(spacer_rows, data_rows))
+  gaps <-
+    min(which(full_rows)[(diff(which(full_rows)) > 20)] + 1, dim(df)[1])
+  df <-
+    df[full_rows_index[full_rows_index <= gaps], ] # remove extra rows
+  if (ncol(df) < n_col) {
+    df[, (ncol(df) + 1):n_col] <- NA
+  }
+  size <- .get_plate_size(df)
+  n_row <- size[1]
+  n_col <- size[2]
+  iB <- 1
+  iF <- 1
+  iS <- 1
+  results_filename <- "data"
+  ref_bckgrd <- 4
+  readout_offset <- 1 + ref_bckgrd
+  barcode_col <- 3
+  expect_null(.check_file_structure(df, iB, iF, iS, results_filename,
+                        readout_offset, n_row, n_col, barcode_col))
+  
+  df2 <- readxl::read_excel(system.file("extdata/data1/RawData_day7.xlsx", package = "gDRimport"))
+  expect_error(.check_file_structure(df2, iB, iF, iS, results_filename,
+                                    readout_offset, n_row, n_col, barcode_col))
+})
