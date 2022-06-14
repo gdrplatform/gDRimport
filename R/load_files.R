@@ -664,12 +664,17 @@ load_results_EnVision <-
           spacer_rows <- grep("[[:alpha:]]", as.data.frame(df)[, 1])
           data_rows <- unlist(lapply(plate_row, function(x) (x + 4):(x + 4 + n_row - 1)))
           
-          fill_rows <- intersect(which(apply(df, 1, function(x) all(is.na(x)))), data_rows)
-          df[fill_rows, ] <- "0"
+          # find full numeric rows
+          all_rows <- sum(apply(df, 1, function(x) all(!is.na(as.numeric(x)))))
           
-          #fill up data_rows
-          for (i in data_rows) {
-            df[i, c(is.na(df[i, ]))] <- "0"
+          if (all_rows/n_row != length(plate_row)) {
+            fill_rows <- intersect(which(apply(df, 1, function(x) all(is.na(x)))), data_rows)
+            df[fill_rows, ] <- "0"
+            
+            #fill up data_rows
+            for (i in data_rows) {
+              df[i, c(is.na(df[i, ]))] <- "0"
+            }
           }
           
           
