@@ -667,7 +667,7 @@ load_results_EnVision <-
           # find full numeric rows
           all_rows <- sum(apply(df, 1, function(x) all(!is.na(as.numeric(x)))))
           
-          if (all_rows/n_row != length(plate_row)) {
+          if (all_rows / n_row != length(plate_row)) {
             fill_rows <- intersect(which(apply(df, 1, function(x) all(is.na(x)))), data_rows)
             df[fill_rows, ] <- "0"
             
