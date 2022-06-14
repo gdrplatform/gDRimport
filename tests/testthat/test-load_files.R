@@ -159,7 +159,7 @@ test_that(".get_plate_size works as expected", {
   df <- readxl::read_excel(system.file("extdata/data1/RawData_day7.xlsx", package = "gDRimport"))
   size <- .get_plate_size(df)
   expect_length(size, 2)
-  expect_equal(product(size), 384)
+  expect_equal(prod(size), 384)
 })
 
 test_that(".check_file_structure works as expected", {
@@ -167,6 +167,8 @@ test_that(".check_file_structure works as expected", {
   df <-
     df[, !apply(df[1:35, ], 2, function(x)
       all(is.na(x)))]
+  Bckd_info_idx <-
+    which(as.data.frame(df)[, 1] %in% "Background information")
   if (length(Bckd_info_idx) > 0) {
     df[Bckd_info_idx + 1, 1] <- df[Bckd_info_idx, 1]
     df[Bckd_info_idx, 1] <- ""
