@@ -19,3 +19,5 @@ pkgs:
     source: GITHUB
   purrr:
     source: CRAN
+  openxlsx:
+    source: CRAN
