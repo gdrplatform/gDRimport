@@ -173,6 +173,9 @@ test_that(".check_file_structure works as expected", {
     df[Bckd_info_idx + 1, 1] <- df[Bckd_info_idx, 1]
     df[Bckd_info_idx, 1] <- ""
   }
+  size <- .get_plate_size(df)
+  n_row <- size[1]
+  n_col <- size[2]
   plate_row <- which(as.data.frame(df)[, 1] %in% "Plate information")
   spacer_rows <- unlist(lapply(plate_row, function(x) c(x + 1, x + 2, x + 4 + n_row)))
   data_rows <- unlist(lapply(plate_row, function(x) (x + 4):(x + 4 + n_row - 1)))
@@ -188,9 +191,6 @@ test_that(".check_file_structure works as expected", {
   if (ncol(df) < n_col) {
     df[, (ncol(df) + 1):n_col] <- NA
   }
-  size <- .get_plate_size(df)
-  n_row <- size[1]
-  n_col <- size[2]
   iB <- 1
   iF <- 1
   iS <- 1
