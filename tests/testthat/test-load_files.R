@@ -208,3 +208,31 @@ test_that(".check_file_structure works as expected", {
   expect_error(.check_file_structure(df2, iB, iF, iS, results_filename,
                                     readout_offset, n_row, n_col, barcode_col))
 })
+
+test_that(".correct_plates works as expected", {
+  df <- readxl::read_excel(system.file("extdata/data1/RawData_day7.xlsx", package = "gDRimport"), col_names = FALSE)
+  df <-
+    df[, !apply(df[1:35, ], 2, function(x)
+      all(is.na(x)))]
+  Bckd_info_idx <-
+    which(as.data.frame(df)[, 1] %in% "Background information")
+  if (length(Bckd_info_idx) > 0) {
+    df[Bckd_info_idx + 1, 1] <- df[Bckd_info_idx, 1]
+    df[Bckd_info_idx, 1] <- ""
+  }
+  size <- .get_plate_size(df)
+  n_row <- size[1]
+  n_col <- size[2]
+  full_rows <-
+    !apply(df[, -6:-1], 1, function(x)
+      all(is.na(as.numeric(x))))#
+  plate_row <- which(as.data.frame(df)[, 1] %in% "Plate information")
+  spacer_rows <- unlist(lapply(plate_row, function(x) c(x + 1, x + 2, x + 4 + n_row)))
+  data_rows <- unlist(lapply(plate_row, function(x) (x + 4):(x + 4 + n_row - 1)))
+  df2 <- .correct_plates(df, plate_row, data_rows, n_row)
+  expect_identical(df, df2)
+  df_modified <- df
+  df_modified[9, ] <- NA
+  df_modified <- .correct_plates(df_modified, plate_row, data_rows, n_row)
+  expect_true(all(df_modified[9, ] == 0))
+})
