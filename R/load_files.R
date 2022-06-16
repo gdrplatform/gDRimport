@@ -665,18 +665,8 @@ load_results_EnVision <-
           data_rows <- unlist(lapply(plate_row, function(x) (x + 4):(x + 4 + n_row - 1)))
           
           # find full numeric rows
-          all_rows <- sum(apply(df, 1, function(x) all(!is.na(as.numeric(x)))))
-          
-          if (all_rows / n_row != length(plate_row)) {
-            fill_rows <- intersect(which(apply(df, 1, function(x) all(is.na(x)))), data_rows)
-            df[fill_rows, ] <- "0"
+          df <- .correct_plates(df, plate_row, data_rows, n_row)
             
-            #fill up data_rows
-            for (i in data_rows) {
-              df[i, c(is.na(df[i, ]))] <- "0"
-            }
-          }
-          
           
           # need to do some heuristic to find where the data is
           full_rows <-
@@ -1173,4 +1163,22 @@ read_EnVision <- function(file,
       )
     )
   }
+}
+
+
+#' Correct plates with not fully filled readout values
+#' @keywords internal
+.correct_plates <- function(df, plate_row, data_rows, n_row) {
+  all_rows <- sum(apply(df, 1, function(x) all(!is.na(as.numeric(x)))))
+  
+  if (all_rows / n_row != length(plate_row)) {
+    fill_rows <- intersect(which(apply(df, 1, function(x) all(is.na(x)))), data_rows)
+    df[fill_rows, ] <- "0"
+    
+    #fill up data_rows
+    for (i in data_rows) {
+      df[i, c(is.na(df[i, ]))] <- "0"
+    }
+  }
+  df
 }
