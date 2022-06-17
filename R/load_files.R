@@ -530,7 +530,7 @@ load_results_tsv <-
         stop(sprintf("Error reading %s", results_file[[iF]]))
       })
       # skip_empty_rows flag needs to be TRUE even if it ends up not skipping empty rows
-      if (dim(df)[2] == 1) {
+      if (ncol(df) == 1) {
         tryCatch({
           # likely a csv file
           df <-
@@ -556,7 +556,7 @@ load_results_tsv <-
       if (!("BackgroundValue" %in% colnames(df)))
         df$BackgroundValue <- 0
 
-      futile.logger::flog.info("File %s read; %d wells", results_filename[iF], dim(df)[1])
+      futile.logger::flog.info("File %s read; %d wells", results_filename[iF], nrow(df))
       all_results <- rbind(all_results, df)
 
       futile.logger::flog.info("File done")
@@ -633,11 +633,11 @@ load_results_EnVision <-
               stop(sprintf("Error reading %s, sheet %s", results_file[[iF]], iS))
             })
             colnames(df) <-
-              col_names <- paste0("x", seq_len(dim(df)[2]))
+              col_names <- paste0("x", seq_len(ncol(df)))
           }
-          df <-
-            df[, !apply(df[1:35, ], 2, function(x)
-              all(is.na(x)))]
+          colsRange <- 35
+          dfNew <- df[, colSums(is.na(df[seq_len(colsRange), ])) != colsRange]
+          
           # remove extra columns
           # limit to first 24 rows in case Protocol information is
           # exported which generate craps at the end of the file
@@ -660,12 +660,12 @@ load_results_EnVision <-
           n_col <- plate_dim[2]
           
           # manually add full rows
-          plate_row <- which(as.data.frame(df)[, 1] %in% "Plate information")
+          plate_rows <- which(as.data.frame(df)[, 1] %in% "Plate information")
           spacer_rows <- grep("[[:alpha:]]", as.data.frame(df)[, 1])
-          data_rows <- unlist(lapply(plate_row, function(x) (x + 4):(x + 4 + n_row - 1)))
+          data_rows <- unlist(lapply(plate_rows, function(x) (x + 4):(x + 4 + n_row - 1)))
           
           # find full numeric rows
-          df <- .correct_plates(df, plate_row, data_rows, n_row)
+          df <- .fill_empty_wells(df, plate_rows, data_rows, n_row)
             
           
           # need to do some heuristic to find where the data is
@@ -685,7 +685,7 @@ load_results_EnVision <-
           # don't consider the first columns as these may be metadata
           # if big gap, delete what is at the bottom (Protocol information)
           gaps <-
-            min(which(full_rows)[(diff(which(full_rows)) > 20)] + 1, dim(df)[1])
+            min(which(full_rows)[(diff(which(full_rows)) > 20)] + 1, nrow(df))
           
           df <-
             df[full_rows_index[full_rows_index <= gaps], ]
@@ -1140,7 +1140,7 @@ read_EnVision <- function(file,
 #' @keywords internal
 .get_plate_size <- function(df) {
   n_col <-
-    1.5 * 2 ^ ceiling(log2((dim(df)[2] - 2) / 1.5))
+    1.5 * 2 ^ ceiling(log2((ncol(df) - 2) / 1.5))
   n_row <- n_col / 1.5
   c(n_row, n_col)
 }
@@ -1168,10 +1168,10 @@ read_EnVision <- function(file,
 
 #' Correct plates with not fully filled readout values
 #' @keywords internal
-.correct_plates <- function(df, plate_row, data_rows, n_row) {
+.fill_empty_wells <- function(df, plate_rows, data_rows, n_row) {
   all_rows <- sum(apply(df, 1, function(x) all(!is.na(as.numeric(x)))))
   
-  if (all_rows / n_row != length(plate_row)) {
+  if (all_rows / n_row != length(plate_rows)) {
     fill_rows <- intersect(which(apply(df, 1, function(x) all(is.na(x)))), data_rows)
     df[fill_rows, ] <- "0"
     

@@ -209,7 +209,7 @@ test_that(".check_file_structure works as expected", {
                                     readout_offset, n_row, n_col, barcode_col))
 })
 
-test_that(".correct_plates works as expected", {
+test_that(".fill_empty_wells works as expected", {
   df <- readxl::read_excel(system.file("extdata/data1/RawData_day7.xlsx", package = "gDRimport"), col_names = FALSE)
   df <-
     df[, !apply(df[1:35, ], 2, function(x)
@@ -229,10 +229,10 @@ test_that(".correct_plates works as expected", {
   plate_row <- which(as.data.frame(df)[, 1] %in% "Plate information")
   spacer_rows <- unlist(lapply(plate_row, function(x) c(x + 1, x + 2, x + 4 + n_row)))
   data_rows <- unlist(lapply(plate_row, function(x) (x + 4):(x + 4 + n_row - 1)))
-  df2 <- .correct_plates(df, plate_row, data_rows, n_row)
+  df2 <- .fill_empty_wells(df, plate_row, data_rows, n_row)
   expect_identical(df, df2)
   df_modified <- df
   df_modified[9, ] <- NA
-  df_modified <- .correct_plates(df_modified, plate_row, data_rows, n_row)
+  df_modified <- .fill_empty_wells(df_modified, plate_row, data_rows, n_row)
   expect_true(all(df_modified[9, ] == 0))
 })
