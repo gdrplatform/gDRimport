@@ -636,7 +636,7 @@ load_results_EnVision <-
               col_names <- paste0("x", seq_len(ncol(df)))
           }
           colsRange <- 35
-          dfNew <- df[, colSums(is.na(df[seq_len(colsRange), ])) != colsRange]
+          df <- df[, colSums(is.na(df[seq_len(colsRange), ])) != colsRange]
           
           # remove extra columns
           # limit to first 24 rows in case Protocol information is
