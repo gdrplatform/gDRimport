@@ -530,7 +530,7 @@ load_results_tsv <-
         stop(sprintf("Error reading %s", results_file[[iF]]))
       })
       # skip_empty_rows flag needs to be TRUE even if it ends up not skipping empty rows
-      if (dim(df)[2] == 1) {
+      if (ncol(df) == 1) {
         tryCatch({
           # likely a csv file
           df <-
@@ -556,7 +556,7 @@ load_results_tsv <-
       if (!("BackgroundValue" %in% colnames(df)))
         df$BackgroundValue <- 0
 
-      futile.logger::flog.info("File %s read; %d wells", results_filename[iF], dim(df)[1])
+      futile.logger::flog.info("File %s read; %d wells", results_filename[iF], nrow(df))
       all_results <- rbind(all_results, df)
 
       futile.logger::flog.info("File done")
@@ -584,7 +584,6 @@ load_results_EnVision <-
 
     results_filename <- basename(results_file)
     # results_file is a string or a vector of strings
-
     # test if the result files are .tsv or .xls(x) files
     isExcel <- sapply(results_file, function(x) {
       return(tools::file_ext(x) %in% c("xlsx", "xls"))
@@ -634,11 +633,11 @@ load_results_EnVision <-
               stop(sprintf("Error reading %s, sheet %s", results_file[[iF]], iS))
             })
             colnames(df) <-
-              col_names <- paste0("x", seq_len(dim(df)[2]))
+              col_names <- paste0("x", seq_len(ncol(df)))
           }
-          df <-
-            df[, !apply(df[1:24, ], 2, function(x)
-              all(is.na(x)))]
+          colsRange <- 35
+          df <- df[, colSums(is.na(df[seq_len(colsRange), ])) != colsRange]
+          
           # remove extra columns
           # limit to first 24 rows in case Protocol information is
           # exported which generate craps at the end of the file
@@ -654,31 +653,53 @@ load_results_EnVision <-
         }
 
         if (isEdited) {
+          
+          # get the plate size
+          plate_dim <- .get_plate_size(df)
+          n_row <- plate_dim[1]
+          n_col <- plate_dim[2]
+          
+          # manually add full rows
+          plate_rows <- which(as.data.frame(df)[, 1] %in% "Plate information")
+          spacer_rows <- grep("[[:alpha:]]", as.data.frame(df)[, 1])
+          data_rows <- unlist(lapply(plate_rows, function(x) (x + 4):(x + 4 + n_row - 1)))
+          
+          # find full numeric rows
+          df <- .fill_empty_wells(df, plate_rows, data_rows, n_row)
+            
+          
           # need to do some heuristic to find where the data is
           full_rows <-
             !apply(df[, -6:-1], 1, function(x)
-              all(is.na(x)))
+              all(is.na(as.numeric(x))))# get the barcode(s) in the sheet; expected in column C (third one)
+          
+          barcode_col <- grep(headers[["barcode"]], as.data.frame(df))[1]
+          Barcode_idx <-
+            which(unlist(as.data.frame(df)[, barcode_col]) %in% headers[["barcode"]])
+          
+          additional_rows <- c(Barcode_idx, Bckd_info_idx + 1)
+          
+          full_rows_index <- unique(sort(c(additional_rows, additional_rows + 1,
+                                    setdiff(which(full_rows), spacer_rows))))
+          
           # don't consider the first columns as these may be metadata
           # if big gap, delete what is at the bottom (Protocol information)
           gaps <-
-            min(which(full_rows)[(diff(which(full_rows)) > 20)] + 1, dim(df)[1])
+            min(which(full_rows)[(diff(which(full_rows)) > 20)] + 1, nrow(df))
+          
           df <-
-            df[which(full_rows)[which(full_rows) <= gaps], ] # remove extra rows
+            df[full_rows_index[full_rows_index <= gaps], ]
 
-          # get the plate size
-          n_col <-
-            1.5 * 2 ^ ceiling(log2((dim(df)[2] - 2) / 1.5)) # -2 ot have some buffer
-          n_row <- n_col / 1.5
+          
+          Barcode_idx <-
+            which(unlist(as.data.frame(df)[, barcode_col]) %in% headers[["barcode"]])
 
           # add empty column to complete plate (assume left column is #1)
           if (ncol(df) < n_col) {
             df[, (ncol(df) + 1):n_col] <- NA
           }
 
-          # get the barcode(s) in the sheet; expected in column C (third one)
-          barcode_col <- grep(headers[["barcode"]], as.data.frame(df))
-          Barcode_idx <-
-            which(as.data.frame(df)[, barcode_col] %in% headers[["barcode"]])
+          
           # run through all plates
           for (iB in Barcode_idx) {
             # two type of format depending on where Background information is placed
@@ -692,28 +713,22 @@ load_results_EnVision <-
             } else {
               # export without background information
               # case of " Exported with EnVision Workstation version 1.13.3009.1409 "
+              ref_bckgrd <- 0
               readout_offset <- 1
               BackgroundValue <- 0
             }
 
             # check the structure of file is ok
-            check_values <-
-              as.matrix(df[iB + readout_offset + c(0, 1, n_row, n_row + iB + readout_offset), n_col])
-
+            .check_file_structure(df, iB, iF, iS,
+                                  results_filename, readout_offset,
+                                  n_row, n_col, barcode_col)
+            
             Barcode <- as.character(df[iB + 1, barcode_col])
-            if (any(c(is.na(check_values[2:3]), !is.na(check_values[c(1, 4)])))) {
-              stop(
-                sprintf(
-                  "In result file %s (sheet %s) readout values are misplaced for plate %s",
-                  results_filename[[iF]],
-                  iS,
-                  as.character(df[iB + 1, barcode_col])
-                )
-              )
-            }
 
             readout <-
-              as.matrix(df[iB + readout_offset + seq_len(n_row), 1:n_col])
+              as.matrix(df[iB + ref_bckgrd + seq_len(n_row) + 1, seq_len(n_col)])
+            
+            stopifnot(dim(readout) == plate_dim)
 
             # check that the plate size is consistent and contains values
             if (any(is.na(readout))) {
@@ -1121,3 +1136,49 @@ read_EnVision <- function(file,
   ))
 }
 
+#' Get plate size
+#' @keywords internal
+.get_plate_size <- function(df) {
+  n_col <-
+    1.5 * 2 ^ ceiling(log2((ncol(df) - 2) / 1.5))
+  n_row <- n_col / 1.5
+  c(n_row, n_col)
+}
+
+
+#' Check the structure of raw data
+#' @keywords internal
+.check_file_structure <- function(df, iB, iF, iS, results_filename,
+                                  readout_offset, n_row, n_col, barcode_col) {
+  # check the structure of file is ok
+  check_values <-
+    as.matrix(df[iB + readout_offset + c(0, 1, n_row, n_row + 1), n_col])
+  if (is.na(check_values[2])) {
+    stop(
+      sprintf(
+        "In result file %s (sheet %s) readout values are misplaced for plate %s",
+        results_filename[[iF]],
+        iS,
+        as.character(df[iB + 1, barcode_col])
+      )
+    )
+  }
+}
+
+
+#' Correct plates with not fully filled readout values
+#' @keywords internal
+.fill_empty_wells <- function(df, plate_rows, data_rows, n_row) {
+  all_rows <- sum(apply(df, 1, function(x) all(!is.na(as.numeric(x)))))
+  
+  if (all_rows / n_row != length(plate_rows)) {
+    fill_rows <- intersect(which(apply(df, 1, function(x) all(is.na(x)))), data_rows)
+    df[fill_rows, ] <- "0"
+    
+    #fill up data_rows
+    for (i in data_rows) {
+      df[i, c(is.na(df[i, ]))] <- "0"
+    }
+  }
+  df
+}

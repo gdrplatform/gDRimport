@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+#### [1.3.2] - 2022-06-15
+- Extend the logic for loading EnVision data for other plate size
+
 #### [1.3.1] - 2022-06-03
 - Add support to load drug doses from D300 .tdd files
 
