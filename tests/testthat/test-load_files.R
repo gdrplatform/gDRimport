@@ -34,7 +34,7 @@ test_that("load_results", {
   # get test_data1
   td1 <- get_test_data1()
 
-  headers <- get_env_identifiers()
+  headers <- gDRutils::get_env_identifiers()
   headers$barcode <- headers$barcode[[1]]
   
   # valid output returned for the two xlsx files
@@ -244,7 +244,7 @@ test_that(".fill_empty_wells works as expected", {
 
 
 test_that(".standardize_untreated_values works as expected", {
-  untreated_tags <- get_env_identifiers("untreated_tag")
+  untreated_tags <- gDRutils::get_env_identifiers("untreated_tag")
   
   df_test <- data.frame(a = c(untreated_tags[[1]], untreated_tags[[2]],
                               toupper(untreated_tags[[1]]), tolower(untreated_tags[[2]])))
