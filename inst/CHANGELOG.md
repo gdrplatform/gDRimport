@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+#### [1.3.r] - 2022-07-06
+- Reduce warnings and get rid of apply()
+
+#### [1.3.3] - 2022-06-17
+- Modify the logic for detecting empty columns
+
 #### [1.3.2] - 2022-06-15
 - Extend the logic for loading EnVision data for other plate size
 
