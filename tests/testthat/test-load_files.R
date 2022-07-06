@@ -34,8 +34,11 @@ test_that("load_results", {
   # get test_data1
   td1 <- get_test_data1()
 
+  headers <- get_env_identifiers()
+  headers$barcode <- headers$barcode[[1]]
+  
   # valid output returned for the two xlsx files
-  res_tbl <- load_results(df_results_files = c(td1$r_files))
+  res_tbl <- load_results(df_results_files = c(td1$r_files), headers = headers)
   ## check with reference
   ## reference obtained with: write.csv2(res_tbl,file = "ref_RawData_day0_day7_xlsx.csv",row.names = FALSE) # nolint
   ref_tbl <- read.csv2(td1$ref_r1_r2)
@@ -43,11 +46,11 @@ test_that("load_results", {
   
   # valid output returned for data.frame input
   df_results <- data.frame(datapath = td1$r_files, name = basename(td1$r_files))
-  res_df_tbl <- load_results(df_results)
+  res_df_tbl <- load_results(df_results, headers = headers)
   expect_equal(res_df_tbl, ref_tbl)
   
   # valid output is returned for a single xlsx file
-  res_tbl2 <- load_results(df_results_files = c(td1$r_files[1]))
+  res_tbl2 <- load_results(df_results_files = c(td1$r_files[1]), headers = headers)
   ## check with reference
   ref_tbl2 <- read.csv2(td1$ref_r1)
   expect_equal(res_tbl2, ref_tbl2)
@@ -56,7 +59,7 @@ test_that("load_results", {
   td2 <- get_test_data2()
   
   # valid output returned for Tecan format
-  res_tbl3 <- load_results(df_results_files = c(td2$r_files), instrument = "Tecan")
+  res_tbl3 <- load_results(df_results_files = c(td2$r_files), instrument = "Tecan", headers = headers)
   ## check with reference
   ref_tbl3 <- readRDS(td2$ref_r_df)
   expect_equal(res_tbl3, ref_tbl3)
