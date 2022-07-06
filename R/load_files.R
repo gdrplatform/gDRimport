@@ -638,7 +638,7 @@ load_results_EnVision <-
               col_names <- paste0("x", seq_len(ncol(df)))
           }
           # Find rows with data and drop empty columns
-          colsRange <- grep("Plate information", unlist(df[, 1]))[1] + 35
+          colsRange <- grep("Plate information", unlist(df[, 1]))[1] + 10
           df <- df[, colSums(is.na(df[seq_len(colsRange), ])) != colsRange]
           
           # remove extra columns
@@ -665,7 +665,17 @@ load_results_EnVision <-
           # manually add full rows
           plate_rows <- which(as.data.frame(df)[, 1] %in% "Plate information")
           spacer_rows <- grep("[[:alpha:]]", as.data.frame(df)[, 1])
-          data_rows <- unlist(lapply(plate_rows, function(x) (x + 4):(x + 4 + n_row - 1)))
+          
+          standardized_bckd_info <- if (length(Bckd_info_idx) == 0) {
+            0
+          } else {
+            Bckd_info_idx
+          }
+          
+          actual_plate_rows <- pmax(plate_rows, standardized_bckd_info)
+          
+          data_rows <- unlist(lapply(actual_plate_rows,
+                                     function(x) (x + 4):(x + 4 + n_row - 1)))
           
           # find full numeric rows
           df <- .fill_empty_wells(df, plate_rows, data_rows, n_row)
@@ -673,9 +683,9 @@ load_results_EnVision <-
           
           # need to do some heuristic to find where the data is
           df_to_check <- df[, -6:-1]
-          full_rows <- rowSums(as.data.frame(lapply(df_to_check, function(x) {
+          full_rows <- which(rowSums(as.data.frame(lapply(df, function(x) {
             is.na(suppressWarnings(as.numeric(x)))
-          }))) != ncol(df_to_check)
+          }))) != ncol(df))
 
           barcode_col <- grep(paste0(headers[["barcode"]], collapse = "|"), as.data.frame(df))[1]
           Barcode_idx <-
@@ -684,12 +694,12 @@ load_results_EnVision <-
           additional_rows <- c(Barcode_idx, Bckd_info_idx + 1)
           
           full_rows_index <- unique(sort(c(additional_rows, additional_rows + 1,
-                                    setdiff(which(full_rows), spacer_rows))))
+                                    setdiff(full_rows, spacer_rows))))
           
           # don't consider the first columns as these may be metadata
           # if big gap, delete what is at the bottom (Protocol information)
           gaps <-
-            min(which(full_rows)[(diff(which(full_rows)) > min(plate_rows[plate_rows > 1]))] + 1, nrow(df))
+            min(max(data_rows), nrow(df))
           
           df <-
             df[full_rows_index[full_rows_index <= gaps], ]
@@ -727,7 +737,7 @@ load_results_EnVision <-
                                   n_row, n_col, barcode_col)
             
             Barcode <- as.character(df[iB + 1, barcode_col])
-
+            if (is.na(Barcode)) next
             readout <-
               as.matrix(df[iB + ref_bckgrd + seq_len(n_row) + 1, seq_len(n_col)])
             
