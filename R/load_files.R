@@ -1208,7 +1208,7 @@ read_EnVision <- function(file,
 #' Standardize untreated values to ignore cases
 #' @keywords internal
 .standardize_untreated_values <- function(df) {
-  untreated_tags <- get_env_identifiers("untreated_tag")
+  untreated_tags <- gDRutils::get_env_identifiers("untreated_tag")
   as.data.frame(lapply(df, function(x) {
     if (is.factor(x)) x <- as.character(x)
     x[toupper(x) %in% toupper(untreated_tags)] <- untreated_tags[[1]]
