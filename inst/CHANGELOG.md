@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-#### [1.3.r] - 2022-07-06
+#### [1.3.4] - 2022-07-06
 - Reduce warnings and get rid of apply()
 
 #### [1.3.3] - 2022-06-17
