@@ -127,7 +127,6 @@ load_manifest <- function(manifest_file) {
   })
 
   headers <- gDRutils::validate_identifiers(do.call(rbind, manifest_data), req_ids = "barcode")
-  invisible(lapply(names(headers), function(x) set_env_identifier(x, headers[[x]])))
 
   # check default headers are in each df
   dump <- sapply(seq_along(manifest_file),
@@ -678,7 +677,7 @@ load_results_EnVision <-
             is.na(suppressWarnings(as.numeric(x)))
           }))) != ncol(df_to_check)
 
-          barcode_col <- grep(headers[["barcode"]], as.data.frame(df))[1]
+          barcode_col <- grep(paste0(headers[["barcode"]], collapse = "|"), as.data.frame(df))[1]
           Barcode_idx <-
             which(unlist(as.data.frame(df)[, barcode_col]) %in% headers[["barcode"]])
           
@@ -755,7 +754,7 @@ load_results_EnVision <-
               ReadoutValue = as.numeric(as.vector(readout)),
               BackgroundValue = BackgroundValue
             )
-            names(df_results)[1] <- headers[["barcode"]]
+            names(df_results)[1] <- headers[["barcode"]][1]
             
             futile.logger::flog.info("Plate %s read; %d wells",
                                      as.character(df[iB + 1, barcode_col]),
@@ -999,17 +998,24 @@ check_metadata_names <-
 
     # common headers that are written in a specific way
     # throw warning if close match and correct upper/lower case for consistency
-    for (i in seq_along(gDRutils::get_header("controlled"))) {
+    controlled_headers <- gDRutils::get_header("controlled")
+    for (i in seq_along(controlled_headers)) {
+      grep_pattern <- paste0(controlled_headers[[i]], "$", collapse = "|")
+      exact_match_grep <- grep(grep_pattern, corrected_names)
+      
+      # To avoid cases when grep compare 'PLATE' to 'temPLATE'
       case_match <- setdiff(
-        grep(paste0(gDRutils::get_header("controlled")[i], "$"), corrected_names, ignore.case = TRUE),
-        grep(paste0(gDRutils::get_header("controlled")[i], "$"), corrected_names)
+        grep(grep_pattern, corrected_names, ignore.case = TRUE),
+        exact_match_grep
       )
+      if (isTRUE(length(exact_match_grep) == 1 || corrected_names[case_match] %in% controlled_headers)) next
+      
       if (length(case_match) > 0) {
-        corrected_names[case_match] <- gDRutils::get_header("controlled")[i]
+        corrected_names[case_match] <- controlled_headers[[i]]
         futile.logger::flog.warn("Header %s in %s corrected to %s",
                                  corrected_names[case_match],
                                  df_name,
-                                 gDRutils::get_header("controlled")[i])
+                                 controlled_headers[[i]])
       }
     }
 
