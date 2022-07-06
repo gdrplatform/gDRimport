@@ -126,8 +126,8 @@ load_manifest <- function(manifest_file) {
     return(x)
   })
 
-  
   headers <- gDRutils::validate_identifiers(do.call(rbind, manifest_data), req_ids = "barcode")
+  invisible(lapply(names(headers), function(x) set_env_identifier(x, headers[[x]])))
 
   # check default headers are in each df
   dump <- sapply(seq_along(manifest_file),
@@ -379,7 +379,7 @@ load_templates_xlsx <-
     metadata_fields <- NULL
     all_templates <- data.frame()
     for (iF in seq_along(template_file)) {
-      futile.logger::flog.info("Loading", template_filename[iF])
+      futile.logger::flog.info("Loading %s", template_filename[iF])
       # first check that the sheet names are ok
       # identify drug_identifier sheet (case insensitive)
       Gnumber_idx <- grep(paste0(gDRutils::get_env_identifiers("drug"), "$"),
@@ -437,6 +437,7 @@ load_templates_xlsx <-
       }, error = function(e) {
         stop(sprintf("Error loading template. See logs: %s", e))
       })
+      
       # get the plate size
       n_row <-
         2 ^ ceiling(log2(max(which(
@@ -501,6 +502,8 @@ load_templates_xlsx <-
       all_templates <- as.data.frame(data.table::rbindlist(list(all_templates, df_template), fill = TRUE))
 
     }
+    # standardize untreated values
+    all_templates <- .standardize_untreated_values(all_templates)
     futile.logger::flog.info("Templates loaded successfully!")
     return(all_templates)
   }
@@ -635,7 +638,8 @@ load_results_EnVision <-
             colnames(df) <-
               col_names <- paste0("x", seq_len(ncol(df)))
           }
-          colsRange <- 35
+          # Find rows with data and drop empty columns
+          colsRange <- grep("Plate information", unlist(df[, 1]))[1] + 35
           df <- df[, colSums(is.na(df[seq_len(colsRange), ])) != colsRange]
           
           # remove extra columns
@@ -669,10 +673,11 @@ load_results_EnVision <-
             
           
           # need to do some heuristic to find where the data is
-          full_rows <-
-            !apply(df[, -6:-1], 1, function(x)
-              all(is.na(as.numeric(x))))# get the barcode(s) in the sheet; expected in column C (third one)
-          
+          df_to_check <- df[, -6:-1]
+          full_rows <- rowSums(as.data.frame(lapply(df_to_check, function(x) {
+            is.na(suppressWarnings(as.numeric(x)))
+          }))) != ncol(df_to_check)
+
           barcode_col <- grep(headers[["barcode"]], as.data.frame(df))[1]
           Barcode_idx <-
             which(unlist(as.data.frame(df)[, barcode_col]) %in% headers[["barcode"]])
@@ -685,11 +690,10 @@ load_results_EnVision <-
           # don't consider the first columns as these may be metadata
           # if big gap, delete what is at the bottom (Protocol information)
           gaps <-
-            min(which(full_rows)[(diff(which(full_rows)) > 20)] + 1, nrow(df))
+            min(which(full_rows)[(diff(which(full_rows)) > min(plate_rows[plate_rows > 1]))] + 1, nrow(df))
           
           df <-
             df[full_rows_index[full_rows_index <= gaps], ]
-
           
           Barcode_idx <-
             which(unlist(as.data.frame(df)[, barcode_col]) %in% headers[["barcode"]])
@@ -1169,8 +1173,9 @@ read_EnVision <- function(file,
 #' Correct plates with not fully filled readout values
 #' @keywords internal
 .fill_empty_wells <- function(df, plate_rows, data_rows, n_row) {
-  all_rows <- sum(apply(df, 1, function(x) all(!is.na(as.numeric(x)))))
-  
+  all_rows <- sum(rowSums(!is.na(as.data.frame(lapply(df, function(x)
+    suppressWarnings(as.numeric(x)))))) == ncol(df))
+
   if (all_rows / n_row != length(plate_rows)) {
     fill_rows <- intersect(which(apply(df, 1, function(x) all(is.na(x)))), data_rows)
     df[fill_rows, ] <- "0"
@@ -1181,4 +1186,16 @@ read_EnVision <- function(file,
     }
   }
   df
+}
+
+
+#' Standardize untreated values to ignore cases
+#' @keywords internal
+.standardize_untreated_values <- function(df) {
+  untreated_tags <- get_env_identifiers("untreated_tag")
+  as.data.frame(lapply(df, function(x) {
+    if (is.factor(x)) x <- as.character(x)
+    x[toupper(x) %in% toupper(untreated_tags)] <- untreated_tags[[1]]
+    return(x)
+    }))
 }
