@@ -683,9 +683,7 @@ load_results_EnVision <-
           
           # need to do some heuristic to find where the data is
           df_to_check <- df[, -6:-1]
-          full_rows <- which(rowSums(as.data.frame(lapply(df, function(x) {
-            is.na(suppressWarnings(as.numeric(x)))
-          }))) != ncol(df))
+          full_rows <- Reduce(union, lapply(df, function(x) grep("^\\d+$", x)))
 
           barcode_col <- grep(paste0(headers[["barcode"]], collapse = "|"), as.data.frame(df))[1]
           Barcode_idx <-
@@ -1189,9 +1187,7 @@ read_EnVision <- function(file,
 #' Correct plates with not fully filled readout values
 #' @keywords internal
 .fill_empty_wells <- function(df, plate_rows, data_rows, n_row) {
-  all_rows <- sum(rowSums(!is.na(as.data.frame(lapply(df, function(x)
-    suppressWarnings(as.numeric(x)))))) == ncol(df))
-
+  all_rows <- length(Reduce(intersect, lapply(df, function(x) grep("^\\d+$", x))))
   if (all_rows / n_row != length(plate_rows)) {
     fill_rows <- intersect(which(apply(df, 1, function(x) all(is.na(x)))), data_rows)
     df[fill_rows, ] <- "0"
