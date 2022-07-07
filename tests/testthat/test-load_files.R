@@ -34,8 +34,11 @@ test_that("load_results", {
   # get test_data1
   td1 <- get_test_data1()
 
+  headers <- gDRutils::get_env_identifiers()
+  headers$barcode <- headers$barcode[[1]]
+  
   # valid output returned for the two xlsx files
-  res_tbl <- load_results(df_results_files = c(td1$r_files))
+  res_tbl <- load_results(df_results_files = c(td1$r_files), headers = headers)
   ## check with reference
   ## reference obtained with: write.csv2(res_tbl,file = "ref_RawData_day0_day7_xlsx.csv",row.names = FALSE) # nolint
   ref_tbl <- read.csv2(td1$ref_r1_r2)
@@ -43,11 +46,11 @@ test_that("load_results", {
   
   # valid output returned for data.frame input
   df_results <- data.frame(datapath = td1$r_files, name = basename(td1$r_files))
-  res_df_tbl <- load_results(df_results)
+  res_df_tbl <- load_results(df_results, headers = headers)
   expect_equal(res_df_tbl, ref_tbl)
   
   # valid output is returned for a single xlsx file
-  res_tbl2 <- load_results(df_results_files = c(td1$r_files[1]))
+  res_tbl2 <- load_results(df_results_files = c(td1$r_files[1]), headers = headers)
   ## check with reference
   ref_tbl2 <- read.csv2(td1$ref_r1)
   expect_equal(res_tbl2, ref_tbl2)
@@ -56,7 +59,7 @@ test_that("load_results", {
   td2 <- get_test_data2()
   
   # valid output returned for Tecan format
-  res_tbl3 <- load_results(df_results_files = c(td2$r_files), instrument = "Tecan")
+  res_tbl3 <- load_results(df_results_files = c(td2$r_files), instrument = "Tecan", headers = headers)
   ## check with reference
   ref_tbl3 <- readRDS(td2$ref_r_df)
   expect_equal(res_tbl3, ref_tbl3)
@@ -80,7 +83,7 @@ test_that("load_templates", {
   t_tbl <- load_templates(df_template_files = c(td1$t_files))
   ## check with reference
   ## reference obtained with: write.csv2(t_tbl,file = "ref_template_treated_untreated_xlsx.csv",row.names = FALSE) # nolint
-  ref_tbl <- read.csv2(td1$ref_t1_t2)
+  ref_tbl <- .standardize_untreated_values(read.csv2(td1$ref_t1_t2))
   expect_equal(standardize_df(t_tbl), standardize_df(ref_tbl))
   
   # valid output returned for data.frame input
@@ -94,7 +97,7 @@ test_that("load_templates", {
   # valid output is returned for xlsx files
   res_t_tbl3 <- load_templates(df_template_files = c(td2$t_files))
   ## check with reference
-  ref_tbl3 <- readRDS(td2$ref_t_df)
+  ref_tbl3 <- .standardize_untreated_values(readRDS(td2$ref_t_df))
   expect_equal(standardize_df(res_t_tbl3), standardize_df(ref_tbl3))
   
   # expected error(s) returned
@@ -111,7 +114,7 @@ test_that("load_data", {
   # valid output returned for manifest
   expect_identical(td1$ref_m_df, l_tbl$manifest)
   # valid output returned for templates
-  ref_tbl <- read.csv2(td1$ref_t1_t2)
+  ref_tbl <- .standardize_untreated_values(read.csv2(td1$ref_t1_t2))
   expect_equal(standardize_df(l_tbl$treatments), standardize_df(ref_tbl))
   # valid output returned for results 
   ref_tbl <- read.csv2(td1$ref_r1_r2)
@@ -125,7 +128,7 @@ test_that("load_data", {
   ref_m_df <- readRDS(td2$ref_m_df)
   expect_identical(ref_m_df$data, l_tbl2$manifest)
   # valid output returned for templates
-  ref_t_df <- readRDS(td2$ref_t_df)
+  ref_t_df <- .standardize_untreated_values(readRDS(td2$ref_t_df))
   expect_equal(standardize_df(ref_t_df), standardize_df(l_tbl2$treatments))
   # valid output returned for results 
   ref_r_df <- readRDS(td2$ref_r_df)
@@ -176,9 +179,10 @@ test_that(".check_file_structure works as expected", {
   size <- .get_plate_size(df)
   n_row <- size[1]
   n_col <- size[2]
-  full_rows <-
-    !apply(df[, -6:-1], 1, function(x)
-      all(is.na(as.numeric(x))))#
+  df_to_check <- df[, -6:-1]
+  full_rows <- rowSums(as.data.frame(lapply(df_to_check, function(x) {
+    is.na(suppressWarnings(as.numeric(x)))
+  }))) != ncol(df_to_check)
   plate_row <- which(as.data.frame(df)[, 1] %in% "Plate information")
   spacer_rows <- unlist(lapply(plate_row, function(x) c(x + 1, x + 2, x + 4 + n_row)))
   data_rows <- unlist(lapply(plate_row, function(x) (x + 4):(x + 4 + n_row - 1)))
@@ -223,9 +227,10 @@ test_that(".fill_empty_wells works as expected", {
   size <- .get_plate_size(df)
   n_row <- size[1]
   n_col <- size[2]
-  full_rows <-
-    !apply(df[, -6:-1], 1, function(x)
-      all(is.na(as.numeric(x))))#
+  df_to_check <- df[, -6:-1]
+  full_rows <- rowSums(as.data.frame(lapply(df_to_check, function(x) {
+    is.na(suppressWarnings(as.numeric(x)))
+  }))) != ncol(df_to_check)
   plate_row <- which(as.data.frame(df)[, 1] %in% "Plate information")
   spacer_rows <- unlist(lapply(plate_row, function(x) c(x + 1, x + 2, x + 4 + n_row)))
   data_rows <- unlist(lapply(plate_row, function(x) (x + 4):(x + 4 + n_row - 1)))
@@ -235,4 +240,14 @@ test_that(".fill_empty_wells works as expected", {
   df_modified[9, ] <- NA
   df_modified <- .fill_empty_wells(df_modified, plate_row, data_rows, n_row)
   expect_true(all(df_modified[9, ] == 0))
+})
+
+
+test_that(".standardize_untreated_values works as expected", {
+  untreated_tags <- gDRutils::get_env_identifiers("untreated_tag")
+  
+  df_test <- data.frame(a = c(untreated_tags[[1]], untreated_tags[[2]],
+                              toupper(untreated_tags[[1]]), tolower(untreated_tags[[2]])))
+  df_corrected <- .standardize_untreated_values(df_test)
+  expect_true(all(unlist(df_corrected) == untreated_tags[[1]]))
 })

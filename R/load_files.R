@@ -126,7 +126,6 @@ load_manifest <- function(manifest_file) {
     return(x)
   })
 
-  
   headers <- gDRutils::validate_identifiers(do.call(rbind, manifest_data), req_ids = "barcode")
 
   # check default headers are in each df
@@ -379,7 +378,7 @@ load_templates_xlsx <-
     metadata_fields <- NULL
     all_templates <- data.frame()
     for (iF in seq_along(template_file)) {
-      futile.logger::flog.info("Loading", template_filename[iF])
+      futile.logger::flog.info("Loading %s", template_filename[iF])
       # first check that the sheet names are ok
       # identify drug_identifier sheet (case insensitive)
       Gnumber_idx <- grep(paste0(gDRutils::get_env_identifiers("drug"), "$"),
@@ -437,6 +436,7 @@ load_templates_xlsx <-
       }, error = function(e) {
         stop(sprintf("Error loading template. See logs: %s", e))
       })
+      
       # get the plate size
       n_row <-
         2 ^ ceiling(log2(max(which(
@@ -501,6 +501,8 @@ load_templates_xlsx <-
       all_templates <- as.data.frame(data.table::rbindlist(list(all_templates, df_template), fill = TRUE))
 
     }
+    # standardize untreated values
+    all_templates <- .standardize_untreated_values(all_templates)
     futile.logger::flog.info("Templates loaded successfully!")
     return(all_templates)
   }
@@ -635,7 +637,8 @@ load_results_EnVision <-
             colnames(df) <-
               col_names <- paste0("x", seq_len(ncol(df)))
           }
-          colsRange <- 35
+          # Find rows with data and drop empty columns
+          colsRange <- grep("Plate information", unlist(df[, 1]))[1] + 10
           df <- df[, colSums(is.na(df[seq_len(colsRange), ])) != colsRange]
           
           # remove extra columns
@@ -662,34 +665,42 @@ load_results_EnVision <-
           # manually add full rows
           plate_rows <- which(as.data.frame(df)[, 1] %in% "Plate information")
           spacer_rows <- grep("[[:alpha:]]", as.data.frame(df)[, 1])
-          data_rows <- unlist(lapply(plate_rows, function(x) (x + 4):(x + 4 + n_row - 1)))
+          
+          standardized_bckd_info <- if (length(Bckd_info_idx) == 0) {
+            0
+          } else {
+            Bckd_info_idx
+          }
+          
+          actual_plate_rows <- pmax(plate_rows, standardized_bckd_info)
+          
+          data_rows <- unlist(lapply(actual_plate_rows,
+                                     function(x) (x + 4):(x + 4 + n_row - 1)))
           
           # find full numeric rows
           df <- .fill_empty_wells(df, plate_rows, data_rows, n_row)
             
           
           # need to do some heuristic to find where the data is
-          full_rows <-
-            !apply(df[, -6:-1], 1, function(x)
-              all(is.na(as.numeric(x))))# get the barcode(s) in the sheet; expected in column C (third one)
-          
-          barcode_col <- grep(headers[["barcode"]], as.data.frame(df))[1]
+          df_to_check <- df[, -6:-1]
+          full_rows <- Reduce(union, lapply(df, function(x) grep("^\\d+$", x)))
+
+          barcode_col <- grep(paste0(headers[["barcode"]], collapse = "|"), as.data.frame(df))[1]
           Barcode_idx <-
             which(unlist(as.data.frame(df)[, barcode_col]) %in% headers[["barcode"]])
           
           additional_rows <- c(Barcode_idx, Bckd_info_idx + 1)
           
           full_rows_index <- unique(sort(c(additional_rows, additional_rows + 1,
-                                    setdiff(which(full_rows), spacer_rows))))
+                                    setdiff(full_rows, spacer_rows))))
           
           # don't consider the first columns as these may be metadata
           # if big gap, delete what is at the bottom (Protocol information)
           gaps <-
-            min(which(full_rows)[(diff(which(full_rows)) > 20)] + 1, nrow(df))
+            min(max(data_rows), nrow(df))
           
           df <-
             df[full_rows_index[full_rows_index <= gaps], ]
-
           
           Barcode_idx <-
             which(unlist(as.data.frame(df)[, barcode_col]) %in% headers[["barcode"]])
@@ -724,7 +735,7 @@ load_results_EnVision <-
                                   n_row, n_col, barcode_col)
             
             Barcode <- as.character(df[iB + 1, barcode_col])
-
+            if (is.na(Barcode)) next
             readout <-
               as.matrix(df[iB + ref_bckgrd + seq_len(n_row) + 1, seq_len(n_col)])
             
@@ -751,7 +762,7 @@ load_results_EnVision <-
               ReadoutValue = as.numeric(as.vector(readout)),
               BackgroundValue = BackgroundValue
             )
-            names(df_results)[1] <- headers[["barcode"]]
+            names(df_results)[1] <- headers[["barcode"]][1]
             
             futile.logger::flog.info("Plate %s read; %d wells",
                                      as.character(df[iB + 1, barcode_col]),
@@ -995,17 +1006,24 @@ check_metadata_names <-
 
     # common headers that are written in a specific way
     # throw warning if close match and correct upper/lower case for consistency
-    for (i in seq_along(gDRutils::get_header("controlled"))) {
+    controlled_headers <- gDRutils::get_header("controlled")
+    for (i in seq_along(controlled_headers)) {
+      grep_pattern <- paste0(controlled_headers[[i]], "$", collapse = "|")
+      exact_match_grep <- grep(grep_pattern, corrected_names)
+      
+      # To avoid cases when grep compare 'PLATE' to 'temPLATE'
       case_match <- setdiff(
-        grep(paste0(gDRutils::get_header("controlled")[i], "$"), corrected_names, ignore.case = TRUE),
-        grep(paste0(gDRutils::get_header("controlled")[i], "$"), corrected_names)
+        grep(grep_pattern, corrected_names, ignore.case = TRUE),
+        exact_match_grep
       )
+      if (isTRUE(length(exact_match_grep) == 1 || corrected_names[case_match] %in% controlled_headers)) next
+      
       if (length(case_match) > 0) {
-        corrected_names[case_match] <- gDRutils::get_header("controlled")[i]
+        corrected_names[case_match] <- controlled_headers[[i]]
         futile.logger::flog.warn("Header %s in %s corrected to %s",
                                  corrected_names[case_match],
                                  df_name,
-                                 gDRutils::get_header("controlled")[i])
+                                 controlled_headers[[i]])
       }
     }
 
@@ -1169,8 +1187,7 @@ read_EnVision <- function(file,
 #' Correct plates with not fully filled readout values
 #' @keywords internal
 .fill_empty_wells <- function(df, plate_rows, data_rows, n_row) {
-  all_rows <- sum(apply(df, 1, function(x) all(!is.na(as.numeric(x)))))
-  
+  all_rows <- length(Reduce(intersect, lapply(df, function(x) grep("^\\d+$", x))))
   if (all_rows / n_row != length(plate_rows)) {
     fill_rows <- intersect(which(apply(df, 1, function(x) all(is.na(x)))), data_rows)
     df[fill_rows, ] <- "0"
@@ -1181,4 +1198,16 @@ read_EnVision <- function(file,
     }
   }
   df
+}
+
+
+#' Standardize untreated values to ignore cases
+#' @keywords internal
+.standardize_untreated_values <- function(df) {
+  untreated_tags <- gDRutils::get_env_identifiers("untreated_tag")
+  as.data.frame(lapply(df, function(x) {
+    if (is.factor(x)) x <- as.character(x)
+    x[toupper(x) %in% toupper(untreated_tags)] <- untreated_tags[[1]]
+    return(x)
+    }))
 }
