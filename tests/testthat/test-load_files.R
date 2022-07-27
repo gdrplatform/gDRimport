@@ -28,6 +28,7 @@ context("load_files")
   expect_error(load_manifest(c(td1$m_file, td1$m_file)), err_msg3)
   
 })
+  
 
 test_that("load_results", {
   
@@ -103,6 +104,15 @@ test_that("load_templates", {
   # expected error(s) returned
   err_msg1 <- "Assertion on 'template_file' failed: File does not exist: '/non/existent_file'."
   expect_error(load_templates(c(td1$t_files[1], "/non/existent_file")), err_msg1)
+})
+
+
+
+test_that("load_templates returns an error when there is no untreated conditions", {
+  err_msg <- "No untreated controls were found in the template. Please upload appropriate template."
+  expect_error(load_templates(system.file("extdata/data_for_unittests/Template_7daytreated.xlsx",
+                                          package = "gDRimport")), err_msg)
+
 })
   
 test_that("load_data", {
