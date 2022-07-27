@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+#### [1.3.5] - 2022-07-27
+- Add assert for templates without untreated controls
+
 #### [1.3.4] - 2022-07-06
 - Reduce warnings and get rid of apply()
 
