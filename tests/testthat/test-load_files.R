@@ -29,34 +29,6 @@ context("load_files")
   
 })
   
-   test_that("load_manifest", {
-
-  # get test_data1
-  td1 <- get_test_data1()
- 
-  # valid output returned for "manifest.xlsx" 
-  m_df <- load_manifest(td1$m_file)
-  expect_identical(td1$ref_m_df, m_df$data)
-  
-  #get test data2
-  td2 <- get_test_data2()
-  
-  # valid output returned for "manifest.xlsx" 
-  m_df <- load_manifest(td2$m_file)
-  ref_m_df <- readRDS(td2$ref_m_df)
-  expect_identical(m_df, ref_m_df)
-  
-  # expected error(s) returned
-  err_msg1 <- "Assertion on 'manifest_file' failed: File does not exist: '/non/existent_file'."
-  expect_error(load_manifest("/non/existent_file"), err_msg1)
-  
-  err_msg2 <- "'manifest_file' must be a character vector"
-  expect_error(load_manifest(c(2, 3)), err_msg2)
- 
-  err_msg3 <- "Barcodes in Manifest must be unique!" 
-  expect_error(load_manifest(c(td1$m_file, td1$m_file)), err_msg3)
-  
-})
 
 test_that("load_results", {
   
