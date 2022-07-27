@@ -28,6 +28,35 @@ context("load_files")
   expect_error(load_manifest(c(td1$m_file, td1$m_file)), err_msg3)
   
 })
+  
+   test_that("load_manifest", {
+
+  # get test_data1
+  td1 <- get_test_data1()
+ 
+  # valid output returned for "manifest.xlsx" 
+  m_df <- load_manifest(td1$m_file)
+  expect_identical(td1$ref_m_df, m_df$data)
+  
+  #get test data2
+  td2 <- get_test_data2()
+  
+  # valid output returned for "manifest.xlsx" 
+  m_df <- load_manifest(td2$m_file)
+  ref_m_df <- readRDS(td2$ref_m_df)
+  expect_identical(m_df, ref_m_df)
+  
+  # expected error(s) returned
+  err_msg1 <- "Assertion on 'manifest_file' failed: File does not exist: '/non/existent_file'."
+  expect_error(load_manifest("/non/existent_file"), err_msg1)
+  
+  err_msg2 <- "'manifest_file' must be a character vector"
+  expect_error(load_manifest(c(2, 3)), err_msg2)
+ 
+  err_msg3 <- "Barcodes in Manifest must be unique!" 
+  expect_error(load_manifest(c(td1$m_file, td1$m_file)), err_msg3)
+  
+})
 
 test_that("load_results", {
   
@@ -103,6 +132,15 @@ test_that("load_templates", {
   # expected error(s) returned
   err_msg1 <- "Assertion on 'template_file' failed: File does not exist: '/non/existent_file'."
   expect_error(load_templates(c(td1$t_files[1], "/non/existent_file")), err_msg1)
+})
+
+
+
+test_that("load_templates returns an error when there is no untreated conditions", {
+  err_msg <- "No untreated controls were found in the template. Please upload appropriate template."
+  expect_error(load_templates(system.file("extdata/data_for_unittests/Template_7daytreated.xlsx",
+                                          package = "gDRimport")), err_msg)
+
 })
   
 test_that("load_data", {
