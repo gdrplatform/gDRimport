@@ -195,6 +195,10 @@ load_templates <- function(df_template_files) {
   all_templates[[gDRutils::get_env_identifiers("drug")]] <- 
     standardize_record_values(all_templates[[gDRutils::get_env_identifiers("drug")]], dictionary = DICTIONARY)
 
+  if (all(!gDRutils::get_env_identifiers("untreated_tag") %in% unlist(all_templates))) {
+    stop("No untreated controls were found in the template. Please upload appropriate template.")
+  }
+  
   return(all_templates)
 
 }
