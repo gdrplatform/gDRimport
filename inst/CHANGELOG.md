@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+#### [1.3.6] - 2022-07-28
+- Change the logic for identification plates using more versatile solution
+
 #### [1.3.5] - 2022-07-27
 - Add assert for templates without untreated controls
 
