@@ -667,7 +667,7 @@ load_results_EnVision <-
           n_col <- plate_dim[2]
           
           # manually add full rows
-          plate_rows <- which(as.data.frame(df)[, 1] %in% "Plate information")
+          plate_rows <- which(do.call(paste, df[, 2:3]) %in% "Repeat Barcode") - 1
           spacer_rows <- grep("[[:alpha:]]", as.data.frame(df)[, 1])
           
           standardized_bckd_info <- if (length(Bckd_info_idx) == 0) {
@@ -1191,8 +1191,8 @@ read_EnVision <- function(file,
 #' Correct plates with not fully filled readout values
 #' @keywords internal
 .fill_empty_wells <- function(df, plate_rows, data_rows, n_row) {
-  all_rows <- length(Reduce(intersect, lapply(df, function(x) grep("^\\d+$", x))))
-  if (all_rows / n_row != length(plate_rows)) {
+  all_rows <- Reduce(intersect, lapply(df, function(x) grep("^\\d+$", x)))
+  if (length(all_rows) / n_row != length(plate_rows)) {
     fill_rows <- intersect(which(apply(df, 1, function(x) all(is.na(x)))), data_rows)
     df[fill_rows, ] <- "0"
     
