@@ -1190,8 +1190,8 @@ read_EnVision <- function(file,
 
 #' Correct plates with not fully filled readout values
 #' @keywords internal
-.fill_empty_wells <- function(df, plate_rows, data_rows, n_row) {
-  all_rows <- Reduce(intersect, lapply(df, function(x) grep("^\\d+$", x)))
+.fill_empty_wells <- function(df, plate_rows, data_rows, n_row, numeric_regex = "^\\d+$") {
+  all_rows <- Reduce(intersect, lapply(df, function(x) grep(numeric_regex, x)))
   if (length(all_rows) / n_row != length(plate_rows)) {
     fill_rows <- intersect(which(apply(df, 1, function(x) all(is.na(x)))), data_rows)
     df[fill_rows, ] <- "0"
