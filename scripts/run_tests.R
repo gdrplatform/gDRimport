@@ -1,6 +1,6 @@
 REPO_DIR <- commandArgs(trailingOnly = TRUE)[1]
 LIB_DIR <- commandArgs(trailingOnly = TRUE)[2]
-PKG_DIR <- REPO_DIR
+PKG_DIR <- file.path(REPO_DIR, "gDRimport")
 stopifnot(
   dir.exists(REPO_DIR),
   dir.exists(LIB_DIR),
@@ -16,4 +16,9 @@ gDRstyle::lintPkgDirs(PKG_DIR)
 cat("Tests")
 devtools::test(PKG_DIR, stop_on_failure = TRUE)
 cat("Check")
-devtools::check(PKG_DIR, error_on = "error", args = c('--no-build-vignettes', '--no-manual', '--no-tests'))
+devtools::check(PKG_DIR, error_on = "error", args = c('--no-build-vignettes', '--no-examples', '--no-manual', '--no-tests'))
+cat("Deps")
+gDRstyle::checkDependencies(
+  desc_path = paste0(REPO_DIR, '/DESCRIPTION'), 
+  dep_path = paste0(REPO_DIR, '/rplatform/dependencies.yaml')
+)
