@@ -244,11 +244,11 @@ test_that(".fill_empty_wells works as expected", {
   plate_row <- which(as.data.frame(df)[, 1] %in% "Plate information")
   spacer_rows <- unlist(lapply(plate_row, function(x) c(x + 1, x + 2, x + 4 + n_row)))
   data_rows <- unlist(lapply(plate_row, function(x) (x + 4):(x + 4 + n_row - 1)))
-  df2 <- .fill_empty_wells(df, plate_row, data_rows, n_row)
+  df2 <- .fill_empty_wells(df, plate_row, data_rows, n_row, n_col)
   expect_identical(df, df2)
   df_modified <- df
   df_modified[9, ] <- NA
-  df_modified <- .fill_empty_wells(df_modified, plate_row, data_rows, n_row)
+  df_modified <- .fill_empty_wells(df_modified, plate_row, data_rows, n_row, n_col)
   expect_true(all(df_modified[9, ] == 0))
 })
 
