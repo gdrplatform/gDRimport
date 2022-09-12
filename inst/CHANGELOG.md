@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+#### [1.3.7] - 2022-09-12
+- Extend the logic for filling empty cols in plate design
+
 #### [1.3.6] - 2022-07-28
 - Change the logic for identification plates using more versatile solution
 
