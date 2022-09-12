@@ -442,22 +442,22 @@ load_templates_xlsx <-
       })
       
       # get the plate size
-      n_row <-
+      exp_row <-
         2 ^ ceiling(log2(max(which(
           apply(!is.na(df), 1, any)
         ))))
-      n_col <-
+      exp_col <-
         1.5 * 2 ^ ceiling(log2(max(which(
           apply(!is.na(df), 2, any)
         )) / 1.5))
-      n_row <- max(n_row, n_col / 1.5)
-      n_col <- max(1.5 * n_row, n_col)
+      exp_row <- max(exp_row, exp_col / 1.5)
+      exp_col <- max(1.5 * exp_row, exp_col)
       plate_range <-
-        ifelse(n_col < 26, paste0("A1:", LETTERS[n_col], n_row), "A1:AV32")
+        ifelse(exp_col < 26, paste0("A1:", LETTERS[exp_col], exp_row), "A1:AV32")
 
       # need to adapt for 1536 well plates
       df_template <-
-        base::expand.grid(WellRow = LETTERS[seq_len(n_row)], WellColumn = seq_len(n_col))
+        base::expand.grid(WellRow = LETTERS[seq_len(exp_row)], WellColumn = seq_len(exp_col))
 
       for (iS in template_sheets[[iF]]) {
         tryCatch({
@@ -465,7 +465,7 @@ load_templates_xlsx <-
             readxl::read_excel(
               template_file[[iF]],
               sheet = iS,
-              col_names = paste0("x", seq_len(n_col)),
+              col_names = paste0("x", seq_len(exp_col)),
               range = plate_range
             )
           )
@@ -476,7 +476,7 @@ load_templates_xlsx <-
             e
           ))
         })
-        df$WellRow <- LETTERS[seq_len(n_row)]
+        df$WellRow <- LETTERS[seq_len(exp_row)]
         df_melted <- reshape2::melt(df, id.vars = "WellRow")
         # check if metadata field already exist and correct capitalization if needed
         if (!(iS %in% metadata_fields)) {
@@ -661,10 +661,10 @@ load_results_EnVision <-
 
         if (isEdited) {
           
-          # get the plate size
+          # get the expected plate size
           plate_dim <- .get_plate_size(df)
-          n_row <- plate_dim[1]
-          n_col <- plate_dim[2]
+          exp_row <- plate_dim[1]
+          exp_col <- plate_dim[2]
           
           # manually add full rows
           plate_rows <- which(do.call(paste, df[, 2:3]) %in% "Repeat Barcode") - 1
@@ -679,10 +679,10 @@ load_results_EnVision <-
           actual_plate_rows <- pmax(plate_rows, standardized_bckd_info)
           
           data_rows <- unlist(lapply(actual_plate_rows,
-                                     function(x) (x + 4):(x + 4 + n_row - 1)))
+                                     function(x) (x + 4):(x + 4 + exp_row - 1)))
           
           # find full numeric rows
-          df <- .fill_empty_wells(df, plate_rows, data_rows, n_row, n_col)
+          df <- .fill_empty_wells(df, plate_rows, data_rows, exp_row, exp_col)
             
           
           # need to do some heuristic to find where the data is
@@ -710,8 +710,8 @@ load_results_EnVision <-
             which(unlist(as.data.frame(df)[, barcode_col]) %in% headers[["barcode"]])
 
           # add empty column to complete plate (assume left column is #1)
-          if (ncol(df) < n_col) {
-            df[, (ncol(df) + 1):n_col] <- NA
+          if (ncol(df) < exp_col) {
+            df[, (ncol(df) + 1):exp_col] <- NA
           }
 
           
@@ -736,12 +736,12 @@ load_results_EnVision <-
             # check the structure of file is ok
             .check_file_structure(df, iB, iF, iS,
                                   results_filename, readout_offset,
-                                  n_row, n_col, barcode_col)
+                                  exp_row, exp_col, barcode_col)
             
             Barcode <- as.character(df[iB + 1, barcode_col])
             if (is.na(Barcode)) next
             readout <-
-              as.matrix(df[iB + ref_bckgrd + seq_len(n_row) + 1, seq_len(n_col)])
+              as.matrix(df[iB + ref_bckgrd + seq_len(exp_row) + 1, seq_len(exp_col)])
             
             stopifnot(dim(readout) == plate_dim)
 
@@ -759,9 +759,9 @@ load_results_EnVision <-
 
             df_results <- data.frame(
               Barcode = Barcode,
-              WellRow = LETTERS[seq_len(n_row)],
+              WellRow = LETTERS[seq_len(exp_row)],
               WellColumn = as.vector(t(matrix(
-                seq_len(n_col), n_col, n_row
+                seq_len(exp_col), exp_col, exp_row
               ))),
               ReadoutValue = as.numeric(as.vector(readout)),
               BackgroundValue = BackgroundValue
@@ -775,11 +775,11 @@ load_results_EnVision <-
             }
           } else {
             # proper original EnVision file
-            n_row <- fInfo$n_row
-            n_col <- fInfo$n_col
+            exp_row <- fInfo$exp_row
+            exp_col <- fInfo$exp_col
             Barcode <- df[3, barcode_col]
             readout <-
-              as.matrix(df[4 + seq_len(n_row), seq_len(n_col)])
+              as.matrix(df[4 + seq_len(exp_row), seq_len(exp_col)])
 
             if (any(as.data.frame(df)[, 1] %in% "Background information")) {
               ref_bckgrd <-
@@ -793,9 +793,9 @@ load_results_EnVision <-
 
           df_results <- data.frame(
             Barcode = Barcode,
-            WellRow = LETTERS[seq_len(n_row)],
+            WellRow = LETTERS[seq_len(exp_row)],
             WellColumn = as.vector(t(matrix(
-              seq_len(n_col), n_col, n_row
+              seq_len(exp_col), exp_col, exp_row
             ))),
             ReadoutValue = as.numeric(as.vector(readout)),
             BackgroundValue = BackgroundValue
@@ -866,14 +866,14 @@ load_results_Tecan <-
       dfm <- dfm[1:ind - 1, 1:ncol(dfm)]
       
       # rows and columns in data matrix with row and col names
-      n_row <- nrow(dfm)
-      n_col <- ncol(dfm)
-      readout <- as.data.frame(dfm[2:n_row, 2:n_col])
-      rownames(readout) <- t(dfm[2:n_row, 1])
-      colnames(readout) <- dfm[1, 2:n_col]
+      exp_row <- nrow(dfm)
+      exp_col <- ncol(dfm)
+      readout <- as.data.frame(dfm[2:exp_row, 2:exp_col])
+      rownames(readout) <- t(dfm[2:exp_row, 1])
+      colnames(readout) <- dfm[1, 2:exp_col]
       # rows and columns in readout matrix
-      n_row <- nrow(readout)
-      n_col <- ncol(readout)
+      exp_row <- nrow(readout)
+      exp_col <- ncol(readout)
       # get well identifiers (numbers and letters) from layout
       WellRow <- rownames(readout)
       WellColumn <- strtoi(colnames(readout))
@@ -883,7 +883,7 @@ load_results_Tecan <-
         Barcode = results_sheets[iS],
         WellRow = WellRow,
         WellColumn =  as.vector(t(matrix(
-          WellColumn, n_col, n_row
+          WellColumn, exp_col, exp_row
         ))),
         ReadoutValue = as.numeric(as.vector(as.matrix(readout))),
         BackgroundValue = 0 ## Tecan users report negligible background readings, usually background is not recorded
@@ -1106,54 +1106,54 @@ read_EnVision <- function(file,
 
   if (isEdited) {
     # may be altered and miss columns
-    n_col <- max(vapply(results.list[5:10], length, integer(length =
+    exp_col <- max(vapply(results.list[5:10], length, integer(length =
                                                              1)))
-    n_col <- 1.5 * 2 ^ ceiling(log2((n_col - 1) / 1.5))
-    n_row <- which(vapply(results.list, function(x) {
+    exp_col <- 1.5 * 2 ^ ceiling(log2((exp_col - 1) / 1.5))
+    exp_row <- which(vapply(results.list, function(x) {
       grepl("Basic assay information", x[1]) |
         grepl("Plate information", x[1])
     },
     logical(1)))
-    if (length(n_row) == 1 && n_row == 1) {
+    if (length(exp_row) == 1 && exp_row == 1) {
       # only the top line with "Plate information" was found
-      n_row <- length(results.list) - 4
+      exp_row <- length(results.list) - 4
     } else {
       # scrap a few rows above "Basic assay information"
-      n_row <- min(n_row[n_row > 1]) - 7
+      exp_row <- min(exp_row[exp_row > 1]) - 7
     }
-    if (length(n_row) != 1 ||
-        abs(log2(1.5 * n_row / n_col)) > .5)  {
+    if (length(exp_row) != 1 ||
+        abs(log2(1.5 * exp_row / exp_col)) > .5)  {
       stop(sprintf("Error reading %s: wrong plate size", results_file[[iF]]))
     }
-    n_row <- n_col / 1.5
+    exp_row <- exp_col / 1.5
   } else {
-    n_col <- max(vapply(results.list[5:10], length, integer(length = 1)))
-    n_row <- sum(vapply(results.list[5:which(vapply(results.list, function(x)
+    exp_col <- max(vapply(results.list[5:10], length, integer(length = 1)))
+    exp_row <- sum(vapply(results.list[5:which(vapply(results.list, function(x)
       grepl("Basic assay information", x[1]), logical(1)))],
-      length, integer(1)) == n_col)
-    if (log2(1.5 * n_row / n_col) != 0)  {
+      length, integer(1)) == exp_col)
+    if (log2(1.5 * exp_row / exp_col) != 0)  {
       stop(sprintf("Error reading %s: wrong plate size", results_file[[iF]]))
     }
   }
 
   # pad the lines with NA if not full before creating the dataframe
   results.list <- lapply(results.list, function(x) {
-    if (length(x) < n_col) {
-      x <- c(x, array(NA, n_col - length(x)))
-    } else if (length(x) > n_col) {
-      x <- x[seq_len(n_col)]
+    if (length(x) < exp_col) {
+      x <- c(x, array(NA, exp_col - length(x)))
+    } else if (length(x) > exp_col) {
+      x <- x[seq_len(exp_col)]
     }
     x[x == "" & !is.na(x)] <- NA
     return(x)
   })
   df_ <- as.data.frame(do.call(rbind, results.list), stringsAsFactors = FALSE)
-  colnames(df_) <- paste0("x", seq_len(n_col))
+  colnames(df_) <- paste0("x", seq_len(exp_col))
 
   rownames(df_) <- NULL
   return(list(
     df = df_,
-    n_col = n_col,
-    n_row = n_row,
+    exp_col = exp_col,
+    exp_row = exp_row,
     isEdited = isEdited
   ))
 }
@@ -1161,20 +1161,20 @@ read_EnVision <- function(file,
 #' Get plate size
 #' @keywords internal
 .get_plate_size <- function(df) {
-  n_col <-
+  exp_col <-
     1.5 * 2 ^ ceiling(log2((ncol(df) - 2) / 1.5))
-  n_row <- n_col / 1.5
-  c(n_row, n_col)
+  exp_row <- exp_col / 1.5
+  c(exp_row, exp_col)
 }
 
 
 #' Check the structure of raw data
 #' @keywords internal
 .check_file_structure <- function(df, iB, iF, iS, results_filename,
-                                  readout_offset, n_row, n_col, barcode_col) {
+                                  readout_offset, exp_row, exp_col, barcode_col) {
   # check the structure of file is ok
   check_values <-
-    as.matrix(df[iB + readout_offset + c(0, 1, n_row, n_row + 1), n_col])
+    as.matrix(df[iB + readout_offset + c(0, 1, exp_row, exp_row + 1), exp_col])
   if (is.na(check_values[2])) {
     stop(
       sprintf(
@@ -1190,13 +1190,13 @@ read_EnVision <- function(file,
 
 #' Correct plates with not fully filled readout values
 #' @keywords internal
-.fill_empty_wells <- function(df, plate_rows, data_rows, n_row, n_col, numeric_regex = "^\\d+$") {
+.fill_empty_wells <- function(df, plate_rows, data_rows, exp_row, exp_col, numeric_regex = "^\\d+$") {
   all_rows <- Reduce(intersect, lapply(df, function(x) grep(numeric_regex, x)))
-  if (ncol(df) < n_col) {
-    new_cols <- n_col - ncol(df)
+  if (ncol(df) < exp_col) {
+    new_cols <- exp_col - ncol(df)
     df <- cbind(df, matrix(ncol = new_cols))
   }
-  if (length(all_rows) / n_row != length(plate_rows)) {
+  if (length(all_rows) / exp_row != length(plate_rows)) {
     fill_rows <- intersect(which(apply(df, 1, function(x) all(is.na(x)))), data_rows)
     df[fill_rows, ] <- "0"
     
