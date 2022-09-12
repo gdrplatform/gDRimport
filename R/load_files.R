@@ -661,7 +661,7 @@ load_results_EnVision <-
 
         if (isEdited) {
           
-          # get the plate size
+          # get the expected plate size
           plate_dim <- .get_plate_size(df)
           n_row <- plate_dim[1]
           n_col <- plate_dim[2]
@@ -682,7 +682,7 @@ load_results_EnVision <-
                                      function(x) (x + 4):(x + 4 + n_row - 1)))
           
           # find full numeric rows
-          df <- .fill_empty_wells(df, plate_rows, data_rows, n_row)
+          df <- .fill_empty_wells(df, plate_rows, data_rows, n_row, n_col)
             
           
           # need to do some heuristic to find where the data is
@@ -1190,9 +1190,13 @@ read_EnVision <- function(file,
 
 #' Correct plates with not fully filled readout values
 #' @keywords internal
-.fill_empty_wells <- function(df, plate_rows, data_rows, n_row, numeric_regex = "^\\d+$") {
+.fill_empty_wells <- function(df, plate_rows, data_rows, exp_row, exp_col, numeric_regex = "^\\d+$") {
   all_rows <- Reduce(intersect, lapply(df, function(x) grep(numeric_regex, x)))
-  if (length(all_rows) / n_row != length(plate_rows)) {
+  if (ncol(df) < exp_col) {
+    new_cols <- exp_col - ncol(df)
+    df <- cbind(df, matrix(ncol = new_cols))
+  }
+  if (length(all_rows) / exp_row != length(plate_rows)) {
     fill_rows <- intersect(which(apply(df, 1, function(x) all(is.na(x)))), data_rows)
     df[fill_rows, ] <- "0"
     
