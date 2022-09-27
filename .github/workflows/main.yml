@@ -10,15 +10,9 @@ name: main
 
 on:
   pull_request:
-  workflow_dispatch:
-    inputs:
-      testsResult:
-        description: 'Tests result'
-        required: true
-        default: 1
 
 jobs:
-  on_trigger:
+  package_test:
     runs-on: ubuntu-18.04
     env:
       GITHUB_TOKEN: ${{ secrets.PRIVATE_ACCESS_TOKEN }}
@@ -31,26 +25,6 @@ jobs:
           username: ${{ github.actor }}
           team: 'PR reviewers'
           GITHUB_TOKEN: ${{ secrets.PRIVATE_ACCESS_TOKEN }}
-
-      ##################
-      # User from Gene #
-      ##################
-      - if: ${{ steps.checkUserMember.outputs.isTeamMember == 'true' }}
-        name: Check tests
-        run: |
-          case "${{ github.event.inputs.testsResult }}" in
-            SUCCESSFUL)
-              echo 'Tests completed successfully'
-              exit 0
-            ;;
-            FAILED)
-              echo 'One or more tests failed'
-            ;;
-            *)
-              echo 'Unknown/unset TESTS_RESULT'
-              ;;
-          esac
-          exit 1
 
       ##########################
       # External collaborators #
@@ -73,4 +47,11 @@ jobs:
       - if: ${{ steps.checkUserMember.outputs.isTeamMember == 'false' }}
         name: Run tests
         run: |
-          docker run -v `pwd`:/mnt/vol ${{ env.TEST_TAG }} bash -c 'bash /mnt/vol/rplatform/run_tests.sh /mnt/vol/gDRimport'
+          docker run -v `pwd`:/mnt/vol ${{ env.TEST_TAG }} bash -c 'bash /mnt/vol/rplatform/run_tests.sh /mnt/vol/gDRutils'
+      
+      ##################
+      # User from Gene #
+      ##################
+      - if: ${{ steps.checkUserMember.outputs.isTeamMember == 'true' }}
+        name: Wait for test results
+        run: exit 1
