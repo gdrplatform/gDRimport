@@ -116,14 +116,11 @@ load_manifest <- function(manifest_file) {
       )
     }
   })
-  
-  # replace Time by Duration for backwards compatibility
+ 
+  # replace synonyms, e.g. 'time => Duration' (backwards compatibility)
   manifest_data <- lapply(manifest_data, function(x) {
-    if ("Time" %in% colnames(x)) {
-      colnames(x)[colnames(x) == "Time"] <-
-        gDRutils::get_env_identifiers("duration")
-    }
-    return(x)
+    colnames(x) <- gDRutils::update_idfs_synonyms(colnames(x))
+    x
   })
 
   headers <- gDRutils::validate_identifiers(do.call(rbind, manifest_data), req_ids = "barcode")
@@ -368,8 +365,10 @@ load_templates_xlsx <-
 
     if (is.null(template_filename))
       template_filename <- basename(template_file)
-    # read sheets in files
-    template_sheets <- lapply(template_file, readxl::excel_sheets)
+    
+    # validate template sheets
+    template_sheets <- correct_template_sheets(template_file)
+    
     # check drug_identifier is present in each df
     dump <- sapply(seq_along(template_file),
                    function(i)
@@ -384,10 +383,8 @@ load_templates_xlsx <-
     for (iF in seq_along(template_file)) {
       futile.logger::flog.info("Loading %s", template_filename[iF])
       # first check that the sheet names are ok
-      # identify drug_identifier sheet (case insensitive)
-      Gnumber_idx <- grep(paste0(gDRutils::get_env_identifiers("drug"), "$"),
-                          template_sheets[[iF]],
-                          ignore.case = TRUE)
+      # identify drug_identifier sheet
+      Gnumber_idx <- which(template_sheets[[iF]] %in% gDRutils::get_env_identifiers("drug"))
       Conc_idx <-
         grepl("Concentration", template_sheets[[iF]], ignore.case = TRUE)
       # case of untreated plate
