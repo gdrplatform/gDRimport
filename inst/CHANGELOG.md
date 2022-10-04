@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+#### [1.3.8] - 2022-10-04
+- Extend logic for correcting manifest and template data
+
 #### [1.3.7] - 2022-09-12
 - Extend the logic for filling empty cols in plate design
 
