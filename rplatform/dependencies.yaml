@@ -2,7 +2,7 @@ pkgs:
   gDRutils:
     ver: '>=1.0.39'
     url: gdrplatform/gDRutils
-    ref: master
+    ref: GDR-1604
     subdir: gDRutils
     source: GITHUB
   gDRstyle:
