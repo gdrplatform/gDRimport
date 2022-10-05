@@ -128,7 +128,7 @@ are_template_sheets_valid <- function(ts) {
 
 checkmate::assert_list(ts)
 
-cl <- list()
+cl <- vector("list", 10)
 
  # only allowed sheet names are present
   myv <- vapply(ts, function(x) {
