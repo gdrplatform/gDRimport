@@ -4,7 +4,14 @@
 \alias{.fill_empty_wells}
 \title{Correct plates with not fully filled readout values}
 \usage{
-.fill_empty_wells(df, plate_rows, data_rows, n_row, numeric_regex = "^\\\\d+$")
+.fill_empty_wells(
+  df,
+  plate_rows,
+  data_rows,
+  exp_row,
+  exp_col,
+  numeric_regex = "^\\\\d+$"
+)
 }
 \description{
 Correct plates with not fully filled readout values
