@@ -7,7 +7,7 @@
 fix_typos_with_reference(
   data,
   ref,
-  method = c("exact", "grepl"),
+  method = c("exact", "grepl", "adist"),
   fix_underscores = FALSE
 )
 }
