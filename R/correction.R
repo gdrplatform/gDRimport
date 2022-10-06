@@ -21,11 +21,10 @@ get_xl_sheets <- function(files) {
 #' 
 .check_against_single_template_sheet <- function(ts) {
 
- checkmate::assert_list(ts)
-
- # edge case: 'untreated'  template with (1) single sheet
- # and (2) improperly named (not 'idfs[['drug']]) 
-  myv <- vapply(es, function(x) {
+  checkmate::assert_list(ts)
+  # edge case: 'untreated'  template with (1) single sheet
+  # and (2) improperly named (not 'idfs[['drug']]) 
+  myv <- vapply(ts, function(x) {
     length(x) == 1 && x != gDRutils::get_env_identiers("drug")
   }, logical(1))
  
@@ -50,14 +49,12 @@ correct_template_sheets <- function(tfiles) {
   checkmate::assert_character(tfiles)
 
   ts <- get_xl_sheets(tfiles)
-  
   # no issues with templates sheets, return input data
-  fts <- if (are_template_sheets_valid(ts)) {
+  ts <- if (are_template_sheets_valid(ts)) {
     ts
   
   # there are issues, let's iterate through available fixes hoping to get the valid data eventually
   } else {
- 
     # spaces/bad capitalization 
     ts <- fix_typos_with_reference(ts, get_expected_template_sheets())
     
@@ -70,8 +67,13 @@ correct_template_sheets <- function(tfiles) {
         ts,
         get_expected_template_sheets("optional"),
         method = "grepl",
-        missing_underscores = TRUE
+        fix_underscores = TRUE
       )
+    # check one letter typos
+    ts <- fix_typos_with_reference(
+      ts,
+      unlist(get_env_identifiers(get_required_identifiers(), simplify = FALSE)),
+      method = "adist")
     
     # check if there is a template file with single, improperly named sheet 
     # fix if possible
@@ -80,9 +82,10 @@ correct_template_sheets <- function(tfiles) {
       inv_file <- attributes(st1)[["file"]]
       ts[[inv_file]] <- gDRutils::get_env_identifiers("drug")
     }
+    ts
   }
-  stopifnot(are_template_sheets_valid(fts))
-  fts
+  stopifnot(are_template_sheets_valid(ts))
+  ts
 }
 
 #' Get names of the shets expected in templates xlsx
@@ -166,7 +169,7 @@ cl <- vector("list", 10)
 fix_typos_with_reference <-
   function(data,
            ref,
-           method = c("exact", "grepl"),
+           method = c("exact", "grepl", "adist"),
            fix_underscores = FALSE) {
     
     stopifnot(is.list(data) || is.character(data))
@@ -191,7 +194,7 @@ fix_typos_with_reference <-
       
       # update to valid identifier (if found)
       # convert both v and valid identifiers to upper case before comparison
-      # remove "_" from references if 'missing_underscores' enabled
+      # remove "_" from references if 'fix_underscores' enabled
       ref_uc <- if (fix_underscores) {
         gsub("_", "", toupper(ref))
       } else {
@@ -201,8 +204,9 @@ fix_typos_with_reference <-
       cdata <- vapply(cdata, function(x) {
         idx <- if (method == "exact") {
           which(ref_uc %in% toupper(x))
-        }
-        else {
+        } else if (method == "adist") {
+          which(adist(toupper(x), ref_uc) == 1)
+        } else {
           which(mgrepl(ref_uc, toupper(x)))
         }
         if (length(idx) == 1) {

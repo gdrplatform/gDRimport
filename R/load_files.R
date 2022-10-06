@@ -368,7 +368,6 @@ load_templates_xlsx <-
     
     # validate template sheets
     template_sheets <- correct_template_sheets(template_file)
-    
     # check drug_identifier is present in each df
     dump <- sapply(seq_along(template_file),
                    function(i)
@@ -429,7 +428,7 @@ load_templates_xlsx <-
         df <-
           readxl::read_excel(
             template_file[[iF]],
-            sheet = template_sheets[[iF]][Gnumber_idx],
+            sheet = Gnumber_idx,
             col_names = paste0("x", 1:48),
             range = "A1:AV32",
             col_types = "text"
@@ -456,7 +455,8 @@ load_templates_xlsx <-
       df_template <-
         base::expand.grid(WellRow = LETTERS[seq_len(n_row)], WellColumn = seq_len(n_col))
 
-      for (iS in template_sheets[[iF]]) {
+      for (iS in seq_along(template_sheets[[iF]])) {
+        sheetName <- template_sheets[[iF]][[iS]]
         tryCatch({
           df <- as.data.frame(
             readxl::read_excel(
@@ -476,18 +476,18 @@ load_templates_xlsx <-
         df$WellRow <- LETTERS[seq_len(n_row)]
         df_melted <- reshape2::melt(df, id.vars = "WellRow")
         # check if metadata field already exist and correct capitalization if needed
-        if (!(iS %in% metadata_fields)) {
+        if (!(sheetName %in% metadata_fields)) {
           if (!is.null(metadata_fields) &&
-              toupper(iS) %in% toupper(metadata_fields)) {
-            oldiS <- iS
-            iS <-
-              metadata_fields[toupper(iS) == toupper(metadata_fields)]
-            futile.logger::flog.info("%s corrected to match case with %s", oldiS, iS)
+              toupper(sheetName) %in% toupper(metadata_fields)) {
+            oldiS <- sheetName
+            sheetName <-
+              metadata_fields[toupper(sheetName) == toupper(metadata_fields)]
+            futile.logger::flog.info("%s corrected to match case with %s", oldiS, sheetName)
           } else {
-            metadata_fields <- c(metadata_fields, iS)
+            metadata_fields <- c(metadata_fields, sheetName)
           }
         }
-        colnames(df_melted)[3] <- iS
+        colnames(df_melted)[3] <- sheetName
         colnames(df_melted)[colnames(df_melted) == "variable"] <-
           "WellColumn"
         df_melted$WellColumn <-
