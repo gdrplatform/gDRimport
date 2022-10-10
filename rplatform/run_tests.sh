@@ -14,4 +14,4 @@ echo ">>>>> OWNER OF THE REPOSITORY"
 sudo chown -R `id -u` $CORE_DIR
 
 echo ">>>>>>>> RUNNING CHECK"
-Rscript -e "gDRstyle::checkPackage('gDRutils' , '/mnt/vol', FALSE)"
+Rscript -e "gDRstyle::checkPackage('gDRimport' , '/mnt/vol')"
