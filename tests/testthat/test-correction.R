@@ -66,3 +66,26 @@ eobs <- as.character(fix_typos_with_reference(e, ref = get_expected_template_she
 eref <- as.character(gDRutils::get_env_identifiers(c("drug", "concentration"), FALSE))
 expect_equal(eref, eobs)
 })
+
+
+test_that("correct_template_sheets works as expected", {
+  tfiles <- list("template1.xlsx" = c("Gnumber", "Concentration", "Media"),
+                 "template2.xlsx" = c("Gnomber", "Concentration"),
+                 "template3.xlsx" = c("Gnomber", "Concentration", "Gnumber_2", "Concentration_2"),
+                 "template_untr.xlsx" = c("Gnumber", "Media"))
+  tfiles_empty <- lapply(tfiles, function(x) {
+    listData <- lapply(x, function(y) y = data.frame(x = runif(12)))
+    names(listData) <- x
+    listData
+  })
+  lapply(names(tfiles_empty), function(x) {
+    openxlsx::write.xlsx(tfiles_empty[[x]], file.path(tempdir(), x))
+  })
+  correctedList <- correct_template_sheets(file.path(tempdir(), names(tfiles)))
+  
+  tfilesCorrect <- list("template1.xlsx" = c("Gnumber", "Concentration", "Media"),
+                 "template2.xlsx" = c("Gnumber", "Concentration"),
+                 "template3.xlsx" = c("Gnumber", "Concentration", "Gnumber_2", "Concentration_2"),
+                 "template_untr.xlsx" = c("Gnumber", "Media"))
+  testthat::expect_identical(lapply(unname(correctedList), unname), unname(tfilesCorrect))
+})
