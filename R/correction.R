@@ -72,7 +72,7 @@ correct_template_sheets <- function(tfiles) {
     # check one letter typos
     ts <- fix_typos_with_reference(
       ts,
-      unlist(get_env_identifiers(get_required_identifiers(), simplify = FALSE)),
+      unlist(gDRutils::get_env_identifiers(gDRutils::get_required_identifiers(), simplify = FALSE)),
       method = "adist")
     
     # check if there is a template file with single, improperly named sheet 
