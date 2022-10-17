@@ -139,7 +139,7 @@ drug <- gDRutils::get_env_identifiers("drug")
   myv <- vapply(ts, function(x) {
     all(get_expected_template_sheets("core") %in% x)
   }, logical(1))
-  if (sum(!myv) == 1 && length(myv) > 1) {
+  if (sum(!myv) == 1 && length(myv) > 1) { # allow for having only `Drug` sheet in case of untreated template
     myv[!myv] <- drug %in% ts[!myv][[1]]
   }
   cl[[length(cl) + 1]] <- all(myv)
