@@ -72,7 +72,7 @@ correct_template_sheets <- function(tfiles) {
     # check one letter typos
     ts <- fix_typos_with_reference(
       ts,
-      unlist(get_env_identifiers(get_required_identifiers(), simplify = FALSE)),
+      unlist(gDRutils::get_env_identifiers(gDRutils::get_required_identifiers(), simplify = FALSE)),
       method = "adist")
     
     # check if there is a template file with single, improperly named sheet 
@@ -132,11 +132,16 @@ are_template_sheets_valid <- function(ts) {
 checkmate::assert_list(ts)
 
 cl <- vector("list", 10)
+drug <- gDRutils::get_env_identifiers("drug")
+
 
  # only allowed sheet names are present
   myv <- vapply(ts, function(x) {
-    all(x %in% get_expected_template_sheets())
+    all(get_expected_template_sheets("core") %in% x)
   }, logical(1))
+  if (sum(!myv) == 1 && length(myv) > 1) { # allow for having only `Drug` sheet in case of untreated template
+    myv[!myv] <- drug %in% ts[!myv][[1]]
+  }
   cl[[length(cl) + 1]] <- all(myv)
   
  # at least idfs[['drug']] sheet is present in all files
