@@ -132,11 +132,16 @@ are_template_sheets_valid <- function(ts) {
 checkmate::assert_list(ts)
 
 cl <- vector("list", 10)
+drug <- gDRutils::get_env_identifiers("drug")
+
 
  # only allowed sheet names are present
   myv <- vapply(ts, function(x) {
-    all(x %in% get_expected_template_sheets())
+    all(get_expected_template_sheets("core") %in% x)
   }, logical(1))
+  if (sum(!myv) == 1 && length(myv) > 1) {
+    myv[!myv] <- drug %in% ts[!myv][[1]]
+  }
   cl[[length(cl) + 1]] <- all(myv)
   
  # at least idfs[['drug']] sheet is present in all files
