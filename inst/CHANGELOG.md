@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+#### [1.3.10] - 2022-10-17
+- Add missing namespace and add unit tests for `correct_template_sheets`
+
 #### [1.3.9] - 2022-10-06
 - Extend logic for correcting template data (II)
 
