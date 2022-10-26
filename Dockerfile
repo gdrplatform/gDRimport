@@ -1,4 +1,4 @@
-FROM arkadiuszgladki/gdr_shiny:0.08
+FROM arkadiuszgladki/gdr_shiny:0.09
 
 # temporary fix
 # GitHub token for downloading private dependencies
