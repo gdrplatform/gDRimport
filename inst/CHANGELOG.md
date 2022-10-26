@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+
+#### [1.3.11] - 2022-10-26
+- Fix bug with reading two untreated templates
+
 #### [1.3.10] - 2022-10-17
 - Add missing namespace and add unit tests for `correct_template_sheets`
 
