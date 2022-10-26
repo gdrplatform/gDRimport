@@ -25,7 +25,7 @@ get_xl_sheets <- function(files) {
   # edge case: 'untreated'  template with (1) single sheet
   # and (2) improperly named (not 'idfs[['drug']]) 
   myv <- vapply(ts, function(x) {
-    length(x) == 1 && x != gDRutils::get_env_identiers("drug")
+    length(x) == 1 && x != gDRutils::get_env_identifiers("drug")
   }, logical(1))
  
   # one template file with 
@@ -56,7 +56,7 @@ correct_template_sheets <- function(tfiles) {
   # there are issues, let's iterate through available fixes hoping to get the valid data eventually
   } else {
     # spaces/bad capitalization 
-    ts <- fix_typos_with_reference(ts, get_expected_template_sheets())
+    ts <- fix_typos_with_reference(ts, unlist(gDRutils::get_env_identifiers()))
     
     # additional prefixes/postfixes in the optional sheets (e.g. "Concentration_2_3", "my_gnumber_2)"
     ts <- fix_typos_with_reference(ts, get_expected_template_sheets("optional"), method = "grepl")
@@ -134,10 +134,9 @@ checkmate::assert_list(ts)
 cl <- vector("list", 10)
 drug <- gDRutils::get_env_identifiers("drug")
 
-
  # only allowed sheet names are present
   myv <- vapply(ts, function(x) {
-    all(get_expected_template_sheets("core") %in% x)
+    all(drug %in% x)
   }, logical(1))
   if (sum(!myv) == 1 && length(myv) > 1) { # allow for having only `Drug` sheet in case of untreated template
     myv[!myv] <- drug %in% ts[!myv][[1]]
