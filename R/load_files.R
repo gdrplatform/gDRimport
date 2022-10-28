@@ -116,14 +116,11 @@ load_manifest <- function(manifest_file) {
       )
     }
   })
-  
-  # replace Time by Duration for backwards compatibility
+ 
+  # replace synonyms, e.g. 'time => Duration' (backwards compatibility)
   manifest_data <- lapply(manifest_data, function(x) {
-    if ("Time" %in% colnames(x)) {
-      colnames(x)[colnames(x) == "Time"] <-
-        gDRutils::get_env_identifiers("duration")
-    }
-    return(x)
+    colnames(x) <- gDRutils::update_idfs_synonyms(colnames(x))
+    x
   })
 
   headers <- gDRutils::validate_identifiers(do.call(rbind, manifest_data), req_ids = "barcode")
@@ -368,8 +365,9 @@ load_templates_xlsx <-
 
     if (is.null(template_filename))
       template_filename <- basename(template_file)
-    # read sheets in files
-    template_sheets <- lapply(template_file, readxl::excel_sheets)
+    
+    # validate template sheets
+    template_sheets <- correct_template_sheets(template_file)
     # check drug_identifier is present in each df
     dump <- sapply(seq_along(template_file),
                    function(i)
@@ -384,10 +382,8 @@ load_templates_xlsx <-
     for (iF in seq_along(template_file)) {
       futile.logger::flog.info("Loading %s", template_filename[iF])
       # first check that the sheet names are ok
-      # identify drug_identifier sheet (case insensitive)
-      Gnumber_idx <- grep(paste0(gDRutils::get_env_identifiers("drug"), "$"),
-                          template_sheets[[iF]],
-                          ignore.case = TRUE)
+      # identify drug_identifier sheet
+      Gnumber_idx <- which(template_sheets[[iF]] %in% gDRutils::get_env_identifiers("drug"))
       Conc_idx <-
         grepl("Concentration", template_sheets[[iF]], ignore.case = TRUE)
       # case of untreated plate
@@ -432,7 +428,7 @@ load_templates_xlsx <-
         df <-
           readxl::read_excel(
             template_file[[iF]],
-            sheet = template_sheets[[iF]][Gnumber_idx],
+            sheet = Gnumber_idx,
             col_names = paste0("x", 1:48),
             range = "A1:AV32",
             col_types = "text"
@@ -459,7 +455,8 @@ load_templates_xlsx <-
       df_template <-
         base::expand.grid(WellRow = LETTERS[seq_len(n_row)], WellColumn = seq_len(n_col))
 
-      for (iS in template_sheets[[iF]]) {
+      for (iS in seq_along(template_sheets[[iF]])) {
+        sheetName <- template_sheets[[iF]][[iS]]
         tryCatch({
           df <- as.data.frame(
             readxl::read_excel(
@@ -479,18 +476,18 @@ load_templates_xlsx <-
         df$WellRow <- LETTERS[seq_len(n_row)]
         df_melted <- reshape2::melt(df, id.vars = "WellRow")
         # check if metadata field already exist and correct capitalization if needed
-        if (!(iS %in% metadata_fields)) {
+        if (!(sheetName %in% metadata_fields)) {
           if (!is.null(metadata_fields) &&
-              toupper(iS) %in% toupper(metadata_fields)) {
-            oldiS <- iS
-            iS <-
-              metadata_fields[toupper(iS) == toupper(metadata_fields)]
-            futile.logger::flog.info("%s corrected to match case with %s", oldiS, iS)
+              toupper(sheetName) %in% toupper(metadata_fields)) {
+            oldiS <- sheetName
+            sheetName <-
+              metadata_fields[toupper(sheetName) == toupper(metadata_fields)]
+            futile.logger::flog.info("%s corrected to match case with %s", oldiS, sheetName)
           } else {
-            metadata_fields <- c(metadata_fields, iS)
+            metadata_fields <- c(metadata_fields, sheetName)
           }
         }
-        colnames(df_melted)[3] <- iS
+        colnames(df_melted)[3] <- sheetName
         colnames(df_melted)[colnames(df_melted) == "variable"] <-
           "WellColumn"
         df_melted$WellColumn <-
@@ -661,7 +658,7 @@ load_results_EnVision <-
 
         if (isEdited) {
           
-          # get the plate size
+          # get the expected plate size
           plate_dim <- .get_plate_size(df)
           n_row <- plate_dim[1]
           n_col <- plate_dim[2]
@@ -682,7 +679,7 @@ load_results_EnVision <-
                                      function(x) (x + 4):(x + 4 + n_row - 1)))
           
           # find full numeric rows
-          df <- .fill_empty_wells(df, plate_rows, data_rows, n_row)
+          df <- .fill_empty_wells(df, plate_rows, data_rows, n_row, n_col)
             
           
           # need to do some heuristic to find where the data is
@@ -1190,9 +1187,13 @@ read_EnVision <- function(file,
 
 #' Correct plates with not fully filled readout values
 #' @keywords internal
-.fill_empty_wells <- function(df, plate_rows, data_rows, n_row, numeric_regex = "^\\d+$") {
+.fill_empty_wells <- function(df, plate_rows, data_rows, exp_row, exp_col, numeric_regex = "^\\d+$") {
   all_rows <- Reduce(intersect, lapply(df, function(x) grep(numeric_regex, x)))
-  if (length(all_rows) / n_row != length(plate_rows)) {
+  if (ncol(df) < exp_col) {
+    new_cols <- exp_col - ncol(df)
+    df <- cbind(df, matrix(ncol = new_cols))
+  }
+  if (length(all_rows) / exp_row != length(plate_rows)) {
     fill_rows <- intersect(which(apply(df, 1, function(x) all(is.na(x)))), data_rows)
     df[fill_rows, ] <- "0"
     

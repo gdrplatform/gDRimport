@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+
+#### [1.3.11] - 2022-10-26
+- Fix bug with reading two untreated templates
+
+#### [1.3.10] - 2022-10-17
+- Add missing namespace and add unit tests for `correct_template_sheets`
+
+#### [1.3.9] - 2022-10-06
+- Extend logic for correcting template data (II)
+
+#### [1.3.8] - 2022-10-04
+- Extend logic for correcting manifest and template data
+
+#### [1.3.7] - 2022-09-12
+- Extend the logic for filling empty cols in plate design
+
 #### [1.3.6] - 2022-07-28
 - Change the logic for identification plates using more versatile solution
 
