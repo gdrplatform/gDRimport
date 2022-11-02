@@ -1,0 +1,57 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+#
+# See https://github.com/r-lib/actions/tree/master/examples#readme for
+# additional example workflows available for the R community.
+
+name: main
+
+on:
+  pull_request:
+
+jobs:
+  package_test:
+    runs-on: ubuntu-18.04
+    env:
+      GITHUB_TOKEN: ${{ secrets.PRIVATE_ACCESS_TOKEN }}
+      TEST_TAG: user/app:latest-${{ github.sha }}
+
+    steps:
+      - uses: tspascoal/get-user-teams-membership@v1
+        id: checkUserMember
+        with:
+          username: ${{ github.actor }}
+          team: 'PR reviewers'
+          GITHUB_TOKEN: ${{ secrets.PRIVATE_ACCESS_TOKEN }}
+
+      ##########################
+      # External collaborators #
+      ##########################
+      - if: ${{ steps.checkUserMember.outputs.isTeamMember == 'false' }}
+        name: Checkout
+        uses: actions/checkout@v2
+      - if: ${{ steps.checkUserMember.outputs.isTeamMember == 'false' }}
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - if: ${{ steps.checkUserMember.outputs.isTeamMember == 'false' }}
+        name: Build
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          load: true
+          tags: ${{ env.TEST_TAG }}
+          build-args:
+            GITHUB_TOKEN=${{ secrets.PRIVATE_ACCESS_TOKEN }}
+      - if: ${{ steps.checkUserMember.outputs.isTeamMember == 'false' }}
+        name: Run tests
+        run: |
+          docker run -v `pwd`:/mnt/vol ${{ env.TEST_TAG }} bash -c 'bash /mnt/vol/rplatform/run_tests.sh /mnt/vol/gDRutils'
+      
+      ##################
+      # User from Gene #
+      ##################
+      - if: ${{ steps.checkUserMember.outputs.isTeamMember == 'true' }}
+        name: Wait for test results
+        run: exit 1
