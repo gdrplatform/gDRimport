@@ -11,7 +11,8 @@ test_that("check get_exception_data works correctly", {
   expect_equal(dim(gDRimport::get_exception_data()), c(32, 5))
 
   expect_error(gDRimport::get_exception_data("two"),
-               "Assertion on 'status_code' failed: Must be of type 'number' (or 'NULL'), not 'character'.")
+               "Assertion on 'status_code' failed: Must be of type 'number' (or 'NULL'), not 'character'.",
+               fixed = TRUE)
   expect_error(gDRimport::get_exception_data(0),
                paste0("Assertion on 'toString(status_code)' failed: Must be element of set",
                       " {'1','2','3','4','5','6','7','8','9','10','11','12','13','14',",
