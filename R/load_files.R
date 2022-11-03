@@ -47,7 +47,7 @@ load_data <-
              %in% basename(template_filename))) {
       exception_data <- get_exception_data(11)
       stop(sprintf(
-        exception_data$sprintf_text
+        exception_data$sprintf_text,
         toString(setdiff(
           unique(manifest[[headers[["template"]]]][manifest[[headers[["barcode"]]]] %in%
                                                      data[[headers[["barcode"]]]]]),
@@ -104,7 +104,7 @@ load_manifest <- function(manifest_file) {
       }, error = function(e) {
         exception_data <- get_exception_data(12)
         stop(sprintf(
-          exception_data$sprintf_text
+          exception_data$sprintf_text,
           e
         ))
       })

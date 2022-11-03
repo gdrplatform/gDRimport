@@ -46,21 +46,10 @@ EXCEPTION_TABLE <- tibble::tribble(
 get_exception_data <- function(status_code = NULL) {
   if (!is.null(status_code)) {
     checkmate::assert_number(status_code)
-    checkmate::assert_choice(status_code, EXCEPTION_TABLE$status_code)
+    checkmate::assert_choice(toString(status_code), EXCEPTION_TABLE$status_code)
 
     EXCEPTION_TABLE[EXCEPTION_TABLE$status_code == status_code, ]
   } else {
     EXCEPTION_TABLE
   }
-}
-
-all_template_files_uploaded <- function(exp_files, obs_files) {
-  if (all(exp_files %in% obs_files)) {
-    out <- TRUE
-  } else {
-    no_files <- exp_files[!exp_files %in% obs_files]
-    out <- FALSE
-    attributes(out) <- list(status_code = 1, no_files)
-  }
-  out
 }

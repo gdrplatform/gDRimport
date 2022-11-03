@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file.
 
+#### [1.3.12] - 2022-11-02
+- Add exception table and getter and update exceptions in `load_files.R`
 
 #### [1.3.11] - 2022-10-26
 - Fix bug with reading two untreated templates
