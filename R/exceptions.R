@@ -44,8 +44,8 @@ EXCEPTION_TABLE <- tibble::tribble(
 #' @return A tibble row with exception data or all exceptions
 #' @export
 get_exception_data <- function(status_code = NULL) {
+  checkmate::assert_number(status_code, null.ok = TRUE)
   if (!is.null(status_code)) {
-    checkmate::assert_number(status_code)
     checkmate::assert_choice(toString(status_code), EXCEPTION_TABLE$status_code)
 
     EXCEPTION_TABLE[EXCEPTION_TABLE$status_code == status_code, ]
