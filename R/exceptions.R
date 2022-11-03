@@ -1,4 +1,5 @@
 # table with the exception data
+#nolint start
 EXCEPTION_TABLE <- tibble::tribble(
   ~status_code, ~title, ~sprintf_text, ~type, ~input_type,
   "1", "Error loading manifest", "There were errors loading manifest. See logs:\n%s", "error", "manifest",
@@ -31,8 +32,10 @@ EXCEPTION_TABLE <- tibble::tribble(
   "28", "Raw Data delimiter", "Can't guess separator fo the delimited files: %s", "error", "raw data",
   "29", "Raw Data EnVision", "Error reading %s: not an original EnVision .csv file", "error", "raw data",
   "30", "Raw Data Plate size", "Error reading %s: wrong plate size", "error", "raw data",
-  "31", "Raw Data structure", "In result file %s (sheet %s) readout values are misplaced for plate %s.", "error", "raw data"
+  "31", "Raw Data structure", "In result file %s (sheet %s) readout values are misplaced for plate %s.", "error", "raw data",
+  "32", "Template File Gnumber and Concentratoin", "Template file(s) %s do/does not contain the same number of Gnumber_* and Concentration_* sheets. Gnumber_* and Concentration_* sheets are required. Please correct your template.", "error", "template"
 )
+#nolint end
 
 #' get exception data
 #'
@@ -42,6 +45,9 @@ EXCEPTION_TABLE <- tibble::tribble(
 #' @export
 get_exception_data <- function(status_code = NULL) {
   if (!is.null(status_code)) {
+    checkmate::assert_number(status_code)
+    checkmate::assert_choice(status_code, EXCEPTION_TABLE$status_code)
+
     EXCEPTION_TABLE[EXCEPTION_TABLE$status_code == status_code, ]
   } else {
     EXCEPTION_TABLE
