@@ -34,6 +34,7 @@ EXCEPTION_TABLE <- tibble::tribble(
   "30", "Raw Data Plate size", "Error reading %s: wrong plate size", "error", "raw data",
   "31", "Raw Data structure", "In result file %s (sheet %s) readout values are misplaced for plate %s.", "error", "raw data",
   "32", "Template File Gnumber and Concentratoin", "Template file(s) %s do/does not contain the same number of Gnumber_* and Concentration_* sheets. Gnumber_* and Concentration_* sheets are required. Please correct your template.", "error", "template"
+  "33", "Error loading input files", "Some input files are missing. Please upload only files with names starting with Manifest_*, Template_* and RawData_*", "error", "input files"
 )
 #nolint end
 
