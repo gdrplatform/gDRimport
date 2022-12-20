@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+#### [1.3.14] - 2022-12-14
+- Make exception tests more robust
+
 #### [1.3.13] - 2022-12-13
 - Add additional error message for handling data in `gDRin`
 
