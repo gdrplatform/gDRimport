@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+#### [1.3.15] - 2022-12-20
+- Add exceptions for missing drugs' and cell lines' annotations
+
 #### [1.3.14] - 2022-12-14
 - Make exception tests more robust
 
