@@ -168,8 +168,7 @@ drug <- gDRutils::get_env_identifiers("drug")
 #' data (after corrections and uppercase'ing)
 #' 'grepl' is used to find entries from 'ref' that might be 
 #' somehow pre- or post- fixed
-#' @param fix_underscore logical flag fix the issues with underscores in data identfiiers? 
-#'
+#' @param fix_underscores logical flag fix the issues with underscores in data identfiers? 
 fix_typos_with_reference <-
   function(data,
            ref,
@@ -225,13 +224,12 @@ fix_typos_with_reference <-
   }
 
 
-#' grep wrapper to suport multiple patterns
-#' 
-#' grep wrapper to suport multiple patterns
+#' grep wrapper to support multiple patterns
 #' 
 #' @param patterns charvec with patterns to be checked
 #' @param x charvec with data
 #' @param do_unlist logical_flag unlist the final results?
+#' @param ... additional argument
 #' 
 mgrepl <- function(patterns, x, do_unlist = TRUE,  ...) {
   checkmate::assert_character(patterns)

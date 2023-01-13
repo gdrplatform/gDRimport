@@ -232,7 +232,7 @@ get_D300_xml_treatments <-
       cols_plate <- XML::xmlValue(plate[["Cols"]])
       plate_dim <- sprintf("(%s,%s)", rows_plate, cols_plate)
       assay_vol <- XML::xmlValue(plate[["AssayVolume"]])
-      desired_unit <- "µL"
+      desired_unit <- muL
       assay_vol_conv <- convert_units(assay_vol, from = vol_unit, to = desired_unit)
       barcode_plate <- XML::xmlValue(plate[["Name"]])
       # check if the plate is randomized; should probably be changed 
@@ -279,15 +279,15 @@ get_D300_xml_treatments <-
   }
 
 
-get_conversion_factor <- function(from, to = "µL") {
-  if (to != "µL") {
+get_conversion_factor <- function(from, to = muL) {
+  if (to != muL) {
     stop(sprintf("conversion to unit '%s' not supported", to))
   }
 
   # nolint start
   switch(from,
     "nL" = 1e-3,
-    "µL" = 1,
+    muL = 1,
     "mL" = 1e3,
     stop(sprintf("unsupported conversion factor: '%s'", from))
   )
@@ -333,3 +333,6 @@ fill_NA <- function(x, from, with) {
   x[idx, from] <- x[idx, with]
   x
 }
+
+# microLiter avoiding the use of non-ASCII characters for R CMD check
+muL <- paste0(rawToChar(as.raw(c(194, 181))), "L")

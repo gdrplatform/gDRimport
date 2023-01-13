@@ -12,7 +12,7 @@ Authors@R: c(person("Arkadiusz", "Gladki", role=c("aut", "cre"), email="arkadius
              person("Luca", "Gerosa", role=c("aut")))
 Maintainer: gDR team <gdr-support-d@gene.com>
 Description: Prepare raw drug response data for downstream processing.
-License: file GNE_LICENSE
+License: file LICENSE
 LazyLoad: yes
 Imports:
     assertthat,
@@ -20,13 +20,18 @@ Imports:
     data.table,
     futile.logger,
     gDRutils (>= 1.0.39),
+    magrittr,
     readxl,
     reshape2,
+    S4Vectors,
     stats,
     stringi,
+    SummarizedExperiment,
+    tibble,
     tools,
     utils,
     XML,
+    yaml,
     openxlsx
 Suggests:
     gDRtestData (>= 1.0.12),

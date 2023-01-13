@@ -3,7 +3,6 @@
 #'
 #' @param paths a character with path(s)
 #'
-#' @return
 #' @export
 #'
 is_readable_v <- function(paths) {

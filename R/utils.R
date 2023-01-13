@@ -66,7 +66,6 @@ read_ref_data <- function(inDir, prefix = "ref") {
 #' @param outDir an output directory
 #' @param prefix a prefix of reference file names ('ref' by default)
 #'
-#' @return
 #' @export
 #'
 write_ref_data_df <- function(lData, outDir, prefix = "ref") {
@@ -89,7 +88,6 @@ write_ref_data_df <- function(lData, outDir, prefix = "ref") {
 #' @param outDir an output directory
 #' @param prefix a prefix of reference file names ('ref' by default)
 #'
-#' @return
 #' @export
 #'
 write_ref_data_se <- function(se, outDir, prefix = "ref") {
@@ -131,7 +129,6 @@ write_ref_data_se <- function(se, outDir, prefix = "ref") {
 #' @param dfRawDataFileName a filename with rawdata ('dfRawData.tsv' by default)
 #' @param fileTypeInfoName a filename with file type information ('fileTypeInfo.csv' by default)
 #'
-#' @return
 #' @export
 #'
 save_file_type_info <-

@@ -845,7 +845,7 @@ load_results_Tecan <-
   function(results_file, headers = gDRutils::get_env_identifiers()) {
     # Assertions:
     checkmate::assert_string(results_file)
-
+    iF <- NULL
     # check the result files is a .xls(x) file
     isExcel <- tools::file_ext(results_file) %in% c("xlsx", "xls")
     if (!isExcel) {
@@ -919,7 +919,7 @@ load_results_Tecan <-
 #' @param df_name a name of dataframe ("" by default)
 #' @param df_type a type of a dataframe (NULL by default)
 #'
-#' @return
+#' @return corrected names
 #' @export
 #'
 check_metadata_names <-
@@ -1069,9 +1069,8 @@ check_metadata_names <-
 #' @param nrows maximum number of file rows to be processed
 #' @param seps potential field separators of the input file
 #'
-#' @return
+#' @return a list containing the data frame, n_col, n_row, and if is edited
 #' @export
-#'
 read_EnVision <- function(file,
                          nrows = 10000,
                          seps = c(",", "\t")) {
@@ -1083,6 +1082,8 @@ read_EnVision <- function(file,
   open(con)
 
   results.list <- list()
+  results_file <- NULL
+  iF <- NULL
 
   current.line <- 1
   while (length(line <-
