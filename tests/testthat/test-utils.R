@@ -19,10 +19,15 @@ test_that("assert_utils", {
 
 
 test_that("read_ref_data and write_ref_data_df works as expected", {
+  
+  dir <- tempdir()
+  if (dir.exists(dir)) unlink(dir, recursive = TRUE)
+  dir.create(dir)  
+  on.exit(unlink(dir, recursive = TRUE))
+  
   testData <- data.frame(band = "Scorpions", song = "Wind of change")
   testKeys <- "Rock"
   testRowMaps <- "Best Bands Ever"
-  dir <- tempdir()
   write.table(testData, file.path(dir, "ref_band.tsv"))
   yaml::write_yaml(testKeys, file.path(dir, "ref_keys.yaml"))
   yaml::write_yaml(testRowMaps, file.path(dir, "ref_row_maps.yaml"))
@@ -37,7 +42,8 @@ test_that("read_ref_data and write_ref_data_df works as expected", {
   data <- list(Manifest = manifest,
                Template = template,
                RawData = raw)
-  save_file_type_info(data, dir)
+  
+  expect_warning(save_file_type_info(data, dir), regexp = "Unknown or uninitialised column")
   expect_true(file.exists(file.path(dir, "fileTypeInfo.csv")))
 
   testSE <- SummarizedExperiment::SummarizedExperiment()
