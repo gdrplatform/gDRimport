@@ -20,7 +20,7 @@ test_that("assert_utils", {
 
 test_that("read_ref_data and write_ref_data_df works as expected", {
   
-  dir <- tempdir()
+  dir <- tempfile()
   if (dir.exists(dir)) unlink(dir, recursive = TRUE)
   dir.create(dir)  
   on.exit(unlink(dir, recursive = TRUE))
