@@ -21,3 +21,5 @@ pkgs:
     source: CRAN
   openxlsx:
     source: CRAN
+  rio:
+    source: CRAN

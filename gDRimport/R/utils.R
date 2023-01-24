@@ -163,3 +163,24 @@ save_file_type_info <-
     outFile <- file.path(save_dir, fileTypeInfoName)
     write.csv(tbl, outFile, row.names = FALSE)
   }
+
+
+
+#' Detect formar of results data
+#'
+#' @param results_file path to results data
+#'
+#' @return string with the information about detected data format of results
+#' @export
+detect_file_format <- function(results_file) {
+  checkmate::assert_character(results_file)
+  results_data <- rio::import(results_file)
+  
+  if (all(c("System", "User", "Plate", "Plate-ID (Stacker)") %in% results_data[, 1])) {
+    "Tecan"
+  } else if (c("Repeat Barcode") %in% do.call(paste, results_data[, 2:3])) {
+    "EnVision"
+  } else {
+    "long_tsv"
+  }
+}
