@@ -17,9 +17,3 @@ pkgs:
     ref: master
     subdir: gDRtestData
     source: GITHUB
-  purrr:
-    source: CRAN
-  openxlsx:
-    source: CRAN
-  rio:
-    source: CRAN
