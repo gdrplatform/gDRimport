@@ -1,4 +1,5 @@
-FROM arkadiuszgladki/gdr_shiny:0.09
+ARG BASE_IMAGE=marcinkam/gdrshiny:0.11
+FROM ${BASE_IMAGE}
 
 # temporary fix
 # GitHub token for downloading private dependencies
