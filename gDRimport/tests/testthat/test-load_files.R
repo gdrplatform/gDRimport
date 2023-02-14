@@ -321,8 +321,8 @@ test_that("check_metadata_names works as expected", {
   
   # Check asserts 
   expect_error(check_metadata_names(col_df = NULL), "Assertion on 'col_df' failed")
-  expect_error(check_metadata_names(col_df = colnames(r_data), df_name = NULL), "Assertion on 'df_name'")
-  expect_error(check_metadata_names(col_df = colnames(r_data), df_type = 5), "Assertion on 'df_type'")
+  expect_error(check_metadata_names(col_df = colnames(m_data), df_name = NULL), "Assertion on 'df_name'")
+  expect_error(check_metadata_names(col_df = colnames(m_data), df_type = 5), "Assertion on 'df_type'")
   
   # TODO: add asserts on check_metadata_names - df_type - current error message `object 
   # 'expected_headers' not found` is misleading
