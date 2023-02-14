@@ -300,7 +300,10 @@ test_that("check_metadata_names works as expected", {
   # names with numbers
   t_data_with_number <- t_data[[1]]
   t_data_with_number[5] <- "1"
-  expect_error(check_metadata_names(col_df = t_data_with_number), "cannot contain special characters or start with a number")
+  expect_error(
+    check_metadata_names(col_df = t_data_with_number), 
+    "cannot contain special characters or start with a number"
+  )
   
   # names with duplication
   t_data_with_duplication <- t_data[[1]]
@@ -324,7 +327,12 @@ test_that("check_metadata_names works as expected", {
   # TODO: add asserts on check_metadata_names - df_type - current error message `object 
   # 'expected_headers' not found` is misleading
   
-  # expect_error(check_metadata_names(col_df = colnames(m_data), m_file, df_type = "I like pancakes"), regexp = "df_type")
+  #nolint start
+  # expect_error(
+  #   check_metadata_names(col_df = colnames(m_data), m_file, df_type = "I like pancakes"),
+  #   regexp = "df_type"
+  # )
+  #nolint end
   
 })
 
