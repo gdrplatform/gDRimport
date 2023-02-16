@@ -261,3 +261,78 @@ test_that(".standardize_untreated_values works as expected", {
   df_corrected <- .standardize_untreated_values(df_test)
   expect_true(all(unlist(df_corrected) == untreated_tags[[1]]))
 })
+
+test_that("check_metadata_names works as expected", {
+  
+  td1 <- get_test_data1()
+  m_file <- td1$m_file
+  m_data <- readxl::read_excel(m_file)
+  
+  # default
+  result <- check_metadata_names(col_df = colnames(m_data))
+  expect_equal(result, colnames(m_data))
+  
+  # tests manifest
+  result <- check_metadata_names(col_df = colnames(m_data), m_file, df_type = "manifest")
+  expect_equal(result, colnames(m_data))
+  
+  # tests template
+  t_file <- td1$t_files[[1]]
+  t_data <- correct_template_sheets(t_file)
+  result <- check_metadata_names(col_df = t_data[[1]])
+  expect_equal(result, t_data[[1]])
+  result <- check_metadata_names(col_df = t_data[[1]], df_type = "template")
+  expect_equal(result, t_data[[1]])
+  result <- check_metadata_names(col_df = t_data[[1]], df_type = "template_treatment")
+  expect_equal(result, t_data[[1]])
+  
+  # missing gnumber
+  expect_error(check_metadata_names(col_df = t_data[[1]][-1], df_type = "template_treatment"))
+  # missing gnumber2
+  expect_error(check_metadata_names(col_df = t_data[[1]][-3], df_type = "template_treatment"), "Template file")
+  
+  # names with spaces
+  t_data_with_space <- t_data[[1]]
+  t_data_with_space[1] <- "Gnumber "
+  expect_no_error(check_metadata_names(col_df = t_data_with_space))
+  # TODO add - expect futile.logger::flog.warn 
+  
+  # names with numbers
+  t_data_with_number <- t_data[[1]]
+  t_data_with_number[5] <- "1"
+  expect_error(
+    check_metadata_names(col_df = t_data_with_number), 
+    "cannot contain special characters or start with a number"
+  )
+  
+  # names with duplication
+  t_data_with_duplication <- t_data[[1]]
+  t_data_with_duplication[5] <- "Gnumber"
+  t_data_with_duplication[6] <- "GnumbeR"
+  expect_no_error(check_metadata_names(col_df = t_data_with_duplication))
+  # TODO add - expect futile.logger::flog.warn 
+  
+  
+  # names with resticted name
+  t_data_with_resticted_name <- t_data[[1]]
+  t_data_with_resticted_name[5] <- "Tissue"
+  expect_error(check_metadata_names(col_df = t_data_with_resticted_name), "Metadata field name")
+  
+  
+  # Check asserts 
+  expect_error(check_metadata_names(col_df = NULL), "Assertion on 'col_df' failed")
+  expect_error(check_metadata_names(col_df = colnames(m_data), df_name = NULL), "Assertion on 'df_name'")
+  expect_error(check_metadata_names(col_df = colnames(m_data), df_type = 5), "Assertion on 'df_type'")
+  
+  # TODO: add asserts on check_metadata_names - df_type - current error message `object 
+  # 'expected_headers' not found` is misleading
+  
+  #nolint start
+  # expect_error(
+  #   check_metadata_names(col_df = colnames(m_data), m_file, df_type = "I like pancakes"),
+  #   regexp = "df_type"
+  # )
+  #nolint end
+  
+})
+

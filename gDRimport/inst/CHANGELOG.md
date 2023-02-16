@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+#### [1.3.17] - 2023-02-14
+- Added tests for check_metadata_names
+
 #### [1.3.16] - 2023-01-23
 - Add function for detecting format of raw data
 
