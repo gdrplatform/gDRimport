@@ -8,6 +8,7 @@ ARG GITHUB_TOKEN
 #================= Install dependencies
 RUN mkdir -p /mnt/vol
 COPY rplatform/dependencies.yaml rplatform/.github_access_token.txt* /mnt/vol
+RUN echo "$GITHUB_TOKEN" >> /mnt/vol/.github_access_token.txt
 RUN Rscript -e "gDRstyle::installAllDeps()"
 
 #================= Check & build package
