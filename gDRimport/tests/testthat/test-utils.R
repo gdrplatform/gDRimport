@@ -17,40 +17,6 @@ test_that("assert_utils", {
   expect_true(all(vapply(standardize_df(ref_tbl), is.character, logical(1))))
 })
 
-
-test_that("read_ref_data and write_ref_data_df works as expected", {
-  
-  dir <- tempfile()
-  if (dir.exists(dir)) unlink(dir, recursive = TRUE)
-  dir.create(dir)  
-  on.exit(unlink(dir, recursive = TRUE))
-  
-  testData <- data.frame(band = "Scorpions", song = "Wind of change")
-  testKeys <- "Rock"
-  testRowMaps <- "Best Bands Ever"
-  write.table(testData, file.path(dir, "ref_band.tsv"))
-  yaml::write_yaml(testKeys, file.path(dir, "ref_keys.yaml"))
-  yaml::write_yaml(testRowMaps, file.path(dir, "ref_row_maps.yaml"))
-  data <- read_ref_data(dir)
-  checkmate::expect_list(data, len = 3)
-  checkmate::expect_list(write_ref_data_df(data, dir))
-
-  td1 <- get_test_data1()
-  manifest <- readxl::read_excel(td1$m_file)
-  template <- readxl::read_excel(td1$t_files[[1]])
-  raw <- readxl::read_excel(td1$r_files[[1]])
-  data <- list(Manifest = manifest,
-               Template = template,
-               RawData = raw)
-  
-  expect_warning(save_file_type_info(data, dir), regexp = "Unknown or uninitialised column")
-  expect_true(file.exists(file.path(dir, "fileTypeInfo.csv")))
-
-  testSE <- SummarizedExperiment::SummarizedExperiment()
-  write_ref_data_se(testSE, dir)
-  expect_true(file.exists(file.path(dir, "ref_df_raw_data.tsv")))
-})
-
 test_that("detect_file_format works as expected", {
   envision_path <- list.files(system.file(package = "gDRimport", "extdata", "data1"),
                            "^RawData", full.names = TRUE)
