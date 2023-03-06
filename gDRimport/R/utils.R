@@ -57,68 +57,6 @@ read_ref_data <- function(inDir, prefix = "ref") {
   lFiles
 }
 
-
-#' write_ref_data_df
-#'
-#' Write reference dataframe
-#'
-#' @param lData a list with dataset
-#' @param outDir an output directory
-#' @param prefix a prefix of reference file names ('ref' by default)
-#'
-#' @export
-#'
-write_ref_data_df <- function(lData, outDir, prefix = "ref") {
-  # Assertions:
-  checkmate::assert_list(lData)
-  checkmate::assert_string(outDir)
-  checkmate::assert_string(prefix)
-
-  myL <- lapply(seq_along(lData), function(x) {
-    outFile <- file.path(outDir, paste0(prefix, "_lData_", names(lData)[x], ".tsv"))
-    write.table(lData[[x]], outFile, sep = "\t", quote = FALSE, row.names = FALSE)
-  })
-
-}
-
-
-#' write_ref_data_se
-#'
-#' @param se a SummarizedExperiment with DR data
-#' @param outDir an output directory
-#' @param prefix a prefix of reference file names ('ref' by default)
-#'
-#' @export
-#'
-write_ref_data_se <- function(se, outDir, prefix = "ref") {
-  # Assertions:
-  checkmate::assert_class(se, "SummarizedExperiment")
-  checkmate::assert_string(outDir)
-  checkmate::assert_string(prefix)
-  #assays
-  myL <- lapply(SummarizedExperiment::assayNames(se), function(x) {
-    outFile <- file.path(outDir, paste0(prefix, "_assay_", x, ".tsv"))
-    write.table(
-      gDRutils::convert_se_assay_to_dt(se, x),
-      outFile,
-      sep = "\t",
-      quote = FALSE,
-      row.names = FALSE
-    )
-  })
-
-  #df_raw_data from metadata
-  outFile <- file.path(outDir, paste0(prefix, "_df_raw_data.tsv"))
-  write.table(S4Vectors::metadata(se)$df_raw_data, outFile, sep = "\t", quote = FALSE, row.names = FALSE)
-
-
-  keys_yaml <- yaml::as.yaml(S4Vectors::metadata(se)$Keys)
-  yaml::write_yaml(keys_yaml, file.path(outDir, paste0(prefix, "_keys.yaml")))
-
-  row_maps_yaml <- yaml::as.yaml(S4Vectors::metadata(se)$row_maps)
-  yaml::write_yaml(row_maps_yaml, file.path(outDir, paste0(prefix, "_row_maps.yaml")))
-}
-
 #' save_file_type_info
 #'
 #' Save information about file types

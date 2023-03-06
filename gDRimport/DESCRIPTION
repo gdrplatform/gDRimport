@@ -1,8 +1,8 @@
 Package: gDRimport
 Type: Package
 Title: Package for handling import of dose-response data
-Version: 1.3.17
-Date: 2023-02-14
+Version: 1.3.18
+Date: 2023-03-01
 Authors@R: c(person("Arkadiusz", "Gladki", role=c("aut", "cre"), email="arkadiusz.gladki@contractors.roche.com"),
              person("Bartosz", "Czech", role=c("aut")), 
              person("Marc", "Hafner", role=c("aut")),
@@ -24,10 +24,8 @@ Imports:
     readxl,
     reshape2,
     rio,
-    S4Vectors,
     stats,
     stringi,
-    SummarizedExperiment,
     tibble,
     tools,
     utils,
@@ -42,7 +40,7 @@ Suggests:
     testthat
 VignetteBuilder: knitr
 ByteCompile: TRUE
-RoxygenNote: 7.2.2
+RoxygenNote: 7.2.3
 SwitchrLibrary: gDRimport
 DeploySubPath: gDRimport
 Encoding: UTF-8

@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+#### [1.3.18] - 2023-03-01
+- Remove obsolete code
+
 #### [1.3.17] - 2023-02-14
 - Added tests for check_metadata_names
 
