@@ -815,13 +815,6 @@ load_results_EnVision <-
             ReadoutValue = as.numeric(as.vector(readout)),
             BackgroundValue = BackgroundValue
           )
-          print(paste(
-            "Plate",
-            as.character(Barcode),
-            "read;",
-            dim(df_results)[1],
-            "wells"
-          ))
           futile.logger::flog.info("Plate %s read; %d wells",
                                    as.character(df[iB + 1, barcode_col]),
                                    dim(df_results)[1])
