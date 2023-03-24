@@ -681,7 +681,7 @@ load_results_EnVision <-
           n_col <- plate_dim[2]
 
           # manually add full rows
-          plate_rows <- which(do.call(paste, df[, c(2,3)]) %in% "Repeat Barcode") - 1
+          plate_rows <- which(do.call(paste, df[, c(2, 3)]) %in% "Repeat Barcode") - 1
           spacer_rows <- grep("[[:alpha:]]", as.data.frame(df)[, 1])
 
           standardized_bckd_info <- if (length(Bckd_info_idx) == 0) {
