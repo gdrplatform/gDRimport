@@ -37,7 +37,7 @@ test_that("import_D300", {
                      td3$Gnum_384w_file)  
   
   #for 96 and 384 well plates
-  for (k in 1:length(dest_paths)) {
+  for (k in seq_len(length(dest_paths))) {
     
     # validate output files for D300 examples
     dest_path <- dest_paths[[k]]
@@ -56,7 +56,7 @@ test_that("import_D300", {
     
     # test every output file against reference file 
     list_files <- list.files(path = dest_path)
-    for (i in 1:length(list_files)) {
+    for (i in seq_len(length(list_files))) {
       output_file_path <- file.path(dest_path, list_files[i])
       ref_file_path <- file.path(ref_path, list_files[i])
       #load sheets
@@ -65,7 +65,7 @@ test_that("import_D300", {
       #test sheet names are identical 
       expect_equal(output_sheets, ref_sheets)
       #test content of sheets is identical
-      for (j in 1:length(output_sheets)) {
+      for (j in seq_len(length(output_sheets))) {
           output_sheet <- readxl::read_excel(output_file_path,
                                              sheet = output_sheets[[j]],
                                              col_names = TRUE)

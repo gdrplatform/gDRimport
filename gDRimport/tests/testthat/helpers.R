@@ -5,7 +5,7 @@ get_test_data1 <-
     ddir <- system.file(package = "gDRimport", "extdata", "data1")
     
     ## define manifest ref data
-    bcode_tbl <- expand.grid(c("201904190", "201904197"), letters[1:6])
+    bcode_tbl <- expand.grid(c("201904190", "201904197"), letters[seq_len(6)])
     bcode_v <- paste0(bcode_tbl$Var1, bcode_tbl$Var2)
     templates_v <- c("Template_Untreated.xlsx", "Template_7daytreated.xlsx")
     clids_n <- c(rep(11, 2), rep(12, 2), rep(13, 2), rep(14, 2), rep(15, 2), rep(18, 2))

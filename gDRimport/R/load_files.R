@@ -409,7 +409,7 @@ load_templates_xlsx <-
             readxl::read_excel(
               template_file[[iF]],
               sheet = Gnumber_idx,
-              col_names = paste0("x", 1:48),
+              col_names = paste0("x", seq_len(48)),
               range = "A1:AV32"
             )
         }, error = function(e) {
@@ -440,7 +440,7 @@ load_templates_xlsx <-
           readxl::read_excel(
             template_file[[iF]],
             sheet = Gnumber_idx,
-            col_names = paste0("x", 1:48),
+            col_names = paste0("x", seq_len(48)),
             range = "A1:AV32",
             col_types = "text"
           )
@@ -638,7 +638,7 @@ load_results_EnVision <-
                 readxl::read_excel(
                   results_file[[iF]],
                   sheet = iS,
-                  col_names = paste0("x", 1:48),
+                  col_names = paste0("x", seq_len(48)),
                   range = "A1:AV32"
                 )
             }, error = function(e) {
@@ -681,7 +681,7 @@ load_results_EnVision <-
           n_col <- plate_dim[2]
 
           # manually add full rows
-          plate_rows <- which(do.call(paste, df[, 2:3]) %in% "Repeat Barcode") - 1
+          plate_rows <- which(do.call(paste, df[, c(2,3)]) %in% "Repeat Barcode") - 1
           spacer_rows <- grep("[[:alpha:]]", as.data.frame(df)[, 1])
 
           standardized_bckd_info <- if (length(Bckd_info_idx) == 0) {
@@ -732,9 +732,9 @@ load_results_EnVision <-
           # run through all plates
           for (iB in Barcode_idx) {
             # two type of format depending on where Background information is placed
-            if (any(as.data.frame(df)[iB + (1:4), 1] %in% "Background information")) {
+            if (any(as.data.frame(df)[iB + (seq_len(4)), 1] %in% "Background information")) {
               ref_bckgrd <-
-                which(as.data.frame(df)[iB + (1:4), 1] %in% "Background information")
+                which(as.data.frame(df)[iB + (seq_len(4)), 1] %in% "Background information")
               readout_offset <- 1 + ref_bckgrd
               stopifnot(as.character(df[iB + ref_bckgrd, 4]) %in% "Signal")
               BackgroundValue <-
@@ -872,7 +872,7 @@ load_results_Tecan <-
       dfm <- df[(ind[1]):nrow(df), ind[2]:ncol(df)]
       # remove text after data matrix ends, as identified by first na value
       ind <- which(is.na(dfm), arr.ind = TRUE)[1]
-      dfm <- dfm[1:ind - 1, 1:ncol(dfm)]
+      dfm <- dfm[seq_len(ind) - 1, seq_len(ncol(dfm))]
 
       # rows and columns in data matrix with row and col names
       n_row <- nrow(dfm)
@@ -1088,7 +1088,7 @@ read_EnVision <- function(file,
   close(con)
 
   n_sep <- colSums(vapply(seps, function(sep) {
-    vapply(results.list[1:10], function(line)
+    vapply(results.list[seq_len(10)], function(line)
       length(unlist(strsplit(line, split = sep))),
       integer(length = 1))
   }, integer(length = 10)))
