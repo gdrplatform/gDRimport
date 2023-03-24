@@ -186,14 +186,10 @@ fix_typos_with_reference <-
       })
     } else {
       # remove spaces at the beginning/end
-      cdata <- vapply(data, function(x) {
-        gsub("^ +| +$", "", x)
-      }, character(1))
+      cdata <- vapply(data, function(x) gsub("^ +| +$", "", x), character(1))
       
       # replace spaces with "_"
-      cdata <- vapply(cdata, function(x) {
-        gsub(" +", "_", x)
-      }, character(1))
+      cdata <- vapply(cdata, function(x) gsub(" +", "_", x), character(1))
       
       # update to valid identifier (if found)
       # convert both v and valid identifiers to upper case before comparison
