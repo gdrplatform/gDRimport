@@ -129,7 +129,7 @@ load_manifest <- function(manifest_file) {
   headers <- gDRutils::validate_identifiers(do.call(rbind, manifest_data), req_ids = "barcode")
 
   # check default headers are in each df
-  dump <- sapply(seq_along(manifest_file),
+  dump <- lapply(seq_along(manifest_file),
                  function(i)
                    check_metadata_names(
                      colnames(manifest_data[[i]]),
@@ -273,7 +273,7 @@ load_templates_tsv <-
         stats::na.omit())
     names(templates) <- template_filename
     # check WellRow/WellColumn is present in each df
-    dump <- sapply(seq_along(template_file),
+    dump <- lapply(seq_along(template_file),
                    function(i)
                      if (!(all(
                        gDRutils::get_env_identifiers("well_position") %in% colnames(templates[[i]])
@@ -283,7 +283,7 @@ load_templates_tsv <-
                                                 gDRutils::get_env_identifiers("well_position"))
                      })
     # check drug_identifier is present in each df
-    dump <- sapply(seq_along(template_file),
+    dump <- lapply(seq_along(template_file),
                    function(i)
                      check_metadata_names(
                        setdiff(colnames(templates[[i]]), gDRutils::get_env_identifiers("well_position")),
@@ -377,7 +377,7 @@ load_templates_xlsx <-
     # validate template sheets
     template_sheets <- correct_template_sheets(template_file)
     # check drug_identifier is present in each df
-    dump <- sapply(seq_along(template_file),
+    dump <- lapply(seq_along(template_file),
                    function(i)
                      check_metadata_names(
                        template_sheets[[i]],
@@ -603,9 +603,10 @@ load_results_EnVision <-
     results_filename <- basename(results_file)
     # results_file is a string or a vector of strings
     # test if the result files are .tsv or .xls(x) files
-    isExcel <- sapply(results_file, function(x) {
+    isExcel <- vapply(results_file, function(x) {
       return(tools::file_ext(x) %in% c("xlsx", "xls"))
-    })
+    },
+    logical(1))
 
     # read sheets in files; warning if more than one sheet (unexpected but can be handled)
     results_sheets <- vector("list", length(results_file))
