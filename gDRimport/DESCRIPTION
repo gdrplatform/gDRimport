@@ -1,17 +1,18 @@
 Package: gDRimport
 Type: Package
 Title: Package for handling import of dose-response data
-Version: 1.3.18
-Date: 2023-03-01
-Authors@R: c(person("Arkadiusz", "Gladki", role=c("aut", "cre"), email="arkadiusz.gladki@contractors.roche.com"),
-             person("Bartosz", "Czech", role=c("aut")), 
-             person("Marc", "Hafner", role=c("aut")),
-             person("Sergiu", "Mocanu", role=c("aut")),
-             person("Dariusz", "Scigocki", role=c("aut")),
-             person("Allison", "Voung", role=c("aut")),
-             person("Luca", "Gerosa", role=c("aut")))
-Maintainer: gDR team <gdr-support-d@gene.com>
-Description: Prepare raw drug response data for downstream processing.
+Version: 1.3.19
+Date: 2023-03-24
+Authors@R: c(
+    person("Arkadiusz", "Gladki", role=c("aut")),
+    person("Bartosz", "Czech", role=c("aut")), 
+    person("Marc", "Hafner", role=c("aut")),
+    person("Sergiu", "Mocanu", role=c("aut")),
+    person("Dariusz", "Scigocki", role=c("aut")),
+    person("Allison", "Voung", role=c("aut")),
+    person("Luca", "Gerosa", role=c("aut")),
+    person("gDR", "Support team", role=c("cre"), email="gdr-support-d@gene.com"))
+Description: Package is a member of the gDR stuite. It helps to prepare raw drug response data for downstream processing. It mainly contains helper functions for importing/loading/validating dose response data provided in the different file formats. 
 License: file LICENSE
 LazyLoad: yes
 Imports:
@@ -38,6 +39,7 @@ Suggests:
     knitr,
     purrr,
     testthat
+biocViews: Software, Infrastructure, DataImport
 VignetteBuilder: knitr
 ByteCompile: TRUE
 RoxygenNote: 7.2.3
