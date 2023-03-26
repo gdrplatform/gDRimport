@@ -23,7 +23,6 @@
 #'
 import_D300 <-
   function(D300_file, metadata_file, destination_path) {
-    # Assertions.
     assertthat::assert_that(is.character(destination_path), msg = "'destination_path' must be a character vector")
     assertthat::assert_that(assertthat::is.readable(destination_path), 
                             msg = "'destination_path' must be a readable path")
@@ -33,53 +32,62 @@ import_D300 <-
     D300 <- fill_NA(D300, from = "D300_Barcode", with = "D300_Plate_N")
 
     treatment <- merge_D300_w_metadata(D300, Gnums)
-
     req_cols <- c("Row", "Col")
     if (!all(present <- req_cols %in% colnames(treatment))) {
       stop(sprintf("missing required columns from D300 file: '%s'", paste0(req_cols[!present], collapse = ", ")))
     }
-
     uplates <- unique(treatment$D300_Plate_N)
-
-    #standard identifiers
-    untreated_tags <- gDRutils::get_env_identifiers("untreated_tag")
-    drug_identifier <- gDRutils::get_env_identifiers("drug") 
-    conc_identifier <- gDRutils::get_env_identifiers("concentration")
+    idfs <- list(
+      untreated_tags = gDRutils::get_env_identifiers("untreated_tag"),
+      drug_identifier = gDRutils::get_env_identifiers("drug"),
+      conc_identifier = gDRutils::get_env_identifiers("concentration")) #standard identifiers
     
     for (i in seq_along(uplates)) {
       wb <- openxlsx::createWorkbook()
-      
-      # Filter to 1 plate.
-      idx <- treatment$D300_Plate_N == uplates[i]
+      idx <- treatment$D300_Plate_N == uplates[i] # Filter to 1 plate.
       trt_filt <- treatment[idx, ]
 
       #create a list with Gnumber and Concentration 
-      trt_filt$Gnumber_Concentration <- apply(trt_filt, 1, function(x) list(x[drug_identifier], x[conc_identifier]))
+      trt_filt$gn_conc <- apply(trt_filt, 1, function(x) list(x[idfs$drug_identifier], x[idfs$conc_identifier]))
       trt_gnumber_conc <- reshape2::dcast(trt_filt, Row ~ Col, 
-                                          value.var = c("Gnumber_Concentration"), 
+                                          value.var = c("gn_conc"), 
                                           fun.aggregate = list)
       rownames(trt_gnumber_conc) <- trt_gnumber_conc$Row
       trt_gnumber_conc <- trt_gnumber_conc[, setdiff(colnames(trt_gnumber_conc), "Row")]
 
       #count number of drugs,conc in each well 
       trt_n_drugs <- apply(trt_gnumber_conc, c(1, 2), function(x) length(x[[1]]))
-      max_drugs_per_well <- max(trt_n_drugs)
+      trt_info <- list(
+        max_drugs_per_well =  max(trt_n_drugs),
+        col_idx = strtoi(colnames(trt_gnumber_conc)),
+        row_idx = strtoi(rownames(trt_gnumber_conc))
+      )
+      save_drug_info_per_well(trt_info, trt_gnumber_conc, wb, idfs) 
+      fname <- sprintf("trt_P%s.xlsx", uplates[i])
+      openxlsx::saveWorkbook(wb, file.path(destination_path, fname), overwrite = TRUE)
+    }
+  }
 
-      # Note: Conversion to integer is important as natural sorting by string will
-      # result in unordered columns like ("10", "11", "2", "3", "4" etc.)
-      col_idx <- strtoi(colnames(trt_gnumber_conc))
-      row_idx <- strtoi(rownames(trt_gnumber_conc))
-      nrow <- max(row_idx) 
-      ncol <- max(col_idx)
-      nwells <- nrow * ncol
-      
-      #for each drug create a Gnumber and Concentration information for each well
-      for (j in seq_len(max_drugs_per_well)) {
-
+#' for each drug create a Gnumber and Concentration information for each well
+save_drug_info_per_well <-
+  function(trt_info, trt_gnumber_conc, wb, idfs) {
+    
+  nrow <- max(trt_info$row_idx)
+  ncol <- max(trt_info$col_idx)
+  nwells <- nrow * ncol
+  
+      for (j in seq_len(trt_info$max_drugs_per_well)) {
+        
+        drug_sname <- idfs$drug_identifier
+        conc_sname <- idfs$conc_identifier
+        if (j != 1L) {
+          drug_sname <- paste0(drug_sname, "_", j)
+          conc_sname <- paste0(conc_sname, "_", j)
+        }
         conc_mat <- drug_mat <- matrix(rep("", nwells), nrow = nrow, ncol = ncol)
 
-        for (m in seq_along(row_idx)) {
-          for (n in seq_along(col_idx)) {
+        for (m in seq_along(trt_info$row_idx)) {
+          for (n in seq_along(trt_info$col_idx)) {
 
             drug_entry <- trt_gnumber_conc[[m, n]]
             if (length(drug_entry) >= j) {
@@ -87,40 +95,28 @@ import_D300 <-
               conc <- drug_entry[[j]][[2]]
 
               # Vehicle or untreated drugs assigned concentration zero.
-              if (drug %in% untreated_tags) {
+              if (drug %in% idfs$untreated_tags) {
                 conc <- 0.0
               }
 
             } else {
               #if there is no 2nd, 3rd etc.. drug specified, set the corresponding entry to untreated
-              drug <- untreated_tags[[1]]
+              drug <- idfs$untreated_tags[[1]]
               conc <- 0.0
             }
 
-            conc_mat[row_idx[m], col_idx[n]] <- conc
-            drug_mat[row_idx[m], col_idx[n]] <- drug
+            conc_mat[trt_info$row_idx[m], trt_info$col_idx[n]] <- conc
+            drug_mat[trt_info$row_idx[m], trt_info$col_idx[n]] <- drug
           }
         }
-        
         drug_data <- data.frame(drug_mat)
         conc_data <- data.frame(conc_mat)
 
-        drug_sname <- drug_identifier
-        conc_sname <- conc_identifier
-        if (j != 1L) {
-          drug_sname <- paste0(drug_sname, "_", j)
-          conc_sname <- paste0(conc_sname, "_", j)
-        }
-        
         openxlsx::addWorksheet(wb, drug_sname)
         openxlsx::writeData(wb, sheet = (j * 2) - 1, drug_data, colNames = FALSE)
         openxlsx::addWorksheet(wb, conc_sname)
         openxlsx::writeData(wb, sheet = (j * 2), conc_data, colNames = FALSE)
       }
-      
-      fname <- sprintf("trt_P%s.xlsx", uplates[i])
-      openxlsx::saveWorkbook(wb, file.path(destination_path, fname), overwrite = TRUE)
-    }
   }
 
 
@@ -211,40 +207,46 @@ get_D300_xml_drugs <-
     do.call("rbind", df_drug)
   }    
 
+get_plate_info <- function(plate, vol_unit) {
+  
+  rows_plate <- XML::xmlValue(plate[["Rows"]])
+  cols_plate <- XML::xmlValue(plate[["Cols"]])
+  plate_dim <- sprintf("(%s,%s)", rows_plate, cols_plate)
+  assay_vol <- XML::xmlValue(plate[["AssayVolume"]])
+  desired_unit <- get_muL()
+  assay_vol_conv <-
+    convert_units(assay_vol, from = vol_unit, to = desired_unit)
+  barcode_plate <- XML::xmlValue(plate[["Name"]])
+  # check if the plate is randomized; should probably be changed
+  randomize <- XML::xmlValue(plate[["Randomize"]])
+  if (randomize != "") {
+    warning("Randomization of D300 plate possibly detected, but not supported yet.")
+  }
+  list(
+    plate_dim = plate_dim,
+    desired_unit = desired_unit,
+    assay_vol_conv = assay_vol_conv,
+    barcode_plate = barcode_plate
+  )
+}
+
 
 get_D300_xml_treatments <-
   function(xml_tree_root, id_col = "ID", vol_unit, conc_unit) {
 
-    #initialize data.frame for treatments
+    # define treatment columns
     trt_cols <- c("D300_Plate_N", "D300_Barcode", "Dimension", "Row", "Col", 
                   "Volume", "Volume_Unit", id_col, "Concentration", "Unit")
-    df_trt <- data.frame(matrix(ncol = length(trt_cols), nrow = 0))
-    colnames(df_trt) <- trt_cols 
 
     #extract drug dispensing information for each plate 
     plates <- XML::xpathSApply(xml_tree_root, ".//Plates", XML::xmlChildren)
-    nplates <- length(plates)
-    pl <- lapply(seq_len(nplates), function(pli) {
+    pl <- lapply(seq_along(plates), function(pli) {
       plate <- xml_tree_root[["Plates"]][pli][["Plate"]]
-
-      #plate info
-      rows_plate <- XML::xmlValue(plate[["Rows"]])
-      cols_plate <- XML::xmlValue(plate[["Cols"]])
-      plate_dim <- sprintf("(%s,%s)", rows_plate, cols_plate)
-      assay_vol <- XML::xmlValue(plate[["AssayVolume"]])
-      desired_unit <- muL
-      assay_vol_conv <- convert_units(assay_vol, from = vol_unit, to = desired_unit)
-      barcode_plate <- XML::xmlValue(plate[["Name"]])
-      # check if the plate is randomized; should probably be changed 
-      randomize <- XML::xmlValue(plate[["Randomize"]])
-      if (randomize != "") {
-        warning("Randomization of D300 plate possibly detected, but not supported yet.")
-      }
+      pl_info <- get_plate_info(plate, vol_unit) # plate info
       
       #extract drug dispensing information for each well 
       wells <- XML::xpathSApply(plate, ".//Wells", XML::xmlChildren)
-      nwells <- length(wells)
-      wl <- lapply(seq_len(nwells), function(wi) {
+      wl <- lapply(seq_along(wells), function(wi) {
         
         well <- plate[["Wells"]][wi][["Well"]]
         #indexes of row and col start from zero, so add one
@@ -254,20 +256,18 @@ get_D300_xml_treatments <-
         
         #extract information each fluid delivered in well 
         fluids <- XML::xpathSApply(well, ".//Fluid", XML::xmlChildren)
-        nfluids <- length(fluids)
-        vapply(seq_len(nfluids), function(fi) {
+        vapply(seq_along(fluids), function(fi) {
           id_fluid <- XML::xmlAttrs(well[[fi]])
           conc_fluid <- XML::xmlValue(well[[fi]])
-          
           #define single entry
             c(
               pli,
-              barcode_plate,
-              plate_dim,
+              pl_info$barcode_plate,
+              pl_info$plate_dim,
               row_well,
               col_well,
-              assay_vol_conv,
-              desired_unit,
+              pl_info$assay_vol_conv,
+              pl_info$desired_unit,
               id_fluid,
               conc_fluid,
               conc_unit
@@ -282,19 +282,19 @@ get_D300_xml_treatments <-
   }
 
 
-get_conversion_factor <- function(from, to = muL) {
-  if (to != muL) {
+
+get_conversion_factor <- function(from, to = get_muL()) {
+  if (to != get_muL()) {
     stop(sprintf("conversion to unit '%s' not supported", to))
   }
 
-  # nolint start
+  muL <- get_muL()
   switch(from,
     "nL" = 1e-3,
     muL = 1,
     "mL" = 1e3,
     stop(sprintf("unsupported conversion factor: '%s'", from))
   )
-  # nolint end
 }
 
 
@@ -337,5 +337,7 @@ fill_NA <- function(x, from, with) {
   x
 }
 
-# microLiter avoiding the use of non-ASCII characters for R CMD check
-muL <- paste0(rawToChar(as.raw(c(194, 181))), "L")
+get_muL <- function() {
+  # microLiter avoiding the use of non-ASCII characters for R CMD check
+  paste0(rawToChar(as.raw(c(194, 181))), "L")
+}
