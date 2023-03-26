@@ -6,6 +6,15 @@
 \usage{
 save_drug_info_per_well(trt_info, trt_gnumber_conc, wb, idfs)
 }
+\arguments{
+\item{trt_info}{list with treatment info}
+
+\item{trt_gnumber_conc}{list with treatment data}
+
+\item{wb}{pointer to xlsx workbook}
+
+\item{idfs}{charvec with identifiers}
+}
 \description{
 for each drug create a Gnumber and Concentration information for each well
 }

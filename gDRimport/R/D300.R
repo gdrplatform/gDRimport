@@ -69,6 +69,12 @@ import_D300 <-
   }
 
 #' for each drug create a Gnumber and Concentration information for each well
+#' 
+#' @param trt_info list with treatment info
+#' @param trt_gnumber_conc list with treatment data
+#' @param wb pointer to xlsx workbook
+#' @param idfs charvec with identifiers
+#' 
 save_drug_info_per_well <-
   function(trt_info, trt_gnumber_conc, wb, idfs) {
     
