@@ -224,7 +224,7 @@ get_D300_xml_treatments <-
     #extract drug dispensing information for each plate 
     plates <- XML::xpathSApply(xml_tree_root, ".//Plates", XML::xmlChildren)
     nplates <- length(plates)
-    for (pli in seq_len(nplates)) {
+    pl <- lapply(seq_len(nplates), function(pli) {
       plate <- xml_tree_root[["Plates"]][pli][["Plate"]]
 
       #plate info
@@ -244,7 +244,7 @@ get_D300_xml_treatments <-
       #extract drug dispensing information for each well 
       wells <- XML::xpathSApply(plate, ".//Wells", XML::xmlChildren)
       nwells <- length(wells)
-      for (wi in seq_len(nwells)) {
+      wl <- lapply(seq_len(nwells), function(wi) {
         
         well <- plate[["Wells"]][wi][["Well"]]
         #indexes of row and col start from zero, so add one
@@ -255,26 +255,29 @@ get_D300_xml_treatments <-
         #extract information each fluid delivered in well 
         fluids <- XML::xpathSApply(well, ".//Fluid", XML::xmlChildren)
         nfluids <- length(fluids)
-        for (fi in seq_len(nfluids)) {
+        vapply(seq_len(nfluids), function(fi) {
           id_fluid <- XML::xmlAttrs(well[[fi]])
           conc_fluid <- XML::xmlValue(well[[fi]])
           
           #define single entry
-          df_trt_entry <- data.frame(t(c(pli, 
-                                         barcode_plate, 
-                                         plate_dim, 
-                                         row_well,
-                                         col_well,
-                                         assay_vol_conv,
-                                         desired_unit,
-                                         id_fluid,
-                                         conc_fluid,
-                                         conc_unit)))
-          colnames(df_trt_entry) <- trt_cols
-          df_trt <- rbind(df_trt, df_trt_entry)
-        }
-      }
-    }
+            c(
+              pli,
+              barcode_plate,
+              plate_dim,
+              row_well,
+              col_well,
+              assay_vol_conv,
+              desired_unit,
+              id_fluid,
+              conc_fluid,
+              conc_unit
+            )
+        }, character(length(trt_cols)))
+    })
+    t(do.call(cbind, wl))
+    })
+    df_trt <- do.call(rbind, pl)
+    colnames(df_trt) <- trt_cols
     df_trt
   }
 
