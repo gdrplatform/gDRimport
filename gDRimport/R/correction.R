@@ -1,9 +1,11 @@
-#' XLS/XLSX #
-
+#' Get Excel sheets
+#'
 #' get sheets for given set of XLS files
 #' 
-#' get sheets for given set of XLS files
 #' @param files charvec with file paths
+#'
+#' @return named list where names are the excel filenames
+#' and the values are the sheets within each file
 #' 
 get_xl_sheets <- function(files) {
   checkmate::assert_character(files)
@@ -50,11 +52,8 @@ correct_template_sheets <- function(tfiles) {
 
   ts <- get_xl_sheets(tfiles)
   # no issues with templates sheets, return input data
-  ts <- if (are_template_sheets_valid(ts)) {
-    ts
-  
-  # there are issues, let's iterate through available fixes hoping to get the valid data eventually
-  } else {
+  if (!are_template_sheets_valid(ts)) {
+    # iterate through available fixes to try to fix data
     # spaces/bad capitalization 
     ts <- fix_typos_with_reference(ts, unlist(gDRutils::get_env_identifiers()))
     
@@ -82,15 +81,14 @@ correct_template_sheets <- function(tfiles) {
       inv_file <- attributes(st1)[["file"]]
       ts[[inv_file]] <- gDRutils::get_env_identifiers("drug")
     }
-    ts
   }
   stopifnot(are_template_sheets_valid(ts))
   ts
 }
 
-#' Get names of the shets expected in templates xlsx
+#' Get names of the sheets expected in templates xlsx
 #'
-#' Get names of the shets expected in templates xlsx
+#' Get names of the sheets expected in templates xlsx
 #'
 #' @param type charvec type of the sheets
 #' 
@@ -116,8 +114,7 @@ get_expected_template_sheets <-
       ctype
     } else if (type == "optional") {
       otype
-    }
-    else {
+    } else {
       stop(sprintf("bad type: '%s", type))
     }
   }
@@ -127,14 +124,15 @@ get_expected_template_sheets <-
 #' are template sheet valid?
 #' 
 #' @param ts list with (per file) template sheets
+#' @seealso get_xl_sheets
 are_template_sheets_valid <- function(ts) {
 
-checkmate::assert_list(ts)
+  checkmate::assert_list(ts)
 
-cl <- vector("list", 10)
-drug <- gDRutils::get_env_identifiers("drug")
+  cl <- vector("list", 10)
+  drug <- gDRutils::get_env_identifiers("drug")
 
- # only allowed sheet names are present
+  # only allowed sheet names are present
   myv <- vapply(ts, function(x) {
     all(drug %in% x)
   }, logical(1))
