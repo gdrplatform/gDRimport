@@ -26,8 +26,7 @@ load_data <-
     assertthat::assert_that(assertthat::is.string(instrument), msg = "'instrument' must be a character vector")
 
     if (is.data.frame(df_template_files)) {
-      # for the shiny app
-      template_file <- df_template_files$datapath
+      template_file <- df_template_files$datapath # for the shiny app
       is_readable_v(template_file)
       template_filename <- df_template_files$name
     } else {
@@ -77,12 +76,41 @@ load_manifest <- function(manifest_file) {
                          "xlsx",
                          "xls",
                          "tsv")
-
   assertthat::assert_that(is.character(manifest_file), msg = "'manifest_file' must be a character vector")
   checkmate::assert_file_exists(manifest_file)
 
 
-  # read files
+  manifest_data <- read_in_manifest_file(manifest_file)
+  headers <- gDRutils::validate_identifiers(do.call(rbind, manifest_data), req_ids = "barcode")
+
+  # check default headers are in each df
+  dump <- lapply(seq_along(manifest_file),
+                 function(i)
+                   check_metadata_names(
+                     colnames(manifest_data[[i]]),
+                     df_name = manifest_file[[i]],
+                     df_type = "manifest"
+                   ))
+
+  cat_manifest_data <- as.data.frame(data.table::rbindlist(manifest_data))
+  colnames(cat_manifest_data) <-
+    check_metadata_names(colnames(cat_manifest_data), "manifest")
+
+  # check that barcodes are unique
+  exception_data <- get_exception_data(14)
+  if (dim(cat_manifest_data)[1] != length(unique(cat_manifest_data[[headers[["barcode"]]]])))
+    stop(exception_data$sprintf_text)
+
+  cat_manifest_data[[headers[["template"]]]] <- basename(cat_manifest_data[[headers[["template"]]]])
+
+  futile.logger::flog.info("Manifest loaded successfully")
+  return(list(data = cat_manifest_data,
+              headers = headers))
+}
+  
+#' read manifest files
+read_in_manifest_file <- function(manifest_file) {
+  
   manifest_data <- lapply(manifest_file, function(x) {
     manifest_ext <- tools::file_ext(x)
     if (manifest_ext %in% c("xlsx", "xls")) {
@@ -125,34 +153,8 @@ load_manifest <- function(manifest_file) {
     colnames(x) <- gDRutils::update_idfs_synonyms(colnames(x))
     x
   })
-
-  headers <- gDRutils::validate_identifiers(do.call(rbind, manifest_data), req_ids = "barcode")
-
-  # check default headers are in each df
-  dump <- lapply(seq_along(manifest_file),
-                 function(i)
-                   check_metadata_names(
-                     colnames(manifest_data[[i]]),
-                     df_name = manifest_file[[i]],
-                     df_type = "manifest"
-                   ))
-
-  cat_manifest_data <- as.data.frame(data.table::rbindlist(manifest_data))
-  colnames(cat_manifest_data) <-
-    check_metadata_names(colnames(cat_manifest_data), "manifest")
-
-  # check that barcodes are unique
-  exception_data <- get_exception_data(14)
-  if (dim(cat_manifest_data)[1] != length(unique(cat_manifest_data[[headers[["barcode"]]]])))
-    stop(exception_data$sprintf_text)
-
-  cat_manifest_data[[headers[["template"]]]] <- basename(cat_manifest_data[[headers[["template"]]]])
-
-  futile.logger::flog.info("Manifest loaded successfully")
-  return(list(data = cat_manifest_data,
-              headers = headers))
+  manifest_data
 }
-
 
 #' Load templates
 #'
@@ -531,12 +533,25 @@ load_templates_xlsx <-
 #'
 load_results_tsv <-
   function(results_file, headers) {
+    
     # results_file is a string or a vector of strings
-    results_filename <- basename(results_file)
+    results_filename <- basename(results_file) 
 
+    all_results <- read_in_result_files(results_file)
+
+    if (dim(unique(df[, c(headers[["barcode"]], gDRutils::get_env_identifiers("well_position"))]))[1] !=
+        dim(df[, c(headers[["barcode"]], gDRutils::get_env_identifiers("well_position"))])[1]) {
+      futile.logger::flog.error("Multiple rows with the same Barcode and Well across all files")
+    }
+
+    return(all_results)
+  }
+
+read_in_result_files <- function(results_file) {
+  
     # read all files
     all_results <- data.frame()
-    for (iF in seq_along(results_file)) {
+    res_l <- lapply(results_file, function(iF) {
       futile.logger::flog.info("Reading file", results_file[iF])
       tryCatch({
         df <-
@@ -575,19 +590,11 @@ load_results_tsv <-
         df$BackgroundValue <- 0
 
       futile.logger::flog.info("File %s read; %d wells", results_filename[iF], nrow(df))
-      all_results <- rbind(all_results, df)
-
       futile.logger::flog.info("File done")
-    }
 
-    if (dim(unique(df[, c(headers[["barcode"]], gDRutils::get_env_identifiers("well_position"))]))[1] !=
-        dim(df[, c(headers[["barcode"]], gDRutils::get_env_identifiers("well_position"))])[1]) {
-      futile.logger::flog.error("Multiple rows with the same Barcode and Well across all files")
-    }
-
-    return(all_results)
-  }
-
+    })
+    all_results <- do.call(rbind, res_l)
+}
 
 #' Load envision results from xlsx
 #'
