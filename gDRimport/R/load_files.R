@@ -80,7 +80,7 @@ load_manifest <- function(manifest_file) {
   checkmate::assert_file_exists(manifest_file)
 
 
-  manifest_data <- read_in_manifest_file(manifest_file)
+  manifest_data <- read_in_manifest_file(manifest_file, available_formats)
   headers <- gDRutils::validate_identifiers(do.call(rbind, manifest_data), req_ids = "barcode")
 
   # check default headers are in each df
@@ -109,7 +109,11 @@ load_manifest <- function(manifest_file) {
 }
   
 #' read manifest files
-read_in_manifest_file <- function(manifest_file) {
+#' 
+#' @param manifest_file character, file path(s) to manifest(s)
+#' @param available_formats charvec with available file formats
+#' 
+read_in_manifest_file <- function(manifest_file, available_formats) {
   
   manifest_data <- lapply(manifest_file, function(x) {
     manifest_ext <- tools::file_ext(x)
@@ -294,7 +298,7 @@ load_templates_tsv <-
                      ))
 
     metadata_fields <- NULL
-    all_templates <- read_in_tsv_template_files <- function(template_file)
+    all_templates <- read_in_tsv_template_files <- function(template_file, tmplate_filename, templates)
     futile.logger::flog.info("Templates loaded successfully!")
     all_templates
   }
@@ -302,7 +306,10 @@ load_templates_tsv <-
 #' read in tsv template files
 #' 
 #' @param template_file character, file path(s) to template(s)
-read_in_tsv_template_files <- function(template_file) {
+#' @param template_filename character, file name(s)
+#' @param templates list with templates data
+#' 
+read_in_tsv_template_files <- function(template_file, template_filename, templates) {
     tmpl_l <- lapply(template_file, function(iF) {
       futile.logger::flog.info("Loading %s", template_filename[iF])
       # 1) check that the sheet names are ok and 2) identify drug_identifier sheet (case insensitive)
@@ -427,6 +434,7 @@ read_in_template_xlsx <- function(template_file, template_filename, template_she
 #' 
 #' @param template_file character, file path(s) to template(s)
 #' @param template_sheets template sheet names
+#' @param idx template file index
 #' @param plate_info list with plate info
 #' 
 read_in_template_sheet_xlsx <- function(template_file, template_sheets, idx, plate_info) {
@@ -585,7 +593,7 @@ load_results_tsv <-
     # results_file is a string or a vector of strings
     results_filename <- basename(results_file) 
 
-    all_results <- read_in_result_files(results_file)
+    all_results <- read_in_result_files(results_file, results_filename, headers)
 
     if (dim(unique(df[, c(headers[["barcode"]], gDRutils::get_env_identifiers("well_position"))]))[1] !=
         dim(df[, c(headers[["barcode"]], gDRutils::get_env_identifiers("well_position"))])[1]) {
@@ -595,10 +603,9 @@ load_results_tsv <-
     return(all_results)
   }
 
-read_in_result_files <- function(results_file) {
+read_in_result_files <- function(results_file, results_filename, headers) {
   
     # read all files
-    all_results <- data.frame()
     res_l <- lapply(results_file, function(iF) {
       futile.logger::flog.info("Reading file", results_file[iF])
       tryCatch({
@@ -621,7 +628,6 @@ read_in_result_files <- function(results_file) {
           stop(sprintf(exception_data$sprintf_text, results_file[[iF]]))
         })
       }
-
       for (coln in c(headers[["barcode"]],
                      gDRutils::get_env_identifiers("well_position"),
                      "ReadoutValue")) {
@@ -636,10 +642,8 @@ read_in_result_files <- function(results_file) {
       }
       if (!("BackgroundValue" %in% colnames(df)))
         df$BackgroundValue <- 0
-
       futile.logger::flog.info("File %s read; %d wells", results_filename[iF], nrow(df))
       futile.logger::flog.info("File done")
-
     })
     all_results <- do.call(rbind, res_l)
 }
@@ -980,135 +984,161 @@ check_metadata_names <-
     checkmate::assert_character(df_name)
     checkmate::assert_character(df_type, null.ok = TRUE)
 
-    # first check for required column names
-    if (!is.null(df_type)) {
-      if (df_type == "manifest") {
-        expected_headers <- gDRutils::get_header("manifest")
-      } else if (df_type == "template") {
-        expected_headers <- gDRutils::get_env_identifiers("drug")
-      } else if (df_type == "template_treatment") {
-        expected_headers <- c(gDRutils::get_env_identifiers("drug"), "Concentration")
-      }
-
-      upperHeaders <- lapply(expected_headers, toupper)
-      headersOK <- vapply(upperHeaders, function(x) any(x %in% toupper(col_df)), FUN.VALUE = logical(1))
-      if (any(!headersOK)) {
-        exception_data <- get_exception_data(24)
-        stop(
-          sprintf(
-            exception_data$sprintf_text,
-            df_type,
-            toString(expected_headers[!(expected_headers %in% col_df)])
-          )
-        )
-      }
-      if (df_type == "template_treatment") {
-        # assess if multiple drugs and proper pairing
-        n_drug <-
-          agrep(gDRutils::get_env_identifiers("drug"), col_df, ignore.case = TRUE)
-        n_conc <-
-          agrep("Concentration", col_df, ignore.case = TRUE)
-        if (length(n_drug) != length(n_conc)) {
-          exception_data <- get_exception_data(32)
-          stop(
-            sprintf(
-              exception_data$sprintf_text,
-              df_name
-            )
-          )
-        }
-        if (length(n_drug) > 1) {
-          trt_sheets <- c(
-            paste0(gDRutils::get_env_identifiers("drug"), "_",
-                   2:length(n_drug)),
-            paste0("Concentration_", 2:length(n_conc))
-          )
-          if (!(all(toupper(trt_sheets) %in% toupper(col_df)))) {
-            exception_data <- get_exception_data(25)
-            stop(sprintf(
-              exception_data$sprintf_text,
-              df_name,
-              toString(trt_sheets[!(toupper(trt_sheets) %in% toupper(col_df))])
-            ))
-          }
-        }
-      }
-    }
-    check_headers <-
-      setdiff(gDRutils::get_header("reserved"), gDRutils::get_env_identifiers("well_position"))
-
-
+    check_metadata_req_col_names(col_df, df_name, df_type)
     corrected_names <- col_df
-
-    # remove spaces and convert to WordUppercase
-    names_spaces <- regexpr("\\s", corrected_names) > 0
-    if (any(names_spaces)) {
-      for (i in which(names_spaces)) {
-        s <- strsplit(corrected_names[i], " ")[[1]]
-        corrected_names[i] <-
-          paste(toupper(substring(s, 1, 1)),
-                substring(s, 2),
-                sep = "",
-                collapse = "")
-      }
-      futile.logger::flog.warn(
-        "Metadata field names for %s cannot contain spaces --> corrected to: %s",
-        df_name,
-        toString(corrected_names[names_spaces])
-      )
-    }
-
-    # check for wrong metadata field names (including dash, starting with number, ... )
-    bad_names <-
-      regexpr("\\W", corrected_names) > 0 |
-      regexpr("\\d", corrected_names) == 1
-    if (any(bad_names)) {
-      exception_data <- get_exception_data(26)
-      stop(
-        sprintf(
-          exception_data$sprintf_text,
-          df_name,
-          toString(corrected_names[bad_names])
-        )
-      )
-    }
-
-    # common headers that are written in a specific way
-    # throw warning if close match and correct upper/lower case for consistency
-    controlled_headers <- gDRutils::get_header("controlled")
-    for (i in seq_along(controlled_headers)) {
-      grep_pattern <- paste0(controlled_headers[[i]], "$", collapse = "|")
-      exact_match_grep <- grep(grep_pattern, corrected_names)
-
-      # To avoid cases when grep compare 'PLATE' to 'temPLATE'
-      case_match <- setdiff(
-        grep(grep_pattern, corrected_names, ignore.case = TRUE),
-        exact_match_grep
-      )
-      if (isTRUE(length(exact_match_grep) == 1 || corrected_names[case_match] %in% controlled_headers)) next
-
-      if (length(case_match) > 0) {
-        corrected_names[case_match] <- controlled_headers[[i]]
-        futile.logger::flog.warn("Header %s in %s corrected to %s",
-                                 corrected_names[case_match],
-                                 df_name,
-                                 controlled_headers[[i]])
-      }
-    }
-
-    # check for headers that are reserved for downstream analyses
-    if (any(corrected_names %in% check_headers)) {
-      exception_data <- get_exception_data(27)
-      stop(sprintf(
-        exception_data$sprintf_text,
-        toString(intersect(check_headers, corrected_names)),
-        df_name
-      ))
-    }
-
-    return(corrected_names)
+    corrected_names <- check_metadata_against_spaces(corrected_names, df_name)
+    corrected_names <- check_metadata_field_names(corrected_names, df_name)
+    corrected_names <- check_metadata_headers(corrected_names, df_name)
+    corrected_names
   }
 
+#' Check metadata for required column names
+# 
+#' @param col_df a charvec with corrected colnames of df
+#' @param df_name a name of dataframe ("" by default)
+#' @param df_type a type of a dataframe (NULL by default)
+#' 
+check_metadata_req_col_names <- function(col_df, df_name, df_type) {
+  # first check for required column names
+  if (!is.null(df_type)) {
+    if (df_type == "manifest") {
+      expected_headers <- gDRutils::get_header("manifest")
+    } else if (df_type == "template") {
+      expected_headers <- gDRutils::get_env_identifiers("drug")
+    } else if (df_type == "template_treatment") {
+      expected_headers <-
+        c(gDRutils::get_env_identifiers("drug"),
+          "Concentration")
+    }
+    upperHeaders <- lapply(expected_headers, toupper)
+    headersOK <-
+      vapply(upperHeaders, function(x)
+        any(x %in% toupper(col_df)), FUN.VALUE = logical(1))
+    if (any(!headersOK)) {
+      exception_data <- get_exception_data(24)
+      stop(sprintf(
+        exception_data$sprintf_text, df_type,
+        toString(expected_headers[!(expected_headers %in% col_df)])))
+    }
+    if (df_type == "template_treatment") {
+      # assess if multiple drugs and proper pairing
+      n_drug <- agrep(gDRutils::get_env_identifiers("drug"), col_df, ignore.case = TRUE)
+      n_conc <- agrep("Concentration", col_df, ignore.case = TRUE)
+      if (length(n_drug) != length(n_conc)) {
+        exception_data <- get_exception_data(32)
+        stop(sprintf(exception_data$sprintf_text, df_name))
+      }
+      if (length(n_drug) > 1) {
+        trt_sheets <- c(
+          paste0(
+            gDRutils::get_env_identifiers("drug"), "_", 2:length(n_drug)),
+          paste0("Concentration_", 2:length(n_conc))
+        )
+        if (!(all(toupper(trt_sheets) %in% toupper(col_df)))) {
+          exception_data <- get_exception_data(25)
+          stop(sprintf(
+            exception_data$sprintf_text, df_name,
+            toString(trt_sheets[!(toupper(trt_sheets) %in% toupper(col_df))])))
+        }
+      }
+    }
+  }
+  
+}
+
+#' Check metadata field names
+# 
+#' @param corrected_names a charvec with corrected colnames of df
+#' @param df_name a name of dataframe ("" by default)
+#' 
+check_metadata_field_names <- function(corrected_names, df_name) {
+  # check for wrong metadata field names (including dash, starting with number, ... )
+  bad_names <-
+    regexpr("\\W", corrected_names) > 0 |
+    regexpr("\\d", corrected_names) == 1
+  if (any(bad_names)) {
+    exception_data <- get_exception_data(26)
+    stop(sprintf(
+      exception_data$sprintf_text,
+      df_name,
+      toString(corrected_names[bad_names])
+    ))
+  }
+  corrected_names
+}
+
+#' Check metadata against spaces
+# 
+#' @param corrected_names a charvec with corrected colnames of df
+#' @param df_name a name of dataframe ("" by default)
+#' 
+check_metadata_against_spaces <- function(corrected_names, df_name) {
+  # remove spaces and convert to WordUppercase
+  names_spaces <- regexpr("\\s", corrected_names) > 0
+  if (any(names_spaces)) {
+    for (i in which(names_spaces)) {
+      s <- strsplit(corrected_names[i], " ")[[1]]
+      corrected_names[i] <-
+        paste(toupper(substring(s, 1, 1)),
+              substring(s, 2),
+              sep = "",
+              collapse = "")
+    }
+    futile.logger::flog.warn(
+      "Metadata field names for %s cannot contain spaces --> corrected to: %s",
+      df_name,
+      toString(corrected_names[names_spaces])
+    )
+  }
+  corrected_names
+}
+
+#' Check whether metadata headers are correct and make fixes if needed
+# 
+#' @param corrected_names a charvec with corrected colnames of df
+#' @param df_name a name of dataframe ("" by default)
+#' 
+check_metadata_headers <- function(corrected_names, df_name) {
+  
+  # common headers that are written in a specific way
+  # throw warning if close match and correct upper/lower case for consistency
+  controlled_headers <- gDRutils::get_header("controlled")
+  for (i in seq_along(controlled_headers)) {
+    grep_pattern <- paste0(controlled_headers[[i]], "$", collapse = "|")
+    exact_match_grep <- grep(grep_pattern, corrected_names)
+    
+    # To avoid cases when grep compare 'PLATE' to 'temPLATE'
+    case_match <- setdiff(grep(grep_pattern, corrected_names, ignore.case = TRUE),
+                          exact_match_grep)
+    if (isTRUE(length(exact_match_grep) == 1 ||
+               corrected_names[case_match] %in% controlled_headers))
+      next
+    
+    if (length(case_match) > 0) {
+      corrected_names[case_match] <- controlled_headers[[i]]
+      futile.logger::flog.warn("Header %s in %s corrected to %s",
+                               corrected_names[case_match],
+                               df_name,
+                               controlled_headers[[i]])
+    }
+  }
+  
+  # check for headers that are reserved for downstream analyses
+  check_headers <-
+    setdiff(
+      gDRutils::get_header("reserved"),
+      gDRutils::get_env_identifiers("well_position")
+    )
+  if (any(corrected_names %in% check_headers)) {
+    exception_data <- get_exception_data(27)
+    stop(sprintf(
+      exception_data$sprintf_text,
+      toString(intersect(check_headers, corrected_names)),
+      df_name
+    ))
+  }
+  corrected_names
+}
 
 #' Read envision files
 #'
