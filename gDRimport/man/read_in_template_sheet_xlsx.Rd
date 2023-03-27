@@ -11,6 +11,8 @@ read_in_template_sheet_xlsx(template_file, template_sheets, idx, plate_info)
 
 \item{template_sheets}{template sheet names}
 
+\item{idx}{template file index}
+
 \item{plate_info}{list with plate info}
 }
 \description{

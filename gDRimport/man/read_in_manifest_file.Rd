@@ -4,7 +4,12 @@
 \alias{read_in_manifest_file}
 \title{read manifest files}
 \usage{
-read_in_manifest_file(manifest_file)
+read_in_manifest_file(manifest_file, available_formats)
+}
+\arguments{
+\item{manifest_file}{character, file path(s) to manifest(s)}
+
+\item{available_formats}{charvec with available file formats}
 }
 \description{
 read manifest files

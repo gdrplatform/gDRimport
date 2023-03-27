@@ -4,10 +4,14 @@
 \alias{read_in_tsv_template_files}
 \title{read in tsv template files}
 \usage{
-read_in_tsv_template_files(template_file)
+read_in_tsv_template_files(template_file, template_filename, templates)
 }
 \arguments{
 \item{template_file}{character, file path(s) to template(s)}
+
+\item{template_filename}{character, file name(s)}
+
+\item{templates}{list with templates data}
 }
 \description{
 read in tsv template files
