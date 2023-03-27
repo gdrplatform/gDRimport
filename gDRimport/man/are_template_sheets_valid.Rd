@@ -12,3 +12,6 @@ are_template_sheets_valid(ts)
 \description{
 are template sheet valid?
 }
+\seealso{
+get_xl_sheets
+}

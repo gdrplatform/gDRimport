@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{detect_file_format}
 \alias{detect_file_format}
-\title{Detect formar of results data}
+\title{Detect format of results data}
 \usage{
 detect_file_format(results_file)
 }
@@ -10,8 +10,8 @@ detect_file_format(results_file)
 \item{results_file}{path to results data}
 }
 \value{
-string with the information about detected data format of results
+string of the detected file format
 }
 \description{
-Detect formar of results data
+Detect format of results data
 }

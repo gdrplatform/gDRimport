@@ -2,7 +2,7 @@
 % Please edit documentation in R/correction.R
 \name{get_expected_template_sheets}
 \alias{get_expected_template_sheets}
-\title{Get names of the shets expected in templates xlsx}
+\title{Get names of the sheets expected in templates xlsx}
 \usage{
 get_expected_template_sheets(type = c("all", "core", "optional"))
 }
@@ -10,5 +10,5 @@ get_expected_template_sheets(type = c("all", "core", "optional"))
 \item{type}{charvec type of the sheets}
 }
 \description{
-Get names of the shets expected in templates xlsx
+Get names of the sheets expected in templates xlsx
 }
