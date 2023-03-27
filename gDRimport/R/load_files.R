@@ -294,12 +294,15 @@ load_templates_tsv <-
                      ))
 
     metadata_fields <- NULL
-    all_templates <- read_in_template_files <- function(template_file)
+    all_templates <- read_in_tsv_template_files <- function(template_file)
     futile.logger::flog.info("Templates loaded successfully!")
     all_templates
   }
 
-read_in_template_files <- function(template_file) {
+#' read in tsv template files
+#' 
+#' @param template_file character, file path(s) to template(s)
+read_in_tsv_template_files <- function(template_file) {
     tmpl_l <- lapply(template_file, function(iF) {
       futile.logger::flog.info("Loading %s", template_filename[iF])
       # 1) check that the sheet names are ok and 2) identify drug_identifier sheet (case insensitive)
@@ -316,7 +319,7 @@ read_in_template_files <- function(template_file) {
         df <- templates[[iF]][, gDRutils::get_env_identifiers("drug")]
         if (!(all(toupper(df)[!is.na(df)]) %in% toupper(gDRutils::get_env_identifiers("untreated_tag")))) {
           exception_data <- get_exception_data(18)
-          stop(sprintf(exception_data$sprintf_text,template_file[[iF]],
+          stop(sprintf(exception_data$sprintf_text, template_file[[iF]],
             paste(gDRutils::get_env_identifiers("untreated_tag"), collapse = " or ")))
         }
       } else {
@@ -377,60 +380,115 @@ load_templates_xlsx <-
                        df_type = "template"
                      ))
 
+    all_templates <- read_in_template_xlsx(template_file, template_filename, template_sheets)
+    
+    # standardize untreated values
+    all_templates <- .standardize_untreated_values(all_templates)
+    futile.logger::flog.info("Templates loaded successfully!")
+    return(all_templates)
+  }
+
+#' Read in xlsx template files
+#' 
+#' @param template_file character, file path(s) to template(s)
+#' @param template_filename character, file name(s)
+#' @param template_sheets template sheet names
+read_in_template_xlsx <- function(template_file, template_filename, template_sheets) {
+  
     metadata_fields <- NULL
     all_templates <- data.frame()
     for (iF in seq_along(template_file)) {
       futile.logger::flog.info("Loading %s", template_filename[iF])
+      Gnumber_idx <- which(template_sheets[[iF]] %in% gDRutils::get_env_identifiers("drug"))
+      
       # first check that the sheet names are ok
       # identify drug_identifier sheet
-      Gnumber_idx <- which(template_sheets[[iF]] %in% gDRutils::get_env_identifiers("drug"))
-      Conc_idx <-
-        grepl("Concentration", template_sheets[[iF]], ignore.case = TRUE)
-      # case of untreated plate
-      if (sum(Conc_idx) == 0) {
-        if (length(Gnumber_idx) == 0) {
-          exception_data <- get_exception_data(17)
-          stop(sprintf(
-            exception_data$sprintf_text,
-            template_file[[iF]],
-            gDRutils::get_env_identifiers("drug")
-          ))
-        }
-        tryCatch({
-          df <-
-            readxl::read_excel(
-              template_file[[iF]],
-              sheet = Gnumber_idx,
-              col_names = paste0("x", seq_len(48)),
-              range = "A1:AV32"
-            )
-        }, error = function(e) {
-          exception_data <- get_exception_data(5)
-          stop(sprintf(exception_data$sprintf_text, e))
-        })
-        if (!(all(toupper(unlist(df)[!is.na(unlist(df))]) %in%
-                  toupper(gDRutils::get_env_identifiers(
-                    "untreated_tag"
-                  ))))) {
-          exception_data <- get_exception_data(18)
-          stop(sprintf(
-            exception_data$sprintf_text,
-            template_file[[iF]],
-            paste(gDRutils::get_env_identifiers("untreated_tag"), collapse = " or ")
-          ))
-        }
-      } else {
-        # normal case
-        dump <- check_metadata_names(template_sheets[[iF]],
-                                     df_name = template_filename[iF],
-                                     df_type = "template_treatment")
-      }
+      validate_template_xlsx(template_file, template_filename, template_sheets, iF)
+      
       # read the different sheets and check for plate size
       # enforce range to avoid skipping empty rows at the beginning
+      plate_info <- get_plate_info_from_template_xlsx(template_file, Gnumber_idx, iF)
+      df_template <-
+        read_in_template_sheet_xlsx(template_file,
+                                    template_sheets,
+                                    iF,
+                                    plate_info)
+      df_template$Template <- template_filename[iF]
+      colnames(df_template) <-
+        check_metadata_names(colnames(df_template),
+                             df_name = template_filename[iF])
+      all_templates <- as.data.frame(data.table::rbindlist(list(all_templates, df_template), fill = TRUE))
+
+    }
+    all_templates
+}
+
+#' Read in data from xlsx template sheet
+#' 
+#' @param template_file character, file path(s) to template(s)
+#' @param template_sheets template sheet names
+#' @param plate_info list with plate info
+#' 
+read_in_template_sheet_xlsx <- function(template_file, template_sheets, idx, plate_info) {
+  metadata_fields <- NULL
+  # need to adapt for 1536 well plates
+  df_template <-
+    base::expand.grid(WellRow = LETTERS[seq_len(plate_info$n_row)],
+                      WellColumn = seq_len(plate_info$n_col))
+  for (iS in seq_along(template_sheets[[idx]])) {
+    sheetName <- template_sheets[[idx]][[iS]]
+    tryCatch({
+      df <- as.data.frame(
+        readxl::read_excel(
+          template_file[[idx]],
+          sheet = iS,
+          col_names = paste0("x", seq_len(plate_info$n_col)),
+          range = plate_info$plate_range
+        )
+      )
+    }, error = function(e) {
+      exception_data <- get_exception_data(20)
+      stop(sprintf(exception_data$sprintf_text,
+                   template_file[[idx]],
+                   e))
+    })
+    df$WellRow <- LETTERS[seq_len(plate_info$n_row)]
+    df_melted <- reshape2::melt(df, id.vars = "WellRow")
+    # check if metadata field already exist and correct capitalization if needed
+    if (!(sheetName %in% metadata_fields)) {
+      if (!is.null(metadata_fields) &&
+          toupper(sheetName) %in% toupper(metadata_fields)) {
+        oldiS <- sheetName
+        sheetName <-
+          metadata_fields[toupper(sheetName) == toupper(metadata_fields)]
+        futile.logger::flog.info("%s corrected to match case with %s", oldiS, sheetName)
+      } else {
+        metadata_fields <- c(metadata_fields, sheetName)
+      }
+    }
+    colnames(df_melted)[3] <- sheetName
+    colnames(df_melted)[colnames(df_melted) == "variable"] <-
+      "WellColumn"
+    df_melted$WellColumn <-
+      gsub("x", "", df_melted$WellColumn)
+    df_template <-
+      base::merge(df_template, df_melted, by = c("WellRow", "WellColumn"))
+  }
+  df_template
+}
+
+#' Get plate info from template xlsx
+#' 
+#' @param template_file character, file path(s) to template(s)
+#' @param Gnumber_idx index with Gnumber data
+#' @param idx template file index
+#' 
+get_plate_info_from_template_xlsx <- function(template_file, Gnumber_idx, idx) {
+  
       tryCatch({
         df <-
           readxl::read_excel(
-            template_file[[iF]],
+            template_file[[idx]],
             sheet = Gnumber_idx,
             col_names = paste0("x", seq_len(48)),
             range = "A1:AV32",
@@ -452,67 +510,67 @@ load_templates_xlsx <-
         )) / 1.5))
       n_row <- max(n_row, n_col / 1.5)
       n_col <- max(1.5 * n_row, n_col)
-      plate_range <-
-        ifelse(n_col < 26, paste0("A1:", LETTERS[n_col], n_row), "A1:AV32")
+      list(
+        plate_range = ifelse(n_col < 26, paste0("A1:", LETTERS[n_col], n_row), "A1:AV32"),
+        n_row = n_row,
+        n_col = n_col
+      )
+}
 
-      # need to adapt for 1536 well plates
-      df_template <-
-        base::expand.grid(WellRow = LETTERS[seq_len(n_row)], WellColumn = seq_len(n_col))
-
-      for (iS in seq_along(template_sheets[[iF]])) {
-        sheetName <- template_sheets[[iF]][[iS]]
-        tryCatch({
-          df <- as.data.frame(
-            readxl::read_excel(
-              template_file[[iF]],
-              sheet = iS,
-              col_names = paste0("x", seq_len(n_col)),
-              range = plate_range
-            )
-          )
-        }, error = function(e) {
-          exception_data <- get_exception_data(20)
+#' Validate template xlsx data
+#' 
+#' @param template_file character, file path(s) to template(s)
+#' @param template_filename character, file name(s)
+#' @param template_sheets template sheet names
+#' @param idx template file index
+#' 
+validate_template_xlsx <- function(template_file, template_filename, template_sheets, idx) {
+  
+      # first check that the sheet names are ok
+      # identify drug_identifier sheet
+      Gnumber_idx <- which(template_sheets[[idx]] %in% gDRutils::get_env_identifiers("drug"))
+      Conc_idx <-
+        grepl("Concentration", template_sheets[[idx]], ignore.case = TRUE)
+      # case of untreated plate
+      if (sum(Conc_idx) == 0) {
+        if (length(Gnumber_idx) == 0) {
+          exception_data <- get_exception_data(17)
           stop(sprintf(
             exception_data$sprintf_text,
-            template_file[[iF]],
-            e
+            template_file[[idx]],
+            gDRutils::get_env_identifiers("drug")
           ))
-        })
-        df$WellRow <- LETTERS[seq_len(n_row)]
-        df_melted <- reshape2::melt(df, id.vars = "WellRow")
-        # check if metadata field already exist and correct capitalization if needed
-        if (!(sheetName %in% metadata_fields)) {
-          if (!is.null(metadata_fields) &&
-              toupper(sheetName) %in% toupper(metadata_fields)) {
-            oldiS <- sheetName
-            sheetName <-
-              metadata_fields[toupper(sheetName) == toupper(metadata_fields)]
-            futile.logger::flog.info("%s corrected to match case with %s", oldiS, sheetName)
-          } else {
-            metadata_fields <- c(metadata_fields, sheetName)
-          }
         }
-        colnames(df_melted)[3] <- sheetName
-        colnames(df_melted)[colnames(df_melted) == "variable"] <-
-          "WellColumn"
-        df_melted$WellColumn <-
-          gsub("x", "", df_melted$WellColumn)
-        df_template <-
-          base::merge(df_template, df_melted, by = c("WellRow", "WellColumn"))
+        tryCatch({
+          df <-
+            readxl::read_excel(
+              template_file[[idx]],
+              sheet = Gnumber_idx,
+              col_names = paste0("x", seq_len(48)),
+              range = "A1:AV32"
+            )
+        }, error = function(e) {
+          exception_data <- get_exception_data(5)
+          stop(sprintf(exception_data$sprintf_text, e))
+        })
+        if (!(all(toupper(unlist(df)[!is.na(unlist(df))]) %in%
+                  toupper(gDRutils::get_env_identifiers(
+                    "untreated_tag"
+                  ))))) {
+          exception_data <- get_exception_data(18)
+          stop(sprintf(
+            exception_data$sprintf_text,
+            template_file[[idx]],
+            paste(gDRutils::get_env_identifiers("untreated_tag"), collapse = " or ")
+          ))
+        }
+      } else {
+        # normal case
+        dump <- check_metadata_names(template_sheets[[idx]],
+                                     df_name = template_filename[idx],
+                                     df_type = "template_treatment")
       }
-      df_template$Template <- template_filename[iF]
-      colnames(df_template) <-
-        check_metadata_names(colnames(df_template),
-                             df_name = template_filename[iF])
-      all_templates <- as.data.frame(data.table::rbindlist(list(all_templates, df_template), fill = TRUE))
-
-    }
-    # standardize untreated values
-    all_templates <- .standardize_untreated_values(all_templates)
-    futile.logger::flog.info("Templates loaded successfully!")
-    return(all_templates)
-  }
-
+} 
 
 #' Load results from tsv
 #'
