@@ -294,34 +294,30 @@ load_templates_tsv <-
                      ))
 
     metadata_fields <- NULL
-    all_templates <- data.frame()
-    for (iF in seq_along(template_file)) {
+    all_templates <- read_in_template_files <- function(template_file)
+    futile.logger::flog.info("Templates loaded successfully!")
+    all_templates
+  }
+
+read_in_template_files <- function(template_file) {
+    tmpl_l <- lapply(template_file, function(iF) {
       futile.logger::flog.info("Loading %s", template_filename[iF])
-      # first check that the sheet names are ok
-      # identify drug_identifier sheet (case insensitive)
+      # 1) check that the sheet names are ok and 2) identify drug_identifier sheet (case insensitive)
       Gnumber_idx <- grep(paste0(gDRutils::get_env_identifiers("drug"), "$"),
-                          colnames(templates[[iF]]),
-                          ignore.case = TRUE)
+                          colnames(templates[[iF]]), ignore.case = TRUE)
       Conc_idx <-
         grepl("Concentration", colnames(templates[[iF]]), ignore.case = TRUE)
       # case of untreated plate
       if (sum(Conc_idx) == 0) {
         if (length(Gnumber_idx) == 0) {
           exception_data <- get_exception_data(17)
-          stop(sprintf(
-            exception_data$sprintf_text,
-            template_file[[iF]],
-            gDRutils::get_env_identifiers("drug")
-          ))
+          stop(sprintf(exception_data$sprintf_text, template_file[[iF]], gDRutils::get_env_identifiers("drug")))
         }
         df <- templates[[iF]][, gDRutils::get_env_identifiers("drug")]
         if (!(all(toupper(df)[!is.na(df)]) %in% toupper(gDRutils::get_env_identifiers("untreated_tag")))) {
           exception_data <- get_exception_data(18)
-          stop(sprintf(
-            exception_data$sprintf_text,
-            template_file[[iF]],
-            paste(gDRutils::get_env_identifiers("untreated_tag"), collapse = " or ")
-          ))
+          stop(sprintf(exception_data$sprintf_text,template_file[[iF]],
+            paste(gDRutils::get_env_identifiers("untreated_tag"), collapse = " or ")))
         }
       } else {
         # normal case
@@ -329,7 +325,6 @@ load_templates_tsv <-
                              df_name = template_filename[iF],
                              df_type = "template_treatment")
       }
-
       df_template <- templates[[iF]]
       for (iS in colnames(df_template)) {
         # check if metadata field already exist and correct capitalization if needed
@@ -349,15 +344,10 @@ load_templates_tsv <-
       }
       df_template$Template <- template_filename[iF]
       colnames(df_template) <-
-        check_metadata_names(colnames(df_template),
-                             df_name = template_filename[iF])
-      all_templates <- rbind(all_templates, df_template)
-
-    }
-    futile.logger::flog.info("Templates loaded successfully!")
-    return(all_templates)
-  }
-
+        check_metadata_names(colnames(df_template), df_name = template_filename[iF])
+    })
+    do.call(rbind, tmpl_l)
+}
 
 #' Load templates from xlsx
 #'
