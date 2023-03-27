@@ -898,7 +898,6 @@ load_results_Tecan <-
   function(results_file, headers = gDRutils::get_env_identifiers()) {
     # Assertions:
     checkmate::assert_string(results_file)
-    iF <- NULL
     # check the result files is a .xls(x) file
     isExcel <- tools::file_ext(results_file) %in% c("xlsx", "xls")
     if (!isExcel) {
@@ -911,58 +910,65 @@ load_results_Tecan <-
       futile.logger::flog.error("No data sheet found in: %s",
                                 results_file)
     }
-    # read all plates
-    all_results <- data.frame()
-    for (iS in seq_along(results_sheets)) {
-      futile.logger::flog.info("Reading file %s, sheet %s", results_file, results_sheets[[iS]])
-      # read the content of each plate
-      tryCatch({
-        df <- readxl::read_excel(results_file,
-                                 sheet = results_sheets[[iS]],
-                                 col_names = FALSE)
-      }, error = function(e) {
-        exception_data <- get_exception_data(22)
-        stop(sprintf(exception_data$sprintf_text, results_file[[iF]], iS))
-      })
-
-      # find the indicator ("<>") that identifies where plate readings are
-      ind <- which(df == "<>", arr.ind = TRUE)
-      # remove text above "<>"
-      dfm <- df[(ind[1]):nrow(df), ind[2]:ncol(df)]
-      # remove text after data matrix ends, as identified by first na value
-      ind <- which(is.na(dfm), arr.ind = TRUE)[1]
-      dfm <- dfm[seq_len(ind) - 1, seq_len(ncol(dfm))]
-
-      # rows and columns in data matrix with row and col names
-      n_row <- nrow(dfm)
-      n_col <- ncol(dfm)
-      readout <- as.data.frame(dfm[2:n_row, 2:n_col])
-      rownames(readout) <- t(dfm[2:n_row, 1])
-      colnames(readout) <- dfm[1, 2:n_col]
-      # rows and columns in readout matrix
-      n_row <- nrow(readout)
-      n_col <- ncol(readout)
-      # get well identifiers (numbers and letters) from layout
-      WellRow <- rownames(readout)
-      WellColumn <- strtoi(colnames(readout))
-
-      # results data frame for plate
-      df_results <- data.frame(
-        Barcode = results_sheets[iS],
-        WellRow = WellRow,
-        WellColumn =  as.vector(t(matrix(
-          WellColumn, n_col, n_row
-        ))),
-        ReadoutValue = as.numeric(as.vector(as.matrix(readout))),
-        BackgroundValue = 0 ## Tecan users report negligible background readings, usually background is not recorded
-      )
-      names(df_results)[1] <- headers[["barcode"]]
-      # add plate to overall results
-      all_results <- rbind(all_results, df_results)
-    }
+    # # read all plates
+    all_results <- read_in_results_Tecan(results_file, results_sheets, headers)
     return(all_results)
   }
 
+#' read in Tecan data
+#' 
+#' @param results_file string, file path to a result file
+#' @param results_sheets template sheet names
+#' @param headers list of headers identified in the manifest
+read_in_results_Tecan <- function(results_file, results_sheets, headers) {
+  all_results <- data.frame()
+  for (iS in seq_along(results_sheets)) {
+    futile.logger::flog.info("Reading file %s, sheet %s", results_file, results_sheets[[iS]])
+    # read the content of each plate
+    tryCatch({
+      df <- readxl::read_excel(results_file,
+                               sheet = results_sheets[[iS]],
+                               col_names = FALSE)
+    }, error = function(e) {
+      exception_data <- get_exception_data(22)
+      stop(sprintf(exception_data$sprintf_text, results_file, iS))
+    })
+    
+    # find the indicator ("<>") that identifies where plate readings are
+    ind <- which(df == "<>", arr.ind = TRUE)
+    dfm <- df[(ind[1]):nrow(df), ind[2]:ncol(df)] # remove text above "<>"
+    # remove text after data matrix ends, as identified by first na value
+    ind <- which(is.na(dfm), arr.ind = TRUE)[1]
+    dfm <- dfm[seq_len(ind) - 1, seq_len(ncol(dfm))]
+    
+    # rows and columns in data matrix with row and col names
+    n_row <- nrow(dfm)
+    n_col <- ncol(dfm)
+    readout <- as.data.frame(dfm[2:n_row, 2:n_col])
+    rownames(readout) <- t(dfm[2:n_row, 1])
+    colnames(readout) <- dfm[1, 2:n_col]
+    # rows and columns in readout matrix
+    n_row <- nrow(readout)
+    n_col <- ncol(readout)
+    # get well identifiers (numbers and letters) from layout
+    WellRow <- rownames(readout)
+    WellColumn <- strtoi(colnames(readout))
+    
+    # results data frame for plate
+    df_results <- data.frame(
+      Barcode = results_sheets[iS],
+      WellRow = WellRow,
+      WellColumn =  as.vector(t(matrix(
+        WellColumn, n_col, n_row
+      ))),
+      ReadoutValue = as.numeric(as.vector(as.matrix(readout))),
+      BackgroundValue = 0 ## Tecan users report negligible background readings, usually background is not recorded
+    )
+    names(df_results)[1] <- headers[["barcode"]]
+    all_results <- rbind(all_results, df_results)
+  }
+  all_results
+}
 
 #' check_metadata_names
 #'
