@@ -229,12 +229,12 @@ test_that(".check_file_structure works as expected", {
   ref_bckgrd <- 4
   readout_offset <- 1 + ref_bckgrd
   barcode_col <- 3
-  expect_null(.check_file_structure(df, iB, iF, iS, results_filename,
-                        readout_offset, n_row, n_col, barcode_col))
+  expect_null(.check_file_structure(df, basename(results_filename[[iF]]), 
+                                    iS, readout_offset, n_row, n_col, iB, barcode_col))
 
   df2 <- readxl::read_excel(system.file("extdata/data1/RawData_day7.xlsx", package = "gDRimport"))
-  expect_error(.check_file_structure(df2, iB, iF, iS, results_filename,
-                                    readout_offset, n_row, n_col, barcode_col))
+  expect_error(.check_file_structure(df2, basename(results_filename[[iF]]),
+                                    iS, readout_offset, n_row, n_col, iB, barcode_col))
 })
 
 test_that(".fill_empty_wells works as expected", {
