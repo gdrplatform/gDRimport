@@ -75,3 +75,15 @@ get_test_data3 <-
       )
     )
   }
+
+get_test_data4 <-
+  function(data_dir = system.file(package = "gDRimport", "extdata", "data4")) {
+    ddir <- system.file(package = "gDRimport", "extdata", "data4")
+    fls <- list.files(ddir, full.names = TRUE)
+    list(
+      m_file = grep("\\/Manifest.xlsx$", fls, value = TRUE),
+      r_files = grep("\\/[H|K].+.csv$", fls, value = TRUE),
+      t_files = grep("\\/Project40.+.xlsx$", fls, value = TRUE),
+      ref_l_path = file.path(ddir, "ref_l.RDS")
+    )
+  }
