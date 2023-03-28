@@ -9,8 +9,9 @@
 #' @export
 #'
 standardize_record_values <- function(x, dictionary = DICTIONARY) {
+  dnames <- names(dictionary)
   for (i in seq_along(dictionary)) {
-    x[x == names(dictionary[i])] <- dictionary[[i]]
+    x[x == dnames[i]] <- dictionary[[i]]
   }
   x
 }
@@ -104,11 +105,11 @@ save_file_type_info <-
 
 
 
-#' Detect formar of results data
+#' Detect format of results data
 #'
 #' @param results_file path to results data
 #'
-#' @return string with the information about detected data format of results
+#' @return string of the detected file format
 #' @export
 detect_file_format <- function(results_file) {
   checkmate::assert_character(results_file)
