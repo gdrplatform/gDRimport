@@ -731,7 +731,8 @@ load_results_EnVision <-
           df[Bckd_info_idx + 1, 1] <- df[Bckd_info_idx, 1]
           df[Bckd_info_idx, 1] <- ""
         }
-
+        barcode_col <- grep(paste0(headers[["barcode"]], collapse = "|"), as.data.frame(df))[1]
+        
         if (isEdited) {
 
           # get the expected plate size
@@ -762,7 +763,6 @@ load_results_EnVision <-
           df_to_check <- df[, -6:-1]
           full_rows <- Reduce(union, lapply(df, function(x) grep("^\\d+$", x)))
 
-          barcode_col <- grep(paste0(headers[["barcode"]], collapse = "|"), as.data.frame(df))[1]
           Barcode_idx <-
             which(unlist(as.data.frame(df)[, barcode_col]) %in% headers[["barcode"]])
 
@@ -875,7 +875,7 @@ load_results_EnVision <-
             BackgroundValue = BackgroundValue
           )
           futile.logger::flog.info("Plate %s read; %d wells",
-                                   as.character(df[iB + 1, barcode_col]),
+                                   as.character(Barcode),
                                    dim(df_results)[1])
 
           all_results <- rbind(all_results, df_results)
