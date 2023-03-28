@@ -21,6 +21,8 @@ get_xl_sheets <- function(files) {
 #' get sheets for given set of XLS files
 #' @param ts list with template sheets info
 #' 
+#' @return logical flaga
+#' 
 .check_against_single_template_sheet <- function(ts) {
 
   checkmate::assert_list(ts)
@@ -46,6 +48,8 @@ get_xl_sheets <- function(files) {
 #' Correct names of the template sheets (if required)
 #' 
 #' @param tfiles charvec with paths to template files
+#' 
+#' @return charvec with paths to corrected sheet names
 correct_template_sheets <- function(tfiles) {
 
   checkmate::assert_character(tfiles)
@@ -91,6 +95,8 @@ correct_template_sheets <- function(tfiles) {
 #' Get names of the sheets expected in templates xlsx
 #'
 #' @param type charvec type of the sheets
+#' 
+#' @return string with type of the sheets
 #' 
 get_expected_template_sheets <-
   function(type = c("all", "core", "optional")) {
@@ -170,6 +176,9 @@ are_template_sheets_valid <- function(ts) {
 #' 'grepl' is used to find entries from 'ref' that might be 
 #' somehow pre- or post- fixed
 #' @param fix_underscores logical flag fix the issues with underscores in data identfiers? 
+#' 
+#' @return list or charvec with corrected data
+#' 
 fix_typos_with_reference <-
   function(data,
            ref,
@@ -220,13 +229,14 @@ fix_typos_with_reference <-
     out
   }
 
-
 #' grep wrapper to support multiple patterns
 #' 
 #' @param patterns charvec with patterns to be checked
 #' @param x charvec with data
 #' @param do_unlist logical_flag unlist the final results?
 #' @param ... additional argument
+#' 
+#' @return list of charvec with grep output
 #' 
 mgrepl <- function(patterns, x, do_unlist = TRUE,  ...) {
   checkmate::assert_character(patterns)

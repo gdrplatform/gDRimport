@@ -1,12 +1,12 @@
 #' get test data1
-#' list with with input data (manifest/template/result paths)
-#' and related reference data (RDS file paths)
 #'
 #' @examples 
 #' get_test_data1()
 #' 
 #' @export
 #'
+#' @return list with with input data (manifest/template/result paths)
+#' and related reference data (RDS file paths)
 get_test_data1 <- function() {
     
     ddir <- system.file(package = "gDRimport", "extdata", "data1")
@@ -45,14 +45,14 @@ get_test_data1 <- function() {
   }
 
 #' get test data2 (Tecan)
-#' list with with input data (manifest/template/result paths)
-#' and related reference data (RDS file paths)
 #'
 #' @examples 
 #' get_test_data2()
 #
 #' @export
 #'
+#' @return list with with input data (manifest/template/result paths)
+#' and related reference data (RDS file paths)
 get_test_data2 <- function() {
     ddir <- system.file(package = "gDRimport", "extdata", "data2")
     list(
@@ -69,14 +69,14 @@ get_test_data2 <- function() {
   }
 
 #' get test data3 (D300)
-#' list with with input data (manifest/template/result paths)
-#' and related reference data (RDS file paths)
 #'
 #' @examples 
 #' get_test_data3()
 #
 #' @export
 #'
+#' @return list with with input data (manifest/template/result paths)
+#' and related reference data (RDS file paths)
 get_test_data3 <- function() {
     ddir <- system.file(package = "gDRimport", "extdata", "data3")
     list(
@@ -100,14 +100,14 @@ get_test_data3 <- function() {
   }
 
 #' get test data3 (EnVision)
-#' list with with input data (manifest/template/result paths)
-#' and related reference data (RDS file paths)
 #'
 #' @examples 
 #' get_test_data4()
 #
 #' @export
 #'
+#' @return list with with input data (manifest/template/result paths)
+#' and related reference data (RDS file paths)
 get_test_data4 <- function() {
     ddir <- system.file(package = "gDRimport", "extdata", "data4")
     fls <- list.files(ddir, full.names = TRUE)

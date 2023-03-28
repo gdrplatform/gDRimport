@@ -14,6 +14,8 @@
 #'  l_tbl <- load_data(td1$m_file, td1$t_files, td1$r_files)
 #'
 #' @export
+#' 
+#' @return a list with three data.frames for manifest/treatment and results
 #'
 load_data <-
   function(manifest_file,
@@ -77,6 +79,9 @@ load_data <-
 #'  ml <- load_manifest(td1$m_file)
 #'
 #' @export
+#' 
+#' @return list with manifest data.frame and headers
+#' 
 load_manifest <- function(manifest_file) {
   # manifest_file is a string or a vector of strings
   available_formats <- c("text/tsv",
@@ -120,6 +125,8 @@ load_manifest <- function(manifest_file) {
 #' 
 #' @param manifest_file character, file path(s) to manifest(s)
 #' @param available_formats charvec with available file formats
+#' 
+#' @return a data.frame with manifest data
 #' 
 read_in_manifest_file <- function(manifest_file, available_formats) {
   
@@ -180,6 +187,9 @@ read_in_manifest_file <- function(manifest_file, available_formats) {
 #'  t_df <- load_templates(td1$t_files)
 #'  
 #' @export
+#' 
+#' @return data.frame with templates data
+#' 
 load_templates <- function(df_template_files) {
   # Assertions:
   stopifnot(any(inherits(df_template_files, "data.frame"), checkmate::test_character(df_template_files)))
@@ -240,6 +250,8 @@ load_templates <- function(df_template_files) {
 #'  
 #' @export
 #'
+#' @return data.frame with results' data
+#' 
 load_results <-
   function(df_results_files, instrument = "EnVision", headers = gDRutils::get_env_identifiers()) {
     stopifnot(any(inherits(df_results_files, "data.frame"), checkmate::test_character(df_results_files)))
@@ -280,6 +292,9 @@ load_results <-
 #'
 #' @param template_file character, file path(s) to template(s)
 #' @param template_filename character, file name(s)
+#' 
+#' @return data.frame with template data
+#' 
 load_templates_tsv <-
   function(template_file,
            template_filename = NULL) {
@@ -326,6 +341,8 @@ load_templates_tsv <-
 #' @param template_file character, file path(s) to template(s)
 #' @param template_filename character, file name(s)
 #' @param templates list with templates data
+#' 
+#' @return data.frame with templates dataa
 #' 
 read_in_tsv_template_files <- function(template_file, template_filename, templates) {
     tmpl_l <- lapply(template_file, function(iF) {
@@ -384,6 +401,8 @@ read_in_tsv_template_files <- function(template_file, template_filename, templat
 #' @param template_file character, file path(s) to template(s)
 #' @param template_filename character, file name(s)
 #'
+#' @return data.frame with templates data
+#' 
 load_templates_xlsx <-
   function(template_file,
            template_filename = NULL) {
@@ -418,6 +437,9 @@ load_templates_xlsx <-
 #' @param template_file character, file path(s) to template(s)
 #' @param template_filename character, file name(s)
 #' @param template_sheets template sheet names
+#' 
+#' @return data.frame with templates data
+#' 
 read_in_template_xlsx <- function(template_file, template_filename, template_sheets) {
   
     metadata_fields <- NULL
@@ -454,6 +476,8 @@ read_in_template_xlsx <- function(template_file, template_filename, template_she
 #' @param template_sheets template sheet names
 #' @param idx template file index
 #' @param plate_info list with plate info
+#' 
+#' @return data.frame with template data
 #' 
 read_in_template_sheet_xlsx <- function(template_file, template_sheets, idx, plate_info) {
   metadata_fields <- NULL
@@ -509,6 +533,8 @@ read_in_template_sheet_xlsx <- function(template_file, template_sheets, idx, pla
 #' @param Gnumber_idx index with Gnumber data
 #' @param idx template file index
 #' 
+#' @return list with plate info
+#' 
 get_plate_info_from_template_xlsx <- function(template_file, Gnumber_idx, idx) {
   
       tryCatch({
@@ -549,6 +575,8 @@ get_plate_info_from_template_xlsx <- function(template_file, Gnumber_idx, idx) {
 #' @param template_filename character, file name(s)
 #' @param template_sheets template sheet names
 #' @param idx template file index
+#' 
+#' @return \code{NULL} invisibly.
 #' 
 validate_template_xlsx <- function(template_file, template_filename, template_sheets, idx) {
   
@@ -604,7 +632,9 @@ validate_template_xlsx <- function(template_file, template_filename, template_sh
 #'
 #' @param results_file character, file path(s) to template(s)
 #' @param headers list of headers identified in the manifest
-#'
+#' 
+#' @return data.frame with results data
+#' 
 load_results_tsv <-
   function(results_file, headers) {
     
@@ -621,6 +651,15 @@ load_results_tsv <-
     return(all_results)
   }
 
+#' Read in results files
+#' 
+#' @param results_file  data.frame, with datapaths and names of results file(s)
+#' or character with file path of results file(s)
+#' @param results_filename charvect with file names
+#' @param headers list of headers identified in the result files
+#' 
+#' @return data.frame with results data
+#' 
 read_in_result_files <- function(results_file, results_filename, headers) {
   
     # read all files
@@ -672,6 +711,9 @@ read_in_result_files <- function(results_file, results_filename, headers) {
 #'
 #' @param results_file character, file path(s) to results file(s)
 #' @param headers list of headers identified in the manifest
+#' 
+#' @return data.frame with results data
+#' 
 load_results_EnVision <-
   function(results_file,
            headers = gDRutils::get_env_identifiers()) {
@@ -727,6 +769,8 @@ load_results_EnVision <-
 #' 
 #' @param results_file character, file path(s) to results file(s)
 #' @param results_sheet results sheet names
+#' 
+#' @return data.frame with results data
 #' 
 read_EnVision_xlsx <- function(results_file, results_sheet) {
   
@@ -804,6 +848,8 @@ get_excel_sheet_names <- function(fls) {
 #' @param sheet_name name of the Excel sheet
 #' @param headers list with the headersa
 #' 
+#' @return data.frame derived from EnVision data
+#' 
 get_df_from_raw_edited_EnVision_df <-
   function(df, barcode_idx, barcode_col, n_row, n_col, fname, sheet_name, headers) {
     
@@ -855,11 +901,13 @@ get_df_from_raw_edited_EnVision_df <-
     do.call(rbind, res_l)
   }
    
-#' Enahnce raw edited EnVision data.frame
+#' Enhance raw edited EnVision data.frame
 #' 
 #' @param df raw data.frame
 #' @param barcode_col column number for barcode data
 #' @param headers list with the headersa
+#' 
+#' @return data.frame derived from EnVision data
 #' 
 enhance_raw_edited_EnVision_df <- function(df, barcode_col, headers) {
   
@@ -920,6 +968,8 @@ enhance_raw_edited_EnVision_df <- function(df, barcode_col, headers) {
 #' @param n_row number of rows
 #' @param n_col number of columns
 #' 
+#' @return data.frame derived from EnVision data
+#' 
 get_df_from_raw_unedited_EnVision_df <-
   function(df, n_row, n_col, barcode_col) {
     
@@ -959,6 +1009,9 @@ get_df_from_raw_unedited_EnVision_df <-
 #'
 #' @param results_file string, file path to a result file
 #' @param headers list of headers identified in the manifest
+#' 
+#' @return data.frame derived from Tecan data
+#' 
 load_results_Tecan <-
   function(results_file, headers = gDRutils::get_env_identifiers()) {
     # Assertions:
@@ -985,6 +1038,9 @@ load_results_Tecan <-
 #' @param results_file string, file path to a result file
 #' @param results_sheets template sheet names
 #' @param headers list of headers identified in the manifest
+#' 
+#' @return data.frame derived from Tecan data
+#' 
 read_in_results_Tecan <- function(results_file, results_sheets, headers) {
   all_results <- data.frame()
   for (iS in seq_along(results_sheets)) {
@@ -1049,7 +1105,8 @@ read_in_results_Tecan <- function(results_file, results_sheets, headers) {
 #'  m_data <- readxl::read_excel(m_file)
 #'  result <- check_metadata_names(col_df = colnames(m_data))
 #'
-#' @return corrected names
+#' @return a charvec with corrected colnames of df
+#' 
 #' @export
 #'
 check_metadata_names <-
@@ -1074,6 +1131,9 @@ check_metadata_names <-
 #' @param col_df a charvec with corrected colnames of df
 #' @param df_name a name of dataframe ("" by default)
 #' @param df_type a type of a dataframe (NULL by default)
+#' 
+#'
+#' @return \code{NULL} invisibly.
 #' 
 check_metadata_req_col_names <- function(col_df, df_name, df_type) {
   # first check for required column names
@@ -1128,6 +1188,8 @@ check_metadata_req_col_names <- function(col_df, df_name, df_type) {
 #' @param corrected_names a charvec with corrected colnames of df
 #' @param df_name a name of dataframe ("" by default)
 #' 
+#' @return a charvec with corrected colnames of df
+#' 
 check_metadata_field_names <- function(corrected_names, df_name) {
   # check for wrong metadata field names (including dash, starting with number, ... )
   bad_names <-
@@ -1148,6 +1210,8 @@ check_metadata_field_names <- function(corrected_names, df_name) {
 # 
 #' @param corrected_names a charvec with corrected colnames of df
 #' @param df_name a name of dataframe ("" by default)
+#' 
+#' @return a charvec with corrected colnames of df
 #' 
 check_metadata_against_spaces <- function(corrected_names, df_name) {
   # remove spaces and convert to WordUppercase
@@ -1174,6 +1238,8 @@ check_metadata_against_spaces <- function(corrected_names, df_name) {
 # 
 #' @param corrected_names a charvec with corrected colnames of df
 #' @param df_name a name of dataframe ("" by default)
+#' 
+#' @return a charvec with corrected colnames of df
 #' 
 check_metadata_headers <- function(corrected_names, df_name) {
   
@@ -1226,6 +1292,7 @@ check_metadata_headers <- function(corrected_names, df_name) {
 #' @param seps potential field separators of the input file
 #'
 #' @return a list containing the data frame, n_col, n_row, and if is edited
+#' 
 read_EnVision_delim <- function(file,
                          nrows = 10000,
                          seps = c(",", "\t")) {
@@ -1271,6 +1338,8 @@ read_EnVision_delim <- function(file,
 #' @param nrows maximum number of file rows to be processed
 #' @param seps potential field separators of the input file
 #' 
+#' @return list with one element per EnVisoin input file
+#' 
 read_in_EnVision_file <- function(file, nrows, seps) {
   
   con <- file(file)
@@ -1306,6 +1375,8 @@ read_in_EnVision_file <- function(file, nrows, seps) {
 #' 
 #' @param results.list  list with EnVision data
 #' @param fname name of the input file
+#' 
+#' @return list with EnVision propertiesa
 #' 
 get_EnVision_properties <- function(results.list, fname) {
   
@@ -1349,6 +1420,9 @@ get_EnVision_properties <- function(results.list, fname) {
 
 #' Get plate size
 #' @keywords internal
+#' 
+#' @return charvec with plate dims
+#' 
 .get_plate_size <- function(df) {
   n_col <-
     1.5 * 2 ^ ceiling(log2((ncol(df) - 2) / 1.5))
@@ -1359,6 +1433,8 @@ get_EnVision_properties <- function(results.list, fname) {
 
 #' Check the structure of raw data
 #' @keywords internal
+#' 
+#' @return \code{NULL} invisibly.
 .check_file_structure <- function(df,
                                   filename,
                                   sheet_name,
@@ -1387,6 +1463,9 @@ get_EnVision_properties <- function(results.list, fname) {
 
 #' Correct plates with not fully filled readout values
 #' @keywords internal
+#' 
+#' @return data.frame with corrected plates data
+#' 
 .fill_empty_wells <- function(df, plate_rows, data_rows, exp_row, exp_col, numeric_regex = "^\\d+$") {
   all_rows <- Reduce(intersect, lapply(df, function(x) grep(numeric_regex, x)))
   if (ncol(df) < exp_col) {
@@ -1408,6 +1487,9 @@ get_EnVision_properties <- function(results.list, fname) {
 
 #' Standardize untreated values to ignore cases
 #' @keywords internal
+#' 
+#' @return data.frame with standardized untreated values
+#' 
 .standardize_untreated_values <- function(df) {
   untreated_tags <- gDRutils::get_env_identifiers("untreated_tag")
   as.data.frame(lapply(df, function(x) {

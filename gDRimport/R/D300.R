@@ -83,6 +83,8 @@ import_D300 <-
 #' @param wb pointer to xlsx workbook
 #' @param idfs charvec with identifiers
 #' 
+#' @return \code{NULL} invisibly.
+#' 
 save_drug_info_per_well <-
   function(trt_info, trt_gnumber_conc, wb, idfs) {
     

@@ -9,6 +9,7 @@
 #' standardize_record_values(c("Vehicle", "vehcle"))
 #' 
 #' @return a named array with updated names
+#' 
 #' @export
 #'
 standardize_record_values <- function(x, dictionary = DICTIONARY) {
@@ -28,7 +29,8 @@ standardize_record_values <- function(x, dictionary = DICTIONARY) {
 #' @examples
 #' standardize_df(iris)
 #'
-#' @return a standardized dataframe
+#' @return a standardized data.frame
+#' 
 #' @export
 #'
 standardize_df <- function(df) {
@@ -73,6 +75,8 @@ read_ref_data <- function(inDir, prefix = "ref") {
 #' @param dfRawDataFileName a filename with rawdata ('dfRawData.tsv' by default)
 #' @param fileTypeInfoName a filename with file type information ('fileTypeInfo.csv' by default)
 #'
+#' @return \code{NULL} invisibly.
+#' 
 save_file_type_info <-
   function(v,
            save_dir,
@@ -117,6 +121,7 @@ save_file_type_info <-
 #' detect_file_format(td2$r_files[1])
 #' 
 #' @return string of the detected file format
+#' 
 #' @export
 detect_file_format <- function(results_file) {
   checkmate::assert_character(results_file)
