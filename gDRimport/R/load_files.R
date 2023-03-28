@@ -1163,13 +1163,50 @@ read_EnVision <- function(file,
   checkmate::assert_string(file)
   checkmate::assert_number(nrows)
   checkmate::assert_character(seps)
+
+  results.list <- read_in_envision_file(file, nrows, seps)
+
+  if (which(vapply(results.list, function(x)
+    grepl("Plate information", x[1]), logical(1))) != 1) {
+    # fails if not the right header
+    exception_data <- get_exception_data(29)
+    stop(sprintf(exception_data$sprintf_text, file))
+  }
+  # identify if original csv file or not (isEdited + n_row/n_col)
+  ep <- get_envision_properties(results.list)
+  
+  # pad the lines with NA if not full before creating the dataframe
+  results.list <- lapply(results.list, function(x) {
+    if (length(x) < ep[["n_col"]]) {
+      x <- c(x, array(NA, ep[["n_col"]] - length(x)))
+    } else if (length(x) > ep[["n_col"]]) {
+      x <- x[seq_len(ep[["n_col"]])]
+    }
+    x[x == "" & !is.na(x)] <- NA
+    x
+  })
+  
+  df_ <- as.data.frame(do.call(rbind, results.list), stringsAsFactors = FALSE)
+  colnames(df_) <- paste0("x", seq_len(ep[["n_col"]]))
+  rownames(df_) <- NULL
+  
+  return(list(df = df_, n_col = ep[["n_col"]], n_row = ep[["n_row"]], isEdited = ep[["isEdited"]]))
+}
+
+#' Read envision file
+#'
+#' This function reads file from the EnVision Workstation
+#' 
+#' @param file  input file from EnVision
+#' @param nrows maximum number of file rows to be processed
+#' @param seps potential field separators of the input file
+#' 
+read_in_envision_file <- function(file, nrows, seps) {
+  
   con <- file(file)
   open(con)
 
   results.list <- list()
-  results_file <- NULL
-  iF <- NULL
-
   current.line <- 1
   while (length(line <-
                 readLines(con, n = 1, warn = FALSE)) > 0 & current.line < nrows) {
@@ -1189,21 +1226,18 @@ read_EnVision <- function(file,
     stop(sprintf(exception_data$sprintf_text, file))
   }
   sep <- names(sep)
-
-  results.list <-
     lapply(results.list, function(line)
       unlist(strsplit(line, split = sep)))
+}
 
-  # identify if original csv file or not
-  if (which(vapply(results.list, function(x)
-    grepl("Plate information", x[1]), logical(1))) != 1) {
-    # fails if not the right header
-    exception_data <- get_exception_data(29)
-    stop(sprintf(
-      exception_data$sprintf_text,
-      results_file[[iF]]
-    ))
-  }
+#' Get properties of EnVision data
+#'
+#' This function return properties of EnVision data
+#' 
+#' @param results.list  list with EnVision data
+#' 
+get_envision_properties <- function(results.list) {
+  
   # has been open/saved in a spreadsheet software --> first line is padded with empty columns
   isEdited <- (length(results.list[[1]]) > 1) |
     !any(vapply(results.list, function(x)
@@ -1211,14 +1245,11 @@ read_EnVision <- function(file,
 
   if (isEdited) {
     # may be altered and miss columns
-    n_col <- max(vapply(results.list[5:10], length, integer(length =
-                                                             1)))
+    n_col <- max(vapply(results.list[5:10], length, integer(length = 1)))
     n_col <- 1.5 * 2 ^ ceiling(log2((n_col - 1) / 1.5))
     n_row <- which(vapply(results.list, function(x) {
-      grepl("Basic assay information", x[1]) |
-        grepl("Plate information", x[1])
-    },
-    logical(1)))
+               grepl("Basic assay information", x[1]) | grepl("Plate information", x[1])},
+             logical(1)))
     if (length(n_row) == 1 && n_row == 1) {
       # only the top line with "Plate information" was found
       n_row <- length(results.list) - 4
@@ -1242,27 +1273,7 @@ read_EnVision <- function(file,
       stop(sprintf(exception_data$sprintf_text, results_file[[iF]]))
     }
   }
-
-  # pad the lines with NA if not full before creating the dataframe
-  results.list <- lapply(results.list, function(x) {
-    if (length(x) < n_col) {
-      x <- c(x, array(NA, n_col - length(x)))
-    } else if (length(x) > n_col) {
-      x <- x[seq_len(n_col)]
-    }
-    x[x == "" & !is.na(x)] <- NA
-    return(x)
-  })
-  df_ <- as.data.frame(do.call(rbind, results.list), stringsAsFactors = FALSE)
-  colnames(df_) <- paste0("x", seq_len(n_col))
-
-  rownames(df_) <- NULL
-  return(list(
-    df = df_,
-    n_col = n_col,
-    n_row = n_row,
-    isEdited = isEdited
-  ))
+  list(n_col = n_col, n_row = n_row, isEdited = isEdited)
 }
 
 #' Get plate size
