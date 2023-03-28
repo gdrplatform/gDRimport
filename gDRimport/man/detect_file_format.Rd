@@ -15,3 +15,8 @@ string of the detected file format
 \description{
 Detect format of results data
 }
+\examples{
+td2 <- get_test_data2()
+detect_file_format(td2$r_files[1])
+
+}

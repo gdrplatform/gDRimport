@@ -14,3 +14,8 @@ is_readable_v(paths)
 is_readable_v
 Check if all paths in vector are readable
 }
+\examples{
+td2 <- get_test_data2()
+is_readable_v(td2$r_files)
+ 
+}

@@ -15,3 +15,8 @@ A tibble row with exception data or all exceptions
 \description{
 get exception data
 }
+\examples{
+get_exception_data(1)
+get_exception_data()
+
+}

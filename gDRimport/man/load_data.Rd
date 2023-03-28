@@ -25,3 +25,8 @@ or character with file path of results file(s)}
 \description{
 This functions loads and checks the data file(s)
 }
+\examples{
+ td1 <- get_test_data1()
+ l_tbl <- load_data(td1$m_file, td1$t_files, td1$r_files)
+
+}

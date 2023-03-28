@@ -15,3 +15,7 @@ a standardized dataframe
 \description{
 Transform all the columns in a dataframe to character type
 }
+\examples{
+standardize_df(iris)
+
+}

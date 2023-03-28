@@ -17,3 +17,7 @@ a named array with updated names
 \description{
 map values to a dictionary
 }
+\examples{
+standardize_record_values(c("Vehicle", "vehcle"))
+
+}

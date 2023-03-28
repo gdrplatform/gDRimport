@@ -30,3 +30,12 @@ For example, wells treated with 2 drugs in combination will result in 4 sheets p
  \item{Sheet 4: Conc of Drug 2}
 }
 }
+\examples{
+td3 <- get_test_data3()[["f_96w"]]
+o_path <- file.path(tempdir(), "td3")
+dir.create(o_path)
+import_D300(td3$d300, td3$Gnum, o_path)
+list.files(o_path)
+unlink(o_path, recursive = TRUE)
+
+}

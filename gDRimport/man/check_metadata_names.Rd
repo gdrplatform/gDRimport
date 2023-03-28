@@ -19,3 +19,10 @@ corrected names
 \description{
 Check whether all metadata names are correct
 }
+\examples{
+ td1 <- get_test_data1()
+ m_file <- td1$m_file
+ m_data <- readxl::read_excel(m_file)
+ result <- check_metadata_names(col_df = colnames(m_data))
+
+}

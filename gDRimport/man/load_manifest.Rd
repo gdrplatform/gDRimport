@@ -12,3 +12,8 @@ load_manifest(manifest_file)
 \description{
 This functions loads and checks the manifest file(s)
 }
+\examples{
+ td1 <- get_test_data1()
+ ml <- load_manifest(td1$m_file)
+
+}

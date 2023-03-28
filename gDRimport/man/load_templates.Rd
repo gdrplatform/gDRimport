@@ -13,3 +13,8 @@ or character with file path of templates file(s)}
 \description{
 This functions loads and checks the template file(s)
 }
+\examples{
+ td1 <- get_test_data1()
+ t_df <- load_templates(td1$t_files)
+ 
+}
