@@ -595,8 +595,8 @@ load_results_tsv <-
 
     all_results <- read_in_result_files(results_file, results_filename, headers)
 
-    if (dim(unique(df[, c(headers[["barcode"]], gDRutils::get_env_identifiers("well_position"))]))[1] !=
-        dim(df[, c(headers[["barcode"]], gDRutils::get_env_identifiers("well_position"))])[1]) {
+    if (dim(unique(all_results[, c(headers[["barcode"]], gDRutils::get_env_identifiers("well_position"))]))[1] !=
+        dim(all_results[, c(headers[["barcode"]], gDRutils::get_env_identifiers("well_position"))])[1]) {
       futile.logger::flog.error("Multiple rows with the same Barcode and Well across all files")
     }
 
@@ -648,245 +648,292 @@ read_in_result_files <- function(results_file, results_filename, headers) {
     all_results <- do.call(rbind, res_l)
 }
 
-#' Load envision results from xlsx
+#' Load EnVision results from xlsx
 #'
 #' This functions loads and checks the results file(s)
 #'
 #' @param results_file character, file path(s) to results file(s)
 #' @param headers list of headers identified in the manifest
 load_results_EnVision <-
-  function(results_file, headers = gDRutils::get_env_identifiers()) {
+  function(results_file,
+           headers = gDRutils::get_env_identifiers()) {
     # Assertions:
     checkmate::assert_character(results_file)
-
-    results_filename <- basename(results_file)
-    # results_file is a string or a vector of strings
-    # test if the result files are .tsv or .xls(x) files
-    isExcel <- vapply(results_file, function(x) {
-      return(tools::file_ext(x) %in% c("xlsx", "xls"))
-    },
-    logical(1))
-
-    # read sheets in files; warning if more than one sheet (unexpected but can be handled)
-    results_sheets <- vector("list", length(results_file))
-    results_sheets[!isExcel] <- 0
-    results_sheets[isExcel] <-
-      lapply(results_file[isExcel], readxl::excel_sheets)
-    if (any(lapply(results_sheets, length) > 1)) {
-      futile.logger::flog.warn("Multiple sheets in result file: %s",
-                               results_file[lapply(results_sheets, length) > 1])
-    }
-
+    
     # read all files and sheets
+    results_sheets <- get_excel_sheet_names(results_file)
     all_results <- data.frame()
     for (iF in seq_along(results_file)) {
       for (iS in results_sheets[[iF]]) {
         futile.logger::flog.info("Reading file %s, sheet %s", results_file[[iF]], iS)
         if (iS == 0) {
-          fInfo <- read_EnVision(results_file[[iF]])
+          fInfo <- read_EnVision_delim(results_file[[iF]])
           df <- fInfo$df
           isEdited <- fInfo$isEdited
         } else {
           isEdited <- TRUE
-          # expect an Excel spreadsheet
-          exception_data <- get_exception_data(22)
-          if (length(results_sheets[[iF]]) > 1) {
-            # if multiple sheets, assume 1 plate per sheet
-            tryCatch({
-              df <-
-                readxl::read_excel(
-                  results_file[[iF]],
-                  sheet = iS,
-                  col_names = paste0("x", seq_len(48)),
-                  range = "A1:AV32"
-                )
-            }, error = function(e) {
-              stop(sprintf(exception_data$sprintf_text, results_file[[iF]], iS))
-            })
-          } else {
-            tryCatch({
-              df <- readxl::read_excel(results_file[[iF]],
-                                       sheet = iS,
-                                       col_names = FALSE)
-            }, error = function(e) {
-              stop(sprintf(exception_data$sprintf_text, results_file[[iF]], iS))
-            })
-            colnames(df) <-
-              col_names <- paste0("x", seq_len(ncol(df)))
-          }
-          # Find rows with data and drop empty columns
-          colsRange <- grep("Plate information", unlist(df[, 1]))[1] + 10
-          df <- df[, colSums(is.na(df[seq_len(colsRange), ])) != colsRange]
-
-          # remove extra columns
-          # limit to first 24 rows in case Protocol information is
-          # exported which generate craps at the end of the file
-        }
-
-        # not empty rows
-        # before discarding the rows; move ''Background information'' in the next row
-        Bckd_info_idx <-
-          which(as.data.frame(df)[, 1] %in% "Background information")
-        if (length(Bckd_info_idx) > 0) {
-          df[Bckd_info_idx + 1, 1] <- df[Bckd_info_idx, 1]
-          df[Bckd_info_idx, 1] <- ""
+          df <- read_EnVision_xlsx(results_file[[iF]], iS)
         }
         barcode_col <- grep(paste0(headers[["barcode"]], collapse = "|"), as.data.frame(df))[1]
         
         if (isEdited) {
-
           # get the expected plate size
           plate_dim <- .get_plate_size(df)
           n_row <- plate_dim[1]
           n_col <- plate_dim[2]
-
-          # manually add full rows
-          plate_rows <- which(do.call(paste, df[, c(2, 3)]) %in% "Repeat Barcode") - 1
-          spacer_rows <- grep("[[:alpha:]]", as.data.frame(df)[, 1])
-
-          standardized_bckd_info <- if (length(Bckd_info_idx) == 0) {
-            0
-          } else {
-            Bckd_info_idx
-          }
-
-          actual_plate_rows <- pmax(plate_rows, standardized_bckd_info)
-
-          data_rows <- unlist(lapply(actual_plate_rows,
-                                     function(x) (x + 4):(x + 4 + n_row - 1)))
-
-          # find full numeric rows
-          df <- .fill_empty_wells(df, plate_rows, data_rows, n_row, n_col)
-
-
-          # need to do some heuristic to find where the data is
-          df_to_check <- df[, -6:-1]
-          full_rows <- Reduce(union, lapply(df, function(x) grep("^\\d+$", x)))
-
-          Barcode_idx <-
-            which(unlist(as.data.frame(df)[, barcode_col]) %in% headers[["barcode"]])
-
-          additional_rows <- c(Barcode_idx, Bckd_info_idx + 1)
-
-          full_rows_index <- unique(sort(c(additional_rows, additional_rows + 1,
-                                    setdiff(full_rows, spacer_rows))))
-
-          # don't consider the first columns as these may be metadata
-          # if big gap, delete what is at the bottom (Protocol information)
-          gaps <-
-            min(max(data_rows), nrow(df))
-
-          df <-
-            df[full_rows_index[full_rows_index <= gaps], ]
-
-          Barcode_idx <-
-            which(unlist(as.data.frame(df)[, barcode_col]) %in% headers[["barcode"]])
-
-          # add empty column to complete plate (assume left column is #1)
-          if (ncol(df) < n_col) {
-            df[, (ncol(df) + 1):n_col] <- NA
-          }
-
-
-          # run through all plates
-          for (iB in Barcode_idx) {
-            # two type of format depending on where Background information is placed
-            if (any(as.data.frame(df)[iB + (seq_len(4)), 1] %in% "Background information")) {
-              ref_bckgrd <-
-                which(as.data.frame(df)[iB + (seq_len(4)), 1] %in% "Background information")
-              readout_offset <- 1 + ref_bckgrd
-              stopifnot(as.character(df[iB + ref_bckgrd, 4]) %in% "Signal")
-              BackgroundValue <-
-                as.numeric(df[iB + ref_bckgrd + 1, 4])
-            } else {
-              # export without background information
-              # case of " Exported with EnVision Workstation version 1.13.3009.1409 "
-              ref_bckgrd <- 0
-              readout_offset <- 1
-              BackgroundValue <- 0
-            }
-
-            # check the structure of file is ok
-            .check_file_structure(df, iB, iF, iS,
-                                  results_filename, readout_offset,
-                                  n_row, n_col, barcode_col)
-
-            Barcode <- as.character(df[iB + 1, barcode_col])
-            if (is.na(Barcode)) next
-            readout <-
-              as.matrix(df[iB + ref_bckgrd + seq_len(n_row) + 1, seq_len(n_col)])
-
-            stopifnot(dim(readout) == plate_dim)
-
-            # check that the plate size is consistent and contains values
-            if (any(is.na(readout))) {
-              exception_data <- get_exception_data(23)
-              stop(
-                sprintf(
-                  exception_data$sprintf_text,
-                  results_filename[[iF]],
-                  iS,
-                  as.character(df[iB + 1, barcode_col])
-                )
-              )
-            }
-
-            df_results <- data.frame(
-              Barcode = Barcode,
-              WellRow = LETTERS[seq_len(n_row)],
-              WellColumn = as.vector(t(matrix(
-                seq_len(n_col), n_col, n_row
-              ))),
-              ReadoutValue = as.numeric(as.vector(readout)),
-              BackgroundValue = BackgroundValue
-            )
-            names(df_results)[1] <- headers[["barcode"]][1]
-
-            futile.logger::flog.info("Plate %s read; %d wells",
-                                     as.character(df[iB + 1, barcode_col]),
-                                     dim(df_results)[1])
-            all_results <- rbind(all_results, df_results)
-            }
-          } else {
-            # proper original EnVision file
-            n_row <- fInfo$n_row
-            n_col <- fInfo$n_col
-            Barcode <- df[3, barcode_col]
-            readout <-
-              as.matrix(df[4 + seq_len(n_row), seq_len(n_col)])
-
-            if (any(as.data.frame(df)[, 1] %in% "Background information")) {
-              ref_bckgrd <-
-                which(as.data.frame(df)[, 1] %in% "Background information")
-              BackgroundValue <-
-                as.numeric(df[ref_bckgrd + 1, 4])
-            } else {
-              # export without background information
-              BackgroundValue <- 0
-            }
-
-          df_results <- data.frame(
-            Barcode = Barcode,
-            WellRow = LETTERS[seq_len(n_row)],
-            WellColumn = as.vector(t(matrix(
-              seq_len(n_col), n_col, n_row
-            ))),
-            ReadoutValue = as.numeric(as.vector(readout)),
-            BackgroundValue = BackgroundValue
-          )
-          futile.logger::flog.info("Plate %s read; %d wells",
-                                   as.character(Barcode),
-                                   dim(df_results)[1])
-
+          
+          df <- enhance_raw_edited_EnVision_df(df, barcode_col, headers)
+          barcode_idx <- which(unlist(as.data.frame(df)[, barcode_col]) %in% headers[["barcode"]])
+          df_results <-
+            get_df_from_raw_edited_EnVision_df(df,
+                                               barcode_idx,
+                                               barcode_col,
+                                               n_row,
+                                               n_col,
+                                               results_file[[iF]],
+                                               iS,
+                                               headers)
+          all_results <- rbind(all_results, df_results)
+        } else {
+          # proper original EnVision file
+          df_results <- get_df_from_raw_unedited_EnVision_df(df, fInfo$n_row, fInfo$n_col, barcode_col)
           all_results <- rbind(all_results, df_results)
         }
-
       }
       futile.logger::flog.info("File done")
     }
-    return(all_results)
+    all_results
   }
 
+#' Read in single xlsx data from EnVision
+#' 
+#' @param results_file character, file path(s) to results file(s)
+#' @param results_sheet results sheet names
+#' 
+read_EnVision_xlsx <- function(results_file, results_sheet) {
+  
+  # expect an Excel spreadsheet
+  exception_data <- get_exception_data(22)
+  if (length(results_sheet) > 1) {
+    # if multiple sheets, assume 1 plate per sheet
+    tryCatch({
+      df <-
+        readxl::read_excel(
+          results_file,
+          sheet = results_sheet,
+          col_names = paste0("x", seq_len(48)),
+          range = "A1:AV32"
+        )
+    }, error = function(e) {
+      stop(sprintf(exception_data$sprintf_text, results_file, results_sheet))
+    })
+  } else {
+    tryCatch({
+      df <- readxl::read_excel(results_file,
+                               sheet = results_sheet,
+                               col_names = FALSE)
+    }, error = function(e) {
+      stop(sprintf(exception_data$sprintf_text, results_file, results_sheet))
+    })
+    colnames(df) <-
+      col_names <- paste0("x", seq_len(ncol(df)))
+  }
+  # Find rows with data and drop empty columns
+  colsRange <-
+    grep("Plate information", unlist(df[, 1]))[1] + 10
+  df <-
+    df[, colSums(is.na(df[seq_len(colsRange), ])) != colsRange]
+}
+
+#' get Excel sheets names for a charvec of files
+#' for non-Excel files return 0
+#' 
+#' @param fls charvec with file pathsa
+#' 
+#' @return list with one element per file with 
+#' sheet names or 0 (for non-Excel file)
+#' 
+get_excel_sheet_names <- function(fls) {
+  
+  # results_file is a string or a vector of strings
+  # test if the result files are .tsv or .xls(x) files
+  isExcel <- vapply(fls, function(x) {
+    return(tools::file_ext(x) %in% c("xlsx", "xls"))
+  },
+  logical(1))
+  
+  # read sheets in files; warning if more than one sheet (unexpected but can be handled)
+  e_sheets <- vector("list", length(fls))
+  e_sheets[!isExcel] <- 0
+  e_sheets[isExcel] <-
+    lapply(fls[isExcel], readxl::excel_sheets)
+  if (any(lapply(e_sheets, length) > 1)) {
+    futile.logger::flog.warn("Multiple sheets in result file: %s",
+                             fls[lapply(e_sheets, length) > 1])
+  }
+  e_sheets
+}
+
+#' Get final results (as a data.frame)
+#' from raw edited EnVision data.frame
+#' 
+#' @param df raw data.frame
+#' @param barcode_idx numeric vector with barcode indices
+#' @param barcode_col column number for barcode data
+#' @param n_row number of rows
+#' @param n_col number of columns
+#' @param fname file name 
+#' @param sheet_name name of the Excel sheet
+#' @param headers list with the headersa
+#' 
+get_df_from_raw_edited_EnVision_df <-
+  function(df, barcode_idx, barcode_col, n_row, n_col, fname, sheet_name, headers) {
+    
+    res_l <- lapply(barcode_idx, function(iB) {
+      # two type of format depending on where Background information is placed
+      if (any(as.data.frame(df)[iB + (seq_len(4)), 1] %in% "Background information")) {
+        ref_bckgrd <- which(as.data.frame(df)[iB + (seq_len(4)), 1] %in% "Background information")
+        readout_offset <- 1 + ref_bckgrd
+        stopifnot(as.character(df[iB + ref_bckgrd, 4]) %in% "Signal")
+        BackgroundValue <- as.numeric(df[iB + ref_bckgrd + 1, 4])
+      } else {
+        # export without background, case with: " Exported with EnVision Workstation version 1.13.3009.1409 "
+        ref_bckgrd <- 0
+        readout_offset <- 1
+        BackgroundValue <- 0
+      }
+      # check the structure of file is ok
+      .check_file_structure(df, fname, sheet_name, readout_offset, n_row, n_col, iB, barcode_col)
+      
+      Barcode <- as.character(df[iB + 1, barcode_col])
+      if (is.na(Barcode)) return(NULL)
+      readout <- as.matrix(df[iB + ref_bckgrd + seq_len(n_row) + 1, seq_len(n_col)])
+      stopifnot(dim(readout) == c(n_row, n_col))
+      
+      # check that the plate size is consistent and contains values
+      if (any(is.na(readout))) {
+        exception_data <- get_exception_data(23)
+        stop(sprintf(
+          exception_data$sprintf_text,
+          basename(fname),
+          sheet_name,
+          as.character(df[iB + 1, barcode_col])
+        ))
+      }
+      
+      df_results <- data.frame(
+        Barcode = Barcode,
+        WellRow = LETTERS[seq_len(n_row)],
+        WellColumn = as.vector(t(matrix(seq_len(n_col), n_col, n_row))),
+        ReadoutValue = as.numeric(as.vector(readout)),
+        BackgroundValue = BackgroundValue
+      )
+      names(df_results)[1] <- headers[["barcode"]][1]
+      futile.logger::flog.info("Plate %s read; %d wells",
+                               as.character(df[iB + 1, barcode_col]),
+                               dim(df_results)[1])
+      df_results
+    })
+    do.call(rbind, res_l)
+  }
+   
+#' Enahnce raw edited EnVision data.frame
+#' 
+#' @param df raw data.frame
+#' @param barcode_col column number for barcode data
+#' @param headers list with the headersa
+#' 
+enhance_raw_edited_EnVision_df <- function(df, barcode_col, headers) {
+  
+  # not empty rows; before discarding the rows: move ''Background information'' in the next row
+  bckd_info_idx <- which(as.data.frame(df)[, 1] %in% "Background information")
+  if (length(bckd_info_idx) > 0) {
+    df[bckd_info_idx + 1, 1] <- df[bckd_info_idx, 1]
+    df[bckd_info_idx, 1] <- ""
+  }
+  
+  # get the expected plate size
+  plate_dim <- .get_plate_size(df)
+  n_row <- plate_dim[1]
+  n_col <- plate_dim[2]
+  
+  # manually add full rows
+  plate_rows <- which(do.call(paste, df[, c(2, 3)]) %in% "Repeat Barcode") - 1
+  spacer_rows <- grep("[[:alpha:]]", as.data.frame(df)[, 1])
+  standardized_bckd_info <-
+    if (length(bckd_info_idx) == 0) {
+      0
+    } else {
+      bckd_info_idx
+    }
+  actual_plate_rows <- pmax(plate_rows, standardized_bckd_info)
+  data_rows <- unlist(lapply(actual_plate_rows,
+                             function(x)
+                               (x + 4):(x + 4 + n_row - 1)))
+  # find full numeric rows
+  df <- .fill_empty_wells(df, plate_rows, data_rows, n_row, n_col)
+  
+  # need to do some heuristic to find where the data is
+  df_to_check <- df[, -6:-1]
+  full_rows <- Reduce(union, lapply(df, function(x) grep("^\\d+$", x)))
+  Barcode_idx <- which(unlist(as.data.frame(df)[, barcode_col]) %in% headers[["barcode"]])
+  additional_rows <- c(Barcode_idx, bckd_info_idx + 1)
+  full_rows_index <-
+    unique(sort(c(
+      additional_rows,
+      additional_rows + 1,
+      setdiff(full_rows, spacer_rows))))
+  
+  # don't consider the first columns as these may be metadata
+  # if big gap, delete what is at the bottom (Protocol information)
+  gaps <- min(max(data_rows), nrow(df))
+  df <- df[full_rows_index[full_rows_index <= gaps], ]
+  
+  # add empty column to complete plate (assume left column is #1)
+  if (ncol(df) < n_col) df[, (ncol(df) + 1):n_col] <- NA
+  df
+}
+
+#' Get final results (as a data.frame)
+#' from raw unedited EnVision data.frame
+#' 
+#' @param df raw data.frame
+#' @param barcode_col column number for barcode data
+#' @param n_row number of rows
+#' @param n_col number of columns
+#' 
+get_df_from_raw_unedited_EnVision_df <-
+  function(df, n_row, n_col, barcode_col) {
+    
+    # proper original EnVision file
+    Barcode <- df[3, barcode_col]
+    readout <-
+      as.matrix(df[4 + seq_len(n_row), seq_len(n_col)])
+    
+    if (any(as.data.frame(df)[, 1] %in% "Background information")) {
+      ref_bckgrd <-
+        which(as.data.frame(df)[, 1] %in% "Background information")
+      BackgroundValue <-
+        as.numeric(df[ref_bckgrd + 1, 4])
+    } else {
+      # export without background information
+      BackgroundValue <- 0
+    }
+    
+    df_results <- data.frame(
+      Barcode = Barcode,
+      WellRow = LETTERS[seq_len(n_row)],
+      WellColumn = as.vector(t(matrix(
+        seq_len(n_col), n_col, n_row
+      ))),
+      ReadoutValue = as.numeric(as.vector(readout)),
+      BackgroundValue = BackgroundValue
+    )
+    futile.logger::flog.info("Plate %s read; %d wells",
+                             as.character(Barcode),
+                             dim(df_results)[1])
+    df_results
+  }
 
 #' Load tecan results from xlsx
 #'
@@ -1146,7 +1193,7 @@ check_metadata_headers <- function(corrected_names, df_name) {
   corrected_names
 }
 
-#' Read envision files
+#' Read EnVision delimited text files
 #'
 #' This function reads file from the EnVision Workstation
 #'
@@ -1156,7 +1203,7 @@ check_metadata_headers <- function(corrected_names, df_name) {
 #'
 #' @return a list containing the data frame, n_col, n_row, and if is edited
 #' @export
-read_EnVision <- function(file,
+read_EnVision_delim <- function(file,
                          nrows = 10000,
                          seps = c(",", "\t")) {
   # Assertions:
@@ -1164,7 +1211,7 @@ read_EnVision <- function(file,
   checkmate::assert_number(nrows)
   checkmate::assert_character(seps)
 
-  results.list <- read_in_envision_file(file, nrows, seps)
+  results.list <- read_in_EnVision_file(file, nrows, seps)
 
   if (which(vapply(results.list, function(x)
     grepl("Plate information", x[1]), logical(1))) != 1) {
@@ -1173,7 +1220,7 @@ read_EnVision <- function(file,
     stop(sprintf(exception_data$sprintf_text, file))
   }
   # identify if original csv file or not (isEdited + n_row/n_col)
-  ep <- get_envision_properties(results.list)
+  ep <- get_EnVision_properties(results.list, basename(file))
   
   # pad the lines with NA if not full before creating the dataframe
   results.list <- lapply(results.list, function(x) {
@@ -1193,7 +1240,7 @@ read_EnVision <- function(file,
   return(list(df = df_, n_col = ep[["n_col"]], n_row = ep[["n_row"]], isEdited = ep[["isEdited"]]))
 }
 
-#' Read envision file
+#' Read EnVision file
 #'
 #' This function reads file from the EnVision Workstation
 #' 
@@ -1201,7 +1248,7 @@ read_EnVision <- function(file,
 #' @param nrows maximum number of file rows to be processed
 #' @param seps potential field separators of the input file
 #' 
-read_in_envision_file <- function(file, nrows, seps) {
+read_in_EnVision_file <- function(file, nrows, seps) {
   
   con <- file(file)
   open(con)
@@ -1235,8 +1282,9 @@ read_in_envision_file <- function(file, nrows, seps) {
 #' This function return properties of EnVision data
 #' 
 #' @param results.list  list with EnVision data
+#' @param fname name of the input file
 #' 
-get_envision_properties <- function(results.list) {
+get_EnVision_properties <- function(results.list, fname) {
   
   # has been open/saved in a spreadsheet software --> first line is padded with empty columns
   isEdited <- (length(results.list[[1]]) > 1) |
@@ -1260,7 +1308,7 @@ get_envision_properties <- function(results.list) {
     if (length(n_row) != 1 ||
         abs(log2(1.5 * n_row / n_col)) > .5)  {
       exception_data <- get_exception_data(30)
-      stop(sprintf(exception_data$sprintf_text, results_file[[iF]]))
+      stop(sprintf(exception_data$sprintf_text, fname))
     }
     n_row <- n_col / 1.5
   } else {
@@ -1270,7 +1318,7 @@ get_envision_properties <- function(results.list) {
       length, integer(1)) == n_col)
     if (log2(1.5 * n_row / n_col) != 0)  {
       exception_data <- get_exception_data(30)
-      stop(sprintf(exception_data$sprintf_text, results_file[[iF]]))
+      stop(sprintf(exception_data$sprintf_text, fname))
     }
   }
   list(n_col = n_col, n_row = n_row, isEdited = isEdited)
@@ -1288,19 +1336,26 @@ get_envision_properties <- function(results.list) {
 
 #' Check the structure of raw data
 #' @keywords internal
-.check_file_structure <- function(df, iB, iF, iS, results_filename,
-                                  readout_offset, n_row, n_col, barcode_col) {
+.check_file_structure <- function(df,
+                                  filename,
+                                  sheet_name,
+                                  readout_offset,
+                                  n_row,
+                                  n_col,
+                                  bcode_idx,
+                                  bcode_col) {
+ 
   # check the structure of file is ok
   check_values <-
-    as.matrix(df[iB + readout_offset + c(0, 1, n_row, n_row + 1), n_col])
+    as.matrix(df[bcode_idx + readout_offset + c(0, 1, n_row, n_row + 1), n_col])
   if (is.na(check_values[2])) {
     exception_data <- get_exception_data(31)
     stop(
       sprintf(
         exception_data$sprintf_text,
-        results_filename[[iF]],
-        iS,
-        as.character(df[iB + 1, barcode_col])
+        filename,
+        sheet_name,
+        as.character(df[bcode_idx + 1, bcode_col])
       )
     )
   }
