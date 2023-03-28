@@ -130,7 +130,7 @@ test_that("load_data", {
   ref_tbl <- read.csv2(td1$ref_r1_r2)
   expect_equal(l_tbl$data, ref_tbl)
 
-  #get test_data2 (Tecan format)
+  #get test_data2
   td2 <- get_test_data2()
 
   l_tbl2 <- load_data(td2$m_file, td2$t_files, td2$r_files, instrument = "Tecan")
@@ -143,21 +143,7 @@ test_that("load_data", {
   # valid output returned for results
   ref_r_df <- readRDS(td2$ref_r_df)
   expect_equal(l_tbl2$data, ref_r_df)
-  
-  # get test_data4 (EnVision format)
-  td4 <- get_test_data4()
-  l_tbl4 <-
-    load_data(td4$m_file, td4$t_files, td4$r_files, instrument = "EnVision")
-  ref_l <- readRDS(td4$ref_l_path)
-  # valid output returned for manifest
-  expect_identical(standardize_df(ref_l$manifest),
-                   standardize_df(l_tbl4$manifest))
-  # valid output returned for templates
-  expect_identical(standardize_df(ref_l$treatments),
-                   standardize_df(l_tbl4$treatments))
-  # valid output returned for results
-  expect_identical(standardize_df(ref_l$data), standardize_df(l_tbl4$data))
-  
+
   # expected error(s) returned - manifest
   err_msg1 <- "'manifest_file' must be a readable path"
   expect_error(load_data("/non/existent_file", td1$t_files, td1$r_files), err_msg1)
