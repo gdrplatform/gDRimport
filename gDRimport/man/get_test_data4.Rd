@@ -2,16 +2,16 @@
 % Please edit documentation in R/testdata.R
 \name{get_test_data4}
 \alias{get_test_data4}
-\title{get test data3 (EnVision)
-list with with input data (manifest/template/result paths)
-and related reference data (RDS file paths)}
+\title{get test data3 (EnVision)}
 \usage{
 get_test_data4()
 }
-\description{
-get test data3 (EnVision)
+\value{
 list with with input data (manifest/template/result paths)
 and related reference data (RDS file paths)
+}
+\description{
+get test data3 (EnVision)
 }
 \examples{
 get_test_data4()

@@ -23,6 +23,9 @@ save_file_type_info(
 
 \item{fileTypeInfoName}{a filename with file type information ('fileTypeInfo.csv' by default)}
 }
+\value{
+\code{NULL} invisibly.
+}
 \description{
 Save information about file types
 }

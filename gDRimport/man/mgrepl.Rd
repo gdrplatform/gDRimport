@@ -15,6 +15,9 @@ mgrepl(patterns, x, do_unlist = TRUE, ...)
 
 \item{...}{additional argument}
 }
+\value{
+list of charvec with grep output
+}
 \description{
 grep wrapper to support multiple patterns
 }

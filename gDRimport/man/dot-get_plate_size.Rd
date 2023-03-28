@@ -6,6 +6,9 @@
 \usage{
 .get_plate_size(df)
 }
+\value{
+charvec with plate dims
+}
 \description{
 Get plate size
 }

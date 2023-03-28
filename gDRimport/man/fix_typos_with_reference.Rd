@@ -24,6 +24,9 @@ somehow pre- or post- fixed}
 
 \item{fix_underscores}{logical flag fix the issues with underscores in data identfiers?}
 }
+\value{
+list or charvec with corrected data
+}
 \description{
 Fix typos using reference data
 Evaluate given list of ids and try to update them

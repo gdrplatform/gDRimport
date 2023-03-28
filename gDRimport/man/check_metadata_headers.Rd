@@ -11,6 +11,9 @@ check_metadata_headers(corrected_names, df_name)
 
 \item{df_name}{a name of dataframe ("" by default)}
 }
+\value{
+a charvec with corrected colnames of df
+}
 \description{
 Check whether metadata headers are correct and make fixes if needed
 }

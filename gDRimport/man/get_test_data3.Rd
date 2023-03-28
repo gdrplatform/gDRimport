@@ -2,16 +2,16 @@
 % Please edit documentation in R/testdata.R
 \name{get_test_data3}
 \alias{get_test_data3}
-\title{get test data3 (D300)
-list with with input data (manifest/template/result paths)
-and related reference data (RDS file paths)}
+\title{get test data3 (D300)}
 \usage{
 get_test_data3()
 }
-\description{
-get test data3 (D300)
+\value{
 list with with input data (manifest/template/result paths)
 and related reference data (RDS file paths)
+}
+\description{
+get test data3 (D300)
 }
 \examples{
 get_test_data3()

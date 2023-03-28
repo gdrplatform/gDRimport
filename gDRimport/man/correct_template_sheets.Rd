@@ -9,6 +9,9 @@ correct_template_sheets(tfiles)
 \arguments{
 \item{tfiles}{charvec with paths to template files}
 }
+\value{
+charvec with paths to corrected sheet names
+}
 \description{
 Correct names of the template sheets (if required)
 }

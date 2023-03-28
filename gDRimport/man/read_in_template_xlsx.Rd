@@ -13,6 +13,9 @@ read_in_template_xlsx(template_file, template_filename, template_sheets)
 
 \item{template_sheets}{template sheet names}
 }
+\value{
+data.frame with templates data
+}
 \description{
 Read in xlsx template files
 }

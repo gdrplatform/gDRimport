@@ -15,6 +15,9 @@ save_drug_info_per_well(trt_info, trt_gnumber_conc, wb, idfs)
 
 \item{idfs}{charvec with identifiers}
 }
+\value{
+\code{NULL} invisibly.
+}
 \description{
 for each drug create a Gnumber and Concentration information for each well
 }

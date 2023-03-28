@@ -9,6 +9,9 @@ are_template_sheets_valid(ts)
 \arguments{
 \item{ts}{list with (per file) template sheets}
 }
+\value{
+logical flag
+}
 \description{
 are template sheet valid?
 }

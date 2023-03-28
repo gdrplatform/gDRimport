@@ -13,6 +13,9 @@
   numeric_regex = "^\\\\d+$"
 )
 }
+\value{
+data.frame with corrected plates data
+}
 \description{
 Correct plates with not fully filled readout values
 }

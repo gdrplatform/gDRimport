@@ -10,7 +10,7 @@ standardize_df(df)
 \item{df}{a dataframe for standardization}
 }
 \value{
-a standardized dataframe
+a standardized data.frame
 }
 \description{
 Transform all the columns in a dataframe to character type

@@ -33,6 +33,9 @@ get_df_from_raw_edited_EnVision_df(
 
 \item{headers}{list with the headersa}
 }
+\value{
+data.frame derived from EnVision data
+}
 \description{
 Get final results (as a data.frame)
 from raw edited EnVision data.frame

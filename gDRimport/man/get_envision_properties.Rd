@@ -11,6 +11,9 @@ get_EnVision_properties(results.list, fname)
 
 \item{fname}{name of the input file}
 }
+\value{
+list with EnVision propertiesa
+}
 \description{
 This function return properties of EnVision data
 }

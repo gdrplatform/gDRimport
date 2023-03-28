@@ -9,6 +9,9 @@ get_expected_template_sheets(type = c("all", "core", "optional"))
 \arguments{
 \item{type}{charvec type of the sheets}
 }
+\value{
+string with type of the sheets
+}
 \description{
 Get names of the sheets expected in templates xlsx
 }

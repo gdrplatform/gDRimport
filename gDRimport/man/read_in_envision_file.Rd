@@ -13,6 +13,9 @@ read_in_EnVision_file(file, nrows, seps)
 
 \item{seps}{potential field separators of the input file}
 }
+\value{
+list with one element per EnVisoin input file
+}
 \description{
 This function reads file from the EnVision Workstation
 }

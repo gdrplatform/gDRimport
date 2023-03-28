@@ -22,6 +22,9 @@ or character with file path of results file(s)}
 
 \item{instrument}{character}
 }
+\value{
+a list with three data.frames for manifest/treatment and results
+}
 \description{
 This functions loads and checks the data file(s)
 }

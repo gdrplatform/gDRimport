@@ -15,6 +15,9 @@ read_in_template_sheet_xlsx(template_file, template_sheets, idx, plate_info)
 
 \item{plate_info}{list with plate info}
 }
+\value{
+data.frame with template data
+}
 \description{
 Read in data from xlsx template sheet
 }

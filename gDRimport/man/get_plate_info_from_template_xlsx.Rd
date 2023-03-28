@@ -13,6 +13,9 @@ get_plate_info_from_template_xlsx(template_file, Gnumber_idx, idx)
 
 \item{idx}{template file index}
 }
+\value{
+list with plate info
+}
 \description{
 Get plate info from template xlsx
 }

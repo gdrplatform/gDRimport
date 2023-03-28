@@ -2,7 +2,7 @@
 % Please edit documentation in R/load_files.R
 \name{enhance_raw_edited_EnVision_df}
 \alias{enhance_raw_edited_EnVision_df}
-\title{Enahnce raw edited EnVision data.frame}
+\title{Enhance raw edited EnVision data.frame}
 \usage{
 enhance_raw_edited_EnVision_df(df, barcode_col, headers)
 }
@@ -13,6 +13,9 @@ enhance_raw_edited_EnVision_df(df, barcode_col, headers)
 
 \item{headers}{list with the headersa}
 }
+\value{
+data.frame derived from EnVision data
+}
 \description{
-Enahnce raw edited EnVision data.frame
+Enhance raw edited EnVision data.frame
 }

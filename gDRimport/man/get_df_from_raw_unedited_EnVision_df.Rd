@@ -16,6 +16,9 @@ get_df_from_raw_unedited_EnVision_df(df, n_row, n_col, barcode_col)
 
 \item{barcode_col}{column number for barcode data}
 }
+\value{
+data.frame derived from EnVision data
+}
 \description{
 Get final results (as a data.frame)
 from raw unedited EnVision data.frame

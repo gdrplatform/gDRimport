@@ -2,16 +2,16 @@
 % Please edit documentation in R/testdata.R
 \name{get_test_data2}
 \alias{get_test_data2}
-\title{get test data2 (Tecan)
-list with with input data (manifest/template/result paths)
-and related reference data (RDS file paths)}
+\title{get test data2 (Tecan)}
 \usage{
 get_test_data2()
 }
-\description{
-get test data2 (Tecan)
+\value{
 list with with input data (manifest/template/result paths)
 and related reference data (RDS file paths)
+}
+\description{
+get test data2 (Tecan)
 }
 \examples{
 get_test_data2()

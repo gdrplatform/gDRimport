@@ -15,6 +15,9 @@
   bcode_col
 )
 }
+\value{
+\code{NULL} invisibly.
+}
 \description{
 Check the structure of raw data
 }

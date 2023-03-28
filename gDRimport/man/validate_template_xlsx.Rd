@@ -15,6 +15,9 @@ validate_template_xlsx(template_file, template_filename, template_sheets, idx)
 
 \item{idx}{template file index}
 }
+\value{
+\code{NULL} invisibly.
+}
 \description{
 Validate template xlsx data
 }

@@ -11,6 +11,9 @@ read_in_manifest_file(manifest_file, available_formats)
 
 \item{available_formats}{charvec with available file formats}
 }
+\value{
+a data.frame with manifest data
+}
 \description{
 read manifest files
 }

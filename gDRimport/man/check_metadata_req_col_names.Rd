@@ -13,6 +13,9 @@ check_metadata_req_col_names(col_df, df_name, df_type)
 
 \item{df_type}{a type of a dataframe (NULL by default)}
 }
+\value{
+\code{NULL} invisibly.
+}
 \description{
 Check metadata for required column names
 }
