@@ -44,6 +44,10 @@ EXCEPTION_TABLE <- tibble::tribble(
 #'
 #' @param status_code A numeric value
 #'
+#' @examples
+#' get_exception_data(1)
+#' get_exception_data()
+#' 
 #' @return A tibble row with exception data or all exceptions
 #' @export
 get_exception_data <- function(status_code = NULL) {

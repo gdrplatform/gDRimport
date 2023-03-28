@@ -124,7 +124,10 @@ get_expected_template_sheets <-
 #' are template sheet valid?
 #' 
 #' @param ts list with (per file) template sheets
+#' 
 #' @seealso get_xl_sheets
+#' 
+#' @return logical flag
 are_template_sheets_valid <- function(ts) {
 
   checkmate::assert_list(ts)

@@ -8,6 +8,10 @@
 #' @param results_file  data.frame, with datapaths and names of results file(s)
 #' or character with file path of results file(s)
 #' @param instrument character
+#' 
+#' @examples
+#'  td1 <- get_test_data1()
+#'  l_tbl <- load_data(td1$m_file, td1$t_files, td1$r_files)
 #'
 #' @export
 #'
@@ -67,6 +71,10 @@ load_data <-
 #' This functions loads and checks the manifest file(s)
 #'
 #' @param manifest_file character, file path(s) to manifest(s)
+#' 
+#' @examples
+#'  td1 <- get_test_data1()
+#'  ml <- load_manifest(td1$m_file)
 #'
 #' @export
 load_manifest <- function(manifest_file) {
@@ -166,6 +174,11 @@ read_in_manifest_file <- function(manifest_file, available_formats) {
 #'
 #' @param df_template_files data.frame, with datapaths and names of results file(s)
 #' or character with file path of templates file(s)
+#' 
+#' @examples
+#'  td1 <- get_test_data1()
+#'  t_df <- load_templates(td1$t_files)
+#'  
 #' @export
 load_templates <- function(df_template_files) {
   # Assertions:
@@ -220,6 +233,11 @@ load_templates <- function(df_template_files) {
 #' or character with file path of results file(s)
 #' @param instrument character
 #' @param headers list of headers identified in the manifest file
+#' 
+#' @examples
+#'  td1 <- get_test_data1()
+#'  r_df <- load_results(td1$r_files)
+#'  
 #' @export
 #'
 load_results <-
@@ -1024,6 +1042,12 @@ read_in_results_Tecan <- function(results_file, results_sheets, headers) {
 #' @param col_df a character with colnames of df
 #' @param df_name a name of dataframe ("" by default)
 #' @param df_type a type of a dataframe (NULL by default)
+#' 
+#' @examples
+#'  td1 <- get_test_data1()
+#'  m_file <- td1$m_file
+#'  m_data <- readxl::read_excel(m_file)
+#'  result <- check_metadata_names(col_df = colnames(m_data))
 #'
 #' @return corrected names
 #' @export
@@ -1202,7 +1226,6 @@ check_metadata_headers <- function(corrected_names, df_name) {
 #' @param seps potential field separators of the input file
 #'
 #' @return a list containing the data frame, n_col, n_row, and if is edited
-#' @export
 read_EnVision_delim <- function(file,
                          nrows = 10000,
                          seps = c(",", "\t")) {

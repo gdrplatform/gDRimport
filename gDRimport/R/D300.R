@@ -6,6 +6,14 @@
 #' @param metadata_file character, file path to file with mapping from D300 names to Gnumbers 
 #' @param destination_path character, path to folder where template 
 #' files will be generated
+#' 
+#' @examples
+#' td3 <- get_test_data3()[["f_96w"]]
+#' o_path <- file.path(tempdir(), "td3")
+#' dir.create(o_path)
+#' import_D300(td3$d300, td3$Gnum, o_path)
+#' list.files(o_path)
+#' unlink(o_path, recursive = TRUE)
 #'
 #' @return
 #' Create one Excel file per plate. Each sheet in each plate file describes 
@@ -154,6 +162,11 @@ merge_D300_w_metadata <- function(D300, Gnums) {
 #' @param D300_file string, file path to D300 .tdd file
 #'
 #' @return data.frame representing input \code{D300_file}.
+#' 
+#' @examples
+#' td3 <- get_test_data3()
+#' fs <- td3[["f_96w"]]
+#' dose_df <- parse_D300_xml(fs[["d300"]])
 #
 #' @export
 #'

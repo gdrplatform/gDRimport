@@ -5,6 +5,9 @@
 #' @param x a named array
 #' @param dictionary a named array
 #'
+#' @examples 
+#' standardize_record_values(c("Vehicle", "vehcle"))
+#' 
 #' @return a named array with updated names
 #' @export
 #'
@@ -21,6 +24,9 @@ standardize_record_values <- function(x, dictionary = DICTIONARY) {
 #' Transform all the columns in a dataframe to character type
 #'
 #' @param df a dataframe for standardization
+#' 
+#' @examples
+#' standardize_df(iris)
 #'
 #' @return a standardized dataframe
 #' @export
@@ -39,7 +45,6 @@ standardize_df <- function(df) {
 #' @param prefix a prefix of reference file names ('ref' by default)
 #'
 #' @return a list of reference data
-#' @export
 #'
 read_ref_data <- function(inDir, prefix = "ref") {
   # Assertions:
@@ -67,8 +72,6 @@ read_ref_data <- function(inDir, prefix = "ref") {
 #' @param normKeysFileName a filename with normalization keys ('normKeys.json' by default)
 #' @param dfRawDataFileName a filename with rawdata ('dfRawData.tsv' by default)
 #' @param fileTypeInfoName a filename with file type information ('fileTypeInfo.csv' by default)
-#'
-#' @export
 #'
 save_file_type_info <-
   function(v,
@@ -109,6 +112,10 @@ save_file_type_info <-
 #'
 #' @param results_file path to results data
 #'
+#' @examples 
+#' td2 <- get_test_data2()
+#' detect_file_format(td2$r_files[1])
+#' 
 #' @return string of the detected file format
 #' @export
 detect_file_format <- function(results_file) {

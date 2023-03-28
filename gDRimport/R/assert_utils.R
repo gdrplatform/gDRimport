@@ -3,6 +3,10 @@
 #'
 #' @param paths a character with path(s)
 #'
+#' @examples
+#' td2 <- get_test_data2()
+#' is_readable_v(td2$r_files)
+#'  
 #' @export
 #'
 is_readable_v <- function(paths) {
