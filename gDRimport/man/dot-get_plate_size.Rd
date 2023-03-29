@@ -12,4 +12,7 @@ charvec with plate dims
 \description{
 Get plate size
 }
+\details{
+All plate sizes assume 1.5x nrows = ncolumns.
+}
 \keyword{internal}

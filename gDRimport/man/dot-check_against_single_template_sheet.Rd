@@ -11,7 +11,7 @@ if the name of the sheet is correct and if it can be fixed}
 \item{ts}{list with template sheets info}
 }
 \value{
-logical flaga
+logical flag
 }
 \description{
 get sheets for given set of XLS files
