@@ -7,7 +7,7 @@
 read_EnVision_delim(file, nrows = 10000, seps = c(",", "\\t"))
 }
 \arguments{
-\item{file}{input file from EnVision}
+\item{file}{string to path of input file from EnVision scanner}
 
 \item{nrows}{maximum number of file rows to be processed}
 

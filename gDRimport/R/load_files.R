@@ -543,7 +543,7 @@ get_plate_info_from_template_xlsx <- function(template_file, Gnumber_idx, idx) {
             template_file[[idx]],
             sheet = Gnumber_idx,
             col_names = paste0("x", seq_len(48)),
-            range = "A1:AV32",
+            range = "A1:AV32", # 32x48 plate (largest plate size)
             col_types = "text"
           )
       }, error = function(e) {
@@ -709,7 +709,7 @@ read_in_result_files <- function(results_file, results_filename, headers) {
 #'
 #' This functions loads and checks the results file(s)
 #'
-#' @param results_file character, file path(s) to results file(s)
+#' @param results_file character vector containing file path(s) to results file(s)
 #' @param headers list of headers identified in the manifest
 #' 
 #' @return data.frame with results data
@@ -726,7 +726,8 @@ load_results_EnVision <-
     for (iF in seq_along(results_file)) {
       for (iS in results_sheets[[iF]]) {
         futile.logger::flog.info("Reading file %s, sheet %s", results_file[[iF]], iS)
-        if (iS == 0) {
+        is_XLSX <- iS != 0L
+        if (!is_XLSX) {
           fInfo <- read_EnVision_delim(results_file[[iF]])
           df <- fInfo$df
           isEdited <- fInfo$isEdited
@@ -1287,7 +1288,7 @@ check_metadata_headers <- function(corrected_names, df_name) {
 #'
 #' This function reads file from the EnVision Workstation
 #'
-#' @param file  input file from EnVision
+#' @param file string to path of input file from EnVision scanner
 #' @param nrows maximum number of file rows to be processed
 #' @param seps potential field separators of the input file
 #'
@@ -1354,12 +1355,13 @@ read_in_EnVision_file <- function(file, nrows, seps) {
   }
   close(con)
 
+  # Try to identify the delimiter.
   n_sep <- colSums(vapply(seps, function(sep) {
     vapply(results.list[seq_len(10)], function(line)
       length(unlist(strsplit(line, split = sep))),
       integer(length = 1))
   }, integer(length = 10)))
-  sep <- n_sep [n_sep == max(n_sep)]
+  sep <- n_sep[n_sep == max(n_sep)]
   if (sep < 30) {
     exception_data <- get_exception_data(28)
     stop(sprintf(exception_data$sprintf_text, file))
@@ -1386,8 +1388,8 @@ get_EnVision_properties <- function(results.list, fname) {
       grepl("EnVision Workstation", x[1]), logical(1)))
 
   if (isEdited) {
-    # may be altered and miss columns
-    n_col <- max(vapply(results.list[5:10], length, integer(length = 1)))
+    # Identify closest larger plate size; may be altered and miss columns. 
+    n_col <- max(vapply(results.list[5:10], length, integer(length = 1))) # Assume first row of data lies in rows 5:10
     n_col <- 1.5 * 2 ^ ceiling(log2((n_col - 1) / 1.5))
     n_row <- which(vapply(results.list, function(x) {
                grepl("Basic assay information", x[1]) | grepl("Plate information", x[1])},
@@ -1400,7 +1402,7 @@ get_EnVision_properties <- function(results.list, fname) {
       n_row <- min(n_row[n_row > 1]) - 7
     }
     if (length(n_row) != 1 ||
-        abs(log2(1.5 * n_row / n_col)) > .5)  {
+        abs(log2(1.5 * n_row / n_col)) > 0.5)  {
       exception_data <- get_exception_data(30)
       stop(sprintf(exception_data$sprintf_text, fname))
     }
@@ -1419,6 +1421,9 @@ get_EnVision_properties <- function(results.list, fname) {
 }
 
 #' Get plate size
+#'
+#' @details
+#' All plate sizes assume 1.5x nrows = ncolumns.
 #' @keywords internal
 #' 
 #' @return charvec with plate dims

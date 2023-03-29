@@ -21,12 +21,12 @@ get_xl_sheets <- function(files) {
 #' get sheets for given set of XLS files
 #' @param ts list with template sheets info
 #' 
-#' @return logical flaga
+#' @return logical flag
 #' 
 .check_against_single_template_sheet <- function(ts) {
 
   checkmate::assert_list(ts)
-  # edge case: 'untreated'  template with (1) single sheet
+  # edge case: 'untreated' template with (1) single sheet
   # and (2) improperly named (not 'idfs[['drug']]) 
   myv <- vapply(ts, function(x) {
     length(x) == 1 && x != gDRutils::get_env_identifiers("drug")
@@ -35,7 +35,7 @@ get_xl_sheets <- function(files) {
   # one template file with 
   status <- any(myv) && !all(myv)
   if (isTRUE(status)) {
-    attributes(status) <- list(file = names(myv[myv == TRUE]))
+    attributes(status) <- list(file = names(myv[myv]))
   }
   status
 }

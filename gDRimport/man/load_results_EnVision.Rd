@@ -7,7 +7,7 @@
 load_results_EnVision(results_file, headers = gDRutils::get_env_identifiers())
 }
 \arguments{
-\item{results_file}{character, file path(s) to results file(s)}
+\item{results_file}{character vector containing file path(s) to results file(s)}
 
 \item{headers}{list of headers identified in the manifest}
 }
