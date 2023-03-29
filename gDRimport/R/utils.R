@@ -65,53 +65,6 @@ read_ref_data <- function(inDir, prefix = "ref") {
   lFiles
 }
 
-#' save_file_type_info
-#'
-#' Save information about file types
-#'
-#' @param v a list with filenames
-#' @param save_dir an output directory
-#' @param normKeysFileName a filename with normalization keys ('normKeys.json' by default)
-#' @param dfRawDataFileName a filename with rawdata ('dfRawData.tsv' by default)
-#' @param fileTypeInfoName a filename with file type information ('fileTypeInfo.csv' by default)
-#'
-#' @return \code{NULL} invisibly.
-#' 
-save_file_type_info <-
-  function(v,
-           save_dir,
-           normKeysFileName = "normKeys.json",
-           dfRawDataFileName = "dfRawData.tsv",
-           fileTypeInfoName = "fileTypeInfo.csv") {
-    # Assertions:
-    checkmate::assert_list(v)
-    checkmate::assert_string(normKeysFileName)
-    checkmate::assert_string(dfRawDataFileName)
-    checkmate::assert_string(fileTypeInfoName)
-    checkmate::assert_true(all(c("Manifest", "Template", "RawData") %in% names(v)))
-
-    tbl <- tibble::tibble(
-      data_type = c(
-        rep("manifest", length(v$Manifest$name)),
-        rep("template", length(v$Template$name)),
-        rep("rawData", length(v$RawData$name)),
-        "normKeys",
-        "dfRawData"
-      ),
-      name = c(
-        v$Manifest$name,
-        v$Template$name,
-        v$RawData$name,
-        normKeysFileName,
-        dfRawDataFileName
-      )
-    )
-    outFile <- file.path(save_dir, fileTypeInfoName)
-    write.csv(tbl, outFile, row.names = FALSE)
-  }
-
-
-
 #' Detect format of results data
 #'
 #' @param results_file path to results data
