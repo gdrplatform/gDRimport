@@ -1,0 +1,48 @@
+Package: gDRimport
+Type: Package
+Title: Package for handling import of dose-response data
+Version: 0.99.0
+Date: 2023-03-24
+Authors@R: c(
+    person("Arkadiusz", "Gladki", role=c("aut")),
+    person("Bartosz", "Czech", role=c("aut")), 
+    person("Marc", "Hafner", role=c("aut")),
+    person("Sergiu", "Mocanu", role=c("aut")),
+    person("Dariusz", "Scigocki", role=c("aut")),
+    person("Allison", "Vuong", role=c("aut")),
+    person("Luca", "Gerosa", role=c("aut")),
+    person("gDR", "Support team", role=c("cre"), email="gdr-support-d@gene.com", comment=c(ORCID="0009-0006-9310-1135")))
+Description: Package is a part of the gDR suite. It helps to prepare raw drug response data for downstream processing. It mainly contains helper functions for importing/loading/validating dose response data provided in different file formats. 
+License: file LICENSE
+LazyLoad: yes
+Imports:
+    assertthat,
+    checkmate,
+    data.table,
+    futile.logger,
+    gDRutils (>= 0.99.0),
+    magrittr,
+    readxl,
+    reshape2,
+    rio,
+    stats,
+    stringi,
+    tibble,
+    tools,
+    utils,
+    XML,
+    yaml,
+    openxlsx
+Suggests:
+    gDRtestData (>= 0.99.0),
+    gDRstyle (>= 0.99.0),
+    knitr,
+    purrr,
+    testthat
+biocViews: Software, Infrastructure, DataImport
+VignetteBuilder: knitr
+ByteCompile: TRUE
+RoxygenNote: 7.2.3
+SwitchrLibrary: gDRimport
+DeploySubPath: gDRimport
+Encoding: UTF-8
