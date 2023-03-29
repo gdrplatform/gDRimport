@@ -717,7 +717,6 @@ read_in_result_files <- function(results_file, results_filename, headers) {
 load_results_EnVision <-
   function(results_file,
            headers = gDRutils::get_env_identifiers()) {
-    # Assertions:
     checkmate::assert_character(results_file)
     
     # read all files and sheets
