@@ -8,7 +8,7 @@
 #' files will be generated
 #' 
 #' @examples
-#' td3 <- get_test_data3()[["f_96w"]]
+#' td3 <- get_test_D300_data()[["f_96w"]]
 #' o_path <- file.path(tempdir(), "td3")
 #' dir.create(o_path)
 #' import_D300(td3$d300, td3$Gnum, o_path)
@@ -166,7 +166,7 @@ merge_D300_w_metadata <- function(D300, Gnums) {
 #' @return data.frame representing input \code{D300_file}.
 #' 
 #' @examples
-#' td3 <- get_test_data3()
+#' td3 <- get_test_D300_data()
 #' fs <- td3[["f_96w"]]
 #' dose_df <- parse_D300_xml(fs[["d300"]])
 #

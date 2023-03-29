@@ -4,7 +4,7 @@
 #' @param paths a character with path(s)
 #'
 #' @examples
-#' td2 <- get_test_data2()
+#' td2 <- get_test_Tecan_data()
 #' is_readable_v(td2$r_files)
 #'  
 #' @export

@@ -26,19 +26,19 @@ There are currently four test datasets that can be used to see what's the expect
 
 ```{r}
 # primary test data
-td1 <- get_test_data1()
+td1 <- get_test_data()
 summary(td1)
 
 # test data in Tecan format
-td2 <- get_test_data2()
+td2 <- get_test_Tecan_data()
 summary(td2)
 
 # test data in D300 format
-td3 <- get_test_data3()
+td3 <- get_test_D300_data()
 summary(td3)
 
 # test data obtained from EnVision
-td4 <- get_test_data4()
+td4 <- get_test_EnVision_data()
 summary(td4)
 ```
 

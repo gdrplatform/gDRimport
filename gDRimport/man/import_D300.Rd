@@ -31,7 +31,7 @@ For example, wells treated with 2 drugs in combination will result in 4 sheets p
 }
 }
 \examples{
-td3 <- get_test_data3()[["f_96w"]]
+td3 <- get_test_D300_data()[["f_96w"]]
 o_path <- file.path(tempdir(), "td3")
 dir.create(o_path)
 import_D300(td3$d300, td3$Gnum, o_path)

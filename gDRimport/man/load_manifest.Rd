@@ -16,7 +16,7 @@ list with manifest data.frame and headers
 This functions loads and checks the manifest file(s)
 }
 \examples{
- td1 <- get_test_data1()
- ml <- load_manifest(td1$m_file)
+ td <- get_test_data()
+ ml <- load_manifest(td$m_file)
 
 }

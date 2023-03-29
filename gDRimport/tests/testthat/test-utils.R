@@ -3,7 +3,7 @@ context("assert_utils")
 test_that("assert_utils", {
 
   # real data
-  td1 <- get_test_data1()
+  td1 <- get_test_data()
   ref_tbl <- read.csv2(td1$ref_t1)
   expect_equal(standardize_record_values(ref_tbl$Gnumber), ref_tbl$Gnumber)
 

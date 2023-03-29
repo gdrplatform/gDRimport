@@ -20,8 +20,8 @@ a charvec with corrected colnames of df
 Check whether all metadata names are correct
 }
 \examples{
- td1 <- get_test_data1()
- m_file <- td1$m_file
+ td <- get_test_data()
+ m_file <- td$m_file
  m_data <- readxl::read_excel(m_file)
  result <- check_metadata_names(col_df = colnames(m_data))
 

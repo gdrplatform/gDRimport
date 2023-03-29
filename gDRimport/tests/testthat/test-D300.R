@@ -1,9 +1,9 @@
 context("import_doses")
-td3 <- get_test_data3()
+td3 <- get_test_D300_data()
 
 test_that("parse_D300_xml", {
   
-  # get test_data3
+  # get test_D300_data
  
   # valid output returned for the D300 96 well plate example
   fs <- td3[["f_96w"]]

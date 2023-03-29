@@ -2,15 +2,15 @@ context("load_files")
 
   test_that("load_manifest", {
 
-  # get test_data1
-  td1 <- get_test_data1()
+  # get test_data
+  td1 <- get_test_data()
 
   # valid output returned for "manifest.xlsx"
   m_df <- load_manifest(td1$m_file)
   expect_identical(td1$ref_m_df, m_df$data)
 
   #get test data2
-  td2 <- get_test_data2()
+  td2 <- get_test_Tecan_data()
 
   # valid output returned for "manifest.xlsx"
   m_df <- load_manifest(td2$m_file)
@@ -32,8 +32,8 @@ context("load_files")
 
 test_that("load_results", {
 
-  # get test_data1
-  td1 <- get_test_data1()
+  # get test_data
+  td1 <- get_test_data()
 
   headers <- gDRutils::get_env_identifiers()
   headers$barcode <- headers$barcode[[1]]
@@ -56,8 +56,8 @@ test_that("load_results", {
   ref_tbl2 <- read.csv2(td1$ref_r1)
   expect_equal(res_tbl2, ref_tbl2)
 
-  # get test_data2
-  td2 <- get_test_data2()
+  # get test_Tecan_data
+  td2 <- get_test_Tecan_data()
 
   # valid output returned for Tecan format
   res_tbl3 <- load_results(df_results_files = c(td2$r_files), instrument = "Tecan", headers = headers)
@@ -77,8 +77,8 @@ test_that("load_results", {
 
 test_that("load_templates", {
 
-  # get test_data1
-  td1 <- get_test_data1()
+  # get test_data
+  td1 <- get_test_data()
 
   # valid output returned for the two xlsx files
   t_tbl <- load_templates(df_template_files = c(td1$t_files))
@@ -92,8 +92,8 @@ test_that("load_templates", {
   res_t_tbl <- load_templates(df_templates)
   expect_equal(standardize_df(res_t_tbl), standardize_df(ref_tbl))
 
-  # get test_data2
-  td2 <- get_test_data2()
+  # get test_Tecan_data
+  td2 <- get_test_Tecan_data()
 
   # valid output is returned for xlsx files
   res_t_tbl3 <- load_templates(df_template_files = c(td2$t_files))
@@ -117,8 +117,8 @@ test_that("load_templates returns an error when there is no untreated conditions
 
 test_that("load_data", {
 
-  # get test_data1
-  td1 <- get_test_data1()
+  # get test_data
+  td1 <- get_test_data()
 
   l_tbl <- load_data(td1$m_file, td1$t_files, td1$r_files)
   # valid output returned for manifest
@@ -130,8 +130,8 @@ test_that("load_data", {
   ref_tbl <- read.csv2(td1$ref_r1_r2)
   expect_equal(l_tbl$data, ref_tbl)
 
-  #get test_data2 (Tecan format)
-  td2 <- get_test_data2()
+  #get test_Tecan_data (Tecan format)
+  td2 <- get_test_Tecan_data()
 
   l_tbl2 <- load_data(td2$m_file, td2$t_files, td2$r_files, instrument = "Tecan")
   # valid output returned for manifest
@@ -144,8 +144,8 @@ test_that("load_data", {
   ref_r_df <- readRDS(td2$ref_r_df)
   expect_equal(l_tbl2$data, ref_r_df)
   
-  # get test_data4 (EnVision format)
-  td4 <- get_test_data4()
+  # get test_EnVision_data (EnVision format)
+  td4 <- get_test_EnVision_data()
   l_tbl4 <-
     load_data(td4$m_file, td4$t_files, td4$r_files, instrument = "EnVision")
   ref_l <- readRDS(td4$ref_l_path)
@@ -278,7 +278,7 @@ test_that(".standardize_untreated_values works as expected", {
 
 test_that("check_metadata_names works as expected", {
   
-  td1 <- get_test_data1()
+  td1 <- get_test_data()
   m_file <- td1$m_file
   m_data <- readxl::read_excel(m_file)
   

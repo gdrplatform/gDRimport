@@ -16,7 +16,7 @@ data.frame representing input \code{D300_file}.
 This function parses a D300 *.tdd file (XML format) into a data.frame
 }
 \examples{
-td3 <- get_test_data3()
+td3 <- get_test_D300_data()
 fs <- td3[["f_96w"]]
 dose_df <- parse_D300_xml(fs[["d300"]])
 }

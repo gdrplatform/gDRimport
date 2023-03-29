@@ -25,7 +25,7 @@ data.frame with results' data
 This functions loads and checks the results file(s)
 }
 \examples{
- td1 <- get_test_data1()
- r_df <- load_results(td1$r_files)
+ td <- get_test_data()
+ r_df <- load_results(td$r_files)
  
 }
