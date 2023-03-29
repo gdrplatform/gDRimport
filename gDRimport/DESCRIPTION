@@ -20,7 +20,7 @@ Imports:
     checkmate,
     data.table,
     futile.logger,
-    gDRutils (>= 1.0.39),
+    gDRutils (>= 0.99.0),
     magrittr,
     readxl,
     reshape2,
@@ -34,8 +34,8 @@ Imports:
     yaml,
     openxlsx
 Suggests:
-    gDRtestData (>= 1.0.12),
-    gDRstyle (>= 0.0.8),
+    gDRtestData (>= 0.99.0),
+    gDRstyle (>= 0.99.0),
     knitr,
     purrr,
     testthat
