@@ -7,9 +7,10 @@ library(PharmacoGx)
 library(gDR)
 library(gDRcore)
 library(gDRimport)
-pset <- gDRimport:::.getPSet("CCLE_2015", psetDir = "/home/bioinf/bhklab/jermiah/psets/")
-pset2 <- gDRimport:::.getPSet("FIMM_2016", psetDir = "/home/bioinf/bhklab/jermiah/psets/")
-pset3 <- gDRimport:::.getPSet("NCI_60", psetDir = "/home/bioinf/bhklab/jermiah/psets/")
+pset <- .getPSet("CCLE_2015")
+pset2 <- .getPSet("FIMM_2016")
+pset3 <- .getPSet("NCI_60")
+pset4 <- .getPSet("PRISM_2020")
 
 df_ <- gDRimport::convert_pset_to_df(pharmacoset = pset,
                         run_parallel=TRUE,
