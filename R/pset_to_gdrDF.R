@@ -19,8 +19,8 @@
 #' @export
 #'
 convert_pset_to_df <- function(pharmacoset,
-                                run_parallel = TRUE,
-                                workers = 2L) {
+                               run_parallel = TRUE,
+                               workers = 2L) {
     
     # TO:DO
     # ASSERT ALL PARAMETERS 
@@ -32,13 +32,10 @@ convert_pset_to_df <- function(pharmacoset,
                             msg = "workers parameter must be an integer. Default = 2L")
 
     # FUNCTION TO MANIPULATE ENV IDENTIFIERS
-    gDRimport::setEnvForPSet()
-
-    # SET PARALLEL OR SERIAL
-    .setParallel(runParallel = run_parallel, workers = workers)
+    setEnvForPSet()
 
     # GET DOSE AND VIABILITY DATA & MELT INTO LARGE TABLE
-    dose_response <- .extractDoseResponse(PSet = pharmacoset)  
+    dose_response <- .extractDoseResponse(pset = pharmacoset)
 
     # ADD IN DURATION AND REFERENCE DIVISION TIME
     dose_response_duration_refdivtime <- .createPseudoData(dose_response)
@@ -55,7 +52,6 @@ convert_pset_to_df <- function(pharmacoset,
 setEnvForPSet <- function() {
     ## -- Set environment identifiers to map from our columns to gDR columns
     gDRutils::reset_env_identifiers()
-    (default_ids <- gDRutils::get_env_identifiers())
 
     pgx_to_gdr_ids <- list(
         cellline = "Clid",
@@ -66,34 +62,26 @@ setEnvForPSet <- function() {
         duration = "Duration",
         barcode = "Barcode"
     )
-   
-    unmodified_ids <- default_ids[setdiff(names(default_ids), names(pgx_to_gdr_ids))]
-    pgx_to_gdr_ids <- c(pgx_to_gdr_ids, unmodified_ids)
-    ## FIXME:: Setting identifiers drops defaults?
-    for (i in seq_along(pgx_to_gdr_ids)) {
-        gDRutils::set_env_identifier(
-            k = names(pgx_to_gdr_ids)[i],
-            v = pgx_to_gdr_ids[[i]]
-        )
-    }
+    
+    invisible(Map(function(x, y) gDRutils::set_env_identifier(x, y), names(pgx_to_gdr_ids), pgx_to_gdr_ids))
 }
 
 #' Get PharmacoSet 
 #' @keywords internal
 .getPSet <- function(pset_name,
-                    psetDir = getwd(),
-                    canonical = FALSE,
-                    timeout = 600) {
+                     psetDir = getwd(),
+                     canonical = FALSE,
+                     timeout = 600) {
    
     assertthat::assert_that(is.character(pset_name),
                             msg = "pset_name parameter must be a character vector.")
 
     availPSets <- PharmacoGx::availablePSets(canonical = canonical)
 
-    if (pset_name %in% availPSets$"Dataset Name") {
-        pset_name_param = availPSets[availPSets$"Dataset Name"== pset_name,]$"PSet Name"
-    } else if (pset_name %in% availPSets$"PSet Name") {
-        pset_name_param = pset_name    
+    pset_name_param <- if (pset_name %in% availPSets$"Dataset Name") {
+      availPSets[availPSets$"Dataset Name" == pset_name, "PSet Name"]
+      } else if (pset_name %in% availPSets$"PSet Name") {
+        pset_name    
     } else {
         stop(pset_name, 
             " does not exist in the available PSets. Try one of the following:\n", 
@@ -102,25 +90,26 @@ setEnvForPSet <- function() {
 
     # Check if PSet exists in directories where PSets are stored. 
     # Read in if exists, download otherwise
-    if (file.exists(file.path(psetDir, paste0(pset_name,".rds")))) {
-        print("PSet exists in user-provided directory, reading .rds file")
-        return(readRDS(file.path(psetDir, paste0(pset_name,".rds"))))
-    } else{
+    pset <- if (file.exists(file.path(psetDir, paste0(pset_name_param,".rds")))) {
+      print("PSet exists in user-provided directory, reading .rds file")
+      readRDS(file.path(psetDir, paste0(pset_name_param,".rds")))
+      } else {
         print("PSet does not exist in user-provided directory, downloading from database.")
-        return(PharmacoGx::downloadPSet(pset_name, saveDir = psetDir, timeout = timeout))
-    }
-
+        PharmacoGx::downloadPSet(pset_name_param, saveDir = psetDir, timeout = timeout)
+      }
     # Update PSet to new structure if not updated already.
-    PharmacoGx::updateObject(pset2)
+    PharmacoGx::updateObject(pset)
 }
 
 #' Get dose and viability readouts and melt into large data table
 #' @keywords internal
 #' @importFrom data.table `:=` setDF
-.extractDoseResponse <- function(PSet) {
+.extractDoseResponse <- function(pset) {
 
-        TRE <- PSet@treatmentResponse
-        raw_tr <- TRE$raw
+        tre <- pset@treatmentResponse
+        raw_tr <- tre$raw
+        info_df <- tre$info
+        duration <- unique(tre$info$duration.hours)
 
         # use output of get_env_identifiers() 
         env_ids <- gDRutils::get_env_identifiers()
@@ -130,14 +119,14 @@ setEnvForPSet <- function() {
         if (raw_tr_dims[3] < 2) {
             stop("Error: PharmacoSet treatmentResponse raw data does not have either/both of viability and concentration data.")
         } else {
-            viability <- data.table::as.data.table(raw_tr[, 1:raw_tr_dims[2], 2], TRUE)
+            viability <- data.table::as.data.table(raw_tr[, seq_len(raw_tr_dims[2]), 2], TRUE)
             viability[[env_ids$untreated_tag[1]]] <- 100
             viability.m <- data.table::melt(viability, 
                         measure.vars = c(2:length(viability)),
                         variable.name = "Dose",
                         value.name = "ReadoutValue")
 
-            doses <- data.table::as.data.table(raw_tr[, 1: raw_tr_dims[2],1], TRUE)
+            doses <- data.table::as.data.table(raw_tr[, seq_len(raw_tr_dims[2]), 1], TRUE)
             doses[[env_ids$untreated_tag[1]]] <- 0
             doses.m <- data.table::melt(doses, 
                         measure.vars = c(2:length(doses)),
@@ -149,14 +138,18 @@ setEnvForPSet <- function() {
         # MERGE     
         if (length(doses.m) == length(viability.m)) {
             merged_dt <- merge(viability.m, doses.m)
-        }else{
+        } else {
             print("doses and viability data tables are not the same size")
         }
 
-        number_of_underscores <- sum(gregexpr("_", merged_dt$rn, fixed = TRUE)[[1]] > 0)
-        merged_dt[, c( env_ids$drug_name , env_ids$cellline ) := data.table::tstrsplit(rn, "_", fixed = TRUE, keep = c(number_of_underscores,number_of_underscores+1))]
-
+        
+        treatment_cols <- c("sampleid", "treatmentid")
+        info_df$rn <- rownames(info_df)
+        merged_dt <- merge(merged_dt, info_df[, c(treatment_cols, "rn")], by = "rn")
+        data.table::setnames(merged_dt, treatment_cols, c(env_ids$cellline, env_ids$drug_name))
+        
         merged_dt[Dose == env_ids$untreated_tag[1], env_ids$drug_name := env_ids$untreated_tag[1]]
+        merged_dt[, Dose := NULL]
         # implicit return
         merged_dt
 }
@@ -164,43 +157,28 @@ setEnvForPSet <- function() {
 #' Add in pseudo-data for duration and cell reference division time
 #' @keywords internal
 .createPseudoData <- function(dt) {
-    if (!"Duration" %in% names(dt)) {
-        dt$"Duration"<-72
-    }
-    if (!"ReferenceDivisionTime" %in% names(dt)) {
-        dt$"ReferenceDivisionTime" <- NA
-    }
-    if (!"Barcode" %in% names(dt)) {
-        colnames(dt)[1] <- "Barcode"
-    }
-    dt
+  
+  barcode <- gDRutils::get_env_identifiers("barcode")[1]
+  duration <- gDRutils::get_env_identifiers("duration")
+  refDivTime <- gDRutils::get_env_identifiers("cellline_ref_div_time")
+  
+  
+  if (!duration %in% names(dt)) {
+      dt[, (duration) := 72]
+  }
+  if (!refDivTime %in% names(dt)) {
+      dt[, (refDivTime) := NA]
+  }
+  if (!barcode %in% names(dt)) {
+      colnames(dt)[1] <- barcode
+  }
+  
+  dt
 }
 
-#' Set parallel or serial
-#' @keywords internal
-.setParallel <- function(runParallel = TRUE, workers_ = 2L) {
-    if (runParallel) {
-        if (!is(BiocParallel::registered()[[1]],"MulticoreParam") | !(BiocParallel::registered()[[1]]$workers == workers_)) {
-            print(paste("Setting environment as parallel with", workers_, "workers."))
-            #run parallel
-            BiocParallel::register( 
-                BiocParallel::MulticoreParam(
-                workers = as.numeric(workers_),
-                tasks = 1L)
-            )
-        } else{
-            print(paste("Environment set as parallel with", workers_, "workers."))
-        }
-        
-    } else{
-        print("Setting as serial.")
-        # run serial
-        BiocParallel::register(BiocParallel::SerialParam())
-    }
-}
 
 #' Remove negative viabilities
 #' @keywords internal
 .removeNegatives <- function(dataset) {
-    newdataset <- dataset[dataset$ReadoutValue>0]
+    dataset[dataset$ReadoutValue > 0]
 }
