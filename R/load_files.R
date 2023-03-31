@@ -46,18 +46,16 @@ load_data <-
     treatments <- load_templates(df_template_files)
     data <- load_results(results_file, instrument, headers = headers)
 
-      # check the all template files are available
-    if (!all(unique(manifest[[headers[["template"]]]][manifest[[headers[["barcode"]]]] %in%
+    # check the all template files are available
+    barcode_col <- headers[["barcode"]]
+    template_col <- headers[["template"]]
+    manifest_tfiles <- unique(manifest[[template_col]][manifest[[barcode_col]] %in%
                                                       data[[headers[["barcode"]]]]])
-             %in% basename(template_filename))) {
+    if (!all(manifest_tfiles %in% basename(template_filename))) {
       exception_data <- get_exception_data(11)
       stop(sprintf(
         exception_data$sprintf_text,
-        toString(setdiff(
-          unique(manifest[[headers[["template"]]]][manifest[[headers[["barcode"]]]] %in%
-                                                     data[[headers[["barcode"]]]]]),
-          basename(template_filename)
-        ))
+        toString(setdiff(manifest_tfiles, basename(template_filename)))
       ))
     }
     return(list(
@@ -146,8 +144,7 @@ read_in_manifest_file <- function(manifest_file, available_formats) {
                                    "text/tab-separated-values",
                                    "tsv")) {
       df <- tryCatch({
-        utils::read.table(x, sep = "\t", header = TRUE, na.strings = c("", "NA")) %>%
-          stats::na.omit()
+        stats::na.omit(utils::read.table(x, sep = "\t", header = TRUE, na.strings = c("", "NA")))
       }, error = function(e) {
         exception_data <- get_exception_data(12)
         stop(sprintf(
@@ -429,7 +426,7 @@ load_templates_xlsx <-
     # standardize untreated values
     all_templates <- .standardize_untreated_values(all_templates)
     futile.logger::flog.info("Templates loaded successfully!")
-    return(all_templates)
+    all_templates
   }
 
 #' Read in xlsx template files
