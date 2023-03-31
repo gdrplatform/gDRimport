@@ -204,15 +204,13 @@ load_templates <- function(df_template_files) {
   checkmate::assert_file_exists(template_file)
 
   all_templates <- data.frame()
-  if (any(grepl("\\.xlsx?$", template_filename))) {
-    idx <- grepl("\\.xlsx?$", template_filename)
+  if (any(idx <- grepl("\\.xlsx?$", template_filename))) {
     futile.logger::flog.info("Reading %s with load_templates_xlsx", template_filename[idx])
     all_templates_1 <-
       load_templates_xlsx(template_file[idx], template_filename[idx])
     all_templates <- rbind(all_templates, all_templates_1)
   }
-  if (any(grepl("\\.[ct]sv$", template_filename))) {
-    idx <- grepl("\\.[ct]sv$", template_filename)
+  if (any(idx <- grepl("\\.[ct]sv$", template_filename))) {
     futile.logger::flog.info("Reading %s with load_templates_tsv", template_filename[idx])
     all_templates_2 <-
       load_templates_tsv(template_file[idx], template_filename[idx])
@@ -1425,10 +1423,33 @@ get_EnVision_properties <- function(results.list, fname) {
 #' @return charvec with plate dims
 #' 
 .get_plate_size <- function(df) {
-  n_col <-
-    1.5 * 2 ^ ceiling(log2((ncol(df) - 2) / 1.5))
+  .Deprecated(".estimate_plate_size")
+  .estimate_plate_size(df)
+}
+
+#' Estimate plate size
+#'
+#' @details
+#' All plate sizes assume 1.5x nrows = ncolumns.
+#' @keywords internal
+#' 
+#' @return charvec with plate dims
+#' @name estimate_plate_size
+#' 
+.estimate_plate_size <- function(df) {
+  n_col <- .estimate_plate_ncol(ncol(df))
   n_row <- n_col / 1.5
   c(n_row, n_col)
+}
+
+#' @name estimate_plate_size
+.estimate_plate_ncol <- function(x) {
+  1.5 * estimate_plate_nrow(x)
+}
+
+#' @name estimate_plate_size
+.estimate_plate_nrow <- function(x) {
+  2 ^ ceiling(log2((x - 2) / 1.5))
 }
 
 
