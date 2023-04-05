@@ -10,6 +10,9 @@ if the name of the sheet is correct and if it can be fixed}
 \arguments{
 \item{ts}{list with template sheets info}
 }
+\value{
+logical flag
+}
 \description{
 get sheets for given set of XLS files
 }

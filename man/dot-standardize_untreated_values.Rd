@@ -6,6 +6,9 @@
 \usage{
 .standardize_untreated_values(df)
 }
+\value{
+data.frame with standardized untreated values
+}
 \description{
 Standardize untreated values to ignore cases
 }

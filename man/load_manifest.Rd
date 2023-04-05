@@ -9,6 +9,14 @@ load_manifest(manifest_file)
 \arguments{
 \item{manifest_file}{character, file path(s) to manifest(s)}
 }
+\value{
+list with manifest data.frame and headers
+}
 \description{
 This functions loads and checks the manifest file(s)
+}
+\examples{
+ td <- get_test_data()
+ ml <- load_manifest(td$m_file)
+
 }

@@ -11,6 +11,9 @@ load_results_tsv(results_file, headers)
 
 \item{headers}{list of headers identified in the manifest}
 }
+\value{
+data.frame with results data
+}
 \description{
 This functions loads and checks the results file(s)
 }

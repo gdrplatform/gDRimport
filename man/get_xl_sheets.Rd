@@ -2,13 +2,16 @@
 % Please edit documentation in R/correction.R
 \name{get_xl_sheets}
 \alias{get_xl_sheets}
-\title{XLS/XLSX #
-get sheets for given set of XLS files}
+\title{Get Excel sheets}
 \usage{
 get_xl_sheets(files)
 }
 \arguments{
 \item{files}{charvec with file paths}
+}
+\value{
+named list where names are the excel filenames
+and the values are the sheets within each file
 }
 \description{
 get sheets for given set of XLS files

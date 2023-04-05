@@ -1,0 +1,69 @@
+---
+title: Using gDRimport
+author:
+- name: Arkadiusz Gladki
+  email: gdr-support-d@gene.com
+package: gDRimport
+date: 
+vignette: >
+  %\VignetteIndexEntry{gDRimport}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, echo=FALSE}
+library(gDRimport)
+```
+
+# Overview
+
+The `gDRimport` package is a part of the gDR suite. It helps to prepare raw drug response data for downstream processing. It mainly contains helper functions for importing/loading/validating dose response data provided in different file formats. 
+
+# Use Cases
+
+## Test Data 
+There are currently four test datasets that can be used to see what's the expected input data for the gDRimport. 
+
+```{r}
+# primary test data
+td1 <- get_test_data()
+summary(td1)
+
+# test data in Tecan format
+td2 <- get_test_Tecan_data()
+summary(td2)
+
+# test data in D300 format
+td3 <- get_test_D300_data()
+summary(td3)
+
+# test data obtained from EnVision
+td4 <- get_test_EnVision_data()
+summary(td4)
+```
+
+## Load data
+The `load_data` is the key function. It wraps `load_manifest`, `load_templates` and `load_results` functions and supports different file formats.
+
+```{r}
+ml <- load_manifest(td1$m_file)
+summary(ml)
+
+t_df <- load_templates(td1$t_files)
+summary(t_df)
+
+r_df <- load_results(td1$r_files)
+summary(r_df)
+
+l_tbl <- load_data(td1$m_file, td1$t_files, td1$r_files)
+summary(l_tbl)
+```
+
+## Package installation
+The function `installAllDeps` assists in installing package dependencies.  
+
+# SessionInfo {-}
+
+```{r sessionInfo}
+sessionInfo()
+```

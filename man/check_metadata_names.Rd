@@ -13,6 +13,16 @@ check_metadata_names(col_df, df_name = "", df_type = NULL)
 
 \item{df_type}{a type of a dataframe (NULL by default)}
 }
+\value{
+a charvec with corrected colnames of df
+}
 \description{
 Check whether all metadata names are correct
+}
+\examples{
+ td <- get_test_data()
+ m_file <- td$m_file
+ m_data <- readxl::read_excel(m_file)
+ result <- check_metadata_names(col_df = colnames(m_data))
+
 }

@@ -10,6 +10,14 @@ load_templates(df_template_files)
 \item{df_template_files}{data.frame, with datapaths and names of results file(s)
 or character with file path of templates file(s)}
 }
+\value{
+data.frame with templates data
+}
 \description{
 This functions loads and checks the template file(s)
+}
+\examples{
+ td <- get_test_data()
+ t_df <- load_templates(td$t_files)
+ 
 }

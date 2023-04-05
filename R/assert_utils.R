@@ -3,9 +3,14 @@
 #'
 #' @param paths a character with path(s)
 #'
-#' @return
+#' @examples
+#' td2 <- get_test_Tecan_data()
+#' is_readable_v(td2$r_files)
+#'  
 #' @export
 #'
+#' @return \code{NULL} invisibly.
+#' 
 is_readable_v <- function(paths) {
   checkmate::assert_character(paths)
   missing_path_string <- paste(paths[as.logical(-file.access(paths, 4))], collapse = ", ", sep = "   ")

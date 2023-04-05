@@ -2,7 +2,7 @@
 % Please edit documentation in R/correction.R
 \name{mgrepl}
 \alias{mgrepl}
-\title{grep wrapper to suport multiple patterns}
+\title{grep wrapper to support multiple patterns}
 \usage{
 mgrepl(patterns, x, do_unlist = TRUE, ...)
 }
@@ -12,7 +12,12 @@ mgrepl(patterns, x, do_unlist = TRUE, ...)
 \item{x}{charvec with data}
 
 \item{do_unlist}{logical_flag unlist the final results?}
+
+\item{...}{additional argument}
+}
+\value{
+list of charvec with grep output
 }
 \description{
-grep wrapper to suport multiple patterns
+grep wrapper to support multiple patterns
 }

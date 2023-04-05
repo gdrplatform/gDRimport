@@ -11,6 +11,9 @@ load_templates_xlsx(template_file, template_filename = NULL)
 
 \item{template_filename}{character, file name(s)}
 }
+\value{
+data.frame with templates data
+}
 \description{
 This functions loads and checks the template file(s)
 }

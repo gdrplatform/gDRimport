@@ -1,9 +1,11 @@
-#' XLS/XLSX #
-
+#' Get Excel sheets
+#'
 #' get sheets for given set of XLS files
 #' 
-#' get sheets for given set of XLS files
 #' @param files charvec with file paths
+#'
+#' @return named list where names are the excel filenames
+#' and the values are the sheets within each file
 #' 
 get_xl_sheets <- function(files) {
   checkmate::assert_character(files)
@@ -19,19 +21,21 @@ get_xl_sheets <- function(files) {
 #' get sheets for given set of XLS files
 #' @param ts list with template sheets info
 #' 
+#' @return logical flag
+#' 
 .check_against_single_template_sheet <- function(ts) {
 
   checkmate::assert_list(ts)
-  # edge case: 'untreated'  template with (1) single sheet
+  # edge case: 'untreated' template with (1) single sheet
   # and (2) improperly named (not 'idfs[['drug']]) 
   myv <- vapply(ts, function(x) {
-    length(x) == 1 && x != gDRutils::get_env_identiers("drug")
+    length(x) == 1 && x != gDRutils::get_env_identifiers("drug")
   }, logical(1))
  
   # one template file with 
   status <- any(myv) && !all(myv)
   if (isTRUE(status)) {
-    attributes(status) <- list(file = names(myv[myv == TRUE]))
+    attributes(status) <- list(file = names(myv[myv]))
   }
   status
 }
@@ -44,19 +48,18 @@ get_xl_sheets <- function(files) {
 #' Correct names of the template sheets (if required)
 #' 
 #' @param tfiles charvec with paths to template files
+#' 
+#' @return charvec with paths to corrected sheet names
 correct_template_sheets <- function(tfiles) {
 
   checkmate::assert_character(tfiles)
 
   ts <- get_xl_sheets(tfiles)
   # no issues with templates sheets, return input data
-  ts <- if (are_template_sheets_valid(ts)) {
-    ts
-  
-  # there are issues, let's iterate through available fixes hoping to get the valid data eventually
-  } else {
+  if (!are_template_sheets_valid(ts)) {
+    # iterate through available fixes to try to fix data
     # spaces/bad capitalization 
-    ts <- fix_typos_with_reference(ts, get_expected_template_sheets())
+    ts <- fix_typos_with_reference(ts, unlist(gDRutils::get_env_identifiers()))
     
     # additional prefixes/postfixes in the optional sheets (e.g. "Concentration_2_3", "my_gnumber_2)"
     ts <- fix_typos_with_reference(ts, get_expected_template_sheets("optional"), method = "grepl")
@@ -82,17 +85,18 @@ correct_template_sheets <- function(tfiles) {
       inv_file <- attributes(st1)[["file"]]
       ts[[inv_file]] <- gDRutils::get_env_identifiers("drug")
     }
-    ts
   }
   stopifnot(are_template_sheets_valid(ts))
   ts
 }
 
-#' Get names of the shets expected in templates xlsx
+#' Get names of the sheets expected in templates xlsx
 #'
-#' Get names of the shets expected in templates xlsx
+#' Get names of the sheets expected in templates xlsx
 #'
 #' @param type charvec type of the sheets
+#' 
+#' @return string with type of the sheets
 #' 
 get_expected_template_sheets <-
   function(type = c("all", "core", "optional")) {
@@ -116,8 +120,7 @@ get_expected_template_sheets <-
       ctype
     } else if (type == "optional") {
       otype
-    }
-    else {
+    } else {
       stop(sprintf("bad type: '%s", type))
     }
   }
@@ -127,17 +130,20 @@ get_expected_template_sheets <-
 #' are template sheet valid?
 #' 
 #' @param ts list with (per file) template sheets
+#' 
+#' @seealso get_xl_sheets
+#' 
+#' @return logical flag
 are_template_sheets_valid <- function(ts) {
 
-checkmate::assert_list(ts)
+  checkmate::assert_list(ts)
 
-cl <- vector("list", 10)
-drug <- gDRutils::get_env_identifiers("drug")
+  cl <- vector("list", 10)
+  drug <- gDRutils::get_env_identifiers("drug")
 
-
- # only allowed sheet names are present
+  # only allowed sheet names are present
   myv <- vapply(ts, function(x) {
-    all(get_expected_template_sheets("core") %in% x)
+    all(drug %in% x)
   }, logical(1))
   if (sum(!myv) == 1 && length(myv) > 1) { # allow for having only `Drug` sheet in case of untreated template
     myv[!myv] <- drug %in% ts[!myv][[1]]
@@ -169,8 +175,10 @@ drug <- gDRutils::get_env_identifiers("drug")
 #' data (after corrections and uppercase'ing)
 #' 'grepl' is used to find entries from 'ref' that might be 
 #' somehow pre- or post- fixed
-#' @param fix_underscore logical flag fix the issues with underscores in data identfiiers? 
-#'
+#' @param fix_underscores logical flag fix the issues with underscores in data identfiers? 
+#' 
+#' @return list or charvec with corrected data
+#' 
 fix_typos_with_reference <-
   function(data,
            ref,
@@ -188,14 +196,10 @@ fix_typos_with_reference <-
       })
     } else {
       # remove spaces at the beginning/end
-      cdata <- vapply(data, function(x) {
-        gsub("^ +| +$", "", x)
-      }, character(1))
+      cdata <- vapply(data, function(x) gsub("^ +| +$", "", x), character(1))
       
       # replace spaces with "_"
-      cdata <- vapply(cdata, function(x) {
-        gsub(" +", "_", x)
-      }, character(1))
+      cdata <- vapply(cdata, function(x) gsub(" +", "_", x), character(1))
       
       # update to valid identifier (if found)
       # convert both v and valid identifiers to upper case before comparison
@@ -225,14 +229,14 @@ fix_typos_with_reference <-
     out
   }
 
-
-#' grep wrapper to suport multiple patterns
-#' 
-#' grep wrapper to suport multiple patterns
+#' grep wrapper to support multiple patterns
 #' 
 #' @param patterns charvec with patterns to be checked
 #' @param x charvec with data
 #' @param do_unlist logical_flag unlist the final results?
+#' @param ... additional argument
+#' 
+#' @return list of charvec with grep output
 #' 
 mgrepl <- function(patterns, x, do_unlist = TRUE,  ...) {
   checkmate::assert_character(patterns)

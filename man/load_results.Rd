@@ -18,6 +18,14 @@ or character with file path of results file(s)}
 
 \item{headers}{list of headers identified in the manifest file}
 }
+\value{
+data.frame with results' data
+}
 \description{
 This functions loads and checks the results file(s)
+}
+\examples{
+ td <- get_test_data()
+ r_df <- load_results(td$r_files)
+ 
 }

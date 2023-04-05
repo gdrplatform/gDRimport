@@ -6,15 +6,17 @@
 \usage{
 .check_file_structure(
   df,
-  iB,
-  iF,
-  iS,
-  results_filename,
+  filename,
+  sheet_name,
   readout_offset,
   n_row,
   n_col,
-  barcode_col
+  bcode_idx,
+  bcode_col
 )
+}
+\value{
+\code{NULL} invisibly.
 }
 \description{
 Check the structure of raw data
