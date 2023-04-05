@@ -401,7 +401,7 @@ load_templates_xlsx <-
               template_file[[iF]],
               sheet = Gnumber_idx,
               col_names = paste0("x", 1:48),
-              range = "A1:AV32"
+              range = "A1:AV32"               # read the largest possible plate size (32 x 48)
             )
         }, error = function(e) {
           stop(sprintf("Error loading template. See logs: %s", e))
@@ -430,14 +430,16 @@ load_templates_xlsx <-
             template_file[[iF]],
             sheet = Gnumber_idx,
             col_names = paste0("x", 1:48),
-            range = "A1:AV32",
+            range = "A1:AV32",               # read the largest possible plate size (32 x 48)
             col_types = "text"
           )
       }, error = function(e) {
         stop(sprintf("Error loading template. See logs: %s", e))
       })
       
-      # get the plate size
+      # get the plate size ; assume the format to be a   (2^n) x (1.5 * [2^n]) 
+      # n_row should be a [2^n]; assume the smallest 2^n value above the number of rows read
+      # n_col should be a 1.5 * [2^n]; assume the smallest 1.5*2^n value above the number of columns read
       n_row <-
         2 ^ ceiling(log2(max(which(
           apply(!is.na(df), 1, any)
@@ -446,11 +448,14 @@ load_templates_xlsx <-
         1.5 * 2 ^ ceiling(log2(max(which(
           apply(!is.na(df), 2, any)
         )) / 1.5))
+      # takes the max(n_row, n_col/1.5) for n_row and reversly for n_col
       n_row <- max(n_row, n_col / 1.5)
       n_col <- max(1.5 * n_row, n_col)
+      # defines the range to read from the template (either 24, 96, 364, or 1536 plate size)
       plate_range <-
         ifelse(n_col < 26, paste0("A1:", LETTERS[n_col], n_row), "A1:AV32")
 
+      # defines the well identifiers based on n_row, n_col (either 24, 96, 364, or 1536 plate size)
       # need to adapt for 1536 well plates
       df_template <-
         base::expand.grid(WellRow = LETTERS[seq_len(n_row)], WellColumn = seq_len(n_col))
@@ -509,7 +514,7 @@ load_templates_xlsx <-
   }
 
 
-#' Load results from tsv
+#' Load results from tsv (long table format with all data and metadata entered in individual rows)
 #'
 #' This functions loads and checks the results file(s)
 #'
@@ -574,7 +579,7 @@ load_results_tsv <-
   }
 
 
-#' Load envision results from xlsx
+#' Load envision results from xlsx (plate format with one or multiple plates per file/sheet)
 #'
 #' This functions loads and checks the results file(s)
 #'
@@ -622,7 +627,7 @@ load_results_EnVision <-
                   results_file[[iF]],
                   sheet = iS,
                   col_names = paste0("x", 1:48),
-                  range = "A1:AV32"
+                  range = "A1:AV32"              # read the largest possible plate size (32 x 48)
                 )
             }, error = function(e) {
               stop(sprintf("Error reading %s, sheet %s", results_file[[iF]], iS))
@@ -643,12 +648,12 @@ load_results_EnVision <-
           df <- df[, colSums(is.na(df[seq_len(colsRange), ])) != colsRange]
           
           # remove extra columns
-          # limit to first 24 rows in case Protocol information is
-          # exported which generate craps at the end of the file
+          # limit to first 24 rows ; in some cases, the Protocol information is
+          # exported which generate entries and rows to ignore at the end of the file
         }
 
         # not empty rows
-        # before discarding the rows; move ''Background information'' in the next row
+        # before discarding the rows that are not data; move ''Background information'' in the next row
         Bckd_info_idx <-
           which(as.data.frame(df)[, 1] %in% "Background information")
         if (length(Bckd_info_idx) > 0) {
@@ -682,7 +687,8 @@ load_results_EnVision <-
           df <- .fill_empty_wells(df, plate_rows, data_rows, n_row, n_col)
             
           
-          # need to do some heuristic to find where the data is
+          # need to do some heuristic to find where the readout data are positioned 
+          # is because of inconsistency in the header rows and empty rows
           df_to_check <- df[, -6:-1]
           full_rows <- Reduce(union, lapply(df, function(x) grep("^\\d+$", x)))
 
@@ -695,7 +701,7 @@ load_results_EnVision <-
           full_rows_index <- unique(sort(c(additional_rows, additional_rows + 1,
                                     setdiff(full_rows, spacer_rows))))
           
-          # don't consider the first columns as these may be metadata
+          # don't consider the first columns to identify where the readout data are positioned as these may be metadata
           # if big gap, delete what is at the bottom (Protocol information)
           gaps <-
             min(max(data_rows), nrow(df))
@@ -754,6 +760,7 @@ load_results_EnVision <-
               )
             }
 
+            # convert all the data into a long table format with plate/well information
             df_results <- data.frame(
               Barcode = Barcode,
               WellRow = LETTERS[seq_len(n_row)],
@@ -769,8 +776,8 @@ load_results_EnVision <-
                                      as.character(df[iB + 1, barcode_col]),
                                      dim(df_results)[1])
             all_results <- rbind(all_results, df_results)
-            }
-          } else {
+          }
+        } else {
             # proper original EnVision file
             n_row <- fInfo$n_row
             n_col <- fInfo$n_col
@@ -787,7 +794,7 @@ load_results_EnVision <-
               # export without background information
               BackgroundValue <- 0
             }
-
+          # convert all the data into a long table format with plate/well information
           df_results <- data.frame(
             Barcode = Barcode,
             WellRow = LETTERS[seq_len(n_row)],
@@ -805,12 +812,11 @@ load_results_EnVision <-
             "wells"
           ))
           futile.logger::flog.info("Plate %s read; %d wells",
-                                   as.character(df[iB + 1, barcode_col]),
-                                   dim(df_results)[1])
+                                  as.character(df[iB + 1, barcode_col]),
+                                  dim(df_results)[1])
           
           all_results <- rbind(all_results, df_results)
         }
-
       }
       futile.logger::flog.info("File done")
     }
@@ -1046,7 +1052,7 @@ check_metadata_names <-
 #' This function reads file from the EnVision Workstation
 #'
 #' @param file  input file from EnVision
-#' @param nrows maximum number of file rows to be processed
+#' @param nrows maximum number of file rows to be processed (to avoid infite loop)
 #' @param seps potential field separators of the input file
 #'
 #' @return
@@ -1072,6 +1078,7 @@ read_EnVision <- function(file,
   }
   close(con)
 
+  # separator can be comma or tab
   n_sep <- colSums(vapply(seps, function(sep) {
     vapply(results.list[1:10], function(line)
       length(unlist(strsplit(line, split = sep))),
@@ -1103,32 +1110,39 @@ read_EnVision <- function(file,
 
   if (isEdited) {
     # may be altered and miss columns
+    # identifies the number of columns in the rows with expected data
     n_col <- max(vapply(results.list[5:10], length, integer(length =
                                                              1)))
+    # n_col should be of the format  1.5 * (2^n)
     n_col <- 1.5 * 2 ^ ceiling(log2((n_col - 1) / 1.5))
-    n_row <- which(vapply(results.list, function(x) {
+    # rename to avoid confusion - first identifies where the metadata rows are located
+    row_metadata <- which(vapply(results.list, function(x) {
       grepl("Basic assay information", x[1]) |
         grepl("Plate information", x[1])
     },
     logical(1)))
-    if (length(n_row) == 1 && n_row == 1) {
+    if (length(row_metadata) == 1 && row_metadata == 1) {
       # only the top line with "Plate information" was found
+      # thus only a single plate --> need to remove the headers
       n_row <- length(results.list) - 4
     } else {
       # scrap a few rows above "Basic assay information"
-      n_row <- min(n_row[n_row > 1]) - 7
+      n_row <- min(row_metadata[row_metadata > 1]) - 7
     }
-    if (length(n_row) != 1 ||
-        abs(log2(1.5 * n_row / n_col)) > .5)  {
-      stop(sprintf("Error reading %s: wrong plate size", results_file[[iF]]))
+    if (length(row_metadata) != 1 ||
+        abs(log2(1.5 * n_row / n_col)) > .5)  # this means too many rows
+      {
+        stop(sprintf("Error reading %s: wrong plate size", results_file[[iF]]))
     }
     n_row <- n_col / 1.5
   } else {
+    # identifies the number of columns in the rows with expected data
     n_col <- max(vapply(results.list[5:10], length, integer(length = 1)))
+    # identifies the rows with expected number of data columns (below headers and before the next plate/assay information)
     n_row <- sum(vapply(results.list[5:which(vapply(results.list, function(x)
       grepl("Basic assay information", x[1]), logical(1)))],
       length, integer(1)) == n_col)
-    if (log2(1.5 * n_row / n_col) != 0)  {
+    if (log2(1.5 * n_row / n_col) != 0)  { # check the right plate format
       stop(sprintf("Error reading %s: wrong plate size", results_file[[iF]]))
     }
   }
@@ -1159,7 +1173,7 @@ read_EnVision <- function(file,
 #' @keywords internal
 .get_plate_size <- function(df) {
   n_col <-
-    1.5 * 2 ^ ceiling(log2((ncol(df) - 2) / 1.5))
+    1.5 * 2 ^ ceiling(log2((ncol(df) - 2) / 1.5)) # allows for two extra columns (-2) before rounding the value to   1.5*(2^n)
   n_row <- n_col / 1.5
   c(n_row, n_col)
 }
