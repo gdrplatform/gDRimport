@@ -545,8 +545,10 @@ get_plate_info_from_template_xlsx <- function(template_file, Gnumber_idx, idx) {
         exception_data <- get_exception_data(5)
         stop(sprintf(exception_data$sprintf_text, e))
       })
-
-      # get the plate size
+      
+      # get the plate size ; assume the format to be a   (2^n) x (1.5 * [2^n]) 
+      # n_row should be a [2^n]; assume the smallest 2^n value above the number of rows read
+      # n_col should be a 1.5 * [2^n]; assume the smallest 1.5*2^n value above the number of columns read
       n_row <-
         2 ^ ceiling(log2(max(which(
           apply(!is.na(df), 1, any)
@@ -555,8 +557,10 @@ get_plate_info_from_template_xlsx <- function(template_file, Gnumber_idx, idx) {
         1.5 * 2 ^ ceiling(log2(max(which(
           apply(!is.na(df), 2, any)
         )) / 1.5))
+      # takes the max(n_row, n_col/1.5) for n_row and reversly for n_col
       n_row <- max(n_row, n_col / 1.5)
       n_col <- max(1.5 * n_row, n_col)
+      # defines the range to read from the template (either 24, 96, 364, or 1536 plate size)
       list(
         plate_range = ifelse(n_col < 26, paste0("A1:", LETTERS[n_col], n_row), "A1:AV32"),
         n_row = n_row,
@@ -596,7 +600,7 @@ validate_template_xlsx <- function(template_file, template_filename, template_sh
               template_file[[idx]],
               sheet = Gnumber_idx,
               col_names = paste0("x", seq_len(48)),
-              range = "A1:AV32"
+              range = "A1:AV32" # read the largest possible plate size (32 x 48)
             )
         }, error = function(e) {
           exception_data <- get_exception_data(5)
@@ -621,7 +625,7 @@ validate_template_xlsx <- function(template_file, template_filename, template_sh
       }
 } 
 
-#' Load results from tsv
+#' Load results from tsv (long table format with all data and metadata entered in individual rows)
 #'
 #' This functions loads and checks the results file(s)
 #'
@@ -700,7 +704,7 @@ read_in_result_files <- function(results_file, results_filename, headers) {
     all_results <- do.call(rbind, res_l)
 }
 
-#' Load EnVision results from xlsx
+#' Load envision results from xlsx (plate format with one or multiple plates per file/sheet)
 #'
 #' This functions loads and checks the results file(s)
 #'
@@ -1382,31 +1386,39 @@ get_EnVision_properties <- function(results.list, fname) {
       grepl("EnVision Workstation", x[1]), logical(1)))
 
   if (isEdited) {
-    # Identify closest larger plate size; may be altered and miss columns. 
+    # may be altered and miss columns
+    # identifies the number of columns in the rows with expected data
     n_col <- max(vapply(results.list[5:10], length, integer(length = 1))) # Assume first row of data lies in rows 5:10
+    # n_col should be of the format  1.5 * (2^n)
     n_col <- 1.5 * 2 ^ ceiling(log2((n_col - 1) / 1.5))
-    n_row <- which(vapply(results.list, function(x) {
-               grepl("Basic assay information", x[1]) | grepl("Plate information", x[1])},
-             logical(1)))
-    if (length(n_row) == 1 && n_row == 1) {
+    # rename to avoid confusion - first identifies where the metadata rows are located
+    row_metadata <- which(vapply(results.list, function(x) {
+      grepl("Basic assay information", x[1]) |
+        grepl("Plate information", x[1])
+    },
+    logical(1)))
+    if (length(row_metadata) == 1 && row_metadata == 1) {
       # only the top line with "Plate information" was found
+      # thus only a single plate --> need to remove the headers
       n_row <- length(results.list) - 4
     } else {
       # scrap a few rows above "Basic assay information"
-      n_row <- min(n_row[n_row > 1]) - 7
+      n_row <- min(row_metadata[row_metadata > 1]) - 7
     }
     if (length(n_row) != 1 ||
-        abs(log2(1.5 * n_row / n_col)) > 0.5)  {
+        abs(log2(1.5 * n_row / n_col)) > 0.5)  { # this means too many rows
       exception_data <- get_exception_data(30)
       stop(sprintf(exception_data$sprintf_text, fname))
     }
     n_row <- n_col / 1.5
   } else {
+    # identifies the number of columns in the rows with expected data
     n_col <- max(vapply(results.list[5:10], length, integer(length = 1)))
+    # identifies the rows with expected number of data columns (below headers and before the next plate/assay information)
     n_row <- sum(vapply(results.list[5:which(vapply(results.list, function(x)
       grepl("Basic assay information", x[1]), logical(1)))],
       length, integer(1)) == n_col)
-    if (log2(1.5 * n_row / n_col) != 0)  {
+    if (log2(1.5 * n_row / n_col) != 0)  { # check the right plate format
       exception_data <- get_exception_data(30)
       stop(sprintf(exception_data$sprintf_text, fname))
     }
@@ -1414,18 +1426,6 @@ get_EnVision_properties <- function(results.list, fname) {
   list(n_col = n_col, n_row = n_row, isEdited = isEdited)
 }
 
-#' Get plate size
-#'
-#' @details
-#' All plate sizes assume 1.5x nrows = ncolumns.
-#' @keywords internal
-#' 
-#' @return charvec with plate dims
-#' 
-.get_plate_size <- function(df) {
-  .Deprecated(".estimate_plate_size")
-  .estimate_plate_size(df)
-}
 
 #' Estimate plate size
 #'
