@@ -1435,7 +1435,7 @@ get_EnVision_properties <- function(results.list, fname) {
 
 #' @name estimate_plate_size
 .estimate_plate_ncol <- function(x) {
-  1.5 * estimate_plate_nrow(x)
+  1.5 * .estimate_plate_nrow(x)
 }
 
 #' @name estimate_plate_size
