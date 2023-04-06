@@ -73,6 +73,10 @@ setEnvForPSet <- function() {
    
     assertthat::assert_that(is.character(pset_name),
                             msg = "pset_name parameter must be a character vector.")
+  
+    checkmate::assert_character(getwd())
+    checkmate::assert_flag(canonical)
+    checkmate::assert_numeric(timeout)
 
     availPSets <- PharmacoGx::availablePSets(canonical = canonical)
 
@@ -103,6 +107,8 @@ setEnvForPSet <- function() {
 #' @keywords internal
 #' @importFrom data.table `:=` setDF
 .extractDoseResponse <- function(pset) {
+  
+        checkmate::assert_class(pset, "PharmacoSet")
 
         tre <- pset@treatmentResponse
         raw_tr <- tre$raw
@@ -160,6 +166,8 @@ setEnvForPSet <- function() {
 #' @keywords internal
 .createPseudoData <- function(dt) {
   
+  checkmate::assert_class(dt, "data.table")
+  
   barcode <- gDRutils::get_env_identifiers("barcode")[1]
   duration <- gDRutils::get_env_identifiers("duration")
   refDivTime <- gDRutils::get_env_identifiers("cellline_ref_div_time")
@@ -183,5 +191,6 @@ setEnvForPSet <- function() {
 #' Remove negative viabilities
 #' @keywords internal
 .removeNegatives <- function(dataset) {
+    checkmate::assert_class(dataset, "data.frame")
     dataset[dataset$ReadoutValue > 0]
 }
