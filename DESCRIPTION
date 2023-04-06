@@ -18,6 +18,7 @@ LazyLoad: yes
 Imports:
     assertthat,
     checkmate,
+    PharmacoGx,
     data.table,
     futile.logger,
     gDRutils (>= 0.99.0),

@@ -22,8 +22,6 @@ convert_pset_to_df <- function(pharmacoset,
                                run_parallel = TRUE,
                                workers = 2L) {
     
-    # TO:DO
-    # ASSERT ALL PARAMETERS 
     assertthat::assert_that(is.logical(run_parallel),
                             msg = "run_parallel must be a logical.")
     assertthat::assert_that(inherits(pharmacoset, "PharmacoSet"),
@@ -91,10 +89,10 @@ setEnvForPSet <- function() {
     # Check if PSet exists in directories where PSets are stored. 
     # Read in if exists, download otherwise
     pset <- if (file.exists(file.path(psetDir, paste0(pset_name_param,".rds")))) {
-      print("PSet exists in user-provided directory, reading .rds file")
+      message("PSet exists in user-provided directory, reading .rds file")
       readRDS(file.path(psetDir, paste0(pset_name_param,".rds")))
       } else {
-        print("PSet does not exist in user-provided directory, downloading from database.")
+        message("PSet does not exist in user-provided directory, downloading from database.")
         PharmacoGx::downloadPSet(pset_name_param, saveDir = psetDir, timeout = timeout)
       }
     # Update PSet to new structure if not updated already.
@@ -150,6 +148,10 @@ setEnvForPSet <- function() {
         
         merged_dt[Dose == env_ids$untreated_tag[1], env_ids$drug_name := env_ids$untreated_tag[1]]
         merged_dt[, Dose := NULL]
+        
+        if (!is.null(duration)) {
+          merged_dt[, (env_ids$duration) := duration]
+        }
         # implicit return
         merged_dt
 }
@@ -163,6 +165,7 @@ setEnvForPSet <- function() {
   refDivTime <- gDRutils::get_env_identifiers("cellline_ref_div_time")
   
   
+  # Some datasets do not have duration specified so let's assign any value, since it is required by gDR
   if (!duration %in% names(dt)) {
       dt[, (duration) := 72]
   }
