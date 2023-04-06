@@ -19,3 +19,6 @@ data.frame of PharmacoSet's dose response data with column names aligned with gD
 \description{
 Convert a PharmacoSet to a DataFrame that is prepare for input into gDR pipeline
 }
+\author{
+Jermiah Joseph -- collaboration with BHKLab
+}
