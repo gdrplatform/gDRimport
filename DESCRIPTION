@@ -1,17 +1,16 @@
 Package: gDRimport
 Type: Package
 Title: Package for handling import of dose-response data
-Version: 0.99.0
-Date: 2023-03-24
+Version: 0.99.1
+Date: 2023-04-07
 Authors@R: c(
-    person("Arkadiusz", "Gladki", role=c("aut")),
+    person("Arkadiusz", "Gladki", role=c("aut", "cre"), email="gladki.arkadiusz@gmail.com"),
     person("Bartosz", "Czech", role=c("aut")), 
     person("Marc", "Hafner", role=c("aut")),
     person("Sergiu", "Mocanu", role=c("aut")),
     person("Dariusz", "Scigocki", role=c("aut")),
     person("Allison", "Vuong", role=c("aut")),
-    person("Luca", "Gerosa", role=c("aut")),
-    person("gDR", "Support team", role=c("cre"), email="gdr-support-d@gene.com", comment=c(ORCID="0009-0006-9310-1135")))
+    person("Luca", "Gerosa", role=c("aut")))
 Description: Package is a part of the gDR suite. It helps to prepare raw drug response data for downstream processing. It mainly contains helper functions for importing/loading/validating dose response data provided in different file formats. 
 License: file LICENSE
 LazyLoad: yes
@@ -20,7 +19,7 @@ Imports:
     checkmate,
     data.table,
     futile.logger,
-    gDRutils (>= 0.99.0),
+    gDRutils (>= 0.99.1),
     magrittr,
     readxl,
     reshape2,
@@ -34,8 +33,8 @@ Imports:
     yaml,
     openxlsx
 Suggests:
-    gDRtestData (>= 0.99.0),
-    gDRstyle (>= 0.99.0),
+    gDRtestData (>= 0.99.1),
+    gDRstyle (>= 0.99.7),
     knitr,
     purrr,
     testthat
