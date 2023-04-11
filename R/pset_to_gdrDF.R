@@ -79,14 +79,14 @@ setEnvForPSet <- function() {
       } else {
         stop(pset_name,
              " does not exist in the available PSets. Try one of the following:\n",
-             paste(availPSets$`PSet Name`, collapse = '\n'))
+             paste(availPSets$`PSet Name`, collapse = "\n"))
         }
   
   # Check if PSet exists in directories where PSets are stored. 
   # Read in if exists, download otherwise
-  pset <- if (file.exists(file.path(psetDir, paste0(pset_name_param,".rds")))) {
+  pset <- if (file.exists(file.path(psetDir, paste0(pset_name_param, ".rds")))) {
     message("PSet exists in user-provided directory, reading .rds file")
-    readRDS(file.path(psetDir, paste0(pset_name_param,".rds")))
+    readRDS(file.path(psetDir, paste0(pset_name_param, ".rds")))
     } else {
       message("PSet does not exist in user-provided directory, downloading from database.")
       PharmacoGx::downloadPSet(pset_name_param, saveDir = psetDir, timeout = timeout)
@@ -112,7 +112,8 @@ setEnvForPSet <- function() {
   # Determine how many doses there are
   raw_tr_dims <- dim(raw_tr)
   if (raw_tr_dims[3] < 2) {
-      stop("Error: PharmacoSet treatmentResponse raw data does not have either/both of viability and concentration data.")
+      stop("Error: PharmacoSet treatmentResponse raw data does not have
+           either/both of viability and concentration data.")
   } else {
       viability <- data.table::as.data.table(raw_tr[, seq_len(raw_tr_dims[2]), 2], TRUE)
       viability[[env_ids$untreated_tag[1]]] <- 100
