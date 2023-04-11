@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+#### [0.99.1] - 2023-04-07
+- Update maintainer
+
 #### [0.99.0] - 2023-03-24
 - Make the package Bioc-compatible
 
