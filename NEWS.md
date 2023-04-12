@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+#### [0.99.2] - 2023-04-11
+- Add support for `PharmacoGx`
+
 #### [0.99.1] - 2023-04-07
 - Update maintainer
 

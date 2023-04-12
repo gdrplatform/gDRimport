@@ -1,7 +1,7 @@
 Package: gDRimport
 Type: Package
 Title: Package for handling import of dose-response data
-Version: 0.99.1
+Version: 0.99.2
 Date: 2023-04-07
 Authors@R: c(
     person("Arkadiusz", "Gladki", role=c("aut", "cre"), email="gladki.arkadiusz@gmail.com"),
@@ -17,6 +17,7 @@ LazyLoad: yes
 Imports:
     assertthat,
     checkmate,
+    PharmacoGx,
     data.table,
     futile.logger,
     gDRutils (>= 0.99.1),
