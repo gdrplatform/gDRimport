@@ -84,9 +84,9 @@ setEnvForPSet <- function() {
   
   # Check if PSet exists in directories where PSets are stored. 
   # Read in if exists, download otherwise
-  pset <- if (file.exists(file.path(psetDir, paste0(pset_name_param, ".rds")))) {
-    message("PSet exists in user-provided directory, reading .rds file")
-    readRDS(file.path(psetDir, paste0(pset_name_param, ".rds")))
+  pset <- if (file.exists(file.path(psetDir, paste0(pset_name_param, ".RDS")))) {
+    message("PSet exists in user-provided directory, reading .RDS file")
+    readRDS(file.path(psetDir, paste0(pset_name_param, ".RDS")))
     } else {
       message("PSet does not exist in user-provided directory, downloading from database.")
       PharmacoGx::downloadPSet(pset_name_param, saveDir = psetDir, timeout = timeout)
