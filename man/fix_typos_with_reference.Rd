@@ -17,9 +17,9 @@ fix_typos_with_reference(
 \item{ref}{charvec with reference data}
 
 \item{method}{charvec type of the method to be used
-'exact' is used to find  identical entries from 'ref' in the 
+'exact' is used to find  identical entries from 'ref' in the
 data (after corrections and uppercase'ing)
-'grepl' is used to find entries from 'ref' that might be 
+'grepl' is used to find entries from 'ref' that might be
 somehow pre- or post- fixed}
 
 \item{fix_underscores}{logical flag fix the issues with underscores in data identfiers?}

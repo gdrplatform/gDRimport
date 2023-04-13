@@ -6,6 +6,9 @@
 \usage{
 .getPSet(pset_name, psetDir = getwd(), canonical = FALSE, timeout = 600)
 }
+\value{
+object with PharmacoSet
+}
 \description{
 Get PharmacoSet
 }

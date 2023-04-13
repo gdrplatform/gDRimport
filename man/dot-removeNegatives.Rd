@@ -6,6 +6,9 @@
 \usage{
 .removeNegatives(dataset)
 }
+\value{
+data.table with positive values in column \code{ReadoutValue}
+}
 \description{
 Remove negative viabilities
 }

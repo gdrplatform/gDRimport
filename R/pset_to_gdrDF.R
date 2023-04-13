@@ -37,6 +37,8 @@ convert_pset_to_df <- function(pharmacoset,
 
 #' Adjust environment variables to meet gDR standards
 #' 
+#' @return \code{NULL} invisibly.
+#' 
 #' @export
 setEnvForPSet <- function() {
   ## -- Set environment identifiers to map from our columns to gDR columns
@@ -58,6 +60,9 @@ setEnvForPSet <- function() {
 
 #' Get PharmacoSet 
 #' @keywords internal
+#' 
+#' @return object with PharmacoSet 
+#' 
 .getPSet <- function(pset_name,
                  psetDir = getwd(),
                  canonical = FALSE,
@@ -98,6 +103,9 @@ setEnvForPSet <- function() {
 #' Get dose and viability readouts and melt into large data table
 #' @keywords internal
 #' @importFrom data.table `:=` setDF
+#' 
+#' @return data.table with dose and viability readouts
+#' 
 .extractDoseResponse <- function(pset) {
   checkmate::assert_class(pset, "PharmacoSet")
   
@@ -153,6 +161,9 @@ setEnvForPSet <- function() {
 
 #' Add in pseudo-data for duration and cell reference division time
 #' @keywords internal
+#' 
+#' @return data.table in proper data format
+#' 
 .createPseudoData <- function(dt) {
   
   checkmate::assert_class(dt, "data.table")
@@ -179,6 +190,9 @@ setEnvForPSet <- function() {
 
 #' Remove negative viabilities
 #' @keywords internal
+#' 
+#' @return data.table with positive values in column `ReadoutValue`
+#' 
 .removeNegatives <- function(dataset) {
   checkmate::assert_class(dataset, "data.frame")
   dataset[dataset$ReadoutValue > 0]

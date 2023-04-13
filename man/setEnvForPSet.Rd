@@ -6,6 +6,9 @@
 \usage{
 setEnvForPSet()
 }
+\value{
+\code{NULL} invisibly.
+}
 \description{
 Adjust environment variables to meet gDR standards
 }
