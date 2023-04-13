@@ -6,6 +6,15 @@
 \usage{
 getPSet(pset_name, psetDir = getwd(), canonical = FALSE, timeout = 600)
 }
+\arguments{
+\item{pset_name}{string with the name of the PharmacoSet}
+
+\item{psetDir}{string with the temporary directory for the PharmacoSet}
+
+\item{canonical}{logical flag indicating if the PSet canonical}
+
+\item{timeout}{maximum number of seconds allowed for PSet download}
+}
 \value{
 PharmacoSet object
 }
@@ -13,6 +22,7 @@ PharmacoSet object
 Get PharmacoSet
 }
 \examples{
+ 
 suppressMessages(getPSet("Tavor_2020", psetDir = system.file("extdata/pset", package = "gDRimport")))
 
 }

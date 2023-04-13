@@ -66,7 +66,12 @@ setEnvForPSet <- function() {
 
 #' Get PharmacoSet 
 #' 
-#' @examples
+#' @param pset_name string with the name of the PharmacoSet
+#' @param psetDir string with the temporary directory for the PharmacoSet
+#' @param canonical logical flag indicating if the PSet canonical
+#' @param timeout maximum number of seconds allowed for PSet download
+#' 
+#' @examples  
 #' suppressMessages(getPSet("Tavor_2020", psetDir = system.file("extdata/pset", package = "gDRimport")))
 #' 
 #' @return PharmacoSet object
