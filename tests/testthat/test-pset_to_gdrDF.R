@@ -1,5 +1,5 @@
-test_that(".getPSet works as expected", {
-  pset <- suppressMessages(.getPSet("Tavor_2020", psetDir = system.file("extdata/pset", package = "gDRimport")))
+test_that("getPSet works as expected", {
+  pset <- suppressMessages(getPSet("Tavor_2020", psetDir = system.file("extdata/pset", package = "gDRimport")))
   expect_equal(unname(dim(pset)), c(53, 46))
   expect_s4_class(pset, "PharmacoSet")
 })
@@ -11,7 +11,7 @@ test_that("setEnvForPSet works as expected", {
 })
 
 test_that(".extractDoseResponse works as expected", {
-  pset <- suppressMessages(.getPSet("Tavor_2020", psetDir = system.file("extdata/pset", package = "gDRimport")))
+  pset <- suppressMessages(getPSet("Tavor_2020", psetDir = system.file("extdata/pset", package = "gDRimport")))
   dt <- .extractDoseResponse(pset)
   expect_s3_class(dt, "data.table")
   expect_equal(names(dt), c("rn", "ReadoutValue", "Concentration", "clid", "DrugName", 
@@ -20,7 +20,7 @@ test_that(".extractDoseResponse works as expected", {
 })
 
 test_that(".extractDoseResponse, .removeNegatives, and .createPseudoData work as expected", {
-  pset <- suppressMessages(.getPSet("Tavor_2020", psetDir = system.file("extdata/pset", package = "gDRimport")))
+  pset <- suppressMessages(getPSet("Tavor_2020", psetDir = system.file("extdata/pset", package = "gDRimport")))
   dt <- .extractDoseResponse(pset)
   expect_s3_class(dt, "data.table")
   expect_equal(names(dt), c("rn", "ReadoutValue", "Concentration", "clid", "DrugName", 
@@ -35,7 +35,7 @@ test_that(".extractDoseResponse, .removeNegatives, and .createPseudoData work as
 })
 
 test_that("convert_pset_to_df works as expected", {
-  pset <- suppressMessages(.getPSet("Tavor_2020", psetDir = system.file("extdata/pset", package = "gDRimport")))
+  pset <- suppressMessages(getPSet("Tavor_2020", psetDir = system.file("extdata/pset", package = "gDRimport")))
   dt <- convert_pset_to_df(pset)
   expect_s3_class(dt, "data.frame")
   expect_equal(dim(dt), c(34516, 7))
