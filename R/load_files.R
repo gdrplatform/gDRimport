@@ -334,7 +334,7 @@ load_templates_tsv <-
                      )})
 
     metadata_fields <- NULL
-    all_templates <- read_in_tsv_template_files(template_file, tmplate_filename, templates)
+    all_templates <- read_in_tsv_template_files(template_file, template_filename, templates)
     futile.logger::flog.info("Templates loaded successfully!")
     all_templates
   }
