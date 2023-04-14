@@ -2,3 +2,9 @@
 #' @importFrom magrittr %>%
 #' @importFrom tibble tribble
 NULL
+
+DICTIONARY <- list(
+  Untreated = "untreated",
+  Vehicle = "vehicle",
+  vehcle = "vehicle"
+)

@@ -11,11 +11,11 @@ import_D300(D300_file, metadata_file, destination_path)
 
 \item{metadata_file}{character, file path to file with mapping from D300 names to Gnumbers}
 
-\item{destination_path}{character, path to folder where template 
+\item{destination_path}{character, path to folder where template
 files will be generated}
 }
 \value{
-Create one Excel file per plate. Each sheet in each plate file describes 
+Create one Excel file per plate. Each sheet in each plate file describes
 the drugs and corrresponding concentrations of what was tested in each well.
 }
 \description{
@@ -24,10 +24,10 @@ This functions takes a D300 file and generates corresponding template files
 \details{
 For example, wells treated with 2 drugs in combination will result in 4 sheets per plate.
 \itemize{
- \item{Sheet 1: Drug 1}
- \item{Sheet 2: Conc of Drug 1}
- \item{Sheet 3: Drug 2}
- \item{Sheet 4: Conc of Drug 2}
+\item{Sheet 1: Drug 1}
+\item{Sheet 2: Conc of Drug 1}
+\item{Sheet 3: Drug 2}
+\item{Sheet 4: Conc of Drug 2}
 }
 }
 \examples{
