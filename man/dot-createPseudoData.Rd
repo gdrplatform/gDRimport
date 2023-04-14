@@ -6,6 +6,9 @@
 \usage{
 .createPseudoData(dt)
 }
+\value{
+data.table
+}
 \description{
 Add in pseudo-data for duration and cell reference division time
 }

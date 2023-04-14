@@ -6,6 +6,9 @@
 \usage{
 .removeNegatives(dataset)
 }
+\value{
+data.frame
+}
 \description{
 Remove negative viabilities
 }

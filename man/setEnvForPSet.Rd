@@ -6,6 +6,13 @@
 \usage{
 setEnvForPSet()
 }
+\value{
+\code{NULL}
+}
 \description{
 Adjust environment variables to meet gDR standards
+}
+\examples{
+setEnvForPSet()
+
 }

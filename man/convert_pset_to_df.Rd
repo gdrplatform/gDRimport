@@ -19,6 +19,11 @@ data.frame of PharmacoSet's dose response data with column names aligned with gD
 \description{
 Convert a PharmacoSet to a DataFrame that is prepare for input into gDR pipeline
 }
+\examples{
+pset <- suppressMessages(getPSet("Tavor_2020", psetDir = system.file("extdata/pset", package = "gDRimport")))
+dt <- convert_pset_to_df(pset)
+
+}
 \author{
 Jermiah Joseph -- collaboration with BHKLab
 }
