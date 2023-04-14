@@ -3,6 +3,7 @@
 export(check_metadata_names)
 export(convert_pset_to_df)
 export(detect_file_format)
+export(getPSet)
 export(get_exception_data)
 export(get_test_D300_data)
 export(get_test_EnVision_data)

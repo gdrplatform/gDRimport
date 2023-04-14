@@ -7,6 +7,10 @@
 #' @param workers integer, number of workers defaults to 2L if run_parallel is TRUE
 #' @return data.frame of PharmacoSet's dose response data with column names aligned with gDR standard
 #' 
+#' @examples
+#' pset <- suppressMessages(getPSet("Tavor_2020", psetDir = system.file("extdata/pset", package = "gDRimport")))
+#' dt <- convert_pset_to_df(pset)
+#' 
 #' @author Jermiah Joseph -- collaboration with BHKLab
 #' @export
 #'
@@ -37,8 +41,10 @@ convert_pset_to_df <- function(pharmacoset,
 
 #' Adjust environment variables to meet gDR standards
 #' 
-#' @return \code{NULL} invisibly.
+#' @examples
+#' setEnvForPSet()
 #' 
+#' @return \code{NULL}
 #' @export
 setEnvForPSet <- function() {
   ## -- Set environment identifiers to map from our columns to gDR columns
@@ -59,14 +65,21 @@ setEnvForPSet <- function() {
 }
 
 #' Get PharmacoSet 
-#' @keywords internal
 #' 
-#' @return object with PharmacoSet 
+#' @param pset_name string with the name of the PharmacoSet
+#' @param psetDir string with the temporary directory for the PharmacoSet
+#' @param canonical logical flag indicating if the PSet canonical
+#' @param timeout maximum number of seconds allowed for PSet download
 #' 
-.getPSet <- function(pset_name,
-                 psetDir = getwd(),
-                 canonical = FALSE,
-                 timeout = 600) {
+#' @examples  
+#' suppressMessages(getPSet("Tavor_2020", psetDir = system.file("extdata/pset", package = "gDRimport")))
+#' 
+#' @return PharmacoSet object
+#' @export
+getPSet <- function(pset_name,
+                    psetDir = getwd(),
+                    canonical = FALSE,
+                    timeout = 600) {
 
   assertthat::assert_that(is.character(pset_name),
                           msg = "pset_name parameter must be a character vector.")
@@ -104,7 +117,7 @@ setEnvForPSet <- function() {
 #' @keywords internal
 #' @importFrom data.table `:=` setDF
 #' 
-#' @return data.table with dose and viability readouts
+#' @return data.table with dose-reponse data
 #' 
 .extractDoseResponse <- function(pset) {
   checkmate::assert_class(pset, "PharmacoSet")
@@ -116,11 +129,10 @@ setEnvForPSet <- function() {
   
   # use output of get_env_identifiers() 
   env_ids <- gDRutils::get_env_identifiers()
-  
   # Determine how many doses there are
   raw_tr_dims <- dim(raw_tr)
   if (raw_tr_dims[3] < 2) {
-      stop("Error: PharmacoSet treatmentResponse raw data does not have
+      stop("PharmacoSet treatmentResponse raw data does not have
            either/both of viability and concentration data.")
   } else {
       viability <- data.table::as.data.table(raw_tr[, seq_len(raw_tr_dims[2]), 2], TRUE)
@@ -137,19 +149,16 @@ setEnvForPSet <- function() {
                   variable.name = "Dose",
                   value.name = env_ids$concentration)
   }
-  
   # CHECK IF SAME SIZE and MERGE     
   if (length(doses.m) == length(viability.m)) {
       merged_dt <- merge(viability.m, doses.m)
   } else {
-      print("doses and viability data tables are not the same size")
+      sprintf("doses and viability data tables are not the same size")
   }
-
   treatment_cols <- c("sampleid", "treatmentid")
   info_df$rn <- rownames(info_df)
   merged_dt <- merge(merged_dt, info_df[, c(treatment_cols, "rn")], by = "rn")
   data.table::setnames(merged_dt, treatment_cols, c(env_ids$cellline, env_ids$drug_name))
-  
   merged_dt["Dose" == env_ids$untreated_tag[1], env_ids$drug_name := env_ids$untreated_tag[1]]
   merged_dt[, "Dose" := NULL]
   
@@ -162,8 +171,7 @@ setEnvForPSet <- function() {
 #' Add in pseudo-data for duration and cell reference division time
 #' @keywords internal
 #' 
-#' @return data.table in proper data format
-#' 
+#' @return data.table
 .createPseudoData <- function(dt) {
   
   checkmate::assert_class(dt, "data.table")

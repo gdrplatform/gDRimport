@@ -98,12 +98,12 @@ load_manifest <- function(manifest_file) {
 
   # check default headers are in each df
   dump <- lapply(seq_along(manifest_file),
-                 function(i)
+                 function(i) {
                    check_metadata_names(
                      colnames(manifest_data[[i]]),
                      df_name = manifest_file[[i]],
                      df_type = "manifest"
-                   ))
+                   )})
 
   cat_manifest_data <- as.data.frame(data.table::rbindlist(manifest_data))
   colnames(cat_manifest_data) <-
@@ -307,31 +307,34 @@ load_templates_tsv <-
       template_filename <- basename(template_file)
 
     # read columns in files
-    templates <- lapply(template_file, function(x)
-      utils::read.table(x, sep = "\t", header = TRUE, na.strings = c("", "NA")) %>%
-        stats::na.omit())
+    templates <- lapply(template_file, function(x) {
+      utils::read.table(x,
+                        sep = "\t",
+                        header = TRUE,
+                        na.strings = c("", "NA")) %>% stats::na.omit()
+    })
     names(templates) <- template_filename
     # check WellRow/WellColumn is present in each df
     dump <- lapply(seq_along(template_file),
-                   function(i)
+                   function(i) {
                      if (!(all(
                        gDRutils::get_env_identifiers("well_position") %in% colnames(templates[[i]])
                      ))) {
                        futile.logger::flog.info("%s missing, %s as header",
                                                 template_filename[[i]],
                                                 gDRutils::get_env_identifiers("well_position"))
-                     })
+                     }})
     # check drug_identifier is present in each df
     dump <- lapply(seq_along(template_file),
-                   function(i)
+                   function(i) {
                      check_metadata_names(
                        setdiff(colnames(templates[[i]]), gDRutils::get_env_identifiers("well_position")),
                        df_name = template_filename[[i]],
                        df_type = "template"
-                     ))
+                     )})
 
     metadata_fields <- NULL
-    all_templates <- read_in_tsv_template_files <- function(template_file, tmplate_filename, templates)
+    all_templates <- read_in_tsv_template_files(template_file, template_filename, templates)
     futile.logger::flog.info("Templates loaded successfully!")
     all_templates
   }
@@ -417,12 +420,12 @@ load_templates_xlsx <-
     template_sheets <- correct_template_sheets(template_file)
     # check drug_identifier is present in each df
     dump <- lapply(seq_along(template_file),
-                   function(i)
+                   function(i) {
                      check_metadata_names(
                        template_sheets[[i]],
                        df_name = template_file[[i]],
                        df_type = "template"
-                     ))
+                     )})
 
     all_templates <- read_in_template_xlsx(template_file, template_filename, template_sheets)
     
@@ -934,8 +937,8 @@ enhance_raw_edited_EnVision_df <- function(df, barcode_col, headers) {
     }
   actual_plate_rows <- pmax(plate_rows, standardized_bckd_info)
   data_rows <- unlist(lapply(actual_plate_rows,
-                             function(x)
-                               (x + 4):(x + 4 + n_row - 1)))
+                             function(x) {
+                               (x + 4):(x + 4 + n_row - 1)}))
   # find full numeric rows
   df <- .fill_empty_wells(df, plate_rows, data_rows, n_row, n_col)
   
@@ -1149,8 +1152,8 @@ check_metadata_req_col_names <- function(col_df, df_name, df_type) {
     }
     upperHeaders <- lapply(expected_headers, toupper)
     headersOK <-
-      vapply(upperHeaders, function(x)
-        any(x %in% toupper(col_df)), FUN.VALUE = logical(1))
+      vapply(upperHeaders, function(x) {
+        any(x %in% toupper(col_df))}, FUN.VALUE = logical(1))
     if (any(!headersOK)) {
       exception_data <- get_exception_data(24)
       stop(sprintf(
@@ -1303,8 +1306,8 @@ read_EnVision_delim <- function(file,
 
   results.list <- read_in_EnVision_file(file, nrows, seps)
 
-  if (which(vapply(results.list, function(x)
-    grepl("Plate information", x[1]), logical(1))) != 1) {
+  if (which(vapply(results.list, function(x) {
+    grepl("Plate information", x[1])}, logical(1))) != 1) {
     # fails if not the right header
     exception_data <- get_exception_data(29)
     stop(sprintf(exception_data$sprintf_text, file))
@@ -1348,7 +1351,7 @@ read_in_EnVision_file <- function(file, nrows, seps) {
   results.list <- list()
   current.line <- 1
   while (length(line <-
-                readLines(con, n = 1, warn = FALSE)) > 0 & current.line < nrows) {
+                readLines(con, n = 1, warn = FALSE)) > 0 && current.line < nrows) {
     results.list[[current.line]] <- line
     current.line <- current.line + 1
   }
@@ -1356,8 +1359,8 @@ read_in_EnVision_file <- function(file, nrows, seps) {
 
   # Try to identify the delimiter.
   n_sep <- colSums(vapply(seps, function(sep) {
-    vapply(results.list[seq_len(10)], function(line)
-      length(unlist(strsplit(line, split = sep))),
+    vapply(results.list[seq_len(10)], function(line) {
+      length(unlist(strsplit(line, split = sep)))},
       integer(length = 1))
   }, integer(length = 10)))
   sep <- n_sep[n_sep == max(n_sep)]
@@ -1366,8 +1369,8 @@ read_in_EnVision_file <- function(file, nrows, seps) {
     stop(sprintf(exception_data$sprintf_text, file))
   }
   sep <- names(sep)
-    lapply(results.list, function(line)
-      unlist(strsplit(line, split = sep)))
+    lapply(results.list, function(line) {
+      unlist(strsplit(line, split = sep))})
 }
 
 #' Get properties of EnVision data
@@ -1383,8 +1386,8 @@ get_EnVision_properties <- function(results.list, fname) {
   
   # has been open/saved in a spreadsheet software --> first line is padded with empty columns
   isEdited <- (length(results.list[[1]]) > 1) |
-    !any(vapply(results.list, function(x)
-      grepl("EnVision Workstation", x[1]), logical(1)))
+    !any(vapply(results.list, function(x) {
+      grepl("EnVision Workstation", x[1])}, logical(1)))
 
   if (isEdited) {
     # Identify closest larger plate size; may be altered and miss columns. 
@@ -1408,8 +1411,8 @@ get_EnVision_properties <- function(results.list, fname) {
     n_row <- n_col / 1.5
   } else {
     n_col <- max(vapply(results.list[5:10], length, integer(length = 1)))
-    n_row <- sum(vapply(results.list[5:which(vapply(results.list, function(x)
-      grepl("Basic assay information", x[1]), logical(1)))],
+    n_row <- sum(vapply(results.list[5:which(vapply(results.list, function(x) {
+      grepl("Basic assay information", x[1])}, logical(1)))],
       length, integer(1)) == n_col)
     if (log2(1.5 * n_row / n_col) != 0)  {
       exception_data <- get_exception_data(30)

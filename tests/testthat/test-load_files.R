@@ -192,8 +192,8 @@ test_that(".get_plate_size works as expected", {
 test_that(".check_file_structure works as expected", {
   df <- readxl::read_excel(system.file("extdata/data1/RawData_day7.xlsx", package = "gDRimport"))
   df <-
-    df[, !apply(df[seq_len(35), ], 2, function(x)
-      all(is.na(x)))]
+    df[, !apply(df[seq_len(35), ], 2, function(x) {
+      all(is.na(x))})]
   Bckd_info_idx <-
     which(as.data.frame(df)[, 1] %in% "Background information")
   if (length(Bckd_info_idx) > 0) {
@@ -240,8 +240,8 @@ test_that(".check_file_structure works as expected", {
 test_that(".fill_empty_wells works as expected", {
   df <- readxl::read_excel(system.file("extdata/data1/RawData_day7.xlsx", package = "gDRimport"), col_names = FALSE)
   df <-
-    df[, !apply(df[seq_len(35), ], 2, function(x)
-      all(is.na(x)))]
+    df[, !apply(df[seq_len(35), ], 2, function(x) {
+      all(is.na(x))})]
   Bckd_info_idx <-
     which(as.data.frame(df)[, 1] %in% "Background information")
   if (length(Bckd_info_idx) > 0) {

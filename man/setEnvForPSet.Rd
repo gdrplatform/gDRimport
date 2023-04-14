@@ -7,8 +7,12 @@
 setEnvForPSet()
 }
 \value{
-\code{NULL} invisibly.
+\code{NULL}
 }
 \description{
 Adjust environment variables to meet gDR standards
+}
+\examples{
+setEnvForPSet()
+
 }

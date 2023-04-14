@@ -7,7 +7,7 @@
 .createPseudoData(dt)
 }
 \value{
-data.table in proper data format
+data.table
 }
 \description{
 Add in pseudo-data for duration and cell reference division time
