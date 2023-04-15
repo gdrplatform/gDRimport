@@ -12,7 +12,7 @@ pkgs:
     subdir: ~
     source: GITHUB
   gDRtestData:
-    ver: '>=0.99.3'
+    ver: '>=0.99.6'
     url: gdrplatform/gDRtestData
     ref: master
     subdir: ~

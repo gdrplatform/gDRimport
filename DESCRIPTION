@@ -34,7 +34,7 @@ Imports:
     yaml,
     openxlsx
 Suggests:
-    gDRtestData (>= 0.99.3),
+    gDRtestData (>= 0.99.6),
     gDRstyle (>= 0.99.8),
     knitr,
     purrr,
