@@ -22,6 +22,7 @@ Convert a PharmacoSet to a DataFrame that is prepare for input into gDR pipeline
 \examples{
 pset <- suppressMessages(getPSet("Tavor_2020", psetDir = system.file("extdata/pset", package = "gDRimport")))
 dt <- convert_pset_to_df(pset)
+gDRutils::reset_env_identifiers()
 
 }
 \author{

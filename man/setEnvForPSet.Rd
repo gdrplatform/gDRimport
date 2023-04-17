@@ -14,5 +14,6 @@ Adjust environment variables to meet gDR standards
 }
 \examples{
 setEnvForPSet()
+gDRutils::reset_env_identifiers()
 
 }
