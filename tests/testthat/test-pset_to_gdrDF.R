@@ -5,9 +5,9 @@ test_that("getPSet works as expected", {
 })
 
 test_that("setEnvForPSet works as expected", {
+  on.exit(gDRutils::reset_env_identifiers())
   setEnvForPSet()
   expect_equal(gDRutils::get_env_identifiers("drug"), "DrugName")
-  gDRutils::reset_env_identifiers()
 })
 
 test_that(".extractDoseResponse works as expected", {
@@ -35,6 +35,7 @@ test_that(".extractDoseResponse, .removeNegatives, and .createPseudoData work as
 })
 
 test_that("convert_pset_to_df works as expected", {
+  on.exit(gDRutils::reset_env_identifiers())
   pset <- suppressMessages(getPSet("Tavor_2020", psetDir = system.file("extdata/pset", package = "gDRimport")))
   dt <- convert_pset_to_df(pset)
   expect_s3_class(dt, "data.frame")

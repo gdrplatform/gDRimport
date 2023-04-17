@@ -1,8 +1,8 @@
 Package: gDRimport
 Type: Package
 Title: Package for handling import of dose-response data
-Version: 0.99.3
-Date: 2023-04-13
+Version: 0.99.4
+Date: 2023-04-17
 Authors@R: c(
     person("Arkadiusz", "Gladki", role=c("aut", "cre"), email="gladki.arkadiusz@gmail.com"),
     person("Bartosz", "Czech", role=c("aut")), 
@@ -14,6 +14,8 @@ Authors@R: c(
 Description: Package is a part of the gDR suite. It helps to prepare raw drug response data for downstream processing. It mainly contains helper functions for importing/loading/validating dose response data provided in different file formats. 
 License: file LICENSE
 LazyLoad: yes
+Depends:
+    R (>= 4.2)
 Imports:
     assertthat,
     checkmate,

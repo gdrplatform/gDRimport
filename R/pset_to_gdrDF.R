@@ -10,6 +10,7 @@
 #' @examples
 #' pset <- suppressMessages(getPSet("Tavor_2020", psetDir = system.file("extdata/pset", package = "gDRimport")))
 #' dt <- convert_pset_to_df(pset)
+#' gDRutils::reset_env_identifiers()
 #' 
 #' @author Jermiah Joseph -- collaboration with BHKLab
 #' @export
@@ -43,6 +44,7 @@ convert_pset_to_df <- function(pharmacoset,
 #' 
 #' @examples
 #' setEnvForPSet()
+#' gDRutils::reset_env_identifiers()
 #' 
 #' @return \code{NULL}
 #' @export

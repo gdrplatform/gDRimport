@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+#### [0.99.4] - 2023-04-17
+- Add R 4.2 as dependency
+- Bugfix for Pset-related tests and examples (reset identifiers)
+
 #### [0.99.3] - 2023-04-13
 - Add minor improvements (BiocCheck compatibility)
 
