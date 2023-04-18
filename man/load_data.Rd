@@ -30,6 +30,6 @@ This functions loads and checks the data file(s)
 }
 \examples{
  td <- get_test_data()
- l_tbl <- load_data(td$m_file, td$t_files, td$r_files)
+ l_tbl <- load_data(manifest_path(td), template_path(td), result_path(td))
 
 }

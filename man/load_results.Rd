@@ -26,6 +26,6 @@ This functions loads and checks the results file(s)
 }
 \examples{
  td <- get_test_data()
- r_df <- load_results(td$r_files)
+ r_df <- load_results(result_path(td))
  
 }
