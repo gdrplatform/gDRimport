@@ -166,7 +166,7 @@ are_template_sheets_valid <- function(ts) {
 #' 
 #' Fix typos using reference data
 #' Evaluate given list of ids and try to update them 
-# if they are similar to any id from 'ref' data
+#  if they are similar to any id from 'ref' data
 #' 
 #' @param data list of charvec(s) or charvec with data
 #' @param ref charvec with reference data
