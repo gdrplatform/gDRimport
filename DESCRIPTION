@@ -24,6 +24,7 @@ Imports:
     futile.logger,
     gDRutils (>= 0.99.4),
     magrittr,
+    methods,
     readxl,
     reshape2,
     rio,
