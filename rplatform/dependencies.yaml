@@ -1,6 +1,6 @@
 pkgs:
   gDRutils:
-    ver: '>=0.99.4'
+    ver: '>=0.99.5'
     url: gdrplatform/gDRutils
     ref: master
     subdir: gDRutils
