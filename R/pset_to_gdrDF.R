@@ -8,7 +8,8 @@
 #' @return data.frame of PharmacoSet's dose response data with column names aligned with gDR standard
 #' 
 #' @examples
-#' pset <- suppressMessages(getPSet("Tavor_2020", psetDir = system.file("extdata/pset", package = "gDRimport")))
+#' pset <- suppressMessages(
+#'     getPSet("Tavor_2020", psetDir = system.file("extdata/pset", package = "gDRimport")))
 #' dt <- convert_pset_to_df(pset)
 #' gDRutils::reset_env_identifiers()
 #' 
@@ -74,7 +75,8 @@ setEnvForPSet <- function() {
 #' @param timeout maximum number of seconds allowed for PSet download
 #' 
 #' @examples  
-#' suppressMessages(getPSet("Tavor_2020", psetDir = system.file("extdata/pset", package = "gDRimport")))
+#' suppressMessages(
+#'     getPSet("Tavor_2020", psetDir = system.file("extdata/pset", package = "gDRimport")))
 #' 
 #' @return PharmacoSet object
 #' @export
