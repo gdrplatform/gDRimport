@@ -8,8 +8,11 @@
 #' @return data.frame of PharmacoSet's dose response data with column names aligned with gDR standard
 #' 
 #' @examples
-#' pset <- suppressMessages(
-#'     getPSet("Tavor_2020", psetDir = system.file("extdata/pset", package = "gDRimport")))
+#' pset <- suppressMessages(getPSet(
+#'   "Tavor_2020", 
+#'   psetDir = system.file("extdata/pset", package = "gDRimport"),
+#'   use_local_PSets_list = TRUE
+#' ))
 #' dt <- convert_pset_to_df(pset)
 #' gDRutils::reset_env_identifiers()
 #' 
@@ -73,17 +76,23 @@ setEnvForPSet <- function() {
 #' @param psetDir string with the temporary directory for the PharmacoSet
 #' @param canonical logical flag indicating if the PSet canonical
 #' @param timeout maximum number of seconds allowed for PSet download
+#' @param use_local_PSets_list logical flag if PSets list should be used from 
+#' local. If FALSE PSets list will be taken from web.
 #' 
 #' @examples  
-#' suppressMessages(
-#'     getPSet("Tavor_2020", psetDir = system.file("extdata/pset", package = "gDRimport")))
+#' suppressMessages(getPSet(
+#'   "Tavor_2020", 
+#'   psetDir = system.file("extdata/pset", package = "gDRimport"),
+#'   use_local_PSets_list = TRUE
+#' ))
 #' 
 #' @return PharmacoSet object
 #' @export
 getPSet <- function(pset_name,
                     psetDir = getwd(),
                     canonical = FALSE,
-                    timeout = 600) {
+                    timeout = 600,
+                    use_local_PSets_list = FALSE) {
 
   assertthat::assert_that(is.character(pset_name),
                           msg = "pset_name parameter must be a character vector.")
@@ -92,7 +101,11 @@ getPSet <- function(pset_name,
   checkmate::assert_flag(canonical)
   checkmate::assert_numeric(timeout)
   
-  availPSets <- PharmacoGx::availablePSets(canonical = canonical)
+  availPSets <- if (use_local_PSets_list) {
+    readRDS(system.file("extdata", "data_for_unittests", "PSets.rds", package = "gDRimport"))
+  } else {
+    PharmacoGx::availablePSets(canonical = canonical)
+  }  
   
   pset_name_param <- if (pset_name %in% availPSets$"Dataset Name") {
     availPSets[availPSets$"Dataset Name" == pset_name, "PSet Name"]
