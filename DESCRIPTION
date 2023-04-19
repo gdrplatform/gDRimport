@@ -22,7 +22,7 @@ Imports:
     PharmacoGx,
     data.table,
     futile.logger,
-    gDRutils (>= 0.99.4),
+    gDRutils (>= 0.99.5),
     magrittr,
     readxl,
     reshape2,
@@ -36,8 +36,8 @@ Imports:
     yaml,
     openxlsx
 Suggests:
-    gDRtestData (>= 0.99.3),
-    gDRstyle (>= 0.99.8),
+    gDRtestData (>= 0.99.7),
+    gDRstyle (>= 0.99.11),
     knitr,
     purrr,
     testthat
