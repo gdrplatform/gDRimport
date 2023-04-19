@@ -23,7 +23,7 @@ Imports:
     PharmacoGx,
     data.table,
     futile.logger,
-    gDRutils (>= 0.99.4),
+    gDRutils (>= 0.99.5),
     magrittr,
     methods,
     readxl,
