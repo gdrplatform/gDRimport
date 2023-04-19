@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+#### [0.99.5] - 2023-04-19
+- Mocked PSets tests
+
 #### [0.99.4] - 2023-04-17
 - Add R 4.2 as dependency
 - Bugfix for Pset-related tests and examples (reset identifiers)
