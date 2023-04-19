@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+#### [0.99.6] - 2023-04-19
+- Add object S4 `gdr_test_data`
+
 #### [0.99.5] - 2023-04-19
 - Mocked PSets tests
 

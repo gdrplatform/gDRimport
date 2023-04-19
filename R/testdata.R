@@ -5,7 +5,7 @@
 #' 
 #' @export
 #'
-#' @return list with with input data (manifest/template/result paths)
+#' @return object class "gdr_test_data" with with input data (manifest/template/result paths)
 #' and related reference data (RDS file paths)
 get_test_data <- function() {
     
@@ -24,23 +24,23 @@ get_test_data <- function() {
         clid = paste0("CL000", clids_n)
       )
     
-    list(
-      m_file = file.path(ddir, "manifest.xlsx"),
-      r_files =
-        c(
-          file.path(ddir, "RawData_day0.xlsx"),
-          file.path(ddir, "RawData_day7.xlsx")
-        ),
-      t_files =
-        c(
-          file.path(ddir, "Template_7daytreated.xlsx"),
-          file.path(ddir, "Template_Untreated.xlsx")
-        ),
-      ref_m_df = ref_m_df,
-      ref_r1_r2 = file.path(ddir, "ref_RawData_day0_day7_xlsx.csv"),
-      ref_r1 = file.path(ddir, "ref_RawData_day0_xlsx.csv"),
-      ref_t1_t2 =  file.path(ddir, "ref_template_treated_untreated_xlsx.csv"),
-      ref_t1 = file.path(ddir, "ref_template_treated_xlsx.csv")
+    new("gdr_test_data",
+        manifest_path = file.path(ddir, "manifest.xlsx"),
+        result_path =
+          c(
+            file.path(ddir, "RawData_day0.xlsx"),
+            file.path(ddir, "RawData_day7.xlsx")
+          ),
+        template_path =
+          c(
+            file.path(ddir, "Template_7daytreated.xlsx"),
+            file.path(ddir, "Template_Untreated.xlsx")
+          ),
+        ref_m_df = ref_m_df,
+        ref_r1_r2 = file.path(ddir, "ref_RawData_day0_day7_xlsx.csv"),
+        ref_r1 = file.path(ddir, "ref_RawData_day0_xlsx.csv"),
+        ref_t1_t2 =  file.path(ddir, "ref_template_treated_untreated_xlsx.csv"),
+        ref_t1 = file.path(ddir, "ref_template_treated_xlsx.csv")
     )
   }
 
@@ -118,4 +118,3 @@ get_test_EnVision_data <- function() {
       ref_l_path = file.path(ddir, "ref_l.RDS")
     )
   }
-

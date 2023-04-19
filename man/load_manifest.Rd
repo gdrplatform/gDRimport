@@ -17,6 +17,6 @@ This functions loads and checks the manifest file(s)
 }
 \examples{
  td <- get_test_data()
- ml <- load_manifest(td$m_file)
+ ml <- load_manifest(manifest_path(td))
 
 }

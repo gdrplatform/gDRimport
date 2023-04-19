@@ -7,7 +7,7 @@
 get_test_data()
 }
 \value{
-list with with input data (manifest/template/result paths)
+object class "gdr_test_data" with with input data (manifest/template/result paths)
 and related reference data (RDS file paths)
 }
 \description{

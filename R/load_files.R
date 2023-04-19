@@ -11,7 +11,7 @@
 #' 
 #' @examples
 #'  td <- get_test_data()
-#'  l_tbl <- load_data(td$m_file, td$t_files, td$r_files)
+#'  l_tbl <- load_data(manifest_path(td), template_path(td), result_path(td))
 #'
 #' @export
 #' 
@@ -76,7 +76,7 @@ load_data <-
 #' 
 #' @examples
 #'  td <- get_test_data()
-#'  ml <- load_manifest(td$m_file)
+#'  ml <- load_manifest(manifest_path(td))
 #'
 #' @export
 #' 
@@ -184,7 +184,7 @@ read_in_manifest_file <- function(manifest_file, available_formats) {
 #' 
 #' @examples
 #'  td <- get_test_data()
-#'  t_df <- load_templates(td$t_files)
+#'  t_df <- load_templates(template_path(td))
 #'  
 #' @export
 #' 
@@ -246,7 +246,7 @@ load_templates <- function(df_template_files) {
 #' 
 #' @examples
 #'  td <- get_test_data()
-#'  r_df <- load_results(td$r_files)
+#'  r_df <- load_results(result_path(td))
 #'  
 #' @export
 #'
@@ -1104,7 +1104,7 @@ read_in_results_Tecan <- function(results_file, results_sheets, headers) {
 #' 
 #' @examples
 #'  td <- get_test_data()
-#'  m_file <- td$m_file
+#'  m_file <- manifest_path(td)
 #'  m_data <- readxl::read_excel(m_file)
 #'  result <- check_metadata_names(col_df = colnames(m_data))
 #'

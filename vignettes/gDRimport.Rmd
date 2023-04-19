@@ -28,6 +28,7 @@ There are currently four test datasets that can be used to see what's the expect
 # primary test data
 td1 <- get_test_data()
 summary(td1)
+td1
 
 # test data in Tecan format
 td2 <- get_test_Tecan_data()
@@ -46,16 +47,16 @@ summary(td4)
 The `load_data` is the key function. It wraps `load_manifest`, `load_templates` and `load_results` functions and supports different file formats.
 
 ```{r}
-ml <- load_manifest(td1$m_file)
+ml <- load_manifest(manifest_path(td1))
 summary(ml)
 
-t_df <- load_templates(td1$t_files)
+t_df <- load_templates(template_path(td1))
 summary(t_df)
 
-r_df <- load_results(td1$r_files)
+r_df <- load_results(result_path(td1))
 summary(r_df)
 
-l_tbl <- load_data(td1$m_file, td1$t_files, td1$r_files)
+l_tbl <- load_data(manifest_path(td1), template_path(td1), result_path(td1))
 summary(l_tbl)
 ```
 

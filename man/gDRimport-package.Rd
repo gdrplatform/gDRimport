@@ -25,6 +25,7 @@ Authors:
   \item Dariusz Scigocki
   \item Allison Vuong
   \item Luca Gerosa
+  \item Janina Smola
 }
 
 }
