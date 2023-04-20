@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+#### [0.99.7] - 2023-04-20
+- Clean-up vignette
+
 #### [0.99.6] - 2023-04-19
 - Add object S4 `gdr_test_data`
 

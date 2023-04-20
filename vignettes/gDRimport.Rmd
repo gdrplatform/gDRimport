@@ -13,6 +13,7 @@ vignette: >
 
 ```{r, echo=FALSE}
 library(gDRimport)
+log_level <- futile.logger::flog.threshold("ERROR")
 ```
 
 # Overview
@@ -53,10 +54,11 @@ summary(ml)
 t_df <- load_templates(template_path(td1))
 summary(t_df)
 
-r_df <- load_results(result_path(td1))
+r_df <- suppressMessages(load_results(result_path(td1)))
 summary(r_df)
 
-l_tbl <- load_data(manifest_path(td1), template_path(td1), result_path(td1))
+l_tbl <-
+  suppressMessages(load_data(manifest_path(td1), template_path(td1), result_path(td1)))
 summary(l_tbl)
 ```
 
