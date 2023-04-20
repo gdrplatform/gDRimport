@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+#### [0.99.8] - 2023-04-20
+- switch to OSI license
+
 #### [0.99.7] - 2023-04-20
 - Clean-up vignette
 
