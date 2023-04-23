@@ -12,7 +12,7 @@ load_templates_tsv(template_file, template_filename = NULL)
 \item{template_filename}{character, file name(s)}
 }
 \value{
-data.frame with template data
+data.table with template data
 }
 \description{
 This functions loads and checks the template file(s)

@@ -2,8 +2,8 @@
 % Please edit documentation in R/load_files.R
 \name{get_df_from_raw_edited_EnVision_df}
 \alias{get_df_from_raw_edited_EnVision_df}
-\title{Get final results (as a data.frame)
-from raw edited EnVision data.frame}
+\title{Get final results (as a data.table)
+from raw edited EnVision data.table}
 \usage{
 get_df_from_raw_edited_EnVision_df(
   df,
@@ -17,7 +17,7 @@ get_df_from_raw_edited_EnVision_df(
 )
 }
 \arguments{
-\item{df}{raw data.frame}
+\item{df}{raw data.table}
 
 \item{barcode_idx}{numeric vector with barcode indices}
 
@@ -34,9 +34,9 @@ get_df_from_raw_edited_EnVision_df(
 \item{headers}{list with the headersa}
 }
 \value{
-data.frame derived from EnVision data
+data.table derived from EnVision data
 }
 \description{
-Get final results (as a data.frame)
-from raw edited EnVision data.frame
+Get final results (as a data.table)
+from raw edited EnVision data.table
 }

@@ -5,7 +5,7 @@
 #' @param pharmacoset PharmacoSet object
 #' @param run_parallel logical, TRUE (default) if to run functions in Parallel, FALSE to run in serial
 #' @param workers integer, number of workers defaults to 2L if run_parallel is TRUE
-#' @return data.frame of PharmacoSet's dose response data with column names aligned with gDR standard
+#' @return data.table of PharmacoSet's dose response data with column names aligned with gDR standard
 #' 
 #' @examples
 #' pset <- suppressMessages(getPSet(
@@ -39,9 +39,7 @@ convert_pset_to_df <- function(pharmacoset,
   dose_response_duration_refdivtime <- .createPseudoData(dose_response)
   
   # REMOVE NEGATIVE VIABILITIES
-  dt <- .removeNegatives(dose_response_duration_refdivtime)
-  
-  as.data.frame(dt)
+  .removeNegatives(dose_response_duration_refdivtime)
 }
 
 #' Adjust environment variables to meet gDR standards
@@ -219,6 +217,6 @@ getPSet <- function(pset_name,
 #' @return data.table with positive values in column `ReadoutValue`
 #' 
 .removeNegatives <- function(dataset) {
-  checkmate::assert_class(dataset, "data.frame")
+  checkmate::assert_class(dataset, "data.table")
   dataset[dataset$ReadoutValue > 0]
 }

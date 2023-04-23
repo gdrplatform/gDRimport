@@ -10,7 +10,7 @@ load_manifest(manifest_file)
 \item{manifest_file}{character, file path(s) to manifest(s)}
 }
 \value{
-list with manifest data.frame and headers
+list with manifest data.table and headers
 }
 \description{
 This functions loads and checks the manifest file(s)

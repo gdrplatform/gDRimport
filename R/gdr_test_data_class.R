@@ -4,8 +4,8 @@
 #' 
 #' @slot manifest_path character, path to manifest file
 #' @slot result_path character, path(s) to results file
-#' @slot template_path character, path(s) to data.frame with template data
-#' @slot ref_m_df character, data.frame with manifest data
+#' @slot template_path character, path(s) to data.table with template data
+#' @slot ref_m_df character, data.table with manifest data
 #' @slot ref_r1_r2 character, path to reference file with raw data for treated & untreated 
 #' @slot ref_r1 character, path to reference file with raw data for treated
 #' @slot ref_t1_t2 character, path to reference template file with treated & untreated data
@@ -25,7 +25,7 @@ setClass(
     manifest_path = "character",
     result_path = "character",
     template_path = "character",
-    ref_m_df = "data.frame",
+    ref_m_df = "data.table",
     ref_r1_r2 = "character",
     ref_r1 = "character",
     ref_t1_t2 = "character",

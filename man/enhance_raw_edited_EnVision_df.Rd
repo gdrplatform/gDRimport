@@ -2,20 +2,20 @@
 % Please edit documentation in R/load_files.R
 \name{enhance_raw_edited_EnVision_df}
 \alias{enhance_raw_edited_EnVision_df}
-\title{Enhance raw edited EnVision data.frame}
+\title{Enhance raw edited EnVision data.table}
 \usage{
 enhance_raw_edited_EnVision_df(df, barcode_col, headers)
 }
 \arguments{
-\item{df}{raw data.frame}
+\item{df}{raw data.table}
 
 \item{barcode_col}{column number for barcode data}
 
 \item{headers}{list with the headersa}
 }
 \value{
-data.frame derived from EnVision data
+data.table derived from EnVision data
 }
 \description{
-Enhance raw edited EnVision data.frame
+Enhance raw edited EnVision data.table
 }

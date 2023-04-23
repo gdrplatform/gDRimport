@@ -7,7 +7,7 @@
 read_in_result_files(results_file, results_filename, headers)
 }
 \arguments{
-\item{results_file}{data.frame, with datapaths and names of results file(s)
+\item{results_file}{data.table, with datapaths and names of results file(s)
 or character with file path of results file(s)}
 
 \item{results_filename}{charvect with file names}
@@ -15,7 +15,7 @@ or character with file path of results file(s)}
 \item{headers}{list of headers identified in the result files}
 }
 \value{
-data.frame with results data
+data.table with results data
 }
 \description{
 Read in results files

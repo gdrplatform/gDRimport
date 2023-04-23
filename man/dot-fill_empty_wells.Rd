@@ -14,7 +14,7 @@
 )
 }
 \value{
-data.frame with corrected plates data
+data.table with corrected plates data
 }
 \description{
 Correct plates with not fully filled readout values
