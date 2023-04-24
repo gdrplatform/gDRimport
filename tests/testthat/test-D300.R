@@ -9,12 +9,16 @@ test_that("parse_D300_xml", {
   fs <- td3[["f_96w"]]
   dose_df <- parse_D300_xml(fs[["d300"]])
   ref_dose_df <- data.table::setDT(readRDS(fs[["ref_d300"]]))
-  expect_equal(dose_df, ref_dose_df)
+  data.table::setorder(dose_df, Row, Col, D300_Plate_N)
+  data.table::setorder(ref_dose_df, Row, Col, D300_Plate_N)
+  expect_identical(dose_df, ref_dose_df)
   
   # valid output returned for the D300 348 well plate example
   fs2 <- td3[["f_384w"]]
   dose_df <- parse_D300_xml(fs[["d300"]])
-  ref_dose_df <- readRDS(fs[["ref_d300"]])
+  ref_dose_df <- data.table::setDT(readRDS(fs[["ref_d300"]]))
+  data.table::setorder(dose_df, Row, Col, D300_Plate_N)
+  data.table::setorder(ref_dose_df, Row, Col, D300_Plate_N)
   expect_identical(dose_df, ref_dose_df)
   
   # expected error(s) returned
