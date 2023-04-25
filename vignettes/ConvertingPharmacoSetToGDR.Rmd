@@ -40,12 +40,25 @@ The main step in this process is to extract the drug dose-response data from the
 Whereas a user might already have a pharmacoset loaded in their R session, if they wish to obtain a different pharmacoset or use the same script in the future we provide a helper function to do so. 
 It helps to have a user directory in which to store all pharmacosets, and by passing this directory into the function as a parameter, the function will also check to see if the PSet exists in the user-definded directory.
 This is to ensure that the PSet is not being re-downloaded if it already has.  
-```{r}
-psetDir = "/home/bioinf/bhklab/jermiah/psets"
-pset <- gDRimport:::.getPSet("CCLE_2015", psetDir = psetDir, timeout = Inf)
+```{r eval = FALSE}
+pset <- gDRimport:::.getPSet("Tavor_2020")
 pset
 ```
 
+```{r, include = FALSE}
+read_mocked_PSets <- function(canonical = FALSE) {
+  readRDS(
+    system.file("extdata", "data_for_unittests", "PSets.rds", package = "gDRimport")
+  )
+}
+pset <- testthat:::with_mock(
+    `PharmacoGx::availablePSets` = read_mocked_PSets,
+    suppressMessages(getPSet(
+      "Tavor_2020", psetDir = system.file("extdata/pset", package = "gDRimport")
+    ))
+  )
+pset
+```
 
 # Converting PharmacoSet to Dataframe for gDR pipeline
 `PharamcoSets` hold data pertaining to the celllines (@sample slot), drugs (@treatment slot), and dose response experiments (@treatmentResponse slot). 
