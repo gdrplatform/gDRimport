@@ -907,7 +907,7 @@ get_df_from_raw_edited_EnVision_df <-
                                dim(df_results)[1])
       df_results
     })
-    do.call(rbind, res_l)
+    data.table::rbindlist(res_l)
   }
    
 #' Enhance raw edited EnVision data.table

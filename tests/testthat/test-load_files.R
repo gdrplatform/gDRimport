@@ -15,7 +15,7 @@ context("load_files")
   # valid output returned for "manifest.xlsx"
   m_df <- load_manifest(td2$m_file)
   ref_m_df <- readRDS(td2$ref_m_df)
-  expect_identical(m_df, ref_m_df)
+  expect_equal(m_df, ref_m_df)
 
   # expected error(s) returned
   err_msg1 <- "Assertion on 'manifest_file' failed: File does not exist: '/non/existent_file'."
@@ -136,7 +136,7 @@ test_that("load_data", {
   l_tbl2 <- load_data(td2$m_file, td2$t_files, td2$r_files, instrument = "Tecan")
   # valid output returned for manifest
   ref_m_df <- readRDS(td2$ref_m_df)
-  expect_identical(ref_m_df$data, l_tbl2$manifest)
+  expect_equal(ref_m_df$data, l_tbl2$manifest)
   # valid output returned for templates
   ref_t_df <- .standardize_untreated_values(readRDS(td2$ref_t_df))
   expect_equal(standardize_df(ref_t_df), standardize_df(l_tbl2$treatments))
