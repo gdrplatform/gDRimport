@@ -36,7 +36,7 @@ standardize_record_values <- function(x, dictionary = DICTIONARY) {
 #'
 standardize_df <- function(df) {
   # Assertions:
-  stopifnot(inherits(df, "data.table") || inherits(df, "data.frame"))
+  checkmate::assert_data_frame(df)
   data.table::as.data.table(lapply(df, as.character))
 }
 

@@ -189,8 +189,8 @@ getPSet <- function(pset_name,
 #' @return data.table
 .createPseudoData <- function(dt) {
   
-  checkmate::assert_class(dt, "data.table")
-  
+  checkmate::assert_data_table(dt)
+
   barcode <- gDRutils::get_env_identifiers("barcode")[1]
   duration <- gDRutils::get_env_identifiers("duration")
   refDivTime <- gDRutils::get_env_identifiers("cellline_ref_div_time")
@@ -217,6 +217,6 @@ getPSet <- function(pset_name,
 #' @return data.table with positive values in column `ReadoutValue`
 #' 
 .removeNegatives <- function(dataset) {
-  checkmate::assert_class(dataset, "data.table")
+  checkmate::assert_data_table(dataset)
   dataset[dataset$ReadoutValue > 0]
 }
