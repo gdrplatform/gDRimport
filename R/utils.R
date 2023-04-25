@@ -37,7 +37,8 @@ standardize_record_values <- function(x, dictionary = DICTIONARY) {
 standardize_df <- function(df) {
   # Assertions:
   checkmate::assert_data_frame(df)
-  data.table::as.data.table(lapply(df, as.character))
+  dt <- data.table::setDT(df)
+  dt[, names(dt) := lapply(.SD, as.character)]
 }
 
 #' read_ref_data
