@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-#### [0.99.9] - 2023-04-23
+#### [0.99.9] - 2023-04-25
 - Refactor: tibble, data.frame --> data.table
 
 #### [0.99.8] - 2023-04-20

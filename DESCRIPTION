@@ -2,7 +2,7 @@ Package: gDRimport
 Type: Package
 Title: Package for handling import of dose-response data
 Version: 0.99.9
-Date: 2023-04-23
+Date: 2023-04-25
 Authors@R: c(
     person("Arkadiusz", "Gladki", role=c("aut", "cre"), email="gladki.arkadiusz@gmail.com"),
     person("Bartosz", "Czech", role=c("aut")), 
@@ -38,7 +38,7 @@ Imports:
     yaml,
     openxlsx
 Suggests:
-    gDRtestData (>= 0.99.7),
+    gDRtestData (>= 0.99.10),
     gDRstyle (>= 0.99.11),
     knitr,
     purrr,
