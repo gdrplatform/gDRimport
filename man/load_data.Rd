@@ -14,16 +14,16 @@ load_data(
 \arguments{
 \item{manifest_file}{character, file path(s) to manifest(s)}
 
-\item{df_template_files}{data.frame, with datapaths and names of results file(s)
+\item{df_template_files}{data.table, with datapaths and names of results file(s)
 or character with file path of templates file(s)}
 
-\item{results_file}{data.frame, with datapaths and names of results file(s)
+\item{results_file}{data.table, with datapaths and names of results file(s)
 or character with file path of results file(s)}
 
 \item{instrument}{character}
 }
 \value{
-a list with three data.frames for manifest/treatment and results
+a list with three data.tables for manifest/treatment and results
 }
 \description{
 This functions loads and checks the data file(s)

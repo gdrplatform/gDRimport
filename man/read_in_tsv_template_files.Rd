@@ -14,7 +14,7 @@ read_in_tsv_template_files(template_file, template_filename, templates)
 \item{templates}{list with templates data}
 }
 \value{
-data.frame with templates dataa
+data.table with templates dataa
 }
 \description{
 read in tsv template files

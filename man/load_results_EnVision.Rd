@@ -12,7 +12,7 @@ load_results_EnVision(results_file, headers = gDRutils::get_env_identifiers())
 \item{headers}{list of headers identified in the manifest}
 }
 \value{
-data.frame with results data
+data.table with results data
 }
 \description{
 This functions loads and checks the results file(s)

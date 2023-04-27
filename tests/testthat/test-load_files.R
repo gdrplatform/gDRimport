@@ -15,7 +15,7 @@ context("load_files")
   # valid output returned for "manifest.xlsx"
   m_df <- load_manifest(td2$m_file)
   ref_m_df <- readRDS(td2$ref_m_df)
-  expect_identical(m_df, ref_m_df)
+  expect_equal(m_df, ref_m_df)
 
   # expected error(s) returned
   err_msg1 <- "Assertion on 'manifest_file' failed: File does not exist: '/non/existent_file'."
@@ -42,18 +42,18 @@ test_that("load_results", {
   res_tbl <- load_results(df_results_files = c(result_path(td1)), headers = headers)
   ## check with reference
   ## reference obtained with: write.csv2(res_tbl,file = "ref_RawData_day0_day7_xlsx.csv",row.names = FALSE) # nolint
-  ref_tbl <- read.csv2(td1@ref_r1_r2)
+  ref_tbl <- data.table::fread(td1@ref_r1_r2)
   expect_equal(res_tbl, ref_tbl)
 
   # valid output returned for data.frame input
-  df_results <- data.frame(datapath = result_path(td1), name = basename(result_path(td1)))
+  df_results <- data.table::data.table(datapath = result_path(td1), name = basename(result_path(td1)))
   res_df_tbl <- load_results(df_results, headers = headers)
   expect_equal(res_df_tbl, ref_tbl)
 
   # valid output is returned for a single xlsx file
   res_tbl2 <- load_results(df_results_files = c(result_path(td1)[1]), headers = headers)
   ## check with reference
-  ref_tbl2 <- read.csv2(td1@ref_r1)
+  ref_tbl2 <- data.table::fread(td1@ref_r1)
   expect_equal(res_tbl2, ref_tbl2)
 
   # get test_Tecan_data
@@ -88,7 +88,7 @@ test_that("load_templates", {
   expect_equal(standardize_df(t_tbl), standardize_df(ref_tbl))
 
   # valid output returned for data.frame input
-  df_templates <- data.frame(datapath = template_path(td1), name = basename(template_path(td1)))
+  df_templates <- data.table::data.table(datapath = template_path(td1), name = basename(template_path(td1)))
   res_t_tbl <- load_templates(df_templates)
   expect_equal(standardize_df(res_t_tbl), standardize_df(ref_tbl))
 
@@ -127,7 +127,7 @@ test_that("load_data", {
   ref_tbl <- .standardize_untreated_values(read.csv2(td1@ref_t1_t2))
   expect_equal(standardize_df(l_tbl$treatments), standardize_df(ref_tbl))
   # valid output returned for results
-  ref_tbl <- read.csv2(td1@ref_r1_r2)
+  ref_tbl <- data.table::fread(td1@ref_r1_r2)
   expect_equal(l_tbl$data, ref_tbl)
 
   #get test_Tecan_data (Tecan format)
@@ -136,7 +136,7 @@ test_that("load_data", {
   l_tbl2 <- load_data(td2$m_file, td2$t_files, td2$r_files, instrument = "Tecan")
   # valid output returned for manifest
   ref_m_df <- readRDS(td2$ref_m_df)
-  expect_identical(ref_m_df$data, l_tbl2$manifest)
+  expect_equal(ref_m_df$data, l_tbl2$manifest)
   # valid output returned for templates
   ref_t_df <- .standardize_untreated_values(readRDS(td2$ref_t_df))
   expect_equal(standardize_df(ref_t_df), standardize_df(l_tbl2$treatments))

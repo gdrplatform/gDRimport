@@ -3,9 +3,9 @@
 #' This functions loads and checks the data file(s)
 #'
 #' @param manifest_file character, file path(s) to manifest(s)
-#' @param df_template_files data.frame, with datapaths and names of results file(s)
+#' @param df_template_files data.table, with datapaths and names of results file(s)
 #' or character with file path of templates file(s)
-#' @param results_file  data.frame, with datapaths and names of results file(s)
+#' @param results_file  data.table, with datapaths and names of results file(s)
 #' or character with file path of results file(s)
 #' @param instrument character
 #' 
@@ -15,7 +15,7 @@
 #'
 #' @export
 #' 
-#' @return a list with three data.frames for manifest/treatment and results
+#' @return a list with three data.tables for manifest/treatment and results
 #'
 load_data <-
   function(manifest_file,
@@ -25,13 +25,13 @@ load_data <-
 
     assertthat::assert_that(is.character(manifest_file), msg = "'manifest_file' must be a character vector")
     assertthat::assert_that(assertthat::is.readable(manifest_file), msg = "'manifest_file' must be a readable path")
-    assertthat::assert_that(is.character(df_template_files) || is.data.frame(df_template_files),
-                msg = "'df_template_files' must be a character vector or data.frame")
-    assertthat::assert_that(is.character(results_file) || is.data.frame(results_file),
-                msg = "'results_file' must be a character vector or data.frame")
+    assertthat::assert_that(is.character(df_template_files) || data.table::is.data.table(df_template_files),
+                msg = "'df_template_files' must be a character vector or data.table")
+    assertthat::assert_that(is.character(results_file) || data.table::is.data.table(results_file),
+                msg = "'results_file' must be a character vector or data.table")
     assertthat::assert_that(assertthat::is.string(instrument), msg = "'instrument' must be a character vector")
 
-    if (is.data.frame(df_template_files)) {
+    if (data.table::is.data.table(df_template_files)) {
       template_file <- df_template_files$datapath # for the shiny app
       is_readable_v(template_file)
       template_filename <- df_template_files$name
@@ -80,7 +80,7 @@ load_data <-
 #'
 #' @export
 #' 
-#' @return list with manifest data.frame and headers
+#' @return list with manifest data.table and headers
 #' 
 load_manifest <- function(manifest_file) {
   # manifest_file is a string or a vector of strings
@@ -105,7 +105,7 @@ load_manifest <- function(manifest_file) {
                      df_type = "manifest"
                    )})
 
-  cat_manifest_data <- as.data.frame(data.table::rbindlist(manifest_data))
+  cat_manifest_data <- data.table::rbindlist(manifest_data)
   colnames(cat_manifest_data) <-
     check_metadata_names(colnames(cat_manifest_data), "manifest")
 
@@ -126,7 +126,7 @@ load_manifest <- function(manifest_file) {
 #' @param manifest_file character, file path(s) to manifest(s)
 #' @param available_formats charvec with available file formats
 #' 
-#' @return a data.frame with manifest data
+#' @return a data.table with manifest data
 #' 
 read_in_manifest_file <- function(manifest_file, available_formats) {
   
@@ -179,7 +179,7 @@ read_in_manifest_file <- function(manifest_file, available_formats) {
 #'
 #' This functions loads and checks the template file(s)
 #'
-#' @param df_template_files data.frame, with datapaths and names of results file(s)
+#' @param df_template_files data.table, with datapaths and names of results file(s)
 #' or character with file path of templates file(s)
 #' 
 #' @examples
@@ -188,14 +188,14 @@ read_in_manifest_file <- function(manifest_file, available_formats) {
 #'  
 #' @export
 #' 
-#' @return data.frame with templates data
+#' @return data.table with templates data
 #' 
 load_templates <- function(df_template_files) {
   # Assertions:
-  stopifnot(any(inherits(df_template_files, "data.frame"), checkmate::test_character(df_template_files)))
+  stopifnot(any(inherits(df_template_files, "data.table"), checkmate::test_character(df_template_files)))
 
   # template_file is a string or a vector of strings
-  if (is.data.frame(df_template_files)) {
+  if (data.table::is.data.table(df_template_files)) {
     # for the shiny app
     template_file <- df_template_files$datapath
     template_filename <- df_template_files$name
@@ -206,7 +206,7 @@ load_templates <- function(df_template_files) {
 
   checkmate::assert_file_exists(template_file)
 
-  all_templates <- data.frame()
+  all_templates <- data.table::data.table()
   if (any(grepl("\\.xlsx?$", template_filename))) {
     idx <- grepl("\\.xlsx?$", template_filename)
     futile.logger::flog.info("Reading %s with load_templates_xlsx", template_filename[idx])
@@ -239,7 +239,7 @@ load_templates <- function(df_template_files) {
 #'
 #' This functions loads and checks the results file(s)
 #'
-#' @param df_results_files  data.frame, with datapaths and names of results file(s)
+#' @param df_results_files  data.table, with datapaths and names of results file(s)
 #' or character with file path of results file(s)
 #' @param instrument character
 #' @param headers list of headers identified in the manifest file
@@ -250,14 +250,14 @@ load_templates <- function(df_template_files) {
 #'  
 #' @export
 #'
-#' @return data.frame with results' data
+#' @return data.table with results' data
 #' 
 load_results <-
   function(df_results_files, instrument = "EnVision", headers = gDRutils::get_env_identifiers()) {
-    stopifnot(any(inherits(df_results_files, "data.frame"), checkmate::test_character(df_results_files)))
+    stopifnot(any(inherits(df_results_files, "data.table"), checkmate::test_character(df_results_files)))
     checkmate::assert_string(instrument, pattern = "^EnVision$|^long_tsv$|^Tecan$")
     checkmate::assert_list(headers, null.ok = TRUE)
-    if (is.data.frame(df_results_files)) {
+    if (data.table::is.data.table(df_results_files)) {
       # for the shiny app
       results_file <- df_results_files$datapath
       results_filename <- df_results_files$name
@@ -293,7 +293,7 @@ load_results <-
 #' @param template_file character, file path(s) to template(s)
 #' @param template_filename character, file name(s)
 #' 
-#' @return data.frame with template data
+#' @return data.table with template data
 #' 
 load_templates_tsv <-
   function(template_file,
@@ -345,7 +345,7 @@ load_templates_tsv <-
 #' @param template_filename character, file name(s)
 #' @param templates list with templates data
 #' 
-#' @return data.frame with templates dataa
+#' @return data.table with templates dataa
 #' 
 read_in_tsv_template_files <- function(template_file, template_filename, templates) {
     tmpl_l <- lapply(template_file, function(iF) {
@@ -404,7 +404,7 @@ read_in_tsv_template_files <- function(template_file, template_filename, templat
 #' @param template_file character, file path(s) to template(s)
 #' @param template_filename character, file name(s)
 #'
-#' @return data.frame with templates data
+#' @return data.table with templates data
 #' 
 load_templates_xlsx <-
   function(template_file,
@@ -441,12 +441,12 @@ load_templates_xlsx <-
 #' @param template_filename character, file name(s)
 #' @param template_sheets template sheet names
 #' 
-#' @return data.frame with templates data
+#' @return data.table with templates data
 #' 
 read_in_template_xlsx <- function(template_file, template_filename, template_sheets) {
   
     metadata_fields <- NULL
-    all_templates <- data.frame()
+    all_templates <- data.table::data.table()
     for (iF in seq_along(template_file)) {
       futile.logger::flog.info("Loading %s", template_filename[iF])
       Gnumber_idx <- which(template_sheets[[iF]] %in% gDRutils::get_env_identifiers("drug"))
@@ -467,7 +467,8 @@ read_in_template_xlsx <- function(template_file, template_filename, template_she
       colnames(df_template) <-
         check_metadata_names(colnames(df_template),
                              df_name = template_filename[iF])
-      all_templates <- as.data.frame(data.table::rbindlist(list(all_templates, df_template), fill = TRUE))
+      
+      all_templates <- data.table::rbindlist(list(all_templates, df_template), fill = TRUE)
 
     }
     all_templates
@@ -480,7 +481,7 @@ read_in_template_xlsx <- function(template_file, template_filename, template_she
 #' @param idx template file index
 #' @param plate_info list with plate info
 #' 
-#' @return data.frame with template data
+#' @return data.table with template data
 #' 
 read_in_template_sheet_xlsx <- function(template_file, template_sheets, idx, plate_info) {
   metadata_fields <- NULL
@@ -491,7 +492,7 @@ read_in_template_sheet_xlsx <- function(template_file, template_sheets, idx, pla
   for (iS in seq_along(template_sheets[[idx]])) {
     sheetName <- template_sheets[[idx]][[iS]]
     tryCatch({
-      df <- as.data.frame(
+      df <- data.table::as.data.table(
         readxl::read_excel(
           template_file[[idx]],
           sheet = iS,
@@ -636,7 +637,7 @@ validate_template_xlsx <- function(template_file, template_filename, template_sh
 #' @param results_file character, file path(s) to template(s)
 #' @param headers list of headers identified in the manifest
 #' 
-#' @return data.frame with results data
+#' @return data.table with results data
 #' 
 load_results_tsv <-
   function(results_file, headers) {
@@ -656,12 +657,12 @@ load_results_tsv <-
 
 #' Read in results files
 #' 
-#' @param results_file  data.frame, with datapaths and names of results file(s)
+#' @param results_file  data.table, with datapaths and names of results file(s)
 #' or character with file path of results file(s)
 #' @param results_filename charvect with file names
 #' @param headers list of headers identified in the result files
 #' 
-#' @return data.frame with results data
+#' @return data.table with results data
 #' 
 read_in_result_files <- function(results_file, results_filename, headers) {
   
@@ -715,7 +716,7 @@ read_in_result_files <- function(results_file, results_filename, headers) {
 #' @param results_file character vector containing file path(s) to results file(s)
 #' @param headers list of headers identified in the manifest
 #' 
-#' @return data.frame with results data
+#' @return data.table with results data
 #' 
 load_results_EnVision <-
   function(results_file,
@@ -724,9 +725,11 @@ load_results_EnVision <-
     
     # read all files and sheets
     results_sheets <- get_excel_sheet_names(results_file)
-    all_results <- data.frame()
+    all_results <- data.table::data.table()
+    
     for (iF in seq_along(results_file)) {
       for (iS in results_sheets[[iF]]) {
+
         futile.logger::flog.info("Reading file %s, sheet %s", results_file[[iF]], iS)
         is_XLSX <- iS != 0L
         if (!is_XLSX) {
@@ -737,7 +740,8 @@ load_results_EnVision <-
           isEdited <- TRUE
           df <- read_EnVision_xlsx(results_file[[iF]], iS)
         }
-        barcode_col <- grep(paste0(headers[["barcode"]], collapse = "|"), as.data.frame(df))[1]
+        
+        barcode_col <- grep(paste0(headers[["barcode"]], collapse = "|"), df)[1]
         
         if (isEdited) {
           # get the expected plate size
@@ -746,7 +750,7 @@ load_results_EnVision <-
           n_col <- plate_dim[2]
           
           df <- enhance_raw_edited_EnVision_df(df, barcode_col, headers)
-          barcode_idx <- which(unlist(as.data.frame(df)[, barcode_col]) %in% headers[["barcode"]])
+          barcode_idx <- which(unlist(df[, barcode_col]) %in% headers[["barcode"]])
           df_results <-
             get_df_from_raw_edited_EnVision_df(df,
                                                barcode_idx,
@@ -765,6 +769,7 @@ load_results_EnVision <-
       }
       futile.logger::flog.info("File done")
     }
+    
     all_results
   }
 
@@ -773,7 +778,7 @@ load_results_EnVision <-
 #' @param results_file character, file path(s) to results file(s)
 #' @param results_sheet results sheet names
 #' 
-#' @return data.frame with results data
+#' @return data.table with results data
 #' 
 read_EnVision_xlsx <- function(results_file, results_sheet) {
   
@@ -839,10 +844,10 @@ get_excel_sheet_names <- function(fls) {
   e_sheets
 }
 
-#' Get final results (as a data.frame)
-#' from raw edited EnVision data.frame
+#' Get final results (as a data.table)
+#' from raw edited EnVision data.table
 #' 
-#' @param df raw data.frame
+#' @param df raw data.table
 #' @param barcode_idx numeric vector with barcode indices
 #' @param barcode_col column number for barcode data
 #' @param n_row number of rows
@@ -851,15 +856,16 @@ get_excel_sheet_names <- function(fls) {
 #' @param sheet_name name of the Excel sheet
 #' @param headers list with the headersa
 #' 
-#' @return data.frame derived from EnVision data
+#' @return data.table derived from EnVision data
 #' 
 get_df_from_raw_edited_EnVision_df <-
   function(df, barcode_idx, barcode_col, n_row, n_col, fname, sheet_name, headers) {
     
     res_l <- lapply(barcode_idx, function(iB) {
       # two type of format depending on where Background information is placed
-      if (any(as.data.frame(df)[iB + (seq_len(4)), 1] %in% "Background information")) {
-        ref_bckgrd <- which(as.data.frame(df)[iB + (seq_len(4)), 1] %in% "Background information")
+      
+      if (any(unlist(df[iB + (seq_len(4)), 1]) %in% "Background information")) {
+        ref_bckgrd <- which(unlist(df[iB + (seq_len(4)), 1]) %in% "Background information")
         readout_offset <- 1 + ref_bckgrd
         stopifnot(as.character(df[iB + ref_bckgrd, 4]) %in% "Signal")
         BackgroundValue <- as.numeric(df[iB + ref_bckgrd + 1, 4])
@@ -888,7 +894,7 @@ get_df_from_raw_edited_EnVision_df <-
         ))
       }
       
-      df_results <- data.frame(
+      df_results <- data.table::data.table(
         Barcode = Barcode,
         WellRow = LETTERS[seq_len(n_row)],
         WellColumn = as.vector(t(matrix(seq_len(n_col), n_col, n_row))),
@@ -901,21 +907,22 @@ get_df_from_raw_edited_EnVision_df <-
                                dim(df_results)[1])
       df_results
     })
-    do.call(rbind, res_l)
+    data.table::rbindlist(res_l)
   }
    
-#' Enhance raw edited EnVision data.frame
+#' Enhance raw edited EnVision data.table
 #' 
-#' @param df raw data.frame
+#' @param df raw data.table
 #' @param barcode_col column number for barcode data
 #' @param headers list with the headersa
 #' 
-#' @return data.frame derived from EnVision data
+#' @return data.table derived from EnVision data
 #' 
 enhance_raw_edited_EnVision_df <- function(df, barcode_col, headers) {
   
   # not empty rows; before discarding the rows: move ''Background information'' in the next row
-  bckd_info_idx <- which(as.data.frame(df)[, 1] %in% "Background information")
+  
+  bckd_info_idx <- which(unlist(df[, 1]) %in% "Background information")
   if (length(bckd_info_idx) > 0) {
     df[bckd_info_idx + 1, 1] <- df[bckd_info_idx, 1]
     df[bckd_info_idx, 1] <- ""
@@ -928,7 +935,7 @@ enhance_raw_edited_EnVision_df <- function(df, barcode_col, headers) {
   
   # manually add full rows
   plate_rows <- which(do.call(paste, df[, c(2, 3)]) %in% "Repeat Barcode") - 1
-  spacer_rows <- grep("[[:alpha:]]", as.data.frame(df)[, 1])
+  spacer_rows <- grep("[[:alpha:]]", unlist(df[, 1]))
   standardized_bckd_info <-
     if (length(bckd_info_idx) == 0) {
       0
@@ -945,7 +952,7 @@ enhance_raw_edited_EnVision_df <- function(df, barcode_col, headers) {
   # need to do some heuristic to find where the data is
   df_to_check <- df[, -6:-1]
   full_rows <- Reduce(union, lapply(df, function(x) grep("^\\d+$", x)))
-  Barcode_idx <- which(unlist(as.data.frame(df)[, barcode_col]) %in% headers[["barcode"]])
+  Barcode_idx <- which(unlist(df[, barcode_col]) %in% headers[["barcode"]])
   additional_rows <- c(Barcode_idx, bckd_info_idx + 1)
   full_rows_index <-
     unique(sort(c(
@@ -963,27 +970,28 @@ enhance_raw_edited_EnVision_df <- function(df, barcode_col, headers) {
   df
 }
 
-#' Get final results (as a data.frame)
-#' from raw unedited EnVision data.frame
+#' Get final results (as a data.table)
+#' from raw unedited EnVision data.table
 #' 
-#' @param df raw data.frame
+#' @param df raw data.table
 #' @param barcode_col column number for barcode data
 #' @param n_row number of rows
 #' @param n_col number of columns
 #' 
-#' @return data.frame derived from EnVision data
+#' @return data.table derived from EnVision data
 #' 
 get_df_from_raw_unedited_EnVision_df <-
   function(df, n_row, n_col, barcode_col) {
-    
+  
     # proper original EnVision file
-    Barcode <- df[3, barcode_col]
+    Barcode <- df[3, ..barcode_col]
+    selected_cols <- seq_len(n_col)
     readout <-
-      as.matrix(df[4 + seq_len(n_row), seq_len(n_col)])
+      as.matrix(df[4 + seq_len(n_row), ..selected_cols])
     
-    if (any(as.data.frame(df)[, 1] %in% "Background information")) {
+    if (any(df[, 1] %in% "Background information")) {
       ref_bckgrd <-
-        which(as.data.frame(df)[, 1] %in% "Background information")
+        which(df[, 1] %in% "Background information")
       BackgroundValue <-
         as.numeric(df[ref_bckgrd + 1, 4])
     } else {
@@ -991,8 +999,8 @@ get_df_from_raw_unedited_EnVision_df <-
       BackgroundValue <- 0
     }
     
-    df_results <- data.frame(
-      Barcode = Barcode,
+    df_results <- data.table::data.table(
+      Barcode = unlist(Barcode),
       WellRow = LETTERS[seq_len(n_row)],
       WellColumn = as.vector(t(matrix(
         seq_len(n_col), n_col, n_row
@@ -1013,7 +1021,7 @@ get_df_from_raw_unedited_EnVision_df <-
 #' @param results_file string, file path to a result file
 #' @param headers list of headers identified in the manifest
 #' 
-#' @return data.frame derived from Tecan data
+#' @return data.table derived from Tecan data
 #' 
 load_results_Tecan <-
   function(results_file, headers = gDRutils::get_env_identifiers()) {
@@ -1042,10 +1050,10 @@ load_results_Tecan <-
 #' @param results_sheets template sheet names
 #' @param headers list of headers identified in the manifest
 #' 
-#' @return data.frame derived from Tecan data
+#' @return data.table derived from Tecan data
 #' 
 read_in_results_Tecan <- function(results_file, results_sheets, headers) {
-  all_results <- data.frame()
+  all_results <- data.table::data.table()
   for (iS in seq_along(results_sheets)) {
     futile.logger::flog.info("Reading file %s, sheet %s", results_file, results_sheets[[iS]])
     # read the content of each plate
@@ -1079,7 +1087,7 @@ read_in_results_Tecan <- function(results_file, results_sheets, headers) {
     WellColumn <- strtoi(colnames(readout))
     
     # results data frame for plate
-    df_results <- data.frame(
+    df_results <- data.table::data.table(
       Barcode = results_sheets[iS],
       WellRow = WellRow,
       WellColumn =  as.vector(t(matrix(
@@ -1303,7 +1311,7 @@ read_EnVision_delim <- function(file,
   checkmate::assert_string(file)
   checkmate::assert_number(nrows)
   checkmate::assert_character(seps)
-
+  
   results.list <- read_in_EnVision_file(file, nrows, seps)
 
   if (which(vapply(results.list, function(x) {
@@ -1326,7 +1334,7 @@ read_EnVision_delim <- function(file,
     x
   })
   
-  df_ <- as.data.frame(do.call(rbind, results.list), stringsAsFactors = FALSE)
+  df_ <- data.table::as.data.table(do.call(rbind, results.list), stringsAsFactors = FALSE)
   colnames(df_) <- paste0("x", seq_len(ep[["n_col"]]))
   rownames(df_) <- NULL
   
@@ -1471,7 +1479,7 @@ get_EnVision_properties <- function(results.list, fname) {
 #' Correct plates with not fully filled readout values
 #' @keywords internal
 #' 
-#' @return data.frame with corrected plates data
+#' @return data.table with corrected plates data
 #' 
 .fill_empty_wells <- function(df, plate_rows, data_rows, exp_row, exp_col, numeric_regex = "^\\d+$") {
   all_rows <- Reduce(intersect, lapply(df, function(x) grep(numeric_regex, x)))
@@ -1495,11 +1503,12 @@ get_EnVision_properties <- function(results.list, fname) {
 #' Standardize untreated values to ignore cases
 #' @keywords internal
 #' 
-#' @return data.frame with standardized untreated values
+#' @return data.table with standardized untreated values
 #' 
 .standardize_untreated_values <- function(df) {
   untreated_tags <- gDRutils::get_env_identifiers("untreated_tag")
-  as.data.frame(lapply(df, function(x) {
+  
+  data.table::as.data.table(lapply(df, function(x) {
     if (is.factor(x)) x <- as.character(x)
     x[toupper(x) %in% toupper(untreated_tags)] <- untreated_tags[[1]]
     return(x)

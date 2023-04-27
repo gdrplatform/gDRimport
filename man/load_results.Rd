@@ -11,7 +11,7 @@ load_results(
 )
 }
 \arguments{
-\item{df_results_files}{data.frame, with datapaths and names of results file(s)
+\item{df_results_files}{data.table, with datapaths and names of results file(s)
 or character with file path of results file(s)}
 
 \item{instrument}{character}
@@ -19,7 +19,7 @@ or character with file path of results file(s)}
 \item{headers}{list of headers identified in the manifest file}
 }
 \value{
-data.frame with results' data
+data.table with results' data
 }
 \description{
 This functions loads and checks the results file(s)

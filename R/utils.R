@@ -22,21 +22,23 @@ standardize_record_values <- function(x, dictionary = DICTIONARY) {
 
 #' standardize_df
 #'
-#' Transform all the columns in a dataframe to character type
+#' Transform all the columns in a data.table to character type, and transform 
+#' data.frame to data.table
 #'
-#' @param df a dataframe for standardization
+#' @param df data.table or data.frame for standardization
 #' 
 #' @examples
 #' standardize_df(iris)
 #'
-#' @return a standardized data.frame
+#' @return a standardized data.table
 #' 
 #' @export
 #'
 standardize_df <- function(df) {
   # Assertions:
-  stopifnot(inherits(df, "data.frame"))
-  data.frame(lapply(df, as.character))
+  checkmate::assert_data_frame(df)
+  dt <- data.table::setDT(df)
+  dt[, names(dt) := lapply(.SD, as.character)]
 }
 
 #' read_ref_data

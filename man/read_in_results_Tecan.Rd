@@ -14,7 +14,7 @@ read_in_results_Tecan(results_file, results_sheets, headers)
 \item{headers}{list of headers identified in the manifest}
 }
 \value{
-data.frame derived from Tecan data
+data.table derived from Tecan data
 }
 \description{
 read in Tecan data

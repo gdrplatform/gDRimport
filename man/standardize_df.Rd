@@ -7,13 +7,14 @@
 standardize_df(df)
 }
 \arguments{
-\item{df}{a dataframe for standardization}
+\item{df}{data.table or data.frame for standardization}
 }
 \value{
-a standardized data.frame
+a standardized data.table
 }
 \description{
-Transform all the columns in a dataframe to character type
+Transform all the columns in a data.table to character type, and transform
+data.frame to data.table
 }
 \examples{
 standardize_df(iris)

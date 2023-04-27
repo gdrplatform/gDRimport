@@ -14,7 +14,7 @@ convert_pset_to_df(pharmacoset, run_parallel = TRUE, workers = 2L)
 \item{workers}{integer, number of workers defaults to 2L if run_parallel is TRUE}
 }
 \value{
-data.frame of PharmacoSet's dose response data with column names aligned with gDR standard
+data.table of PharmacoSet's dose response data with column names aligned with gDR standard
 }
 \description{
 Convert a PharmacoSet to a DataFrame that is prepare for input into gDR pipeline

@@ -12,7 +12,7 @@ load_results_Tecan(results_file, headers = gDRutils::get_env_identifiers())
 \item{headers}{list of headers identified in the manifest}
 }
 \value{
-data.frame derived from Tecan data
+data.table derived from Tecan data
 }
 \description{
 This functions loads and checks the results file

@@ -10,10 +10,10 @@ parse_D300_xml(D300_file)
 \item{D300_file}{string, file path to D300 .tdd file}
 }
 \value{
-data.frame representing input \code{D300_file}.
+data.table representing input \code{D300_file}.
 }
 \description{
-This function parses a D300 *.tdd file (XML format) into a data.frame
+This function parses a D300 *.tdd file (XML format) into a data.table
 }
 \examples{
 td3 <- get_test_D300_data()
