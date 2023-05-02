@@ -142,6 +142,7 @@ read_in_manifest_file <- function(manifest_file, available_formats) {
           e
         ))
       })
+      data.table::setDT(df)
     } else if (manifest_ext %in% c("text/tsv",
                                    "text/tab-separated-values",
                                    "tsv")) {
@@ -506,6 +507,7 @@ read_in_template_sheet_xlsx <- function(template_file, template_sheets, idx, pla
                    template_file[[idx]],
                    e))
     })
+    data.table::setDT(df)
     df$WellRow <- LETTERS[seq_len(plate_info$n_row)]
     df_melted <- reshape2::melt(df, id.vars = "WellRow")
     # check if metadata field already exist and correct capitalization if needed
@@ -554,6 +556,8 @@ get_plate_info_from_template_xlsx <- function(template_file, Gnumber_idx, idx) {
         exception_data <- get_exception_data(5)
         stop(sprintf(exception_data$sprintf_text, e))
       })
+  
+      data.table::setDT(df)
 
       # get the plate size
       n_row <-
@@ -611,6 +615,7 @@ validate_template_xlsx <- function(template_file, template_filename, template_sh
           exception_data <- get_exception_data(5)
           stop(sprintf(exception_data$sprintf_text, e))
         })
+        data.table::setDT(df)
         if (!(all(toupper(unlist(df)[!is.na(unlist(df))]) %in%
                   toupper(gDRutils::get_env_identifiers(
                     "untreated_tag"
@@ -750,7 +755,8 @@ load_results_EnVision <-
           n_col <- plate_dim[2]
           
           df <- enhance_raw_edited_EnVision_df(df, barcode_col, headers)
-          barcode_idx <- which(unlist(df[, barcode_col]) %in% headers[["barcode"]])
+          barcode_idx <- which(unlist(df[, barcode_col, with = FALSE])
+                               %in% headers[["barcode"]])
           df_results <-
             get_df_from_raw_edited_EnVision_df(df,
                                                barcode_idx,
@@ -794,6 +800,7 @@ read_EnVision_xlsx <- function(results_file, results_sheet) {
           col_names = paste0("x", seq_len(48)),
           range = "A1:AV32"
         )
+      data.table::setDT(df)
     }, error = function(e) {
       stop(sprintf(exception_data$sprintf_text, results_file, results_sheet))
     })
@@ -802,6 +809,7 @@ read_EnVision_xlsx <- function(results_file, results_sheet) {
       df <- readxl::read_excel(results_file,
                                sheet = results_sheet,
                                col_names = FALSE)
+      data.table::setDT(df)
     }, error = function(e) {
       stop(sprintf(exception_data$sprintf_text, results_file, results_sheet))
     })
@@ -811,8 +819,9 @@ read_EnVision_xlsx <- function(results_file, results_sheet) {
   # Find rows with data and drop empty columns
   colsRange <-
     grep("Plate information", unlist(df[, 1]))[1] + 10
+  colsToKeep <- which(colSums(is.na(df[seq_len(colsRange), ])) != colsRange)
   df <-
-    df[, colSums(is.na(df[seq_len(colsRange), ])) != colsRange]
+    df[, colsToKeep, with = FALSE]
 }
 
 #' get Excel sheets names for a charvec of files
@@ -878,9 +887,10 @@ get_df_from_raw_edited_EnVision_df <-
       # check the structure of file is ok
       .check_file_structure(df, fname, sheet_name, readout_offset, n_row, n_col, iB, barcode_col)
       
-      Barcode <- as.character(df[iB + 1, barcode_col])
+      Barcode <- as.character(df[iB + 1, barcode_col, with = FALSE])
       if (is.na(Barcode)) return(NULL)
-      readout <- as.matrix(df[iB + ref_bckgrd + seq_len(n_row) + 1, seq_len(n_col)])
+      readout <- as.matrix(df[iB + ref_bckgrd + seq_len(n_row) + 1,
+                              seq_len(n_col), with = FALSE])
       stopifnot(dim(readout) == c(n_row, n_col))
       
       # check that the plate size is consistent and contains values
@@ -890,7 +900,7 @@ get_df_from_raw_edited_EnVision_df <-
           exception_data$sprintf_text,
           basename(fname),
           sheet_name,
-          as.character(df[iB + 1, barcode_col])
+          as.character(df[iB + 1, barcode_col, with = FALSE])
         ))
       }
       
@@ -903,7 +913,7 @@ get_df_from_raw_edited_EnVision_df <-
       )
       names(df_results)[1] <- headers[["barcode"]][1]
       futile.logger::flog.info("Plate %s read; %d wells",
-                               as.character(df[iB + 1, barcode_col]),
+                               as.character(df[iB + 1, barcode_col, with = FALSE]),
                                dim(df_results)[1])
       df_results
     })
@@ -952,7 +962,8 @@ enhance_raw_edited_EnVision_df <- function(df, barcode_col, headers) {
   # need to do some heuristic to find where the data is
   df_to_check <- df[, -6:-1]
   full_rows <- Reduce(union, lapply(df, function(x) grep("^\\d+$", x)))
-  Barcode_idx <- which(unlist(df[, barcode_col]) %in% headers[["barcode"]])
+  Barcode_idx <- which(unlist(df[, barcode_col, with = FALSE])
+                       %in% headers[["barcode"]])
   additional_rows <- c(Barcode_idx, bckd_info_idx + 1)
   full_rows_index <-
     unique(sort(c(
@@ -984,10 +995,10 @@ get_df_from_raw_unedited_EnVision_df <-
   function(df, n_row, n_col, barcode_col) {
   
     # proper original EnVision file
-    Barcode <- df[3, ..barcode_col]
+    Barcode <- df[3, barcode_col, with = FALSE]
     selected_cols <- seq_len(n_col)
     readout <-
-      as.matrix(df[4 + seq_len(n_row), ..selected_cols])
+      as.matrix(df[4 + seq_len(n_row), selected_cols, with = FALSE])
     
     if (any(df[, 1] %in% "Background information")) {
       ref_bckgrd <-
@@ -1061,6 +1072,7 @@ read_in_results_Tecan <- function(results_file, results_sheets, headers) {
       df <- readxl::read_excel(results_file,
                                sheet = results_sheets[[iS]],
                                col_names = FALSE)
+      data.table::setDT(df)
     }, error = function(e) {
       exception_data <- get_exception_data(22)
       stop(sprintf(exception_data$sprintf_text, results_file, iS))
@@ -1068,15 +1080,15 @@ read_in_results_Tecan <- function(results_file, results_sheets, headers) {
     
     # find the indicator ("<>") that identifies where plate readings are
     ind <- which(df == "<>", arr.ind = TRUE)
-    dfm <- df[(ind[1]):nrow(df), ind[2]:ncol(df)] # remove text above "<>"
+    dfm <- df[(ind[1]):nrow(df), ind[2]:ncol(df), with = FALSE] # remove text above "<>"
     # remove text after data matrix ends, as identified by first na value
     ind <- which(is.na(dfm), arr.ind = TRUE)[1]
-    dfm <- dfm[seq_len(ind) - 1, seq_len(ncol(dfm))]
+    dfm <- dfm[seq_len(ind) - 1, seq_len(ncol(dfm)), with = FALSE]
     
     # rows and columns in data matrix with row and col names
     n_row <- nrow(dfm)
     n_col <- ncol(dfm)
-    readout <- as.data.frame(dfm[2:n_row, 2:n_col])
+    readout <- as.data.frame(dfm[2:n_row, 2:n_col, with = FALSE])
     rownames(readout) <- t(dfm[2:n_row, 1])
     colnames(readout) <- dfm[1, 2:n_col]
     # rows and columns in readout matrix
@@ -1461,7 +1473,8 @@ get_EnVision_properties <- function(results.list, fname) {
  
   # check the structure of file is ok
   check_values <-
-    as.matrix(df[bcode_idx + readout_offset + c(0, 1, n_row, n_row + 1), n_col])
+    as.matrix(df[bcode_idx + readout_offset + c(0, 1, n_row, n_row + 1),
+                 n_col, with = FALSE])
   if (is.na(check_values[2])) {
     exception_data <- get_exception_data(31)
     stop(
