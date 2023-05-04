@@ -36,7 +36,7 @@ read_ref_data <- function(inDir, prefix = "ref") {
 
   files <- list.files(inDir, paste0(prefix, "_.+\\.tsv$"), full.names = TRUE)
   lFiles <- lapply(files, function(x) {
-    read.table(x, sep = "\t", header = TRUE)
+    data.table::fread(x, sep = "\t", header = TRUE)
     })
   names(lFiles) <- gsub("\\.tsv", "", gsub(paste0("^", prefix, "_"), "", basename(files)))
   refKeys <- yaml::read_yaml(file.path(inDir, paste0(prefix, "_keys.yaml")))
