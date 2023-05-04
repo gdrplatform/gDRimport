@@ -31,3 +31,8 @@ test_that("detect_file_format works as expected", {
   expect_equal(unique(unlist(lapply(tsv_path, detect_file_format))), "long_tsv")
 })
 
+test_that("read_excel_to_dt works as expected", {
+  datasets <- readxl::readxl_example("datasets.xlsx")
+  dt <- read_excel_to_dt(datasets)
+  expect_s3_class(dt, "data.table")
+})

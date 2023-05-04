@@ -91,3 +91,21 @@ detect_file_format <- function(results_file) {
     "long_tsv"
   }
 }
+
+#' Read excel file and transorm it into data.table object
+#'
+#' @param path path to excel file
+#' @param ... other arguments that should be passed into `readxl::read_excel`
+#'
+#' @return data.table object with read excel file
+#' @export
+#'
+#' @examples
+#' datasets <- readxl::readxl_example("datasets.xlsx")
+#' read_excel_to_dt(datasets)
+read_excel_to_dt <- function(path, ...) {
+  checkmate::assert_character(path)
+  dt <- readxl::read_excel(path, ...)
+  data.table::setDT(dt)
+  dt
+}
