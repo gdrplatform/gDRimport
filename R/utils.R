@@ -39,6 +39,7 @@ standardize_df <- function(df) {
   checkmate::assert_data_frame(df)
   dt <- data.table::setDT(df)
   dt[, names(dt) := lapply(.SD, as.character)]
+  dt
 }
 
 #' read_ref_data

@@ -194,9 +194,10 @@ test_that(".get_plate_size works as expected", {
 
 test_that(".check_file_structure works as expected", {
   df <- readxl::read_excel(system.file("extdata/data1/RawData_day7.xlsx", package = "gDRimport"))
+  data.table::setDT(df)
   df <-
     df[, !apply(df[seq_len(35), ], 2, function(x) {
-      all(is.na(x))})]
+      all(is.na(x))}), with = FALSE]
   Bckd_info_idx <-
     which(as.data.frame(df)[, 1] %in% "Background information")
   if (length(Bckd_info_idx) > 0) {
@@ -206,7 +207,7 @@ test_that(".check_file_structure works as expected", {
   size <- .get_plate_size(df)
   n_row <- size[1]
   n_col <- size[2]
-  df_to_check <- df[, -6:-1]
+  df_to_check <- df[, c(-6:-1), with = FALSE]
   full_rows <- rowSums(as.data.frame(lapply(df_to_check, function(x) {
     is.na(suppressWarnings(as.numeric(x)))
   }))) != ncol(df_to_check)
@@ -214,9 +215,7 @@ test_that(".check_file_structure works as expected", {
   spacer_rows <- unlist(lapply(plate_row, function(x) c(x + 1, x + 2, x + 4 + n_row)))
   data_rows <- unlist(lapply(plate_row, function(x) (x + 4):(x + 4 + n_row - 1)))
   #fill up data_rows
-  for (i in data_rows) {
-    df[i, c(is.na(df[i, ]))] <- "0"
-  }
+  df[data_rows, ] <- lapply(df[data_rows, ], function(x) ifelse(is.na(x), "0", x))
   full_rows_index <- sort(union(spacer_rows, data_rows))
   gaps <-
     min(which(full_rows)[(diff(which(full_rows)) > 20)] + 1, dim(df)[1])
@@ -242,9 +241,10 @@ test_that(".check_file_structure works as expected", {
 
 test_that(".fill_empty_wells works as expected", {
   df <- readxl::read_excel(system.file("extdata/data1/RawData_day7.xlsx", package = "gDRimport"), col_names = FALSE)
+  data.table::setDT(df)
   df <-
     df[, !apply(df[seq_len(35), ], 2, function(x) {
-      all(is.na(x))})]
+      all(is.na(x))}), with = FALSE]
   Bckd_info_idx <-
     which(as.data.frame(df)[, 1] %in% "Background information")
   if (length(Bckd_info_idx) > 0) {
@@ -254,7 +254,7 @@ test_that(".fill_empty_wells works as expected", {
   size <- .get_plate_size(df)
   n_row <- size[1]
   n_col <- size[2]
-  df_to_check <- df[, -6:-1]
+  df_to_check <- df[, -6:-1, with = FALSE]
   full_rows <- rowSums(as.data.frame(lapply(df_to_check, function(x) {
     is.na(suppressWarnings(as.numeric(x)))
   }))) != ncol(df_to_check)

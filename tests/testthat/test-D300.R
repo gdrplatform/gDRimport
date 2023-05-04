@@ -83,10 +83,20 @@ test_that("import_D300", {
       for (j in seq_len(length(output_sheets))) {
           output_sheet <- readxl::read_excel(output_file_path,
                                              sheet = output_sheets[[j]],
-                                             col_names = TRUE)
+                                             col_names = FALSE)
+          data.table::setDT(output_sheet)
           ref_sheet <- readxl::read_excel(ref_file_path,
                                           sheet = ref_sheets[[j]],
-                                          col_names = TRUE)
+                                          col_names = FALSE)
+          data.table::setDT(ref_sheet)
+          untreated_tags <- gDRutils::get_env_identifiers("untreated_tag")
+          ref_sheet[, names(ref_sheet) := lapply(.SD, function(x) {
+            if (is.character(x)) {
+              gsub(untreated_tags[[2]], untreated_tags[[1]], x)
+            } else {
+              x
+            }
+            }), .SDcols = names(ref_sheet)]
           expect_equal(output_sheet, ref_sheet)
       }    
     }

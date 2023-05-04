@@ -1505,9 +1505,7 @@ get_EnVision_properties <- function(results.list, fname) {
     df[fill_rows, ] <- "0"
 
     #fill up data_rows
-    for (i in data_rows) {
-      df[i, c(is.na(df[i, ]))] <- "0"
-    }
+    df[data_rows, ] <- lapply(df[data_rows, ], function(x) ifelse(is.na(x), "0", x))
   }
   df
 }
