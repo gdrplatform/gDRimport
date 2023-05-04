@@ -13,8 +13,6 @@ test_that("assert_utils", {
   res_v <- c(letters[seq_len(4)], as.character(DICTIONARY))
   names(res_v) <- names(test_v)
   expect_equal(standardize_record_values(test_v), res_v)
-
-  expect_true(all(vapply(standardize_df(ref_tbl), is.character, logical(1))))
 })
 
 test_that("detect_file_format works as expected", {

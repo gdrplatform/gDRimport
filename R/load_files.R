@@ -498,7 +498,6 @@ read_in_template_sheet_xlsx <- function(template_file, template_sheets, idx, pla
           col_names = paste0("x", seq_len(plate_info$n_col)),
           range = plate_info$plate_range
         )
-      )
     }, error = function(e) {
       exception_data <- get_exception_data(20)
       stop(sprintf(exception_data$sprintf_text,

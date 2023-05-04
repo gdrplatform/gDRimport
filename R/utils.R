@@ -20,28 +20,6 @@ standardize_record_values <- function(x, dictionary = DICTIONARY) {
   x
 }
 
-#' standardize_df
-#'
-#' Transform all the columns in a data.table to character type, and transform 
-#' data.frame to data.table
-#'
-#' @param df data.table or data.frame for standardization
-#' 
-#' @examples
-#' standardize_df(iris)
-#'
-#' @return a standardized data.table
-#' 
-#' @export
-#'
-standardize_df <- function(df) {
-  # Assertions:
-  checkmate::assert_data_frame(df)
-  dt <- data.table::setDT(df)
-  dt[, names(dt) := lapply(.SD, as.character)]
-  dt
-}
-
 #' read_ref_data
 #'
 #' Read reference data

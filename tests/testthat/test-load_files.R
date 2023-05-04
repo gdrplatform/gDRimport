@@ -85,12 +85,12 @@ test_that("load_templates", {
   ## check with reference
   ## reference obtained with: write.csv2(t_tbl,file = "ref_template_treated_untreated_xlsx.csv",row.names = FALSE) # nolint
   ref_tbl <- .standardize_untreated_values(read.csv2(td1@ref_t1_t2))
-  expect_equal(standardize_df(t_tbl), standardize_df(ref_tbl))
+  expect_equal(t_tbl, ref_tbl)
 
   # valid output returned for data.frame input
   df_templates <- data.table::data.table(datapath = template_path(td1), name = basename(template_path(td1)))
   res_t_tbl <- load_templates(df_templates)
-  expect_equal(standardize_df(res_t_tbl), standardize_df(ref_tbl))
+  expect_equal(res_t_tbl, ref_tbl)
 
   # get test_Tecan_data
   td2 <- get_test_Tecan_data()
@@ -99,7 +99,7 @@ test_that("load_templates", {
   res_t_tbl3 <- load_templates(df_template_files = c(td2$t_files))
   ## check with reference
   ref_tbl3 <- .standardize_untreated_values(readRDS(td2$ref_t_df))
-  expect_equal(standardize_df(res_t_tbl3), standardize_df(ref_tbl3))
+  expect_equal(res_t_tbl3, ref_tbl3)
 
   # expected error(s) returned
   err_msg1 <- "Assertion on 'template_file' failed: File does not exist: '/non/existent_file'."
@@ -125,7 +125,7 @@ test_that("load_data", {
   expect_identical(td1@ref_m_df, l_tbl$manifest)
   # valid output returned for templates
   ref_tbl <- .standardize_untreated_values(read.csv2(td1@ref_t1_t2))
-  expect_equal(standardize_df(l_tbl$treatments), standardize_df(ref_tbl))
+  expect_equal(l_tbl$treatments, ref_tbl)
   # valid output returned for results
   ref_tbl <- data.table::fread(td1@ref_r1_r2)
   expect_equal(l_tbl$data, ref_tbl)
@@ -139,7 +139,7 @@ test_that("load_data", {
   expect_equal(ref_m_df$data, l_tbl2$manifest)
   # valid output returned for templates
   ref_t_df <- .standardize_untreated_values(readRDS(td2$ref_t_df))
-  expect_equal(standardize_df(ref_t_df), standardize_df(l_tbl2$treatments))
+  expect_equal(ref_t_df, l_tbl2$treatments)
   # valid output returned for results
   ref_r_df <- readRDS(td2$ref_r_df)
   expect_equal(l_tbl2$data, ref_r_df)
@@ -150,13 +150,11 @@ test_that("load_data", {
     load_data(td4$m_file, td4$t_files, td4$r_files, instrument = "EnVision")
   ref_l <- readRDS(td4$ref_l_path)
   # valid output returned for manifest
-  expect_identical(standardize_df(ref_l$manifest),
-                   standardize_df(l_tbl4$manifest))
+  expect_equal(ref_l$manifest, l_tbl4$manifest)
   # valid output returned for templates
-  expect_identical(standardize_df(ref_l$treatments),
-                   standardize_df(l_tbl4$treatments))
+  expect_equal(ref_l$treatments, l_tbl4$treatments)
   # valid output returned for results
-  expect_identical(standardize_df(ref_l$data), standardize_df(l_tbl4$data))
+  expect_equal(ref_l$data, l_tbl4$data)
   
   # expected error(s) returned - manifest
   err_msg1 <- "'manifest_file' must be a readable path"
