@@ -84,7 +84,7 @@ test_that("load_templates", {
   t_tbl <- load_templates(df_template_files = c(template_path(td1)))
   ## check with reference
   ## reference obtained with: write.csv2(t_tbl,file = "ref_template_treated_untreated_xlsx.csv",row.names = FALSE) # nolint
-  ref_tbl <- .standardize_untreated_values(read.csv2(td1@ref_t1_t2))
+  ref_tbl <- .standardize_untreated_values(data.table::fread(td1@ref_t1_t2))
   expect_equal(t_tbl, ref_tbl)
 
   # valid output returned for data.frame input
@@ -124,7 +124,7 @@ test_that("load_data", {
   # valid output returned for manifest
   expect_identical(td1@ref_m_df, l_tbl$manifest)
   # valid output returned for templates
-  ref_tbl <- .standardize_untreated_values(read.csv2(td1@ref_t1_t2))
+  ref_tbl <- .standardize_untreated_values(data.table::fread(td1@ref_t1_t2))
   expect_equal(l_tbl$treatments, ref_tbl)
   # valid output returned for results
   ref_tbl <- data.table::fread(td1@ref_r1_r2)
