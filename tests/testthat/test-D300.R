@@ -81,14 +81,12 @@ test_that("import_D300", {
       expect_equal(output_sheets, ref_sheets)
       #test content of sheets is identical
       for (j in seq_len(length(output_sheets))) {
-          output_sheet <- readxl::read_excel(output_file_path,
+          output_sheet <- read_excel_to_dt(output_file_path,
                                              sheet = output_sheets[[j]],
                                              col_names = FALSE)
-          data.table::setDT(output_sheet)
-          ref_sheet <- readxl::read_excel(ref_file_path,
+          ref_sheet <- read_excel_to_dt(ref_file_path,
                                           sheet = ref_sheets[[j]],
                                           col_names = FALSE)
-          data.table::setDT(ref_sheet)
           untreated_tags <- gDRutils::get_env_identifiers("untreated_tag")
           ref_sheet[, names(ref_sheet) := lapply(.SD, function(x) {
             if (is.character(x)) {

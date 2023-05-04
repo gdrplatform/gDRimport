@@ -186,15 +186,14 @@ test_that("load_data", {
 })
 
 test_that(".get_plate_size works as expected", {
-  df <- readxl::read_excel(system.file("extdata/data1/RawData_day7.xlsx", package = "gDRimport"))
+  df <- read_excel_to_dt(system.file("extdata/data1/RawData_day7.xlsx", package = "gDRimport"))
   size <- .get_plate_size(df)
   expect_length(size, 2)
   expect_equal(prod(size), 384)
 })
 
 test_that(".check_file_structure works as expected", {
-  df <- readxl::read_excel(system.file("extdata/data1/RawData_day7.xlsx", package = "gDRimport"))
-  data.table::setDT(df)
+  df <- read_excel_to_dt(system.file("extdata/data1/RawData_day7.xlsx", package = "gDRimport"))
   df <-
     df[, !apply(df[seq_len(35), ], 2, function(x) {
       all(is.na(x))}), with = FALSE]
@@ -234,14 +233,13 @@ test_that(".check_file_structure works as expected", {
   expect_null(.check_file_structure(df, basename(results_filename[[iF]]), 
                                     iS, readout_offset, n_row, n_col, iB, barcode_col))
 
-  df2 <- readxl::read_excel(system.file("extdata/data1/RawData_day7.xlsx", package = "gDRimport"))
+  df2 <- read_excel_to_dt(system.file("extdata/data1/RawData_day7.xlsx", package = "gDRimport"))
   expect_error(.check_file_structure(df2, basename(results_filename[[iF]]),
                                     iS, readout_offset, n_row, n_col, iB, barcode_col))
 })
 
 test_that(".fill_empty_wells works as expected", {
-  df <- readxl::read_excel(system.file("extdata/data1/RawData_day7.xlsx", package = "gDRimport"), col_names = FALSE)
-  data.table::setDT(df)
+  df <- read_excel_to_dt(system.file("extdata/data1/RawData_day7.xlsx", package = "gDRimport"), col_names = FALSE)
   df <-
     df[, !apply(df[seq_len(35), ], 2, function(x) {
       all(is.na(x))}), with = FALSE]
@@ -283,7 +281,7 @@ test_that("check_metadata_names works as expected", {
   
   td1 <- get_test_data()
   m_file <- manifest_path(td1)
-  m_data <- readxl::read_excel(m_file)
+  m_data <- read_excel_to_dt(m_file)
   
   # default
   result <- check_metadata_names(col_df = colnames(m_data))

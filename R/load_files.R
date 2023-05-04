@@ -134,7 +134,7 @@ read_in_manifest_file <- function(manifest_file, available_formats) {
     manifest_ext <- tools::file_ext(x)
     if (manifest_ext %in% c("xlsx", "xls")) {
       df <- tryCatch({
-        readxl::read_excel(x, col_names = TRUE)
+        read_excel_to_dt(x, col_names = TRUE)
       }, error = function(e) {
         exception_data <- get_exception_data(12)
         stop(sprintf(
@@ -142,7 +142,6 @@ read_in_manifest_file <- function(manifest_file, available_formats) {
           e
         ))
       })
-      data.table::setDT(df)
     } else if (manifest_ext %in% c("text/tsv",
                                    "text/tab-separated-values",
                                    "tsv")) {
@@ -493,8 +492,7 @@ read_in_template_sheet_xlsx <- function(template_file, template_sheets, idx, pla
   for (iS in seq_along(template_sheets[[idx]])) {
     sheetName <- template_sheets[[idx]][[iS]]
     tryCatch({
-      df <- data.table::as.data.table(
-        readxl::read_excel(
+      df <- read_excel_to_dt(
           template_file[[idx]],
           sheet = iS,
           col_names = paste0("x", seq_len(plate_info$n_col)),
@@ -507,7 +505,6 @@ read_in_template_sheet_xlsx <- function(template_file, template_sheets, idx, pla
                    template_file[[idx]],
                    e))
     })
-    data.table::setDT(df)
     df$WellRow <- LETTERS[seq_len(plate_info$n_row)]
     df_melted <- reshape2::melt(df, id.vars = "WellRow")
     # check if metadata field already exist and correct capitalization if needed
@@ -545,7 +542,7 @@ get_plate_info_from_template_xlsx <- function(template_file, Gnumber_idx, idx) {
   
       tryCatch({
         df <-
-          readxl::read_excel(
+          read_excel_to_dt(
             template_file[[idx]],
             sheet = Gnumber_idx,
             col_names = paste0("x", seq_len(48)),
@@ -557,8 +554,6 @@ get_plate_info_from_template_xlsx <- function(template_file, Gnumber_idx, idx) {
         stop(sprintf(exception_data$sprintf_text, e))
       })
   
-      data.table::setDT(df)
-
       # get the plate size
       n_row <-
         2 ^ ceiling(log2(max(which(
@@ -605,7 +600,7 @@ validate_template_xlsx <- function(template_file, template_filename, template_sh
         }
         tryCatch({
           df <-
-            readxl::read_excel(
+            read_excel_to_dt(
               template_file[[idx]],
               sheet = Gnumber_idx,
               col_names = paste0("x", seq_len(48)),
@@ -615,7 +610,6 @@ validate_template_xlsx <- function(template_file, template_filename, template_sh
           exception_data <- get_exception_data(5)
           stop(sprintf(exception_data$sprintf_text, e))
         })
-        data.table::setDT(df)
         if (!(all(toupper(unlist(df)[!is.na(unlist(df))]) %in%
                   toupper(gDRutils::get_env_identifiers(
                     "untreated_tag"
@@ -794,22 +788,20 @@ read_EnVision_xlsx <- function(results_file, results_sheet) {
     # if multiple sheets, assume 1 plate per sheet
     tryCatch({
       df <-
-        readxl::read_excel(
+        read_excel_to_dt(
           results_file,
           sheet = results_sheet,
           col_names = paste0("x", seq_len(48)),
           range = "A1:AV32"
         )
-      data.table::setDT(df)
     }, error = function(e) {
       stop(sprintf(exception_data$sprintf_text, results_file, results_sheet))
     })
   } else {
     tryCatch({
-      df <- readxl::read_excel(results_file,
-                               sheet = results_sheet,
-                               col_names = FALSE)
-      data.table::setDT(df)
+      df <- read_excel_to_dt(results_file,
+                             sheet = results_sheet,
+                             col_names = FALSE)
     }, error = function(e) {
       stop(sprintf(exception_data$sprintf_text, results_file, results_sheet))
     })
@@ -1069,10 +1061,9 @@ read_in_results_Tecan <- function(results_file, results_sheets, headers) {
     futile.logger::flog.info("Reading file %s, sheet %s", results_file, results_sheets[[iS]])
     # read the content of each plate
     tryCatch({
-      df <- readxl::read_excel(results_file,
-                               sheet = results_sheets[[iS]],
-                               col_names = FALSE)
-      data.table::setDT(df)
+      df <- read_excel_to_dt(results_file,
+                             sheet = results_sheets[[iS]],
+                             col_names = FALSE)
     }, error = function(e) {
       exception_data <- get_exception_data(22)
       stop(sprintf(exception_data$sprintf_text, results_file, iS))
@@ -1125,7 +1116,7 @@ read_in_results_Tecan <- function(results_file, results_sheets, headers) {
 #' @examples
 #'  td <- get_test_data()
 #'  m_file <- manifest_path(td)
-#'  m_data <- readxl::read_excel(m_file)
+#'  m_data <- read_excel_to_dt(m_file)
 #'  result <- check_metadata_names(col_df = colnames(m_data))
 #'
 #' @return a charvec with corrected colnames of df
