@@ -146,8 +146,8 @@ read_in_manifest_file <- function(manifest_file, available_formats) {
                                    "text/tab-separated-values",
                                    "tsv")) {
       df <- tryCatch({
-        utils::read.table(x, sep = "\t", header = TRUE, na.strings = c("", "NA")) %>%
-          stats::na.omit()
+        stats::na.omit(data.table::fread(
+          x, sep = "\t", header = TRUE, na.strings = c("", "NA")))
       }, error = function(e) {
         exception_data <- get_exception_data(12)
         stop(sprintf(
@@ -308,7 +308,7 @@ load_templates_tsv <-
 
     # read columns in files
     templates <- lapply(template_file, function(x) {
-      utils::read.table(x,
+      data.table::fread(x,
                         sep = "\t",
                         header = TRUE,
                         na.strings = c("", "NA")) %>% stats::na.omit()
@@ -669,8 +669,8 @@ read_in_result_files <- function(results_file, results_filename, headers) {
       futile.logger::flog.info("Reading file", results_file[iF])
       tryCatch({
         df <-
-        utils::read.table(results_file[iF], sep = "\t", header = TRUE, na.strings = c("", "NA")) %>%
-          stats::na.omit()
+        stats::na.omit(data.table::fread(
+          results_file[iF], sep = "\t", header = TRUE, na.strings = c("", "NA")))
       }, error = function(e) {
         exception_data <- get_exception_data(21)
         stop(sprintf(exception_data$sprintf_text, results_file[[iF]]))
@@ -680,8 +680,8 @@ read_in_result_files <- function(results_file, results_filename, headers) {
         tryCatch({
           # likely a csv file
           df <-
-            utils::read.csv(results_file[iF], header = TRUE, na.strings = c("", "NA")) %>%
-            stats::na.omit()
+            stats::na.omit(data.table::fread(
+              results_file[iF], header = TRUE, na.strings = c("", "NA")))
         }, error = function(e) {
           exception_data <- get_exception_data(21)
           stop(sprintf(exception_data$sprintf_text, results_file[[iF]]))
