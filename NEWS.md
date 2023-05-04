@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+#### [0.99.10] - 2023-05-04
+- Switch from `tibble` to `data.table` in excel files
+
 #### [0.99.9] - 2023-04-25
 - Refactor: tibble, data.frame --> data.table
 
