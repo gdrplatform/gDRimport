@@ -343,9 +343,9 @@ parse_D300_metadata_file <- function(metadata_file) {
                               nsheets, metadata_file)
   }
 
-  metadata <- readxl::read_excel(metadata_file,
-                                     sheet = D300_Gnum_sheets[[1]],
-                                     col_names = TRUE)
+  metadata <- read_excel_to_dt(metadata_file,
+                               sheet = D300_Gnum_sheets[[1]],
+                               col_names = TRUE)
   metadata
 }
 
