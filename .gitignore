@@ -37,3 +37,7 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+
+# OS generated files #
+.DS_Store
+.DS_Store?
