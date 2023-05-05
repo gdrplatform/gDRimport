@@ -1,4 +1,4 @@
-#' @importFrom utils adist read.table write.csv write.table
+#' @importFrom utils adist
 #' @importFrom magrittr %>%
 #' @importFrom tibble tribble
 #' @importFrom methods new slotNames
