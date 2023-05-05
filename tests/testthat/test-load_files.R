@@ -83,8 +83,7 @@ test_that("load_templates", {
   # valid output returned for the two xlsx files
   t_tbl <- load_templates(df_template_files = c(template_path(td1)))
   ## check with reference
-  ## reference obtained with: write.csv2(t_tbl,file = "ref_template_treated_untreated_xlsx.csv",row.names = FALSE) # nolint
-  ref_tbl <- .standardize_untreated_values(data.table::fread(td1@ref_t1_t2))
+  ref_tbl <- data.table::fread(td1@ref_t1_t2, colClasses = "character")
   expect_equal(t_tbl, ref_tbl)
 
   # valid output returned for data.frame input
