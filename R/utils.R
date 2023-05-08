@@ -20,27 +20,6 @@ standardize_record_values <- function(x, dictionary = DICTIONARY) {
   x
 }
 
-#' standardize_df
-#'
-#' Transform all the columns in a data.table to character type, and transform 
-#' data.frame to data.table
-#'
-#' @param df data.table or data.frame for standardization
-#' 
-#' @examples
-#' standardize_df(iris)
-#'
-#' @return a standardized data.table
-#' 
-#' @export
-#'
-standardize_df <- function(df) {
-  # Assertions:
-  checkmate::assert_data_frame(df)
-  dt <- data.table::setDT(df)
-  dt[, names(dt) := lapply(.SD, as.character)]
-}
-
 #' read_ref_data
 #'
 #' Read reference data
@@ -57,7 +36,7 @@ read_ref_data <- function(inDir, prefix = "ref") {
 
   files <- list.files(inDir, paste0(prefix, "_.+\\.tsv$"), full.names = TRUE)
   lFiles <- lapply(files, function(x) {
-    read.table(x, sep = "\t", header = TRUE)
+    data.table::fread(x, sep = "\t", header = TRUE)
     })
   names(lFiles) <- gsub("\\.tsv", "", gsub(paste0("^", prefix, "_"), "", basename(files)))
   refKeys <- yaml::read_yaml(file.path(inDir, paste0(prefix, "_keys.yaml")))
@@ -89,4 +68,22 @@ detect_file_format <- function(results_file) {
   } else {
     "long_tsv"
   }
+}
+
+#' Read excel file and transorm it into data.table object
+#'
+#' @param path path to excel file
+#' @param ... other arguments that should be passed into `readxl::read_excel`
+#'
+#' @return data.table object with read excel file
+#' @export
+#'
+#' @examples
+#' datasets <- readxl::readxl_example("datasets.xlsx")
+#' read_excel_to_dt(datasets)
+read_excel_to_dt <- function(path, ...) {
+  checkmate::assert_character(path)
+  dt <- readxl::read_excel(path, ...)
+  data.table::setDT(dt)
+  dt
 }

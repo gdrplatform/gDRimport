@@ -22,7 +22,7 @@ Check whether all metadata names are correct
 \examples{
  td <- get_test_data()
  m_file <- manifest_path(td)
- m_data <- readxl::read_excel(m_file)
+ m_data <- read_excel_to_dt(m_file)
  result <- check_metadata_names(col_df = colnames(m_data))
 
 }
