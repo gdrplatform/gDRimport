@@ -74,7 +74,7 @@ test_that("correct_template_sheets works as expected", {
                  "template3.xlsx" = c("Gnomber", "Concentration", "Gnumber_2", "Concentration_2"),
                  "template_untr.xlsx" = c("Gnumber", "Media"))
   tfiles_empty <- lapply(tfiles, function(x) {
-    listData <- lapply(x, function(y) data.frame(x = runif(12)))
+    listData <- lapply(x, function(y) data.table::data.table(x = runif(12)))
     names(listData) <- x
     listData
   })
