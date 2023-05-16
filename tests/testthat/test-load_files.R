@@ -195,7 +195,7 @@ test_that(".check_file_structure works as expected", {
     df[, !apply(df[seq_len(35), ], 2, function(x) {
       all(is.na(x))}), with = FALSE]
   Bckd_info_idx <-
-    which(df[, 1] %in% "Background information")
+    which(df[[1]] %in% "Background information")
   if (length(Bckd_info_idx) > 0) {
     df[Bckd_info_idx + 1, 1] <- df[Bckd_info_idx, 1]
     df[Bckd_info_idx, 1] <- ""
@@ -242,7 +242,7 @@ test_that(".fill_empty_wells works as expected", {
     df[, !apply(df[seq_len(35), ], 2, function(x) {
       all(is.na(x))}), with = FALSE]
   Bckd_info_idx <-
-    which(df[, 1] %in% "Background information")
+    which(df[[1]] %in% "Background information")
   if (length(Bckd_info_idx) > 0) {
     df[Bckd_info_idx + 1, 1] <- df[Bckd_info_idx, 1]
     df[Bckd_info_idx, 1] <- ""
