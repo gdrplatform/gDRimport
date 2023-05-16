@@ -1078,9 +1078,9 @@ read_in_results_Tecan <- function(results_file, results_sheets, headers) {
     # rows and columns in data matrix with row and col names
     n_row <- nrow(dfm)
     n_col <- ncol(dfm)
-    readout <- as.data.frame(dfm[2:n_row, 2:n_col, with = FALSE])
-    rownames(readout) <- t(dfm[2:n_row, 1])
-    colnames(readout) <- dfm[1, 2:n_col]
+    readout <- dfm[2:n_row, 2:n_col, with = FALSE]
+    rownames(readout) <- as.character(t(dfm[2:n_row, 1]))
+    colnames(readout) <- as.character(dfm[1, 2:n_col])
     # rows and columns in readout matrix
     n_row <- nrow(readout)
     n_col <- ncol(readout)
@@ -1088,7 +1088,7 @@ read_in_results_Tecan <- function(results_file, results_sheets, headers) {
     WellRow <- rownames(readout)
     WellColumn <- strtoi(colnames(readout))
     
-    # results data frame for plate
+    # results data table for plate
     df_results <- data.table::data.table(
       Barcode = results_sheets[iS],
       WellRow = WellRow,
@@ -1109,8 +1109,8 @@ read_in_results_Tecan <- function(results_file, results_sheets, headers) {
 #' Check whether all metadata names are correct
 #'
 #' @param col_df a character with colnames of df
-#' @param df_name a name of dataframe ("" by default)
-#' @param df_type a type of a dataframe (NULL by default)
+#' @param df_name a name of data.table ("" by default)
+#' @param df_type a type of a data.table (NULL by default)
 #' 
 #' @examples
 #'  td <- get_test_data()
@@ -1142,8 +1142,8 @@ check_metadata_names <-
 #' Check metadata for required column names
 # 
 #' @param col_df a charvec with corrected colnames of df
-#' @param df_name a name of dataframe ("" by default)
-#' @param df_type a type of a dataframe (NULL by default)
+#' @param df_name a name of data.table ("" by default)
+#' @param df_type a type of a data.table (NULL by default)
 #' 
 #'
 #' @return \code{NULL} invisibly.
@@ -1199,7 +1199,7 @@ check_metadata_req_col_names <- function(col_df, df_name, df_type) {
 #' Check metadata field names
 # 
 #' @param corrected_names a charvec with corrected colnames of df
-#' @param df_name a name of dataframe ("" by default)
+#' @param df_name a name of data.table ("" by default)
 #' 
 #' @return a charvec with corrected colnames of df
 #' 
@@ -1222,7 +1222,7 @@ check_metadata_field_names <- function(corrected_names, df_name) {
 #' Check metadata against spaces
 # 
 #' @param corrected_names a charvec with corrected colnames of df
-#' @param df_name a name of dataframe ("" by default)
+#' @param df_name a name of data.table ("" by default)
 #' 
 #' @return a charvec with corrected colnames of df
 #' 
@@ -1250,7 +1250,7 @@ check_metadata_against_spaces <- function(corrected_names, df_name) {
 #' Check whether metadata headers are correct and make fixes if needed
 # 
 #' @param corrected_names a charvec with corrected colnames of df
-#' @param df_name a name of dataframe ("" by default)
+#' @param df_name a name of data.table ("" by default)
 #' 
 #' @return a charvec with corrected colnames of df
 #' 
@@ -1304,7 +1304,7 @@ check_metadata_headers <- function(corrected_names, df_name) {
 #' @param nrows maximum number of file rows to be processed
 #' @param seps potential field separators of the input file
 #'
-#' @return a list containing the data frame, n_col, n_row, and if is edited
+#' @return a list containing the data table, n_col, n_row, and if is edited
 #' 
 read_EnVision_delim <- function(file,
                          nrows = 10000,
@@ -1325,7 +1325,7 @@ read_EnVision_delim <- function(file,
   # identify if original csv file or not (isEdited + n_row/n_col)
   ep <- get_EnVision_properties(results.list, basename(file))
   
-  # pad the lines with NA if not full before creating the dataframe
+  # pad the lines with NA if not full before creating the data.table
   results.list <- lapply(results.list, function(x) {
     if (length(x) < ep[["n_col"]]) {
       x <- c(x, array(NA, ep[["n_col"]] - length(x)))
