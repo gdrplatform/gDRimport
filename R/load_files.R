@@ -1327,12 +1327,11 @@ read_EnVision_delim <- function(file,
       x <- x[seq_len(ep[["n_col"]])]
     }
     x[x == "" & !is.na(x)] <- NA
-    x
+    as.list(x)
   })
   
-  df_ <- data.table::as.data.table(do.call(rbind, results.list), stringsAsFactors = FALSE)
-  colnames(df_) <- paste0("x", seq_len(ep[["n_col"]]))
-  rownames(df_) <- NULL
+  df_ <- data.table::rbindlist(results.list)
+  data.table::setnames(df_, paste0("x", seq_len(ep[["n_col"]])))
   
   return(list(df = df_, n_col = ep[["n_col"]], n_row = ep[["n_row"]], isEdited = ep[["isEdited"]]))
 }
