@@ -1079,14 +1079,14 @@ read_in_results_Tecan <- function(results_file, results_sheets, headers) {
     n_row <- nrow(dfm)
     n_col <- ncol(dfm)
     readout <- dfm[2:n_row, 2:n_col, with = FALSE]
-    rownames(readout) <- as.character(t(dfm[2:n_row, 1]))
-    colnames(readout) <- as.character(dfm[1, 2:n_col])
+    row.names(readout) <- as.character(t(dfm[2:n_row, 1]))
+    names(readout) <- as.character(dfm[1, 2:n_col])
     # rows and columns in readout matrix
     n_row <- nrow(readout)
     n_col <- ncol(readout)
     # get well identifiers (numbers and letters) from layout
-    WellRow <- rownames(readout)
-    WellColumn <- strtoi(colnames(readout))
+    WellRow <- row.names(readout)
+    WellColumn <- strtoi(names(readout))
     
     # results data table for plate
     df_results <- data.table::data.table(
