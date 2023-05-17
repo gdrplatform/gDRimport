@@ -1079,21 +1079,15 @@ read_in_results_Tecan <- function(results_file, results_sheets, headers) {
     n_row <- nrow(dfm)
     n_col <- ncol(dfm)
     readout <- dfm[2:n_row, 2:n_col, with = FALSE]
-    row.names(readout) <- as.character(t(dfm[2:n_row, 1]))
-    names(readout) <- as.character(dfm[1, 2:n_col])
-    # rows and columns in readout matrix
-    n_row <- nrow(readout)
-    n_col <- ncol(readout)
     # get well identifiers (numbers and letters) from layout
-    WellRow <- row.names(readout)
-    WellColumn <- strtoi(names(readout))
-    
+    WellRow <- as.character(t(dfm[2:n_row, 1]))
+    WellColumn <- strtoi(as.character(dfm[1, 2:n_col]))
     # results data table for plate
     df_results <- data.table::data.table(
       Barcode = results_sheets[iS],
       WellRow = WellRow,
       WellColumn =  as.vector(t(matrix(
-        WellColumn, n_col, n_row
+        WellColumn, ncol(readout), nrow(readout)
       ))),
       ReadoutValue = as.numeric(as.vector(as.matrix(readout))),
       BackgroundValue = 0 ## Tecan users report negligible background readings, usually background is not recorded
