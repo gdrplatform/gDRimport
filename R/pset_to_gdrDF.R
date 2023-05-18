@@ -140,7 +140,7 @@ getPSet <- function(pset_name,
   tre <- pset@treatmentResponse
   raw_tr <- tre$raw
   info_dt <- data.table::data.table(tre$info)
-  info_dt[, rn := rownames(tre$info)]
+  info_dt[, "rn" := rownames(tre$info)]
   duration <- unique(tre$info$duration.hours)
   
   # use output of get_env_identifiers() 
