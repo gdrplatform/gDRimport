@@ -14,7 +14,7 @@ read_EnVision_delim(file, nrows = 10000, seps = c(",", "\\t"))
 \item{seps}{potential field separators of the input file}
 }
 \value{
-a list containing the data frame, n_col, n_row, and if is edited
+a list containing the data table, n_col, n_row, and if is edited
 }
 \description{
 This function reads file from the EnVision Workstation

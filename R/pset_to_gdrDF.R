@@ -139,7 +139,7 @@ getPSet <- function(pset_name,
   
   tre <- pset@treatmentResponse
   raw_tr <- tre$raw
-  info_df <- tre$info
+  info_dt <- data.table::as.data.table(tre$info, keep.rownames = TRUE)
   duration <- unique(tre$info$duration.hours)
   
   # use output of get_env_identifiers() 
@@ -171,8 +171,8 @@ getPSet <- function(pset_name,
       sprintf("doses and viability data tables are not the same size")
   }
   treatment_cols <- c("sampleid", "treatmentid")
-  info_df$rn <- rownames(info_df)
-  merged_dt <- merge(merged_dt, info_df[, c(treatment_cols, "rn")], by = "rn")
+  selected_cols <- c(treatment_cols, "rn")
+  merged_dt <- merge(merged_dt, info_dt[, ..selected_cols], by = "rn")
   data.table::setnames(merged_dt, treatment_cols, c(env_ids$cellline, env_ids$drug_name))
   merged_dt["Dose" == env_ids$untreated_tag[1], env_ids$drug_name := env_ids$untreated_tag[1]]
   merged_dt[, "Dose" := NULL]

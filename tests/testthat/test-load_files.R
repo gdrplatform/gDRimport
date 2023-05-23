@@ -45,7 +45,7 @@ test_that("load_results", {
   ref_tbl <- data.table::fread(td1@ref_r1_r2)
   expect_equal(res_tbl, ref_tbl)
 
-  # valid output returned for data.frame input
+  # valid output returned for data.table input
   df_results <- data.table::data.table(datapath = result_path(td1), name = basename(result_path(td1)))
   res_df_tbl <- load_results(df_results, headers = headers)
   expect_equal(res_df_tbl, ref_tbl)
@@ -86,7 +86,7 @@ test_that("load_templates", {
   ref_tbl <- data.table::fread(td1@ref_t1_t2, colClasses = "character")
   expect_equal(t_tbl, ref_tbl)
 
-  # valid output returned for data.frame input
+  # valid output returned for data.table input
   df_templates <- data.table::data.table(datapath = template_path(td1), name = basename(template_path(td1)))
   res_t_tbl <- load_templates(df_templates)
   expect_equal(res_t_tbl, ref_tbl)
@@ -195,7 +195,7 @@ test_that(".check_file_structure works as expected", {
     df[, !apply(df[seq_len(35), ], 2, function(x) {
       all(is.na(x))}), with = FALSE]
   Bckd_info_idx <-
-    which(as.data.frame(df)[, 1] %in% "Background information")
+    which(df[[1]] %in% "Background information")
   if (length(Bckd_info_idx) > 0) {
     df[Bckd_info_idx + 1, 1] <- df[Bckd_info_idx, 1]
     df[Bckd_info_idx, 1] <- ""
@@ -204,10 +204,11 @@ test_that(".check_file_structure works as expected", {
   n_row <- size[1]
   n_col <- size[2]
   df_to_check <- df[, c(-6:-1), with = FALSE]
-  full_rows <- rowSums(as.data.frame(lapply(df_to_check, function(x) {
+  ml <- lapply(df_to_check, function(x) {
     is.na(suppressWarnings(as.numeric(x)))
-  }))) != ncol(df_to_check)
-  plate_row <- which(as.data.frame(df)[, 1] %in% "Plate information")
+  })
+  full_rows <- rowSums(do.call(cbind, ml)) != ncol(df_to_check)
+  plate_row <- which(df[[1]] %in% "Plate information")
   spacer_rows <- unlist(lapply(plate_row, function(x) c(x + 1, x + 2, x + 4 + n_row)))
   data_rows <- unlist(lapply(plate_row, function(x) (x + 4):(x + 4 + n_row - 1)))
   #fill up data_rows
@@ -241,7 +242,7 @@ test_that(".fill_empty_wells works as expected", {
     df[, !apply(df[seq_len(35), ], 2, function(x) {
       all(is.na(x))}), with = FALSE]
   Bckd_info_idx <-
-    which(as.data.frame(df)[, 1] %in% "Background information")
+    which(df[[1]] %in% "Background information")
   if (length(Bckd_info_idx) > 0) {
     df[Bckd_info_idx + 1, 1] <- df[Bckd_info_idx, 1]
     df[Bckd_info_idx, 1] <- ""
@@ -250,10 +251,11 @@ test_that(".fill_empty_wells works as expected", {
   n_row <- size[1]
   n_col <- size[2]
   df_to_check <- df[, -6:-1, with = FALSE]
-  full_rows <- rowSums(as.data.frame(lapply(df_to_check, function(x) {
+  ml <- lapply(df_to_check, function(x) {
     is.na(suppressWarnings(as.numeric(x)))
-  }))) != ncol(df_to_check)
-  plate_row <- which(as.data.frame(df)[, 1] %in% "Plate information")
+  })
+  full_rows <- rowSums(do.call(cbind, ml)) != ncol(df_to_check)
+  plate_row <- which(df[[1]] %in% "Plate information")
   spacer_rows <- unlist(lapply(plate_row, function(x) c(x + 1, x + 2, x + 4 + n_row)))
   data_rows <- unlist(lapply(plate_row, function(x) (x + 4):(x + 4 + n_row - 1)))
   df2 <- .fill_empty_wells(df, plate_row, data_rows, n_row, n_col)
@@ -268,7 +270,7 @@ test_that(".fill_empty_wells works as expected", {
 test_that(".standardize_untreated_values works as expected", {
   untreated_tags <- gDRutils::get_env_identifiers("untreated_tag")
 
-  df_test <- data.frame(a = c(untreated_tags[[1]], untreated_tags[[2]],
+  df_test <- data.table::data.table(a = c(untreated_tags[[1]], untreated_tags[[2]],
                               toupper(untreated_tags[[1]]), tolower(untreated_tags[[2]])))
   df_corrected <- .standardize_untreated_values(df_test)
   expect_true(all(unlist(df_corrected) == untreated_tags[[1]]))
