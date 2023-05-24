@@ -1,10 +1,7 @@
 ---
-title: Using gDRimport
-author:
-- name: Arkadiusz Gladki
-  email: gdr-support-d@gene.com
-package: gDRimport
-date: 
+title: "gDRimport"
+author: "gDR team"
+output: BiocStyle::html_document
 vignette: >
   %\VignetteIndexEntry{gDRimport}
   %\VignetteEngine{knitr::rmarkdown}
