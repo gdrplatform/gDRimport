@@ -30,7 +30,7 @@ library(gDRimport)
 
 # Overview
 The `gDRimport` package is a part of the gDR suite. It helps to prepare raw drug response data for downstream processing. 
-It mainly contains helper functions for importing/loading/validating dose response data provided in different file formats. 
+It mainly contains helper functions for importing/loading/validating dose response data provided from different scanner sources. 
 In collaboration with the BHKLab, `gDRimport` also provides functions that can convert a `PharmacoGx::PharamcoSet` object into a gDR object. 
 With this functionality, users familiar with the gDR suite of packages and methods can utilize the publically available, curated datasets from the PharmacoGx database. 
 The main step in this process is to extract the drug dose-response data from the PharmacoSets and transform them into a `data.frame` that can be used as input for the `gDRcore::runDrugResponseProcessingPipeline`.
@@ -38,10 +38,10 @@ The main step in this process is to extract the drug dose-response data from the
 
 # Loading a PharmacoSet (PSet)
 Whereas a user might already have a pharmacoset loaded in their R session, if they wish to obtain a different pharmacoset or use the same script in the future we provide a helper function to do so. 
-It helps to have a user directory in which to store all pharmacosets, and by passing this directory into the function as a parameter, the function will also check to see if the PSet exists in the user-definded directory.
+It helps to have a user directory in which to store all pharmacosets, and by passing this directory into the function as a parameter, the function will also check to see if the PSet exists in the user-defined directory.
 This is to ensure that the PSet is not being re-downloaded if it already has.  
 ```{r eval = FALSE}
-pset <- gDRimport:::.getPSet("Tavor_2020")
+pset <- getPSet("Tavor_2020")
 pset
 ```
 
@@ -61,7 +61,7 @@ pset
 ```
 
 # Converting PharmacoSet to Dataframe for gDR pipeline
-`PharamcoSets` hold data pertaining to the celllines (@sample slot), drugs (@treatment slot), and dose response experiments (@treatmentResponse slot). 
+`PharamcoSets` hold data pertaining to the cell lines (@sample slot), drugs (@treatment slot), and dose response experiments (@treatmentResponse slot). 
 The dose response data is stored in a `treatmentResponseExperiment` object and the function `gDRimport::convert_pset_to_df` extracts this information to 
 build a `dataFrame` that can be used as input to the gDR pipeline. 
 
@@ -72,7 +72,7 @@ df_ |> str()
 ```
 
 # Subsetting to extract relevant information
-Most canonical `PharmacoSets` have data pertaining to many cellLines and their response to many drugs (drug-combination data is available in some but its conversion to gDR is not currently supported).
+Most canonical `PharmacoSets` have data pertaining to many cell lines and their response to many drugs (drug-combination data is available in some but its conversion to gDR is not currently supported).
 As such, in the interest of time and resources, it may be useful to subset the data before providing it as input for the gDR pipeline. 
 
 ```{r}
