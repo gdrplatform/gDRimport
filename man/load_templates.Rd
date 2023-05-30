@@ -7,11 +7,11 @@
 load_templates(df_template_files)
 }
 \arguments{
-\item{df_template_files}{data.frame, with datapaths and names of results file(s)
+\item{df_template_files}{data.table, with datapaths and names of results file(s)
 or character with file path of templates file(s)}
 }
 \value{
-data.frame with templates data
+data.table with templates data
 }
 \description{
 This functions loads and checks the template file(s)

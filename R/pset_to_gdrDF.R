@@ -5,7 +5,7 @@
 #' @param pharmacoset PharmacoSet object
 #' @param run_parallel logical, TRUE (default) if to run functions in Parallel, FALSE to run in serial
 #' @param workers integer, number of workers defaults to 2L if run_parallel is TRUE
-#' @return data.frame of PharmacoSet's dose response data with column names aligned with gDR standard
+#' @return data.table of PharmacoSet's dose response data with column names aligned with gDR standard
 #' 
 #' @examples
 #' pset <- suppressMessages(getPSet(
@@ -39,9 +39,7 @@ convert_pset_to_df <- function(pharmacoset,
   dose_response_duration_refdivtime <- .createPseudoData(dose_response)
   
   # REMOVE NEGATIVE VIABILITIES
-  dt <- .removeNegatives(dose_response_duration_refdivtime)
-  
-  as.data.frame(dt)
+  .removeNegatives(dose_response_duration_refdivtime)
 }
 
 #' Adjust environment variables to meet gDR standards
@@ -141,7 +139,7 @@ getPSet <- function(pset_name,
   
   tre <- pset@treatmentResponse
   raw_tr <- tre$raw
-  info_df <- tre$info
+  info_dt <- data.table::as.data.table(tre$info, keep.rownames = TRUE)
   duration <- unique(tre$info$duration.hours)
   
   # use output of get_env_identifiers() 
@@ -173,8 +171,8 @@ getPSet <- function(pset_name,
       sprintf("doses and viability data tables are not the same size")
   }
   treatment_cols <- c("sampleid", "treatmentid")
-  info_df$rn <- rownames(info_df)
-  merged_dt <- merge(merged_dt, info_df[, c(treatment_cols, "rn")], by = "rn")
+  selected_cols <- c(treatment_cols, "rn")
+  merged_dt <- merge(merged_dt, info_dt[, ..selected_cols], by = "rn")
   data.table::setnames(merged_dt, treatment_cols, c(env_ids$cellline, env_ids$drug_name))
   merged_dt["Dose" == env_ids$untreated_tag[1], env_ids$drug_name := env_ids$untreated_tag[1]]
   merged_dt[, "Dose" := NULL]
@@ -191,8 +189,8 @@ getPSet <- function(pset_name,
 #' @return data.table
 .createPseudoData <- function(dt) {
   
-  checkmate::assert_class(dt, "data.table")
-  
+  checkmate::assert_data_table(dt)
+
   barcode <- gDRutils::get_env_identifiers("barcode")[1]
   duration <- gDRutils::get_env_identifiers("duration")
   refDivTime <- gDRutils::get_env_identifiers("cellline_ref_div_time")
@@ -219,6 +217,6 @@ getPSet <- function(pset_name,
 #' @return data.table with positive values in column `ReadoutValue`
 #' 
 .removeNegatives <- function(dataset) {
-  checkmate::assert_class(dataset, "data.frame")
+  checkmate::assert_data_table(dataset)
   dataset[dataset$ReadoutValue > 0]
 }

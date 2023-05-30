@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+#### [0.99.12] - 2023-05-24
+- format the vignette with BiocStyle
+
+#### [0.99.11] - 2023-05-16
+- data.frame => data.table switch (next round of changes)
+
+#### [0.99.10] - 2023-05-04
+- Switch from `tibble` to `data.table` in excel files
+
+#### [0.99.9] - 2023-04-25
+- Refactor: tibble, data.frame --> data.table
+
 #### [0.99.8] - 2023-04-20
 - switch to OSI license
 

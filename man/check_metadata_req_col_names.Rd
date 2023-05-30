@@ -9,9 +9,9 @@ check_metadata_req_col_names(col_df, df_name, df_type)
 \arguments{
 \item{col_df}{a charvec with corrected colnames of df}
 
-\item{df_name}{a name of dataframe ("" by default)}
+\item{df_name}{a name of data.table ("" by default)}
 
-\item{df_type}{a type of a dataframe (NULL by default)}
+\item{df_type}{a type of a data.table (NULL by default)}
 }
 \value{
 \code{NULL} invisibly.

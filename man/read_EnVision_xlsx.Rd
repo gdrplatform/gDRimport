@@ -12,7 +12,7 @@ read_EnVision_xlsx(results_file, results_sheet)
 \item{results_sheet}{results sheet names}
 }
 \value{
-data.frame with results data
+data.table with results data
 }
 \description{
 Read in single xlsx data from EnVision

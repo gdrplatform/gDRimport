@@ -9,7 +9,7 @@ check_metadata_field_names(corrected_names, df_name)
 \arguments{
 \item{corrected_names}{a charvec with corrected colnames of df}
 
-\item{df_name}{a name of dataframe ("" by default)}
+\item{df_name}{a name of data.table ("" by default)}
 }
 \value{
 a charvec with corrected colnames of df

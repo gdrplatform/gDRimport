@@ -125,8 +125,9 @@ save_drug_info_per_well <-
             drug_mat[trt_info$row_idx[m], trt_info$col_idx[n]] <- drug
           }
         }
-        drug_data <- data.frame(drug_mat)
-        conc_data <- data.frame(conc_mat)
+
+        drug_data <- data.table::data.table(drug_mat)
+        conc_data <- data.table::data.table(conc_mat)
 
         openxlsx::addWorksheet(wb, drug_sname)
         openxlsx::writeData(wb, sheet = (j * 2) - 1, drug_data, colNames = FALSE)
@@ -159,11 +160,11 @@ merge_D300_w_metadata <- function(D300, Gnums) {
 
 #' Parse D300
 #'
-#' This function parses a D300 *.tdd file (XML format) into a data.frame
+#' This function parses a D300 *.tdd file (XML format) into a data.table
 #'
 #' @param D300_file string, file path to D300 .tdd file
 #'
-#' @return data.frame representing input \code{D300_file}.
+#' @return data.table representing input \code{D300_file}.
 #' 
 #' @examples
 #' td3 <- get_test_D300_data()
@@ -219,13 +220,13 @@ get_D300_xml_drugs <-
       name <- XML::xmlValue(fluid[["Name"]])
       stock_conc <- XML::xmlValue(fluid[["Concentration"]])
       conc_unit <- XML::xmlValue(fluid[["ConcentrationUnit"]])
-      df_drug[[fi]] <- data.frame(t(c(id, 
-                                     name, 
-                                     stock_conc, 
-                                     conc_unit)))
+      df_drug[[fi]] <- data.table::data.table(t(c(id,
+                                                  name,
+                                                  stock_conc,
+                                                  conc_unit)))
       colnames(df_drug[[fi]]) <- drug_cols
     }
-    do.call("rbind", df_drug)
+    data.table::rbindlist(df_drug)
   }    
 
 get_plate_info <- function(plate, vol_unit) {
@@ -297,7 +298,8 @@ get_D300_xml_treatments <-
     })
     t(do.call(cbind, wl))
     })
-    df_trt <- do.call(rbind, pl)
+    
+    df_trt <- data.table::data.table(do.call(rbind, pl))
     colnames(df_trt) <- trt_cols
     df_trt
   }
@@ -341,9 +343,9 @@ parse_D300_metadata_file <- function(metadata_file) {
                               nsheets, metadata_file)
   }
 
-  metadata <- readxl::read_excel(metadata_file,
-                                     sheet = D300_Gnum_sheets[[1]],
-                                     col_names = TRUE)
+  metadata <- read_excel_to_dt(metadata_file,
+                               sheet = D300_Gnum_sheets[[1]],
+                               col_names = TRUE)
   metadata
 }
 
@@ -354,7 +356,9 @@ parse_D300_metadata_file <- function(metadata_file) {
 
 fill_NA <- function(x, from, with) {
   idx <- is.na(x[[from]])
-  x[idx, from] <- x[idx, with]
+  if (any(idx)) {
+    data.table::set(x, j = from, value = x[which(idx), ..with])
+  }
   x
 }
 

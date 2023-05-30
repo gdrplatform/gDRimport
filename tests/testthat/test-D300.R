@@ -8,13 +8,17 @@ test_that("parse_D300_xml", {
   # valid output returned for the D300 96 well plate example
   fs <- td3[["f_96w"]]
   dose_df <- parse_D300_xml(fs[["d300"]])
-  ref_dose_df <- readRDS(fs[["ref_d300"]])
+  ref_dose_df <- data.table::setDT(readRDS(fs[["ref_d300"]]))
+  data.table::setorder(dose_df, Row, Col, D300_Plate_N)
+  data.table::setorder(ref_dose_df, Row, Col, D300_Plate_N)
   expect_identical(dose_df, ref_dose_df)
   
   # valid output returned for the D300 348 well plate example
   fs2 <- td3[["f_384w"]]
   dose_df <- parse_D300_xml(fs[["d300"]])
-  ref_dose_df <- readRDS(fs[["ref_d300"]])
+  ref_dose_df <- data.table::setDT(readRDS(fs[["ref_d300"]]))
+  data.table::setorder(dose_df, Row, Col, D300_Plate_N)
+  data.table::setorder(ref_dose_df, Row, Col, D300_Plate_N)
   expect_identical(dose_df, ref_dose_df)
   
   # expected error(s) returned
@@ -77,12 +81,20 @@ test_that("import_D300", {
       expect_equal(output_sheets, ref_sheets)
       #test content of sheets is identical
       for (j in seq_len(length(output_sheets))) {
-          output_sheet <- readxl::read_excel(output_file_path,
+          output_sheet <- read_excel_to_dt(output_file_path,
                                              sheet = output_sheets[[j]],
-                                             col_names = TRUE)
-          ref_sheet <- readxl::read_excel(ref_file_path,
+                                             col_names = FALSE)
+          ref_sheet <- read_excel_to_dt(ref_file_path,
                                           sheet = ref_sheets[[j]],
-                                          col_names = TRUE)
+                                          col_names = FALSE)
+          untreated_tags <- gDRutils::get_env_identifiers("untreated_tag")
+          ref_sheet[, names(ref_sheet) := lapply(.SD, function(x) {
+            if (is.character(x)) {
+              gsub(untreated_tags[[2]], untreated_tags[[1]], x)
+            } else {
+              x
+            }
+            }), .SDcols = names(ref_sheet)]
           expect_equal(output_sheet, ref_sheet)
       }    
     }
@@ -107,7 +119,7 @@ test_that("convert_units works as expected", {
 
 test_that("gDRimport:::fill_NA works as expected", {
   n <- 5
-  df <- data.frame(a = rep(NA, n), b = seq(n))
+  df <- data.table::data.table(a = rep(NA, n), b = seq(n))
   obs <- gDRimport:::fill_NA(df, "a", "b")
   expect_equal(obs$a, df$b)
 

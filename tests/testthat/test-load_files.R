@@ -15,7 +15,7 @@ context("load_files")
   # valid output returned for "manifest.xlsx"
   m_df <- load_manifest(td2$m_file)
   ref_m_df <- readRDS(td2$ref_m_df)
-  expect_identical(m_df, ref_m_df)
+  expect_equal(m_df, ref_m_df)
 
   # expected error(s) returned
   err_msg1 <- "Assertion on 'manifest_file' failed: File does not exist: '/non/existent_file'."
@@ -42,18 +42,18 @@ test_that("load_results", {
   res_tbl <- load_results(df_results_files = c(result_path(td1)), headers = headers)
   ## check with reference
   ## reference obtained with: write.csv2(res_tbl,file = "ref_RawData_day0_day7_xlsx.csv",row.names = FALSE) # nolint
-  ref_tbl <- read.csv2(td1@ref_r1_r2)
+  ref_tbl <- data.table::fread(td1@ref_r1_r2)
   expect_equal(res_tbl, ref_tbl)
 
-  # valid output returned for data.frame input
-  df_results <- data.frame(datapath = result_path(td1), name = basename(result_path(td1)))
+  # valid output returned for data.table input
+  df_results <- data.table::data.table(datapath = result_path(td1), name = basename(result_path(td1)))
   res_df_tbl <- load_results(df_results, headers = headers)
   expect_equal(res_df_tbl, ref_tbl)
 
   # valid output is returned for a single xlsx file
   res_tbl2 <- load_results(df_results_files = c(result_path(td1)[1]), headers = headers)
   ## check with reference
-  ref_tbl2 <- read.csv2(td1@ref_r1)
+  ref_tbl2 <- data.table::fread(td1@ref_r1)
   expect_equal(res_tbl2, ref_tbl2)
 
   # get test_Tecan_data
@@ -83,14 +83,13 @@ test_that("load_templates", {
   # valid output returned for the two xlsx files
   t_tbl <- load_templates(df_template_files = c(template_path(td1)))
   ## check with reference
-  ## reference obtained with: write.csv2(t_tbl,file = "ref_template_treated_untreated_xlsx.csv",row.names = FALSE) # nolint
-  ref_tbl <- .standardize_untreated_values(read.csv2(td1@ref_t1_t2))
-  expect_equal(standardize_df(t_tbl), standardize_df(ref_tbl))
+  ref_tbl <- data.table::fread(td1@ref_t1_t2, colClasses = "character")
+  expect_equal(t_tbl, ref_tbl)
 
-  # valid output returned for data.frame input
-  df_templates <- data.frame(datapath = template_path(td1), name = basename(template_path(td1)))
+  # valid output returned for data.table input
+  df_templates <- data.table::data.table(datapath = template_path(td1), name = basename(template_path(td1)))
   res_t_tbl <- load_templates(df_templates)
-  expect_equal(standardize_df(res_t_tbl), standardize_df(ref_tbl))
+  expect_equal(res_t_tbl, ref_tbl)
 
   # get test_Tecan_data
   td2 <- get_test_Tecan_data()
@@ -99,7 +98,7 @@ test_that("load_templates", {
   res_t_tbl3 <- load_templates(df_template_files = c(td2$t_files))
   ## check with reference
   ref_tbl3 <- .standardize_untreated_values(readRDS(td2$ref_t_df))
-  expect_equal(standardize_df(res_t_tbl3), standardize_df(ref_tbl3))
+  expect_equal(res_t_tbl3, ref_tbl3)
 
   # expected error(s) returned
   err_msg1 <- "Assertion on 'template_file' failed: File does not exist: '/non/existent_file'."
@@ -124,10 +123,10 @@ test_that("load_data", {
   # valid output returned for manifest
   expect_identical(td1@ref_m_df, l_tbl$manifest)
   # valid output returned for templates
-  ref_tbl <- .standardize_untreated_values(read.csv2(td1@ref_t1_t2))
-  expect_equal(standardize_df(l_tbl$treatments), standardize_df(ref_tbl))
+  ref_tbl <- .standardize_untreated_values(data.table::fread(td1@ref_t1_t2))
+  expect_equal(l_tbl$treatments, ref_tbl)
   # valid output returned for results
-  ref_tbl <- read.csv2(td1@ref_r1_r2)
+  ref_tbl <- data.table::fread(td1@ref_r1_r2)
   expect_equal(l_tbl$data, ref_tbl)
 
   #get test_Tecan_data (Tecan format)
@@ -136,10 +135,10 @@ test_that("load_data", {
   l_tbl2 <- load_data(td2$m_file, td2$t_files, td2$r_files, instrument = "Tecan")
   # valid output returned for manifest
   ref_m_df <- readRDS(td2$ref_m_df)
-  expect_identical(ref_m_df$data, l_tbl2$manifest)
+  expect_equal(ref_m_df$data, l_tbl2$manifest)
   # valid output returned for templates
   ref_t_df <- .standardize_untreated_values(readRDS(td2$ref_t_df))
-  expect_equal(standardize_df(ref_t_df), standardize_df(l_tbl2$treatments))
+  expect_equal(ref_t_df, l_tbl2$treatments)
   # valid output returned for results
   ref_r_df <- readRDS(td2$ref_r_df)
   expect_equal(l_tbl2$data, ref_r_df)
@@ -150,13 +149,11 @@ test_that("load_data", {
     load_data(td4$m_file, td4$t_files, td4$r_files, instrument = "EnVision")
   ref_l <- readRDS(td4$ref_l_path)
   # valid output returned for manifest
-  expect_identical(standardize_df(ref_l$manifest),
-                   standardize_df(l_tbl4$manifest))
+  expect_equal(ref_l$manifest, l_tbl4$manifest)
   # valid output returned for templates
-  expect_identical(standardize_df(ref_l$treatments),
-                   standardize_df(l_tbl4$treatments))
+  expect_equal(ref_l$treatments, l_tbl4$treatments)
   # valid output returned for results
-  expect_identical(standardize_df(ref_l$data), standardize_df(l_tbl4$data))
+  expect_equal(ref_l$data, l_tbl4$data)
   
   # expected error(s) returned - manifest
   err_msg1 <- "'manifest_file' must be a readable path"
@@ -186,19 +183,19 @@ test_that("load_data", {
 })
 
 test_that(".get_plate_size works as expected", {
-  df <- readxl::read_excel(system.file("extdata/data1/RawData_day7.xlsx", package = "gDRimport"))
+  df <- read_excel_to_dt(system.file("extdata/data1/RawData_day7.xlsx", package = "gDRimport"))
   size <- .get_plate_size(df)
   expect_length(size, 2)
   expect_equal(prod(size), 384)
 })
 
 test_that(".check_file_structure works as expected", {
-  df <- readxl::read_excel(system.file("extdata/data1/RawData_day7.xlsx", package = "gDRimport"))
+  df <- read_excel_to_dt(system.file("extdata/data1/RawData_day7.xlsx", package = "gDRimport"))
   df <-
     df[, !apply(df[seq_len(35), ], 2, function(x) {
-      all(is.na(x))})]
+      all(is.na(x))}), with = FALSE]
   Bckd_info_idx <-
-    which(as.data.frame(df)[, 1] %in% "Background information")
+    which(df[[1]] %in% "Background information")
   if (length(Bckd_info_idx) > 0) {
     df[Bckd_info_idx + 1, 1] <- df[Bckd_info_idx, 1]
     df[Bckd_info_idx, 1] <- ""
@@ -206,17 +203,16 @@ test_that(".check_file_structure works as expected", {
   size <- .get_plate_size(df)
   n_row <- size[1]
   n_col <- size[2]
-  df_to_check <- df[, -6:-1]
-  full_rows <- rowSums(as.data.frame(lapply(df_to_check, function(x) {
+  df_to_check <- df[, c(-6:-1), with = FALSE]
+  ml <- lapply(df_to_check, function(x) {
     is.na(suppressWarnings(as.numeric(x)))
-  }))) != ncol(df_to_check)
-  plate_row <- which(as.data.frame(df)[, 1] %in% "Plate information")
+  })
+  full_rows <- rowSums(do.call(cbind, ml)) != ncol(df_to_check)
+  plate_row <- which(df[[1]] %in% "Plate information")
   spacer_rows <- unlist(lapply(plate_row, function(x) c(x + 1, x + 2, x + 4 + n_row)))
   data_rows <- unlist(lapply(plate_row, function(x) (x + 4):(x + 4 + n_row - 1)))
   #fill up data_rows
-  for (i in data_rows) {
-    df[i, c(is.na(df[i, ]))] <- "0"
-  }
+  df[data_rows, ] <- lapply(df[data_rows, ], function(x) ifelse(is.na(x), "0", x))
   full_rows_index <- sort(union(spacer_rows, data_rows))
   gaps <-
     min(which(full_rows)[(diff(which(full_rows)) > 20)] + 1, dim(df)[1])
@@ -235,18 +231,18 @@ test_that(".check_file_structure works as expected", {
   expect_null(.check_file_structure(df, basename(results_filename[[iF]]), 
                                     iS, readout_offset, n_row, n_col, iB, barcode_col))
 
-  df2 <- readxl::read_excel(system.file("extdata/data1/RawData_day7.xlsx", package = "gDRimport"))
+  df2 <- read_excel_to_dt(system.file("extdata/data1/RawData_day7.xlsx", package = "gDRimport"))
   expect_error(.check_file_structure(df2, basename(results_filename[[iF]]),
                                     iS, readout_offset, n_row, n_col, iB, barcode_col))
 })
 
 test_that(".fill_empty_wells works as expected", {
-  df <- readxl::read_excel(system.file("extdata/data1/RawData_day7.xlsx", package = "gDRimport"), col_names = FALSE)
+  df <- read_excel_to_dt(system.file("extdata/data1/RawData_day7.xlsx", package = "gDRimport"), col_names = FALSE)
   df <-
     df[, !apply(df[seq_len(35), ], 2, function(x) {
-      all(is.na(x))})]
+      all(is.na(x))}), with = FALSE]
   Bckd_info_idx <-
-    which(as.data.frame(df)[, 1] %in% "Background information")
+    which(df[[1]] %in% "Background information")
   if (length(Bckd_info_idx) > 0) {
     df[Bckd_info_idx + 1, 1] <- df[Bckd_info_idx, 1]
     df[Bckd_info_idx, 1] <- ""
@@ -254,11 +250,12 @@ test_that(".fill_empty_wells works as expected", {
   size <- .get_plate_size(df)
   n_row <- size[1]
   n_col <- size[2]
-  df_to_check <- df[, -6:-1]
-  full_rows <- rowSums(as.data.frame(lapply(df_to_check, function(x) {
+  df_to_check <- df[, -6:-1, with = FALSE]
+  ml <- lapply(df_to_check, function(x) {
     is.na(suppressWarnings(as.numeric(x)))
-  }))) != ncol(df_to_check)
-  plate_row <- which(as.data.frame(df)[, 1] %in% "Plate information")
+  })
+  full_rows <- rowSums(do.call(cbind, ml)) != ncol(df_to_check)
+  plate_row <- which(df[[1]] %in% "Plate information")
   spacer_rows <- unlist(lapply(plate_row, function(x) c(x + 1, x + 2, x + 4 + n_row)))
   data_rows <- unlist(lapply(plate_row, function(x) (x + 4):(x + 4 + n_row - 1)))
   df2 <- .fill_empty_wells(df, plate_row, data_rows, n_row, n_col)
@@ -273,7 +270,7 @@ test_that(".fill_empty_wells works as expected", {
 test_that(".standardize_untreated_values works as expected", {
   untreated_tags <- gDRutils::get_env_identifiers("untreated_tag")
 
-  df_test <- data.frame(a = c(untreated_tags[[1]], untreated_tags[[2]],
+  df_test <- data.table::data.table(a = c(untreated_tags[[1]], untreated_tags[[2]],
                               toupper(untreated_tags[[1]]), tolower(untreated_tags[[2]])))
   df_corrected <- .standardize_untreated_values(df_test)
   expect_true(all(unlist(df_corrected) == untreated_tags[[1]]))
@@ -283,7 +280,7 @@ test_that("check_metadata_names works as expected", {
   
   td1 <- get_test_data()
   m_file <- manifest_path(td1)
-  m_data <- readxl::read_excel(m_file)
+  m_data <- read_excel_to_dt(m_file)
   
   # default
   result <- check_metadata_names(col_df = colnames(m_data))

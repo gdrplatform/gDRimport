@@ -17,7 +17,7 @@ get_test_data <- function() {
     templates_v <- c("Template_Untreated.xlsx", "Template_7daytreated.xlsx")
     clids_n <- c(rep(11, 2), rep(12, 2), rep(13, 2), rep(14, 2), rep(15, 2), rep(18, 2))
     ref_m_df <-
-      data.frame(
+      data.table::data.table(
         Barcode = bcode_v,
         Duration = rep(c(0, 168), 6),
         Template = rep(templates_v, 6),

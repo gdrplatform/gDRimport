@@ -6,19 +6,18 @@ library(PharmacoGx)
 library(gDR)
 library(gDRcore)
 library(gDRimport)
-pset <- .getPSet("CCLE_2015")
-pset2 <- .getPSet("FIMM_2016")
-pset3 <- .getPSet("NCI_60")
-pset4 <- .getPSet("PRISM_2020")
+pset <- getPSet("CCLE_2015")
+pset2 <- getPSet("FIMM_2016")
+pset3 <- getPSet("NCI_60")
+pset4 <- getPSet("PRISM_2020")
 
-df_ <- gDRimport::convert_pset_to_df(pharmacoset = pset,
+dt <- gDRimport::convert_pset_to_df(pharmacoset = pset,
                         run_parallel=TRUE,
                         workers = 4L)
 
 
 
 # example subset to speed things up. Specific to CCLE Pset
-(dt <- data.table::as.data.table(df_))
 x <- dt[Clid=="1321N1"]
 x
 # x$Barcode |> unique() |> length()
@@ -26,7 +25,7 @@ x
 
 #############################
 # RUN DRUG RESPONSE PROCESSING PIPELINE
-se <- gDRcore::runDrugResponseProcessingPipeline(as.data.frame(x))
+se <- gDRcore::runDrugResponseProcessingPipeline(x)
 gDRutils::convert_se_assay_to_dt(se[[1]],"RawTreated")
 gDRutils::convert_se_assay_to_dt(se[[1]],"Controls")
 
@@ -36,7 +35,7 @@ gDRutils::convert_se_assay_to_dt(se[[1]],"Controls")
 
 #############################
 # CREATE SUMMARIZED EXPERIMENT
-se2 <- gDRcore::create_SE(as.data.frame(x),  data_type = "single-agent")
+se2 <- gDRcore::create_SE(x,  data_type = "single-agent")
 gDRutils::convert_se_assay_to_dt(se2, "RawTreated")
 gDRutils::convert_se_assay_to_dt(se2, "Controls")
 

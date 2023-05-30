@@ -17,9 +17,9 @@ Object class \code{gdr_test_data} is build by function \code{\link[=get_test_dat
 
 \item{\code{result_path}}{character, path(s) to results file}
 
-\item{\code{template_path}}{character, path(s) to data.frame with template data}
+\item{\code{template_path}}{character, path(s) to data.table with template data}
 
-\item{\code{ref_m_df}}{character, data.frame with manifest data}
+\item{\code{ref_m_df}}{character, data.table with manifest data}
 
 \item{\code{ref_r1_r2}}{character, path to reference file with raw data for treated & untreated}
 

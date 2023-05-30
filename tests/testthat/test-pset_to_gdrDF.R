@@ -73,7 +73,7 @@ test_that("convert_pset_to_df works as expected", {
     ))
   )
   dt <- convert_pset_to_df(pset)
-  expect_s3_class(dt, "data.frame")
+  checkmate::assert_data_table(dt)
   expect_equal(dim(dt), c(34516, 7))
   expect_equal(names(dt), c("Barcode", "ReadoutValue", "Concentration", "Clid", "DrugName", 
                             "Duration", "ReferenceDivisionTime"))
