@@ -68,7 +68,7 @@ build a `dataFrame` that can be used as input to the gDR pipeline.
 ```{r}
 # Store treatment response data in df_ 
 df_ <- convert_pset_to_df(pharmacoset = pset)
-df_ |> str()
+str(df_)
 ```
 
 # Subsetting to extract relevant information
