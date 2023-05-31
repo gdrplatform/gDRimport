@@ -7,7 +7,7 @@ author:
   email: bartosz.w.czech@gmail.com
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{ConvertingPharmacoSetDrugResponseDataintogDRobject}
+  %\VignetteIndexEntry{Converting PharmacoSet Drug Response Data into gDR object}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
