@@ -31,7 +31,7 @@ The `gDRimport` package is a part of the gDR suite. It helps to prepare raw drug
 It mainly contains helper functions for importing/loading/validating dose response data provided from different scanner sources. 
 In collaboration with the BHKLab, `gDRimport` also provides functions that can convert a `PharmacoGx::PharamcoSet` object into a gDR object. 
 With this functionality, users familiar with the gDR suite of packages and methods can utilize the publically available, curated datasets from the PharmacoGx database. 
-The main step in this process is to extract the drug dose-response data from the PharmacoSets and transform them into a `data.frame` that can be used as input for the `gDRcore::runDrugResponseProcessingPipeline`.
+The main step in this process is to extract the drug dose-response data from the PharmacoSets and transform them into a `data.table` that can be used as input for the `gDRcore::runDrugResponseProcessingPipeline`.
 
 
 # Loading a PharmacoSet (PSet)
@@ -61,12 +61,12 @@ pset
 # Converting PharmacoSet to Dataframe for gDR pipeline
 `PharamcoSets` hold data pertaining to the cell lines (@sample slot), drugs (@treatment slot), and dose response experiments (@treatmentResponse slot). 
 The dose response data is stored in a `treatmentResponseExperiment` object and the function `gDRimport::convert_pset_to_df` extracts this information to 
-build a `dataFrame` that can be used as input to the gDR pipeline. 
+build a `data.table` that can be used as input to the gDR pipeline. 
 
 ```{r}
 # Store treatment response data in df_ 
-df_ <- convert_pset_to_df(pharmacoset = pset)
-str(df_)
+dt <- convert_pset_to_df(pharmacoset = pset)
+str(dt)
 ```
 
 # Subsetting to extract relevant information
@@ -74,11 +74,7 @@ Most canonical `PharmacoSets` have data pertaining to many cell lines and their 
 As such, in the interest of time and resources, it may be useful to subset the data before providing it as input for the gDR pipeline. 
 
 ```{r}
-#Convert df to datatable for subsetting ease
-dt <- data.table::as.data.table(df_)
-
-
-# example subset using only 1 cellLine
+# example subset using only 1 cell line
 x <- dt[Clid==dt$Clid[1]]
 x
 ```
@@ -88,17 +84,23 @@ The subsetted data can now be used as input for the `gDRcore::runDrugResponsePro
 
 ```{r eval = FALSE}
 # RUN DRUG RESPONSE PROCESSING PIPELINE
-se <- gDRcore::runDrugResponseProcessingPipeline(as.data.frame(x))
+se <- gDRcore::runDrugResponseProcessingPipeline(x)
 se
 ``` 
 
 ```{r eval = FALSE}
-# Convert Summarized Experiments to Data.Table 
+# Convert Summarized Experiments to data.table 
 # Available SEs : "RawTreatred", "Controls", "Normalized", "Averaged", "Metrics"
 
 str(gDRutils::convert_se_assay_to_dt(se[[1]], "Averaged"))
 str(gDRutils::convert_se_assay_to_dt(se[[1]], "Metrics"))
 ```
+
+
+```{r, include = FALSE}
+gDRutils::reset_env_identifiers()
+```
+
 
 # SessionInfo {-}
 
