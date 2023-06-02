@@ -58,7 +58,7 @@ pset <- testthat:::with_mock(
 pset
 ```
 
-# Converting PharmacoSet to Dataframe for gDR pipeline
+# Converting PharmacoSet to data.table for gDR pipeline
 `PharamcoSets` hold data pertaining to the cell lines (@sample slot), drugs (@treatment slot), and dose response experiments (@treatmentResponse slot). 
 The dose response data is stored in a `treatmentResponseExperiment` object and the function `gDRimport::convert_pset_to_df` extracts this information to 
 build a `data.table` that can be used as input to the gDR pipeline. 
