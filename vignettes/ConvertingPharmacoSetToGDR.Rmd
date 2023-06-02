@@ -75,7 +75,8 @@ As such, in the interest of time and resources, it may be useful to subset the d
 
 ```{r}
 # example subset using only 1 cell line
-x <- dt[Clid==dt$Clid[1]]
+subset_cl <- dt$Clid[1]
+x <- dt[Clid == subset_cl]
 x
 ```
 
