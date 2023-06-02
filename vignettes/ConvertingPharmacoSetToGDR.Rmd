@@ -1,0 +1,110 @@
+---
+title: "Converting PharmacoSet Drug Response Data into gDR object" 
+author:
+- name: Jermiah Joseph
+  email: jermiah.joseph@uhn.ca
+- name: Bartosz Czech
+  email: bartosz.w.czech@gmail.com
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Converting PharmacoSet Drug Response Data into gDR object}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(PharmacoGx)
+library(gDRimport)
+```
+
+
+# Overview
+The `gDRimport` package is a part of the gDR suite. It helps to prepare raw drug response data for downstream processing. 
+It mainly contains helper functions for importing/loading/validating dose response data provided from different scanner sources. 
+In collaboration with the BHKLab, `gDRimport` also provides functions that can convert a `PharmacoGx::PharamcoSet` object into a gDR object. 
+With this functionality, users familiar with the gDR suite of packages and methods can utilize the publically available, curated datasets from the PharmacoGx database. 
+The main step in this process is to extract the drug dose-response data from the PharmacoSets and transform them into a `data.table` that can be used as input for the `gDRcore::runDrugResponseProcessingPipeline`.
+
+
+# Loading a PharmacoSet (PSet)
+Whereas a user might already have a pharmacoset loaded in their R session, if they wish to obtain a different pharmacoset or use the same script in the future we provide a helper function to do so. 
+It helps to have a user directory in which to store all pharmacosets, and by passing this directory into the function as a parameter, the function will also check to see if the PSet exists in the user-defined directory.
+This is to ensure that the PSet is not being re-downloaded if it already has.  
+```{r eval = FALSE}
+pset <- getPSet("Tavor_2020")
+pset
+```
+
+```{r, include = FALSE}
+read_mocked_PSets <- function(canonical = FALSE) {
+  readRDS(
+    system.file("extdata", "data_for_unittests", "PSets.rds", package = "gDRimport")
+  )
+}
+pset <- testthat:::with_mock(
+    `PharmacoGx::availablePSets` = read_mocked_PSets,
+    suppressMessages(getPSet(
+      "Tavor_2020", psetDir = system.file("extdata/pset", package = "gDRimport")
+    ))
+  )
+pset
+```
+
+# Converting PharmacoSet to data.table for gDR pipeline
+`PharamcoSets` hold data pertaining to the cell lines (@sample slot), drugs (@treatment slot), and dose response experiments (@treatmentResponse slot). 
+The dose response data is stored in a `treatmentResponseExperiment` object and the function `gDRimport::convert_pset_to_df` extracts this information to 
+build a `data.table` that can be used as input to the gDR pipeline. 
+
+```{r}
+# Store treatment response data in df_ 
+dt <- convert_pset_to_df(pharmacoset = pset)
+str(dt)
+```
+
+# Subsetting to extract relevant information
+Most canonical `PharmacoSets` have data pertaining to many cell lines and their response to many drugs (drug-combination data is available in some but its conversion to gDR is not currently supported).
+As such, in the interest of time and resources, it may be useful to subset the data before providing it as input for the gDR pipeline. 
+
+```{r}
+# example subset using only 1 cell line
+subset_cl <- dt$Clid[1]
+x <- dt[Clid == subset_cl]
+x
+```
+
+# Running drug response pipeline with data
+The subsetted data can now be used as input for the `gDRcore::runDrugResponseProcessingPipeline()`. The output of this function is a `MultiAssayExperiment` object which can be accessed with `gDRutils::convert_se_assay_to_dt()`
+
+```{r eval = FALSE}
+# RUN DRUG RESPONSE PROCESSING PIPELINE
+se <- gDRcore::runDrugResponseProcessingPipeline(x)
+se
+``` 
+
+```{r eval = FALSE}
+# Convert Summarized Experiments to data.table 
+# Available SEs : "RawTreatred", "Controls", "Normalized", "Averaged", "Metrics"
+
+str(gDRutils::convert_se_assay_to_dt(se[[1]], "Averaged"))
+str(gDRutils::convert_se_assay_to_dt(se[[1]], "Metrics"))
+```
+
+
+```{r, include = FALSE}
+gDRutils::reset_env_identifiers()
+```
+
+
+# SessionInfo {-}
+
+```{r sessionInfo}
+sessionInfo()
+```
