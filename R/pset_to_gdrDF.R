@@ -1,6 +1,4 @@
-#' Convert a PharmacoSet to a DataFrame that is prepare for input into gDR pipeline
-#'
-#'
+#' Convert a PharmacoSet to a data.table that is prepare for input into gDR pipeline
 #'
 #' @param pharmacoset PharmacoSet object
 #' @param run_parallel logical, TRUE (default) if to run functions in Parallel, FALSE to run in serial

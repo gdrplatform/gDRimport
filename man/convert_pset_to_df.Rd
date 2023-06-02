@@ -2,7 +2,7 @@
 % Please edit documentation in R/pset_to_gdrDF.R
 \name{convert_pset_to_df}
 \alias{convert_pset_to_df}
-\title{Convert a PharmacoSet to a DataFrame that is prepare for input into gDR pipeline}
+\title{Convert a PharmacoSet to a data.table that is prepare for input into gDR pipeline}
 \usage{
 convert_pset_to_df(pharmacoset, run_parallel = TRUE, workers = 2L)
 }
@@ -17,7 +17,7 @@ convert_pset_to_df(pharmacoset, run_parallel = TRUE, workers = 2L)
 data.table of PharmacoSet's dose response data with column names aligned with gDR standard
 }
 \description{
-Convert a PharmacoSet to a DataFrame that is prepare for input into gDR pipeline
+Convert a PharmacoSet to a data.table that is prepare for input into gDR pipeline
 }
 \examples{
 pset <- suppressMessages(getPSet(
