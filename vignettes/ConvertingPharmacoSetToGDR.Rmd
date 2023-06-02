@@ -96,8 +96,8 @@ se
 # Convert Summarized Experiments to Data.Table 
 # Available SEs : "RawTreatred", "Controls", "Normalized", "Averaged", "Metrics"
 
-gDRutils::convert_se_assay_to_dt(se[[1]],"Averaged") |> str()
-gDRutils::convert_se_assay_to_dt(se[[1]],"Metrics") |> str()
+str(gDRutils::convert_se_assay_to_dt(se[[1]], "Averaged"))
+str(gDRutils::convert_se_assay_to_dt(se[[1]], "Metrics"))
 ```
 
 # SessionInfo {-}
