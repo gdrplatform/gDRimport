@@ -57,18 +57,18 @@ import_D300 <-
 
       #create a list with Gnumber and Concentration 
       trt_filt$gn_conc <- apply(trt_filt, 1, function(x) list(x[idfs$drug_identifier], x[idfs$conc_identifier]))
-      trt_gnumber_conc <- reshape2::dcast(trt_filt, Row ~ Col, 
+      trt_gnumber_conc <- data.table::dcast(trt_filt, Row ~ Col, 
                                           value.var = c("gn_conc"), 
                                           fun.aggregate = list)
-      rownames(trt_gnumber_conc) <- trt_gnumber_conc$Row
-      trt_gnumber_conc <- trt_gnumber_conc[, setdiff(colnames(trt_gnumber_conc), "Row")]
+      rownames_trt_gnumber_conc <- trt_gnumber_conc$Row
+      trt_gnumber_conc <- trt_gnumber_conc[, setdiff(colnames(trt_gnumber_conc), "Row"), with = FALSE]
 
       #count number of drugs,conc in each well 
       trt_n_drugs <- apply(trt_gnumber_conc, c(1, 2), function(x) length(x[[1]]))
       trt_info <- list(
         max_drugs_per_well =  max(trt_n_drugs),
         col_idx = strtoi(colnames(trt_gnumber_conc)),
-        row_idx = strtoi(rownames(trt_gnumber_conc))
+        row_idx = strtoi(rownames_trt_gnumber_conc)
       )
       save_drug_info_per_well(trt_info, trt_gnumber_conc, wb, idfs) 
       fname <- sprintf("trt_P%s.xlsx", uplates[i])

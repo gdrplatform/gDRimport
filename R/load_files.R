@@ -505,7 +505,8 @@ read_in_template_sheet_xlsx <- function(template_file, template_sheets, idx, pla
                    e))
     })
     df$WellRow <- LETTERS[seq_len(plate_info$n_row)]
-    df_melted <- reshape2::melt(df, id.vars = "WellRow")
+    df <- df[, lapply(.SD, as.character)]
+    df_melted <- data.table::melt(df, id.vars = "WellRow")
     # check if metadata field already exist and correct capitalization if needed
     if (!(sheetName %in% metadata_fields)) {
       if (!is.null(metadata_fields) &&

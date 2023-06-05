@@ -27,7 +27,6 @@ Imports:
     magrittr,
     methods,
     readxl,
-    reshape2,
     rio,
     stats,
     stringi,
