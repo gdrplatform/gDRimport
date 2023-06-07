@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+#### [0.99.13] - 2023-06-05
+- replaced reshape2 functions by functions from data.table
+
 #### [0.99.12] - 2023-05-24
 - format the vignette with BiocStyle
 

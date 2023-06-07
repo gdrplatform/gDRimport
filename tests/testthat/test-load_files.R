@@ -1,6 +1,6 @@
 context("load_files")
 
-  test_that("load_manifest", {
+test_that("load_manifest", {
 
   # get test_data
   td1 <- get_test_data()
@@ -104,7 +104,6 @@ test_that("load_templates", {
   err_msg1 <- "Assertion on 'template_file' failed: File does not exist: '/non/existent_file'."
   expect_error(load_templates(c(template_path(td1)[1], "/non/existent_file")), err_msg1)
 })
-
 
 
 test_that("load_templates returns an error when there is no untreated conditions", {
