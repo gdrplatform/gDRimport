@@ -164,13 +164,14 @@ getPSet <- function(pset_name,
   }
   # CHECK IF SAME SIZE and MERGE     
   if (length(doses.m) == length(viability.m)) {
-      merged_dt <- merge(viability.m, doses.m)
+      merged_dt <- viability.m[doses.m, on = intersect(names(viability.m),
+                                                       names(doses.m))]
   } else {
       sprintf("doses and viability data tables are not the same size")
   }
   treatment_cols <- c("sampleid", "treatmentid")
   selected_cols <- c(treatment_cols, "rn")
-  merged_dt <- merge(merged_dt, info_dt[, ..selected_cols], by = "rn")
+  merged_dt <- merged_dt[info_dt[, selected_cols, with = FALSE], on = "rn"]
   data.table::setnames(merged_dt, treatment_cols, c(env_ids$cellline, env_ids$drug_name))
   merged_dt["Dose" == env_ids$untreated_tag[1], env_ids$drug_name := env_ids$untreated_tag[1]]
   merged_dt[, "Dose" := NULL]

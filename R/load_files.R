@@ -486,9 +486,8 @@ read_in_template_xlsx <- function(template_file, template_filename, template_she
 read_in_template_sheet_xlsx <- function(template_file, template_sheets, idx, plate_info) {
   metadata_fields <- NULL
   # need to adapt for 1536 well plates
-  df_template <-
-    base::expand.grid(WellRow = LETTERS[seq_len(plate_info$n_row)],
-                      WellColumn = seq_len(plate_info$n_col))
+  df_template <- data.table::CJ(WellRow = LETTERS[seq_len(plate_info$n_row)],
+                                WellColumn = as.character(seq_len(plate_info$n_col)))
   for (iS in seq_along(template_sheets[[idx]])) {
     sheetName <- template_sheets[[idx]][[iS]]
     tryCatch({
@@ -526,7 +525,7 @@ read_in_template_sheet_xlsx <- function(template_file, template_sheets, idx, pla
     df_melted$WellColumn <-
       gsub("x", "", df_melted$WellColumn)
     df_template <-
-      base::merge(df_template, df_melted, by = c("WellRow", "WellColumn"))
+      df_template[df_melted, on = c("WellRow", "WellColumn")]
   }
   df_template
 }
