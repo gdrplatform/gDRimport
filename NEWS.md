@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+#### [0.99.14] - 2023-06-13
+- switch from `merge` to `[[`
+
 #### [0.99.13] - 2023-06-05
 - replaced reshape2 functions by functions from data.table
 
