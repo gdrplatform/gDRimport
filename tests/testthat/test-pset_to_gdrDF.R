@@ -3,12 +3,12 @@ context("PSets")
 
 # in tests we used mocked availablePSets in case of lack of internet connection.
 # to prepare new mock data: 
-# saveRDS(PharmacoGx::availablePSets(canonical = FALSE), 
-#         system.file("extdata", "data_for_unittests", "PSets.rds", package = "gDRimport")) 
+# qs::qsave(PharmacoGx::availablePSets(canonical = FALSE), 
+#           system.file("extdata", "data_for_unittests", "PSets.qs", package = "gDRimport")) 
 
 read_mocked_PSets <- function(canonical = FALSE) {
-  readRDS(
-    system.file("extdata", "data_for_unittests", "PSets.rds", package = "gDRimport")
+  qs::qread(
+    system.file("extdata", "data_for_unittests", "PSets.qs", package = "gDRimport")
   )
 }
 
