@@ -41,6 +41,7 @@ Suggests:
     gDRstyle (>= 0.99.11),
     knitr,
     purrr,
+    qs,
     testthat
 biocViews: Software, Infrastructure, DataImport
 VignetteBuilder: knitr

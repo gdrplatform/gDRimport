@@ -98,7 +98,7 @@ getPSet <- function(pset_name,
   checkmate::assert_numeric(timeout)
   
   availPSets <- if (use_local_PSets_list) {
-    qs::qread(system.file("extdata", "data_for_unittests", "PSets.rds", package = "gDRimport"))
+    qs::qread(system.file("extdata", "data_for_unittests", "PSets.qs", package = "gDRimport"))
   } else {
     PharmacoGx::availablePSets(canonical = canonical)
   }  
