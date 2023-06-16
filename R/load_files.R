@@ -527,6 +527,7 @@ read_in_template_sheet_xlsx <- function(template_file, template_sheets, idx, pla
     df_template <-
       df_template[df_melted, on = c("WellRow", "WellColumn")]
   }
+  data.table::setorder(df_template)
   df_template
 }
 
