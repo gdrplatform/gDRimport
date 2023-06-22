@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+#### [0.99.15] - 2023-06-22
+- replaced rds with qs
+
 #### [0.99.14] - 2023-06-13
 - switch from `merge` to `[[`
 

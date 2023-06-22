@@ -8,7 +8,7 @@ get_test_D300_data()
 }
 \value{
 list with with input data (manifest/template/result paths)
-and related reference data (RDS file paths)
+and related reference data (qs file paths)
 }
 \description{
 get test D300 data

@@ -14,7 +14,7 @@ test_that("load_manifest", {
 
   # valid output returned for "manifest.xlsx"
   m_df <- load_manifest(td2$m_file)
-  ref_m_df <- readRDS(td2$ref_m_df)
+  ref_m_df <- qs::qread(td2$ref_m_df)
   expect_equal(m_df, ref_m_df)
 
   # expected error(s) returned
@@ -62,7 +62,7 @@ test_that("load_results", {
   # valid output returned for Tecan format
   res_tbl3 <- load_results(df_results_files = c(td2$r_files), instrument = "Tecan", headers = headers)
   ## check with reference
-  ref_tbl3 <- readRDS(td2$ref_r_df)
+  ref_tbl3 <- qs::qread(td2$ref_r_df)
   expect_equal(res_tbl3, ref_tbl3)
 
   # expected error(s) returned
@@ -97,7 +97,7 @@ test_that("load_templates", {
   # valid output is returned for xlsx files
   res_t_tbl3 <- load_templates(df_template_files = c(td2$t_files))
   ## check with reference
-  ref_tbl3 <- .standardize_untreated_values(readRDS(td2$ref_t_df))
+  ref_tbl3 <- .standardize_untreated_values(qs::qread(td2$ref_t_df))
   expect_equal(res_t_tbl3, ref_tbl3)
 
   # expected error(s) returned
@@ -133,20 +133,20 @@ test_that("load_data", {
 
   l_tbl2 <- load_data(td2$m_file, td2$t_files, td2$r_files, instrument = "Tecan")
   # valid output returned for manifest
-  ref_m_df <- readRDS(td2$ref_m_df)
+  ref_m_df <- qs::qread(td2$ref_m_df)
   expect_equal(ref_m_df$data, l_tbl2$manifest)
   # valid output returned for templates
-  ref_t_df <- .standardize_untreated_values(readRDS(td2$ref_t_df))
+  ref_t_df <- .standardize_untreated_values(qs::qread(td2$ref_t_df))
   expect_equal(ref_t_df, l_tbl2$treatments)
   # valid output returned for results
-  ref_r_df <- readRDS(td2$ref_r_df)
+  ref_r_df <- qs::qread(td2$ref_r_df)
   expect_equal(l_tbl2$data, ref_r_df)
   
   # get test_EnVision_data (EnVision format)
   td4 <- get_test_EnVision_data()
   l_tbl4 <-
     load_data(td4$m_file, td4$t_files, td4$r_files, instrument = "EnVision")
-  ref_l <- readRDS(td4$ref_l_path)
+  ref_l <- qs::qread(td4$ref_l_path)
   # valid output returned for manifest
   expect_equal(ref_l$manifest, l_tbl4$manifest)
   # valid output returned for templates

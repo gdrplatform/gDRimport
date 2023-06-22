@@ -8,7 +8,7 @@ get_test_data()
 }
 \value{
 object class "gdr_test_data" with with input data (manifest/template/result paths)
-and related reference data (RDS file paths)
+and related reference data (qs file paths)
 }
 \description{
 get primary test data
