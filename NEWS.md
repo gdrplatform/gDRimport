@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+#### [0.99.16] - 2023-06-23
+- increase comporession level (Tavor_2020.qs; < 5MB limit)
+
 #### [0.99.15] - 2023-06-22
 - replaced rds with qs
 
