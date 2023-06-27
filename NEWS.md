@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+#### [0.99.17] - 2023-06-27
+- add exception entry for invalid average dose-reponse data
+
 #### [0.99.16] - 2023-06-23
 - increase compression level (Tavor_2020.qs; < 5MB limit)
 
