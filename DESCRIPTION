@@ -37,6 +37,7 @@ Imports:
     yaml,
     openxlsx
 Suggests:
+    BiocStyle,
     gDRtestData (>= 0.99.10),
     gDRstyle (>= 0.99.11),
     knitr,
