@@ -18,7 +18,8 @@ if (getRversion() >= "2.15.1") {
       "..barcode_col",
       "..selected_cols",
       "..with",
-      ".SD"
+      ".SD",
+      "Dose"
     ),
     utils::packageName())
 }
