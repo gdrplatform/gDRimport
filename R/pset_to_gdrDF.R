@@ -173,8 +173,8 @@ getPSet <- function(pset_name,
   selected_cols <- c(treatment_cols, "rn")
   merged_dt <- merged_dt[info_dt[, selected_cols, with = FALSE], on = "rn"]
   data.table::setnames(merged_dt, treatment_cols, c(env_ids$cellline, env_ids$drug_name))
-  merged_dt["Dose" == env_ids$untreated_tag[1], env_ids$drug_name := env_ids$untreated_tag[1]]
-  merged_dt[, "Dose" := NULL]
+  merged_dt[Dose == env_ids$untreated_tag[1], env_ids$drug_name := env_ids$untreated_tag[1]]
+  merged_dt[, Dose := NULL]
   
   if (!is.null(duration)) {
     merged_dt[, (env_ids$duration) := duration]

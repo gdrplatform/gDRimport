@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+#### [0.99.20] - 2023-08-25
+- refactor subsetting of data.table using colname
+
 #### [0.99.19] - 2023-07-19
 - update warning messages
 
