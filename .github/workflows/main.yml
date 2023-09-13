@@ -10,6 +10,7 @@ name: main
 
 on:
   pull_request:
+    types: [opened, reopened, closed, synchronize]
 
 jobs:
   trigger_tests:
@@ -18,4 +19,6 @@ jobs:
       USERNAME: ${{ github.actor }}
       PACKAGE_NAME: ${{ github.event.repository.name }}
       BRANCH_NAME: ${{ github.head_ref }}
+      COMMIT_HASH: ${{ github.sha }}
+      COMMIT_MSG: ${{ github.event.head_commit.message }}
     secrets: inherit
