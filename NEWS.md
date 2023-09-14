@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+#### [0.99.21] - 2023-09-14
+- disable support for 'xls' file format due to crashes
+
 #### [0.99.20] - 2023-08-25
 - refactor subsetting of data.table using colname
 
