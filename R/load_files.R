@@ -87,7 +87,6 @@ load_manifest <- function(manifest_file) {
   available_formats <- c("text/tsv",
                          "text/tab-separated-values",
                          "xlsx",
-                         "xls",
                          "tsv")
   assertthat::assert_that(is.character(manifest_file), msg = "'manifest_file' must be a character vector")
   checkmate::assert_file_exists(manifest_file)
@@ -132,7 +131,7 @@ read_in_manifest_file <- function(manifest_file, available_formats) {
   
   manifest_data <- lapply(manifest_file, function(x) {
     manifest_ext <- tools::file_ext(x)
-    if (manifest_ext %in% c("xlsx", "xls")) {
+    if (manifest_ext == "xlsx") {
       df <- tryCatch({
         read_excel_to_dt(x, col_names = TRUE)
       }, error = function(e) {
@@ -830,7 +829,7 @@ get_excel_sheet_names <- function(fls) {
   # results_file is a string or a vector of strings
   # test if the result files are .tsv or .xls(x) files
   isExcel <- vapply(fls, function(x) {
-    return(tools::file_ext(x) %in% c("xlsx", "xls"))
+    return(tools::file_ext(x) == "xlsx")
   },
   logical(1))
   
@@ -864,6 +863,7 @@ get_df_from_raw_edited_EnVision_df <-
   function(df, barcode_idx, barcode_col, n_row, n_col, fname, sheet_name, headers) {
     
     res_l <- lapply(barcode_idx, function(iB) {
+      print(iB)
       # two type of format depending on where Background information is placed
       
       if (any(unlist(df[iB + (seq_len(4)), 1]) %in% "Background information")) {
@@ -1032,7 +1032,7 @@ load_results_Tecan <-
     # Assertions:
     checkmate::assert_string(results_file)
     # check the result files is a .xls(x) file
-    isExcel <- tools::file_ext(results_file) %in% c("xlsx", "xls")
+    isExcel <- tools::file_ext(results_file) == "xlsx"
     if (!isExcel) {
       futile.logger::flog.error("Results file for Tecan importer must be a 'xls(x)' file: %s",
                                 results_file)
