@@ -863,7 +863,6 @@ get_df_from_raw_edited_EnVision_df <-
   function(df, barcode_idx, barcode_col, n_row, n_col, fname, sheet_name, headers) {
     
     res_l <- lapply(barcode_idx, function(iB) {
-      print(iB)
       # two type of format depending on where Background information is placed
       
       if (any(unlist(df[iB + (seq_len(4)), 1]) %in% "Background information")) {
