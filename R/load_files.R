@@ -94,7 +94,13 @@ load_manifest <- function(manifest_file) {
 
   manifest_data <- read_in_manifest_file(manifest_file, available_formats)
   headers <- gDRutils::validate_identifiers(do.call(rbind, manifest_data), req_ids = "barcode")
-
+  
+  # Set character type to barcode
+  manifest_data <- lapply(manifest_data, function(x) {
+    x[, (headers[["barcode"]]) := lapply(.SD, as.character), .SDcols = headers[["barcode"]]]
+  })
+  
+  
   # check default headers are in each df
   dump <- lapply(seq_along(manifest_file),
                  function(i) {
