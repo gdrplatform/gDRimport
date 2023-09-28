@@ -94,13 +94,13 @@ load_manifest <- function(manifest_file) {
 
   manifest_data <- read_in_manifest_file(manifest_file, available_formats)
   headers <- gDRutils::validate_identifiers(do.call(rbind, manifest_data), req_ids = "barcode")
-  
+
   # Set character type to barcode
   manifest_data <- lapply(manifest_data, function(x) {
     x[, (headers[["barcode"]]) := lapply(.SD, as.character), .SDcols = headers[["barcode"]]]
   })
-  
-  
+
+
   # check default headers are in each df
   dump <- lapply(seq_along(manifest_file),
                  function(i) {
@@ -746,7 +746,7 @@ load_results_EnVision <-
           isEdited <- TRUE
           df <- read_EnVision_xlsx(results_file[[iF]], iS)
         }
-        
+
         barcode_col <- grep(paste0(headers[["barcode"]], collapse = "|"), df)[1]
 
         if (isEdited) {
@@ -868,7 +868,7 @@ get_excel_sheet_names <- function(fls) {
 #'
 get_df_from_raw_edited_EnVision_df <-
   function(df, barcode_idx, barcode_col, n_row, n_col, fname, sheet_name, headers) {
-    
+
     res_l <- lapply(barcode_idx, function(iB) {
       # two type of format depending on where Background information is placed
 
@@ -1442,11 +1442,8 @@ get_EnVision_properties <- function(results.list, fname) {
 #' @return charvec with plate dims
 #'
 .get_plate_size <- function(df) {
-  n_col <- min(
-    1.5 * 2 ^ ceiling(log2((ncol(df) - 2) / 1.5)),
-    ncol(df)
-  )
-  n_row <- floor(n_col / 1.5)
+  n_col <- 1.5 * 2 ^ ceiling(log2((ncol(df) - 2) / 1.5))
+  n_row <- n_col / 1.5
   c(n_row, n_col)
 }
 
@@ -1491,7 +1488,8 @@ get_EnVision_properties <- function(results.list, fname) {
   all_rows <- Reduce(intersect, lapply(df, function(x) grep(numeric_regex, x)))
   if (ncol(df) < exp_col) {
     new_cols <- exp_col - ncol(df)
-    df <- cbind(df, matrix(ncol = new_cols))
+    df <- cbind(df, matrix("", ncol = new_cols))
+    df[data_rows, rev(names(df))[seq_len(new_cols)]] <- NA
   }
   if (length(all_rows) / exp_row != length(plate_rows)) {
     fill_rows <- intersect(which(apply(df, 1, function(x) all(is.na(x)))), data_rows)
