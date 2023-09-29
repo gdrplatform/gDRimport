@@ -14,7 +14,8 @@ test_that("convert_MAE_to_PSet works as expected", {
 
   pset <- convert_MAE_to_PSet(mae, "my_pset")
   expect_equal(class(pset@treatmentResponse)[1], "TreatmentResponseExperiment")
-  expect_equal(sort(rownames(pset@treatmentResponse)), sort(unlist(lapply(experiments(mae), rownames), use.names = FALSE)))
+  expect_equal(sort(rownames(pset@treatmentResponse)), 
+               sort(unlist(lapply(MultiAssayExperiment::experiments(mae), rownames), use.names = FALSE)))
   expect_equal(pset@sample$sampleid, cnames)
 
 
@@ -30,8 +31,9 @@ test_that("convert_MAE_to_PSet works as expected", {
   
   pset_mae2Exp <- convert_MAE_to_PSet(maeTwoExperiments, "my2exp")
   expect_equal(class(pset_mae2Exp@treatmentResponse)[1], "TreatmentResponseExperiment")
-  expect_equal(sort(rownames(pset_mae2Exp@treatmentResponse)), sort(unlist(lapply(experiments(maeTwoExperiments), rownames), use.names = FALSE)))
+  expect_equal(sort(rownames(pset_mae2Exp@treatmentResponse)), 
+               sort(unlist(lapply(MultiAssayExperiment::experiments(maeTwoExperiments), rownames), use.names = FALSE)))
   expect_equal(pset_mae2Exp@sample$sampleid, cnames)
-  expect_equal(pset_mae2Exp@treatment$treatmentid, c(rownames( assay(maeTwoExperiments,'single-agent')),rownames(assay(maeTwoExperiments,'matrix'))))
-}
-)
+  expect_equal(pset_mae2Exp@treatment$treatmentid, 
+               c(rownames(assay(maeTwoExperiments, "single-agent")), rownames(assay(maeTwoExperiments, "matrix"))))
+})
