@@ -18,6 +18,15 @@
 #' 
 #' @examples
 #' # Convert a MultiAssayExperiment object to a PharmacoSet object
+#' m <- 20
+#' n <- 10
+#' rnames <- LETTERS[1:m]
+#' cnames <- letters[1:n]
+#' ref_gr_value <-  matrix(runif(m * n), nrow = m, ncol = n, dimnames = list(rnames, cnames))
+#' se <- SummarizedExperiment::SummarizedExperiment(assays = list(RefGRvalue = ref_gr_value),
+#'                                                  rowData = S4Vectors::DataFrame(rnames),
+#'                                                  colData = S4Vectors::DataFrame(cnames))
+#' mae <- MultiAssayExperiment::MultiAssayExperiment(experiments = list("single-agent" = se))
 #' convert_MAE_to_PSet(mae, "my_pset")
 #' 
 #' @export
@@ -57,11 +66,10 @@ convert_MAE_to_PSet <- function(mae,
     # Get the unique rownames from all experiments combined
     rownames <- unique(unlist(gDRutils::MAEpply(mae, FUN = rownames)))
     # convert the rowData of each Summarized Experiment to a data.table and combine them into one data.table
-    rowdata_ <- data.table::rbindlist(
-      l = gDRutils::MAEpply(
-        mae = mae, 
-        FUN = function(x) data.table::as.data.table(SummarizedExperiment::rowData(x), keep.rownames = TRUE)), 
-      fill = TRUE)
+    rowdata_ <- gDRutils::MAEpply(
+      mae = mae, 
+      FUN = function(x) data.table::as.data.table(data.frame(SummarizedExperiment::rowData(x)), keep.rownames = TRUE), 
+      unify = T)
     # rename the rownames column to "treatmentid" (required for PharmacoSet Object)
     data.table::setnames(rowdata_, "rn", "treatmentid")
 
@@ -69,11 +77,10 @@ convert_MAE_to_PSet <- function(mae,
     # Get the unique colnames from all experiments combined
     colnames <- unique(unlist(gDRutils::MAEpply(mae, FUN = colnames)))
     # convert the colData of each Summarized Experiment to a data.table and combine them into one data.table
-    coldata_ <- unique(data.table::rbindlist(
-      l = gDRutils::MAEpply(
-        mae = mae, 
-        FUN = function(x) data.table::as.data.table(SummarizedExperiment::colData(x), keep.rownames = TRUE)), 
-      fill = TRUE))
+    coldata_ <- unique(gDRutils::MAEpply(
+      mae = mae, 
+      FUN = function(x) data.table::as.data.table(data.frame(SummarizedExperiment::colData(x)), keep.rownames = TRUE),
+      unify = T))
     # rename the rownames column to "sampleid" (required for PharmacoSet Object)
     data.table::setnames(coldata_, "rn", "sampleid")
 

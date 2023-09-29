@@ -20,6 +20,15 @@ PharmacoGx package. The resulting PharmacoSet can be used for pharmacogenomic an
 }
 \examples{
 # Convert a MultiAssayExperiment object to a PharmacoSet object
+m <- 20
+n <- 10
+rnames <- LETTERS[1:m]
+cnames <- letters[1:n]
+ref_gr_value <-  matrix(runif(m * n), nrow = m, ncol = n, dimnames = list(rnames, cnames))
+se <- SummarizedExperiment::SummarizedExperiment(assays = list(RefGRvalue = ref_gr_value),
+                                                 rowData = S4Vectors::DataFrame(rnames),
+                                                 colData = S4Vectors::DataFrame(cnames))
+mae <- MultiAssayExperiment::MultiAssayExperiment(experiments = list("single-agent" = se))
 convert_MAE_to_PSet(mae, "my_pset")
 
 }
