@@ -8,14 +8,6 @@
 #' 
 #' @return A PharmacoSet object.
 #' 
-#' @importFrom checkmate assert_class assert_string
-#' @importFrom data.table rbindlist setnames
-#' @importFrom gDRutils MAEpply convert_se_assay_to_dt
-#' @importFrom MultiAssayExperiment ExperimentList
-#' @importFrom SummarizedExperiment SummarizedExperiment rowData colData
-#' @importFrom CoreGx TreatmentResponseExperiment
-#' @importFrom PharmacoGx PharmacoSet2
-#' 
 #' @examples
 #' # Convert a MultiAssayExperiment object to a PharmacoSet object
 #' m <- 20
@@ -140,10 +132,6 @@ convert_MAE_to_PSet <- function(mae,
 #'
 #' @return A SummarizedExperiment object with the specified assay
 #'
-#' @importFrom checkmate assert_class assert_string
-#' @importFrom SummarizedExperiment assayNames assay
-#' @importFrom BumpyMatrix splitAsBumpyMatrix
-#' @importFrom S4Vectors DataFrame
 #'
 .extract_or_create_assay <- function(SE, 
                                      assay_name) {
