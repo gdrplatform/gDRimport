@@ -69,7 +69,7 @@ convert_MAE_to_PSet <- function(mae,
     rowdata_ <- gDRutils::MAEpply(
       mae = mae, 
       FUN = function(x) data.table::as.data.table(data.frame(SummarizedExperiment::rowData(x)), keep.rownames = TRUE), 
-      unify = T)
+      unify = TRUE)
     # rename the rownames column to "treatmentid" (required for PharmacoSet Object)
     data.table::setnames(rowdata_, "rn", "treatmentid")
 
@@ -80,7 +80,7 @@ convert_MAE_to_PSet <- function(mae,
     coldata_ <- unique(gDRutils::MAEpply(
       mae = mae, 
       FUN = function(x) data.table::as.data.table(data.frame(SummarizedExperiment::colData(x)), keep.rownames = TRUE),
-      unify = T))
+      unify = TRUE))
     # rename the rownames column to "sampleid" (required for PharmacoSet Object)
     data.table::setnames(coldata_, "rn", "sampleid")
 
