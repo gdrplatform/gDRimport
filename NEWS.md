@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+#### [0.99.24] - 2023-10-02
+- add functions & unit tests for converting gDR MAE to PSet
+
 #### [0.99.23] - 2023-09-22
 - correct plate size calculation
 

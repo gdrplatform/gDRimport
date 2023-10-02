@@ -1,8 +1,8 @@
 Package: gDRimport
 Type: Package
 Title: Package for handling the import of dose-response data
-Version: 0.99.23
-Date: 2023-09-22
+Version: 0.99.24
+Date: 2023-10-02
 Authors@R: c(
     person("Arkadiusz", "Gladki", role=c("aut", "cre"), email="gladki.arkadiusz@gmail.com"),
     person("Bartosz", "Czech", role=c("aut")), 
@@ -19,17 +19,22 @@ Depends:
     R (>= 4.2)
 Imports:
     assertthat,
+    BumpyMatrix,
     checkmate,
+    CoreGx,
     PharmacoGx,
     data.table,
     futile.logger,
     gDRutils (>= 0.99.5),
     magrittr,
     methods,
+    MultiAssayExperiment,
     readxl,
     rio,
+    S4Vectors,
     stats,
     stringi,
+    SummarizedExperiment,
     tibble,
     tools,
     utils,

@@ -4,12 +4,12 @@
 \name{gDRimport-package}
 \alias{gDRimport}
 \alias{gDRimport-package}
-\title{gDRimport: Package for handling import of dose-response data}
+\title{gDRimport: Package for handling the import of dose-response data}
 \value{
 package help page
 }
 \description{
-Package is a part of the gDR suite. It helps to prepare raw drug response data for downstream processing. It mainly contains helper functions for importing/loading/validating dose response data provided in different file formats.
+The package is a part of the gDR suite. It helps to prepare raw drug response data for downstream processing. It mainly contains helper functions for importing/loading/validating dose-response data provided in different file formats.
 }
 \note{
 To learn more about functions start with \code{help(package = "gDRimport")}
