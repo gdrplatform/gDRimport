@@ -71,9 +71,9 @@ pset
 We can view information about the drugs and cell lines in the `PharmacoSet` object using the `treatment` and `sample` slots:
 
 ``` {r}
-head(pset@treatment)
+head(treatmentInfo(pset))
 
-head(pset@sample)
+head(sampleInfo(pset))
 
 ```
 
@@ -85,7 +85,7 @@ This vignette will cover some basics about this class, however for more informat
 
 ## Row and Column Names
 ```{r rownames, echo=TRUE}
-tre <- pset@treatmentResponse
+tre <- treatmentResponse(pset)
 head(rownames(tre))
 head(rowData(tre))
 ```
