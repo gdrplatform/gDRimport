@@ -34,6 +34,11 @@ test_that("convert_MAE_to_PSet works as expected", {
   expect_equal(sort(rownames(pset_mae2Exp@treatmentResponse)), 
                sort(unlist(lapply(MultiAssayExperiment::experiments(maeTwoExperiments), rownames), use.names = FALSE)))
   expect_equal(pset_mae2Exp@sample$sampleid, cnames)
-  expect_equal(pset_mae2Exp@treatment$treatmentid, 
-               c(rownames(assay(maeTwoExperiments, "single-agent")), rownames(assay(maeTwoExperiments, "matrix"))))
+  expect_equal(pset_mae2Exp@treatment$treatmentid,
+               c(
+                 rownames(
+                   SummarizedExperiment::assay(maeTwoExperiments, "single-agent")
+                 ),
+                 rownames(SummarizedExperiment::assay(maeTwoExperiments, "matrix"))
+               ))
 })
