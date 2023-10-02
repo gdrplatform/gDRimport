@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+#### [0.99.23] - 2023-09-22
+- correct plate size calculation
+
 #### [0.99.22] - 2023-09-20
 - set barcode as character in the manifest file
 
