@@ -79,7 +79,7 @@ convert_MAE_to_PSet <- function(mae,
     # Create a list of rowname and column name identifiers for each assay name (required for 
     # TreatmentResponseExperiment object)
     # in this case, all the identifiers are the same treatmentid & sampleid columns
-    assayIDs <- setNames(lapply(assay_names, function(x) c("treatmentid", "sampleid")), assay_names)
+    assayIDs <- stats::setNames(lapply(assay_names, function(x) c("treatmentid", "sampleid")), assay_names)
 
     tre <- CoreGx::TreatmentResponseExperiment(
         rowData = rowdata_,
