@@ -28,7 +28,7 @@ convert_MAE_to_PSet <- function(mae,
     checkmate::assert_string(pset_name)
 
     # Get the unique assay names from all experiments combined
-    assay_names <- unique(unlist(gDRutils::MAEpply(mae, function(x) assayNames(x))))
+    assay_names <- unique(unlist(gDRutils::MAEpply(mae, function(x) SummarizedExperiment::assayNames(x))))
 
     # Create a list of data.tables, one for each assay name, with the data from all Summarized Experiments in the MAE. 
     assay_list <- lapply(assay_names, function(x) {
