@@ -1269,7 +1269,7 @@ check_metadata_headers <- function(corrected_names, df_name) {
     case_match <- setdiff(grep(grep_pattern, corrected_names, ignore.case = TRUE),
                           exact_match_grep)
     if (isTRUE(length(exact_match_grep) == 1 ||
-               corrected_names[case_match] %in% controlled_headers))
+               corrected_names[case_match] %in% unlist(controlled_headers)))
       next
 
     if (length(case_match) > 0) {
