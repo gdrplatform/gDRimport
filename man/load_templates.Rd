@@ -19,5 +19,5 @@ This functions loads and checks the template file(s)
 \examples{
  td <- get_test_data()
  t_df <- load_templates(template_path(td))
- 
+
 }
