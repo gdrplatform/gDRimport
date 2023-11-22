@@ -1,5 +1,5 @@
 ## 1.1.1 (2023-11-22)
-- sync master with devel branch
+- sync main with devel branch
 - add "Treatment" as template identifier
 
 ## 1.1.0 (2023-10-24)
