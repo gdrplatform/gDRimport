@@ -107,7 +107,7 @@ test_that("load_templates", {
 
 
 test_that("load_templates returns an error when there is no untreated conditions", {
-  err_msg <- "No untreated controls were found in the template. Please upload the appropriate template."
+  err_msg <- "No untreated controls were found in the treatment. Please upload the appropriate treatment."
   expect_error(load_templates(system.file("extdata/data_for_unittests/Template_7daytreated.xlsx",
                                           package = "gDRimport")), err_msg)
 
@@ -302,7 +302,7 @@ test_that("check_metadata_names works as expected", {
   # missing gnumber
   expect_error(check_metadata_names(col_df = t_data[[1]][-1], df_type = "template_treatment"))
   # missing gnumber2
-  expect_error(check_metadata_names(col_df = t_data[[1]][-3], df_type = "template_treatment"), "Template file")
+  expect_error(check_metadata_names(col_df = t_data[[1]][-3], df_type = "template_treatment"), "Treatment file")
   
   # names with spaces
   t_data_with_space <- t_data[[1]]
