@@ -1,8 +1,8 @@
 Package: gDRimport
 Type: Package
 Title: Package for handling the import of dose-response data
-Version: 1.1.1
-Date: 2023-11-22
+Version: 1.1.2
+Date: 2023-12-01
 Authors@R: c(
     person("Arkadiusz", "Gladki", role=c("aut", "cre"), email="gladki.arkadiusz@gmail.com"),
     person("Bartosz", "Czech", role=c("aut")), 
@@ -25,7 +25,7 @@ Imports:
     PharmacoGx,
     data.table,
     futile.logger,
-    gDRutils (>= 0.99.5),
+    gDRutils (>= 1.1.1),
     magrittr,
     methods,
     MultiAssayExperiment,
@@ -43,8 +43,8 @@ Imports:
     openxlsx
 Suggests:
     BiocStyle,
-    gDRtestData (>= 0.99.10),
-    gDRstyle (>= 0.99.11),
+    gDRtestData (>= 1.1.1),
+    gDRstyle (>= 1.1.1),
     knitr,
     purrr,
     qs,
