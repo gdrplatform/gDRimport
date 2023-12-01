@@ -1,3 +1,6 @@
+## 1.1.1 (2023-12-01)
+- - update validation function used during data submission
+
 ## 1.1.1 (2023-11-22)
 - sync main with devel branch
 - add "Treatment" as template identifier
