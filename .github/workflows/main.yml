@@ -22,3 +22,9 @@ jobs:
       COMMIT_HASH: ${{ github.sha }}
       COMMIT_MSG: ${{ github.event.head_commit.message }}
     secrets: inherit
+  trigger_bioc_sync:
+    uses: gdrplatform/gDRstyle/.github/workflows/bioc-sync.yaml@main
+    with:
+      PACKAGE_NAME: ${{ github.event.repository.name }}
+      DEFAULT_BRANCH: main
+    secrets: inherit
