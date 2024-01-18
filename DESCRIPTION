@@ -49,6 +49,8 @@ Suggests:
     purrr,
     qs,
     testthat
+URL: https://github.com/gdrplatform/gDRimport
+BugReports: https://github.com/gdrplatform/gDRimport/issues
 biocViews: Software, Infrastructure, DataImport
 VignetteBuilder: knitr
 ByteCompile: TRUE
