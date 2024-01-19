@@ -1,5 +1,8 @@
+## 1.1.3 (2023-12-19)
+- update package vignette
+
 ## 1.1.1 (2023-12-01)
-- - update validation function used during data submission
+- update validation function used during data submission
 
 ## 1.1.1 (2023-11-22)
 - sync main with devel branch

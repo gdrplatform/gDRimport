@@ -55,7 +55,8 @@ r_df <- suppressMessages(load_results(result_path(td1)))
 summary(r_df)
 
 l_tbl <-
-  suppressMessages(load_data(manifest_path(td1), template_path(td1), result_path(td1)))
+  suppressMessages(
+    load_data(manifest_path(td1), template_path(td1), result_path(td1)))
 summary(l_tbl)
 ```
 
