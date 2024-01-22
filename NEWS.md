@@ -1,7 +1,10 @@
+## 1.1.4 (2024-01-22)
+- add new description fields
+
 ## 1.1.3 (2023-12-19)
 - update package vignette
 
-## 1.1.1 (2023-12-01)
+## 1.1.2 (2023-12-01)
 - update validation function used during data submission
 
 ## 1.1.1 (2023-11-22)
