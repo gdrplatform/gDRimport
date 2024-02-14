@@ -127,7 +127,7 @@ The assays can be viewed through the `assays` function. Each assay has a column 
 the `MAE` the data corresponds with. 
 
 ``` {r viewTREAssays}
-assays(tre)
+lapply(assays(tre), head)
 ```
 
 
