@@ -1,8 +1,8 @@
 Package: gDRimport
 Type: Package
 Title: Package for handling the import of dose-response data
-Version: 1.1.4
-Date: 2024-01-22
+Version: 1.1.5
+Date: 2024-02-14
 Authors@R: c(
     person("Arkadiusz", "Gladki", role=c("aut", "cre"), email="gladki.arkadiusz@gmail.com"),
     person("Bartosz", "Czech", role=c("aut")), 
@@ -49,7 +49,7 @@ Suggests:
     purrr,
     qs,
     testthat
-URL: https://github.com/gdrplatform/gDRimport
+URL: https://github.com/gdrplatform/gDRimport, https://gdrplatform.github.io/gDRimport/
 BugReports: https://github.com/gdrplatform/gDRimport/issues
 biocViews: Software, Infrastructure, DataImport
 VignetteBuilder: knitr
