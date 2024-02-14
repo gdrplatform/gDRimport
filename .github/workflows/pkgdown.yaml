@@ -1,0 +1,23 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+#
+# See https://github.com/r-lib/actions/tree/master/examples#readme for
+# additional example workflows available for the R community.
+
+name: pkgdown
+
+on:
+  push:
+    branches: [main, master, test_ci_pkgdown]
+
+jobs:
+  trigger_pkgdown:
+    uses: gdrplatform/gDRstyle/.github/workflows/pkgdown.yaml@GDR-2371_2
+    with:
+      USERNAME: ${{ github.actor }}
+      PACKAGE_NAME: ${{ github.event.repository.name }}
+      BRANCH_NAME: ${{ github.head_ref }}
+      DEFAULT_BRANCH: master
+    secrets: inherit
