@@ -6,6 +6,10 @@
 # See https://github.com/r-lib/actions/tree/master/examples#readme for
 # additional example workflows available for the R community.
 
+# This workflow uses (triggers) 'pkgdown.yaml' template from gdrplatform/gDRstyle
+# See more details at:
+# https://github.com/gdrplatform/gDRstyle/blob/main/.github/workflows/pkgdown.yaml
+
 name: pkgdown
 
 on:
@@ -14,10 +18,9 @@ on:
 
 jobs:
   trigger_pkgdown:
-    uses: gdrplatform/gDRstyle/.github/workflows/pkgdown.yaml@GDR-2371_2
+    uses: gdrplatform/gDRstyle/.github/workflows/pkgdown.yaml@main
     with:
       USERNAME: ${{ github.actor }}
       PACKAGE_NAME: ${{ github.event.repository.name }}
       BRANCH_NAME: ${{ github.head_ref }}
-      DEFAULT_BRANCH: master
     secrets: inherit
