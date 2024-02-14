@@ -1,0 +1,12 @@
+pandoc: 3.1.1
+pkgdown: 2.0.7
+pkgdown_sha: ~
+articles:
+  ConvertingMAEtoPharmacoSet: ConvertingMAEtoPharmacoSet.html
+  ConvertingPharmacoSetToGDR: ConvertingPharmacoSetToGDR.html
+  gDRimport: gDRimport.html
+last_built: 2024-02-14T12:20Z
+urls:
+  reference: https://gdrplatform.github.io/gDRutils/reference
+  article: https://gdrplatform.github.io/gDRutils/articles
+
