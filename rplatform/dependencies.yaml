@@ -1,18 +1,18 @@
 pkgs:
   gDRutils:
-    ver: '>=1.1.1'
+    ver: '>=1.1.5'
     url: gdrplatform/gDRutils
     ref: master
     subdir: ~
     source: GITHUB
   gDRstyle:
-    ver: '>=1.1.1'
+    ver: '>=1.1.3'
     url: gdrplatform/gDRstyle
     ref: main
     subdir: ~
     source: GITHUB
   gDRtestData:
-    ver: '>=1.1.1'
+    ver: '>=1.1.7'
     url: gdrplatform/gDRtestData
     ref: ~
     subdir: ~
