@@ -14,6 +14,15 @@ The package is a part of the gDR suite. It helps to prepare raw drug response da
 \note{
 To learn more about functions start with \code{help(package = "gDRimport")}
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/gdrplatform/gDRimport}
+  \item \url{https://gdrplatform.github.io/gDRimport/}
+  \item Report bugs at \url{https://github.com/gdrplatform/gDRimport/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Arkadiusz Gladki \email{gladki.arkadiusz@gmail.com}
 

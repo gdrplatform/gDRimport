@@ -55,7 +55,7 @@ biocViews: Software, Infrastructure, DataImport
 VignetteBuilder: knitr
 ByteCompile: TRUE
 Roxygen: list(markdown = TRUE) 
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.0
 SwitchrLibrary: gDRimport
 DeploySubPath: gDRimport
 Encoding: UTF-8
