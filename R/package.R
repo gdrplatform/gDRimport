@@ -2,6 +2,7 @@
 #' @importFrom magrittr %>%
 #' @importFrom tibble tribble
 #' @importFrom methods new slotNames
+#' @importFrom data.table := setDF
 NULL
 
 DICTIONARY <- list(

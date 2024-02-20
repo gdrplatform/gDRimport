@@ -128,7 +128,6 @@ getPSet <- function(pset_name,
 
 #' Get dose and viability readouts and melt into large data table
 #' @keywords internal
-#' @importFrom data.table `:=` setDF
 #' 
 #' @return data.table with dose-reponse data
 #' 
