@@ -26,5 +26,4 @@ jobs:
     uses: gdrplatform/gDRstyle/.github/workflows/bioc-sync.yaml@main
     with:
       PACKAGE_NAME: ${{ github.event.repository.name }}
-      DEFAULT_BRANCH: main
     secrets: inherit
