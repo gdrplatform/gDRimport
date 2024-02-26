@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">gDRimport</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.6</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +54,54 @@
     </div>
 
     <div class="section level2">
-      <h2 id="all-functions">All functions<a class="anchor" aria-label="anchor" href="#all-functions"></a></h2>
+      <h2 id="import-d-">Import D300<a class="anchor" aria-label="anchor" href="#import-d-"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="import_D300.html">import_D300()</a></code> 
+        </dt>
+        <dd>Import D300</dd>
+      </dl><dl><dt>
+          
+          <code><a href="parse_D300_xml.html">parse_D300_xml()</a></code> 
+        </dt>
+        <dd>Parse D300</dd>
+      </dl><dl><dt>
+          
+          <code><a href="save_drug_info_per_well.html">save_drug_info_per_well()</a></code> 
+        </dt>
+        <dd>for each drug create a Gnumber and Concentration information for each well</dd>
+      </dl></div><div class="section level2">
+      <h2 id="convert-mae-to-pset-object">Convert MAE to PSet object<a class="anchor" aria-label="anchor" href="#convert-mae-to-pset-object"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="convert_MAE_to_PSet.html">convert_MAE_to_PSet()</a></code> 
+        </dt>
+        <dd>Convert MultiAssayExperiment to TreatmentResponseExperiment</dd>
+      </dl><dl><dt>
+          
+          <code><a href="dot-extract_or_create_assay.html">.extract_or_create_assay()</a></code> 
+        </dt>
+        <dd>Extracts an assay from a SummarizedExperiment object or creates a new one if it does not exist</dd>
+      </dl></div><div class="section level2">
+      <h2 id="correction-helpers">Correction helpers<a class="anchor" aria-label="anchor" href="#correction-helpers"></a></h2>
       
       
 
@@ -70,6 +117,95 @@
         </dt>
         <dd>are template sheet valid?</dd>
       </dl><dl><dt>
+          
+          <code><a href="correct_template_sheets.html">correct_template_sheets()</a></code> 
+        </dt>
+        <dd>Correct names of the template sheets (if required)</dd>
+      </dl><dl><dt>
+          
+          <code><a href="dot-check_against_single_template_sheet.html">.check_against_single_template_sheet()</a></code> 
+        </dt>
+        <dd>Evaluate if template file with single sheet is present,
+if the name of the sheet is correct and if it can be fixed</dd>
+      </dl><dl><dt>
+          
+          <code><a href="fix_typos_with_reference.html">fix_typos_with_reference()</a></code> 
+        </dt>
+        <dd>Fix typos using reference data</dd>
+      </dl><dl><dt>
+          
+          <code><a href="get_expected_template_sheets.html">get_expected_template_sheets()</a></code> 
+        </dt>
+        <dd>Get names of the sheets expected in templates xlsx</dd>
+      </dl><dl><dt>
+          
+          <code><a href="get_xl_sheets.html">get_xl_sheets()</a></code> 
+        </dt>
+        <dd>Get Excel sheets</dd>
+      </dl><dl><dt>
+          
+          <code><a href="mgrepl.html">mgrepl()</a></code> 
+        </dt>
+        <dd>grep wrapper to support multiple patterns</dd>
+      </dl></div><div class="section level2">
+      <h2 id="exception-helpers">Exception helpers<a class="anchor" aria-label="anchor" href="#exception-helpers"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="get_exception_data.html">get_exception_data()</a></code> 
+        </dt>
+        <dd>get exception data</dd>
+      </dl></div><div class="section level2">
+      <h2 id="test-data-class">Test data class<a class="anchor" aria-label="anchor" href="#test-data-class"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="gdr_test_data-class.html">gdr_test_data-class</a></code> 
+        </dt>
+        <dd>gDR Test Data object</dd>
+      </dl><dl><dt>
+          
+          <code><a href="manifest_path-method.html">manifest_path()</a></code> 
+        </dt>
+        <dd>Method manifest_path</dd>
+      </dl><dl><dt>
+          
+          <code><a href="result_path-method.html">result_path()</a></code> 
+        </dt>
+        <dd>Method result_path</dd>
+      </dl><dl><dt>
+          
+          <code><a href="template_path-method.html">template_path()</a></code> 
+        </dt>
+        <dd>Method template_path</dd>
+      </dl></div><div class="section level2">
+      <h2 id="load-files">Load files<a class="anchor" aria-label="anchor" href="#load-files"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
           
           <code><a href="check_metadata_against_spaces.html">check_metadata_against_spaces()</a></code> 
         </dt>
@@ -96,55 +232,9 @@
         <dd>Check metadata for required column names</dd>
       </dl><dl><dt>
           
-          <code><a href="convert_MAE_to_PSet.html">convert_MAE_to_PSet()</a></code> 
-        </dt>
-        <dd>Convert MultiAssayExperiment to TreatmentResponseExperiment</dd>
-      </dl><dl><dt>
-          
-          <code><a href="convert_pset_to_df.html">convert_pset_to_df()</a></code> 
-        </dt>
-        <dd>Convert a PharmacoSet to a data.table that is prepare for input into gDR pipeline</dd>
-      </dl><dl><dt>
-          
-          <code><a href="correct_template_sheets.html">correct_template_sheets()</a></code> 
-        </dt>
-        <dd>Correct names of the template sheets (if required)</dd>
-      </dl><dl><dt>
-          
-          <code><a href="detect_file_format.html">detect_file_format()</a></code> 
-        </dt>
-        <dd>Detect format of results data</dd>
-      </dl><dl><dt>
-          
-          <code><a href="dot-check_against_single_template_sheet.html">.check_against_single_template_sheet()</a></code> 
-        </dt>
-        <dd>Evaluate if template file with single sheet is present,
-if the name of the sheet is correct and if it can be fixed</dd>
-      </dl><dl><dt>
-          
-          <code><a href="dot-extract_or_create_assay.html">.extract_or_create_assay()</a></code> 
-        </dt>
-        <dd>Extracts an assay from a SummarizedExperiment object or creates a new one if it does not exist</dd>
-      </dl><dl><dt>
-          
           <code><a href="enhance_raw_edited_EnVision_df.html">enhance_raw_edited_EnVision_df()</a></code> 
         </dt>
         <dd>Enhance raw edited EnVision data.table</dd>
-      </dl><dl><dt>
-          
-          <code><a href="fix_typos_with_reference.html">fix_typos_with_reference()</a></code> 
-        </dt>
-        <dd>Fix typos using reference data</dd>
-      </dl><dl><dt>
-          
-          <code><a href="gdr_test_data-class.html">gdr_test_data-class</a></code> 
-        </dt>
-        <dd>gDR Test Data object</dd>
-      </dl><dl><dt>
-          
-          <code><a href="getPSet.html">getPSet()</a></code> 
-        </dt>
-        <dd>Get PharmacoSet</dd>
       </dl><dl><dt>
           
           <code><a href="get_EnVision_properties.html">get_EnVision_properties()</a></code> 
@@ -170,55 +260,9 @@ from raw unedited EnVision data.table</dd>
 for non-Excel files return 0</dd>
       </dl><dl><dt>
           
-          <code><a href="get_exception_data.html">get_exception_data()</a></code> 
-        </dt>
-        <dd>get exception data</dd>
-      </dl><dl><dt>
-          
-          <code><a href="get_expected_template_sheets.html">get_expected_template_sheets()</a></code> 
-        </dt>
-        <dd>Get names of the sheets expected in templates xlsx</dd>
-      </dl><dl><dt>
-          
           <code><a href="get_plate_info_from_template_xlsx.html">get_plate_info_from_template_xlsx()</a></code> 
         </dt>
         <dd>Get plate info from template xlsx</dd>
-      </dl><dl><dt>
-          
-          <code><a href="get_test_D300_data.html">get_test_D300_data()</a></code> 
-        </dt>
-        <dd>get test D300 data</dd>
-      </dl><dl><dt>
-          
-          <code><a href="get_test_EnVision_data.html">get_test_EnVision_data()</a></code> 
-        </dt>
-        <dd>get test EnVision data</dd>
-      </dl><dl><dt>
-          
-          <code><a href="get_test_Tecan_data.html">get_test_Tecan_data()</a></code> 
-        </dt>
-        <dd>get test Tecan data</dd>
-      </dl><dl><dt>
-          
-          <code><a href="get_test_data.html">get_test_data()</a></code> 
-        </dt>
-        <dd>get primary test data</dd>
-      </dl><dl><dt>
-          
-          <code><a href="get_xl_sheets.html">get_xl_sheets()</a></code> 
-        </dt>
-        <dd>Get Excel sheets</dd>
-      </dl><dl><dt>
-          
-          <code><a href="import_D300.html">import_D300()</a></code> 
-        </dt>
-        <dd>Import D300</dd>
-      </dl><dl><dt>
-          
-          <code><a href="is_readable_v.html">is_readable_v()</a></code> 
-        </dt>
-        <dd>is_readable_v
-Check if all paths in vector are readable</dd>
       </dl><dl><dt>
           
           <code><a href="load_data.html">load_data()</a></code> 
@@ -266,21 +310,6 @@ Check if all paths in vector are readable</dd>
         <dd>Load templates from xlsx</dd>
       </dl><dl><dt>
           
-          <code><a href="manifest_path-method.html">manifest_path()</a></code> 
-        </dt>
-        <dd>Method manifest_path</dd>
-      </dl><dl><dt>
-          
-          <code><a href="mgrepl.html">mgrepl()</a></code> 
-        </dt>
-        <dd>grep wrapper to support multiple patterns</dd>
-      </dl><dl><dt>
-          
-          <code><a href="parse_D300_xml.html">parse_D300_xml()</a></code> 
-        </dt>
-        <dd>Parse D300</dd>
-      </dl><dl><dt>
-          
           <code><a href="read_EnVision_delim.html">read_EnVision_delim()</a></code> 
         </dt>
         <dd>Read EnVision delimited text files</dd>
@@ -289,11 +318,6 @@ Check if all paths in vector are readable</dd>
           <code><a href="read_EnVision_xlsx.html">read_EnVision_xlsx()</a></code> 
         </dt>
         <dd>Read in single xlsx data from EnVision</dd>
-      </dl><dl><dt>
-          
-          <code><a href="read_excel_to_dt.html">read_excel_to_dt()</a></code> 
-        </dt>
-        <dd>Read excel file and transorm it into data.table object</dd>
       </dl><dl><dt>
           
           <code><a href="read_in_EnVision_file.html">read_in_EnVision_file()</a></code> 
@@ -331,41 +355,117 @@ Check if all paths in vector are readable</dd>
         <dd>read in tsv template files</dd>
       </dl><dl><dt>
           
-          <code><a href="read_ref_data.html">read_ref_data()</a></code> 
+          <code><a href="validate_template_xlsx.html">validate_template_xlsx()</a></code> 
         </dt>
-        <dd>read_ref_data</dd>
+        <dd>Validate template xlsx data</dd>
+      </dl></div><div class="section level2">
+      <h2 id="convert-pset-object-to-gdr-object">Convert Pset object to gDR object<a class="anchor" aria-label="anchor" href="#convert-pset-object-to-gdr-object"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="convert_pset_to_df.html">convert_pset_to_df()</a></code> 
+        </dt>
+        <dd>Convert a PharmacoSet to a data.table that is prepare for input into gDR pipeline</dd>
       </dl><dl><dt>
           
-          <code><a href="result_path-method.html">result_path()</a></code> 
+          <code><a href="getPSet.html">getPSet()</a></code> 
         </dt>
-        <dd>Method result_path</dd>
-      </dl><dl><dt>
-          
-          <code><a href="save_drug_info_per_well.html">save_drug_info_per_well()</a></code> 
-        </dt>
-        <dd>for each drug create a Gnumber and Concentration information for each well</dd>
+        <dd>Get PharmacoSet</dd>
       </dl><dl><dt>
           
           <code><a href="setEnvForPSet.html">setEnvForPSet()</a></code> 
         </dt>
         <dd>Adjust environment variables to meet gDR standards</dd>
+      </dl></div><div class="section level2">
+      <h2 id="test-data">Test data<a class="anchor" aria-label="anchor" href="#test-data"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="get_test_D300_data.html">get_test_D300_data()</a></code> 
+        </dt>
+        <dd>get test D300 data</dd>
+      </dl><dl><dt>
+          
+          <code><a href="get_test_EnVision_data.html">get_test_EnVision_data()</a></code> 
+        </dt>
+        <dd>get test EnVision data</dd>
+      </dl><dl><dt>
+          
+          <code><a href="get_test_Tecan_data.html">get_test_Tecan_data()</a></code> 
+        </dt>
+        <dd>get test Tecan data</dd>
+      </dl><dl><dt>
+          
+          <code><a href="get_test_data.html">get_test_data()</a></code> 
+        </dt>
+        <dd>get primary test data</dd>
+      </dl></div><div class="section level2">
+      <h2 id="assert-utils">Assert utils<a class="anchor" aria-label="anchor" href="#assert-utils"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="is_readable_v.html">is_readable_v()</a></code> 
+        </dt>
+        <dd>is_readable_v
+Check if all paths in vector are readable</dd>
+      </dl></div><div class="section level2">
+      <h2 id="utils">Utils<a class="anchor" aria-label="anchor" href="#utils"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="detect_file_format.html">detect_file_format()</a></code> 
+        </dt>
+        <dd>Detect format of results data</dd>
+      </dl><dl><dt>
+          
+          <code><a href="read_excel_to_dt.html">read_excel_to_dt()</a></code> 
+        </dt>
+        <dd>Read excel file and transorm it into data.table object</dd>
+      </dl><dl><dt>
+          
+          <code><a href="read_ref_data.html">read_ref_data()</a></code> 
+        </dt>
+        <dd>read_ref_data</dd>
       </dl><dl><dt>
           
           <code><a href="standardize_record_values.html">standardize_record_values()</a></code> 
         </dt>
         <dd>standardize_record_values</dd>
-      </dl><dl><dt>
-          
-          <code><a href="template_path-method.html">template_path()</a></code> 
-        </dt>
-        <dd>Method template_path</dd>
-      </dl><dl><dt>
-          
-          <code><a href="validate_template_xlsx.html">validate_template_xlsx()</a></code> 
-        </dt>
-        <dd>Validate template xlsx data</dd>
       </dl></div>
-  </main></div>
+  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">

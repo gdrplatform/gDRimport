@@ -5,8 +5,8 @@ articles:
   ConvertingMAEtoPharmacoSet: ConvertingMAEtoPharmacoSet.html
   ConvertingPharmacoSetToGDR: ConvertingPharmacoSetToGDR.html
   gDRimport: gDRimport.html
-last_built: 2024-02-14T12:36Z
+last_built: 2024-02-26T09:20Z
 urls:
-  reference: https://gdrplatform.github.io/gDRutils/reference
-  article: https://gdrplatform.github.io/gDRutils/articles
+  reference: https://gdrplatform.github.io/gDRimport/reference
+  article: https://gdrplatform.github.io/gDRimport/articles
 

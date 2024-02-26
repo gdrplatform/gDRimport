@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">gDRimport</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.6</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -147,7 +147,7 @@ in a <code>MAE</code> object generated using the data from the <a href="https://
 <p>First we will view the experiments and assays within the
 MultiAssayExperiment object.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">gDRutils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gDRutils/man/MAEpply.html" class="external-link">MAEpply</a></span><span class="op">(</span><span class="va">mae</span>, <span class="va">assays</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu">gDRutils</span><span class="fu">::</span><span class="fu"><a href="https://gdrplatform.github.io/gDRstyle/reference/MAEpply.html" class="external-link">MAEpply</a></span><span class="op">(</span><span class="va">mae</span>, <span class="va">assays</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $matrix</span></span>
 <span><span class="co">#&gt; List of length 14</span></span>
 <span><span class="co">#&gt; names(14): RawTreated Controls Normalized ... CIScore_50 CIScore_80 Metrics</span></span>
@@ -165,7 +165,7 @@ object, in this example we will use the name of the study.</p>
 <code class="sourceCode R"><span><span class="va">pset</span></span>
 <span><span class="co">#&gt; &lt;PharmacoSet&gt;</span></span>
 <span><span class="co">#&gt; Name:  Kyung2022 </span></span>
-<span><span class="co">#&gt; Date Created:  Wed Feb 14 12:37:17 2024 </span></span>
+<span><span class="co">#&gt; Date Created:  Mon Feb 26 09:21:08 2024 </span></span>
 <span><span class="co">#&gt; Number of samples:  7 </span></span>
 <span><span class="co">#&gt; Molecular profiles:</span></span>
 <span><span class="co">#&gt;    A MultiAssayExperiment object of 1 listed</span></span>
@@ -1282,7 +1282,7 @@ discovery, 12(1), 204-219.</li>
 <span><span class="co">#&gt; [8] base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt;  [1] MultiAssayExperiment_1.28.0 gDRimport_1.1.5            </span></span>
+<span><span class="co">#&gt;  [1] MultiAssayExperiment_1.28.0 gDRimport_1.1.6            </span></span>
 <span><span class="co">#&gt;  [3] PharmacoGx_3.6.0            CoreGx_2.6.0               </span></span>
 <span><span class="co">#&gt;  [5] SummarizedExperiment_1.32.0 Biobase_2.62.0             </span></span>
 <span><span class="co">#&gt;  [7] GenomicRanges_1.54.1        GenomeInfoDb_1.38.6        </span></span>
@@ -1308,19 +1308,19 @@ discovery, 12(1), 204-219.</li>
 <span><span class="co">#&gt;  [43] qs_0.25.7               limma_3.58.1            boot_1.3-28.1          </span></span>
 <span><span class="co">#&gt;  [46] jquerylib_0.1.4         Rcpp_1.0.12             knitr_1.45             </span></span>
 <span><span class="co">#&gt;  [49] downloader_0.4          httpuv_1.6.14           Matrix_1.6-5           </span></span>
-<span><span class="co">#&gt;  [52] igraph_1.6.0            tidyselect_1.2.0        abind_1.4-5            </span></span>
+<span><span class="co">#&gt;  [52] igraph_2.0.2            tidyselect_1.2.0        abind_1.4-5            </span></span>
 <span><span class="co">#&gt;  [55] yaml_2.3.8              stringfish_0.16.0       gplots_3.1.3.1         </span></span>
 <span><span class="co">#&gt;  [58] codetools_0.2-19        plyr_1.8.9              lattice_0.21-8         </span></span>
 <span><span class="co">#&gt;  [61] tibble_3.2.1            shiny_1.8.0             BumpyMatrix_1.10.0     </span></span>
 <span><span class="co">#&gt;  [64] evaluate_0.23           desc_1.4.3              RcppParallel_5.1.7     </span></span>
 <span><span class="co">#&gt;  [67] bench_1.1.3             pillar_1.9.0            lsa_0.73.3             </span></span>
-<span><span class="co">#&gt;  [70] KernSmooth_2.23-20      sm_2.2-5.7.1            checkmate_2.3.1        </span></span>
-<span><span class="co">#&gt;  [73] DT_0.31                 shinyjs_2.1.0           piano_2.18.0           </span></span>
-<span><span class="co">#&gt;  [76] generics_0.1.3          RCurl_1.98-1.14         ggplot2_3.4.4          </span></span>
+<span><span class="co">#&gt;  [70] KernSmooth_2.23-20      sm_2.2-6.0              checkmate_2.3.1        </span></span>
+<span><span class="co">#&gt;  [73] DT_0.32                 shinyjs_2.1.0           piano_2.18.0           </span></span>
+<span><span class="co">#&gt;  [76] generics_0.1.3          RCurl_1.98-1.14         ggplot2_3.5.0          </span></span>
 <span><span class="co">#&gt;  [79] munsell_0.5.0           scales_1.3.0            RApiSerialize_0.1.2    </span></span>
 <span><span class="co">#&gt;  [82] gtools_3.9.5            xtable_1.8-4            marray_1.80.0          </span></span>
 <span><span class="co">#&gt;  [85] glue_1.7.0              slam_0.1-50             mapproj_1.2.11         </span></span>
-<span><span class="co">#&gt;  [88] tools_4.3.0             data.table_1.15.0       gDRutils_1.1.4         </span></span>
+<span><span class="co">#&gt;  [88] tools_4.3.0             data.table_1.15.0       gDRutils_1.1.6         </span></span>
 <span><span class="co">#&gt;  [91] fgsea_1.28.0            RANN_2.6.1              visNetwork_2.1.2       </span></span>
 <span><span class="co">#&gt;  [94] fs_1.6.3                fastmatch_1.1-4         cowplot_1.1.3          </span></span>
 <span><span class="co">#&gt;  [97] grid_4.3.0              plotrix_3.8-4           NISTunits_1.0.1        </span></span>
