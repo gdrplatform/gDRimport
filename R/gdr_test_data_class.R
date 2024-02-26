@@ -15,7 +15,7 @@
 #' 
 #' @docType class
 #' @name gdr_test_data-class
-#' @keywords classes
+#' @keywords classes test_data_class
 #' 
 #' @export
 setClass(
@@ -53,13 +53,14 @@ setMethod("show", "gdr_test_data",
 #' 
 #' @docType methods
 #' @rdname manifest_path-method
-#' @keywords methods
+#' @keywords methods test_data_class
 #' 
 #' @export
 setGeneric("manifest_path", function(x) standardGeneric("manifest_path"))
 
 #' @aliases manifest_path,gdr_test_data-method
 #' @rdname manifest_path-method
+#' @keywords test_data_class
 setMethod("manifest_path", "gdr_test_data", function(x) x@manifest_path)
 
 #' Method result_path
@@ -75,19 +76,21 @@ setMethod("manifest_path", "gdr_test_data", function(x) x@manifest_path)
 #'   
 #' @docType methods
 #' @rdname result_path-method
-#' @keywords methods
+#' @keywords methods test_data_class
 #' 
 #' @export
 setGeneric("result_path", function(x) standardGeneric("result_path"))
 
 #' @aliases result_path,gdr_test_data-method
 #' @rdname result_path-method
+#' @keywords test_data_class
 setMethod("result_path", "gdr_test_data", function(x) x@result_path)
 
 #' Method template_path
 #'
 #' Method for object gdr_test_data - access to slot `template_path`
 #' @param x object class gdr_test_data
+#' @keywords test_data_class
 #'
 #' @return value of slot `template_path`
 #' 
@@ -97,7 +100,7 @@ setMethod("result_path", "gdr_test_data", function(x) x@result_path)
 #'  
 #' @docType methods
 #' @rdname template_path-method
-#' @keywords methods
+#' @keywords methods test_data_class
 #' 
 #' @export
 setGeneric("template_path", function(x) standardGeneric("template_path"))

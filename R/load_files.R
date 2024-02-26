@@ -7,7 +7,7 @@
 #' or character with file path of templates file(s)
 #' @param results_file  data.table, with datapaths and names of results file(s)
 #' or character with file path of results file(s)
-#' @param instrument character
+#' @keywords load_files
 #'
 #' @examples
 #'  td <- get_test_data()
@@ -73,6 +73,7 @@ load_data <-
 #' This functions loads and checks the manifest file(s)
 #'
 #' @param manifest_file character, file path(s) to manifest(s)
+#' @keywords load_files
 #'
 #' @examples
 #'  td <- get_test_data()
@@ -130,6 +131,7 @@ load_manifest <- function(manifest_file) {
 #'
 #' @param manifest_file character, file path(s) to manifest(s)
 #' @param available_formats charvec with available file formats
+#' @keywords load_files
 #'
 #' @return a data.table with manifest data
 #'
@@ -186,6 +188,7 @@ read_in_manifest_file <- function(manifest_file, available_formats) {
 #'
 #' @param df_template_files data.table, with datapaths and names of results file(s)
 #' or character with file path of templates file(s)
+#' @keywords load_files
 #'
 #' @examples
 #'  td <- get_test_data()
@@ -248,6 +251,7 @@ load_templates <- function(df_template_files) {
 #' or character with file path of results file(s)
 #' @param instrument character
 #' @param headers list of headers identified in the manifest file
+#' @keywords load_files
 #'
 #' @examples
 #'  td <- get_test_data()
@@ -298,6 +302,7 @@ load_results <-
 #'
 #' @param template_file character, file path(s) to template(s)
 #' @param template_filename character, file name(s)
+#' @keywords load_files
 #'
 #' @return data.table with template data
 #'
@@ -350,6 +355,7 @@ load_templates_tsv <-
 #' @param template_file character, file path(s) to template(s)
 #' @param template_filename character, file name(s)
 #' @param templates list with templates data
+#' @keywords load_files
 #'
 #' @return data.table with templates dataa
 #'
@@ -409,6 +415,7 @@ read_in_tsv_template_files <- function(template_file, template_filename, templat
 #'
 #' @param template_file character, file path(s) to template(s)
 #' @param template_filename character, file name(s)
+#' @keywords load_files
 #'
 #' @return data.table with templates data
 #'
@@ -446,6 +453,7 @@ load_templates_xlsx <-
 #' @param template_file character, file path(s) to template(s)
 #' @param template_filename character, file name(s)
 #' @param template_sheets template sheet names
+#' @keywords load_files
 #'
 #' @return data.table with templates data
 #'
@@ -486,6 +494,7 @@ read_in_template_xlsx <- function(template_file, template_filename, template_she
 #' @param template_sheets template sheet names
 #' @param idx template file index
 #' @param plate_info list with plate info
+#' @keywords load_files
 #'
 #' @return data.table with template data
 #'
@@ -542,6 +551,7 @@ read_in_template_sheet_xlsx <- function(template_file, template_sheets, idx, pla
 #' @param template_file character, file path(s) to template(s)
 #' @param Gnumber_idx index with Gnumber data
 #' @param idx template file index
+#' @keywords load_files
 #'
 #' @return list with plate info
 #'
@@ -585,6 +595,7 @@ get_plate_info_from_template_xlsx <- function(template_file, Gnumber_idx, idx) {
 #' @param template_filename character, file name(s)
 #' @param template_sheets template sheet names
 #' @param idx template file index
+#' @keywords load_files
 #'
 #' @return \code{NULL} invisibly.
 #'
@@ -642,6 +653,7 @@ validate_template_xlsx <- function(template_file, template_filename, template_sh
 #'
 #' @param results_file character, file path(s) to template(s)
 #' @param headers list of headers identified in the manifest
+#' @keywords load_files
 #'
 #' @return data.table with results data
 #'
@@ -667,6 +679,7 @@ load_results_tsv <-
 #' or character with file path of results file(s)
 #' @param results_filename charvect with file names
 #' @param headers list of headers identified in the result files
+#' @keywords load_files
 #'
 #' @return data.table with results data
 #'
@@ -721,6 +734,7 @@ read_in_result_files <- function(results_file, results_filename, headers) {
 #'
 #' @param results_file character vector containing file path(s) to results file(s)
 #' @param headers list of headers identified in the manifest
+#' @keywords load_files
 #'
 #' @return data.table with results data
 #'
@@ -784,6 +798,7 @@ load_results_EnVision <-
 #'
 #' @param results_file character, file path(s) to results file(s)
 #' @param results_sheet results sheet names
+#' @keywords load_files
 #'
 #' @return data.table with results data
 #'
@@ -827,6 +842,7 @@ read_EnVision_xlsx <- function(results_file, results_sheet) {
 #' for non-Excel files return 0
 #'
 #' @param fls charvec with file pathsa
+#' @keywords load_files
 #'
 #' @return list with one element per file with
 #' sheet names or 0 (for non-Excel file)
@@ -863,6 +879,7 @@ get_excel_sheet_names <- function(fls) {
 #' @param fname file name
 #' @param sheet_name name of the Excel sheet
 #' @param headers list with the headersa
+#' @keywords load_files
 #'
 #' @return data.table derived from EnVision data
 #'
@@ -924,6 +941,7 @@ get_df_from_raw_edited_EnVision_df <-
 #' @param df raw data.table
 #' @param barcode_col column number for barcode data
 #' @param headers list with the headersa
+#' @keywords load_files
 #'
 #' @return data.table derived from EnVision data
 #'
@@ -987,6 +1005,7 @@ enhance_raw_edited_EnVision_df <- function(df, barcode_col, headers) {
 #' @param barcode_col column number for barcode data
 #' @param n_row number of rows
 #' @param n_col number of columns
+#' @keywords load_files
 #'
 #' @return data.table derived from EnVision data
 #'
@@ -1030,6 +1049,7 @@ get_df_from_raw_unedited_EnVision_df <-
 #'
 #' @param results_file string, file path to a result file
 #' @param headers list of headers identified in the manifest
+#' @keywords load_files
 #'
 #' @return data.table derived from Tecan data
 #'
@@ -1059,6 +1079,7 @@ load_results_Tecan <-
 #' @param results_file string, file path to a result file
 #' @param results_sheets template sheet names
 #' @param headers list of headers identified in the manifest
+#' @keywords load_files
 #'
 #' @return data.table derived from Tecan data
 #'
@@ -1113,6 +1134,7 @@ read_in_results_Tecan <- function(results_file, results_sheets, headers) {
 #' @param col_df a character with colnames of df
 #' @param df_name a name of data.table ("" by default)
 #' @param df_type a type of a data.table (NULL by default)
+#' @keywords load_files
 #'
 #' @examples
 #'  td <- get_test_data()
@@ -1146,6 +1168,7 @@ check_metadata_names <-
 #' @param col_df a charvec with corrected colnames of df
 #' @param df_name a name of data.table ("" by default)
 #' @param df_type a type of a data.table (NULL by default)
+#' @keywords load_files
 #'
 #'
 #' @return \code{NULL} invisibly.
@@ -1202,6 +1225,7 @@ check_metadata_req_col_names <- function(col_df, df_name, df_type) {
 #
 #' @param corrected_names a charvec with corrected colnames of df
 #' @param df_name a name of data.table ("" by default)
+#' @keywords load_files
 #'
 #' @return a charvec with corrected colnames of df
 #'
@@ -1225,6 +1249,7 @@ check_metadata_field_names <- function(corrected_names, df_name) {
 #
 #' @param corrected_names a charvec with corrected colnames of df
 #' @param df_name a name of data.table ("" by default)
+#' @keywords load_files
 #'
 #' @return a charvec with corrected colnames of df
 #'
@@ -1253,6 +1278,7 @@ check_metadata_against_spaces <- function(corrected_names, df_name) {
 #
 #' @param corrected_names a charvec with corrected colnames of df
 #' @param df_name a name of data.table ("" by default)
+#' @keywords load_files
 #'
 #' @return a charvec with corrected colnames of df
 #'
@@ -1305,6 +1331,7 @@ check_metadata_headers <- function(corrected_names, df_name) {
 #' @param file string to path of input file from EnVision scanner
 #' @param nrows maximum number of file rows to be processed
 #' @param seps potential field separators of the input file
+#' @keywords load_files
 #'
 #' @return a list containing the data table, n_col, n_row, and if is edited
 #'
@@ -1351,6 +1378,7 @@ read_EnVision_delim <- function(file,
 #' @param file  input file from EnVision
 #' @param nrows maximum number of file rows to be processed
 #' @param seps potential field separators of the input file
+#' @keywords load_files
 #'
 #' @return list with one element per EnVisoin input file
 #'
@@ -1390,6 +1418,7 @@ read_in_EnVision_file <- function(file, nrows, seps) {
 #'
 #' @param results.list  list with EnVision data
 #' @param fname name of the input file
+#' @keywords load_files
 #'
 #' @return list with EnVision propertiesa
 #'

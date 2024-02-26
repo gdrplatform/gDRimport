@@ -1,4 +1,35 @@
-url: https://gdrplatform.github.io/gDRutils/
+url: https://gdrplatform.github.io/gDRimport/
 template:
   bootstrap: 5
 
+reference:
+- title: Import D300
+- contents:
+  - has_keyword("D300")
+- title: Convert MAE to PSet object
+- contents:
+  - has_keyword("mae_to_pset")
+- title: Correction helpers
+- contents:
+  - has_keyword("correction")
+- title: Exception helpers
+- contents:
+  - has_keyword("exceptions")
+- title: Test data class
+- contents:
+  - has_keyword("test_data_class")
+- title: Load files
+- contents:
+  - has_keyword("load_files")
+- title: Convert Pset object to gDR object
+- contents:
+  - has_keyword("pset_to_gdr")
+- title: Test data
+- contents:
+  - has_keyword("test_data")
+- title: Assert utils
+- contents:
+  - has_keyword("assert_utils")
+- title: Utils
+- contents:
+  - has_keyword("utils")
