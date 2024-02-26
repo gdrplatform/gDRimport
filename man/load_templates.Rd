@@ -21,3 +21,4 @@ This functions loads and checks the template file(s)
  t_df <- load_templates(template_path(td))
 
 }
+\keyword{load_files}

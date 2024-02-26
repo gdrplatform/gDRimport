@@ -21,3 +21,4 @@ map values to a dictionary
 standardize_record_values(c("Vehicle", "vehcle"))
 
 }
+\keyword{utils}

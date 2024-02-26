@@ -21,3 +21,4 @@ Read excel file and transorm it into data.table object
 datasets <- readxl::readxl_example("datasets.xlsx")
 read_excel_to_dt(datasets)
 }
+\keyword{utils}

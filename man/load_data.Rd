@@ -19,8 +19,6 @@ or character with file path of templates file(s)}
 
 \item{results_file}{data.table, with datapaths and names of results file(s)
 or character with file path of results file(s)}
-
-\item{instrument}{character}
 }
 \value{
 a list with three data.tables for manifest/treatment and results
@@ -33,3 +31,4 @@ This functions loads and checks the data file(s)
  l_tbl <- load_data(manifest_path(td), template_path(td), result_path(td))
 
 }
+\keyword{load_files}

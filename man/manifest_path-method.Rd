@@ -25,3 +25,4 @@ Method for object gdr_test_data - access to slot \code{manifest_path}
 
 }
 \keyword{methods}
+\keyword{test_data_class}

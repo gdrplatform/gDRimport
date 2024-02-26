@@ -17,3 +17,4 @@ data.table derived from Tecan data
 \description{
 This functions loads and checks the results file
 }
+\keyword{load_files}

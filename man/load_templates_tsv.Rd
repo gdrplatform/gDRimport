@@ -17,3 +17,4 @@ data.table with template data
 \description{
 This functions loads and checks the template file(s)
 }
+\keyword{load_files}

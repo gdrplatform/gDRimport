@@ -20,3 +20,4 @@ data.table with results data
 \description{
 Read in results files
 }
+\keyword{load_files}

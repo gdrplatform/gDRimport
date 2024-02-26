@@ -17,3 +17,4 @@ data.table with results data
 \description{
 This functions loads and checks the results file(s)
 }
+\keyword{load_files}

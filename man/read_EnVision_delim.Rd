@@ -19,3 +19,4 @@ a list containing the data table, n_col, n_row, and if is edited
 \description{
 This function reads file from the EnVision Workstation
 }
+\keyword{load_files}

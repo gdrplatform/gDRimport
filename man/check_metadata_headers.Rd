@@ -17,3 +17,4 @@ a charvec with corrected colnames of df
 \description{
 Check whether metadata headers are correct and make fixes if needed
 }
+\keyword{load_files}

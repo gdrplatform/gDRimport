@@ -18,3 +18,4 @@ sheet names or 0 (for non-Excel file)
 get Excel sheets names for a charvec of files
 for non-Excel files return 0
 }
+\keyword{load_files}

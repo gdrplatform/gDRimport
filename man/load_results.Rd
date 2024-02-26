@@ -29,3 +29,4 @@ This functions loads and checks the results file(s)
  r_df <- load_results(result_path(td))
 
 }
+\keyword{load_files}

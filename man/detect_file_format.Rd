@@ -20,3 +20,4 @@ td2 <- get_test_Tecan_data()
 detect_file_format(td2$r_files[1])
 
 }
+\keyword{utils}

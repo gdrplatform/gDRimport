@@ -15,3 +15,4 @@ string with type of the sheets
 \description{
 Get names of the sheets expected in templates xlsx
 }
+\keyword{correction}

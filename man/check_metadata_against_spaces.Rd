@@ -17,3 +17,4 @@ a charvec with corrected colnames of df
 \description{
 Check metadata against spaces
 }
+\keyword{load_files}

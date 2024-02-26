@@ -20,3 +20,4 @@ td3 <- get_test_D300_data()
 fs <- td3[["f_96w"]]
 dose_df <- parse_D300_xml(fs[["d300"]])
 }
+\keyword{D300}

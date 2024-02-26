@@ -31,3 +31,4 @@ Object class \code{gdr_test_data} is build by function \code{\link[=get_test_dat
 }}
 
 \keyword{classes}
+\keyword{test_data_class}
