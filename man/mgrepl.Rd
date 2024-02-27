@@ -21,4 +21,4 @@ list of charvec with grep output
 \description{
 grep wrapper to support multiple patterns
 }
-\keyword{correction}
+\keyword{correction_exception}

@@ -19,4 +19,4 @@ get exception data
 get_exception_data(1)
 get_exception_data()
 }
-\keyword{exceptions}
+\keyword{correction_exception}

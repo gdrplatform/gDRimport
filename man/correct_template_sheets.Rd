@@ -15,4 +15,4 @@ charvec with paths to corrected sheet names
 \description{
 Correct names of the template sheets (if required)
 }
-\keyword{correction}
+\keyword{correction_exception}

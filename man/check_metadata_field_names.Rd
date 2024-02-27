@@ -17,4 +17,4 @@ a charvec with corrected colnames of df
 \description{
 Check metadata field names
 }
-\keyword{load_files}
+\keyword{correction_exception}

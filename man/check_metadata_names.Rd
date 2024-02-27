@@ -26,4 +26,4 @@ Check whether all metadata names are correct
  result <- check_metadata_names(col_df = colnames(m_data))
 
 }
-\keyword{load_files}
+\keyword{correction_exception}

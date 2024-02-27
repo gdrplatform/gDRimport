@@ -7,6 +7,7 @@
 #' or character with file path of templates file(s)
 #' @param results_file  data.table, with datapaths and names of results file(s)
 #' or character with file path of results file(s)
+#' @param instrument character
 #' @keywords load_files
 #'
 #' @examples
@@ -1134,7 +1135,7 @@ read_in_results_Tecan <- function(results_file, results_sheets, headers) {
 #' @param col_df a character with colnames of df
 #' @param df_name a name of data.table ("" by default)
 #' @param df_type a type of a data.table (NULL by default)
-#' @keywords load_files
+#' @keywords correction_exception
 #'
 #' @examples
 #'  td <- get_test_data()
@@ -1168,7 +1169,7 @@ check_metadata_names <-
 #' @param col_df a charvec with corrected colnames of df
 #' @param df_name a name of data.table ("" by default)
 #' @param df_type a type of a data.table (NULL by default)
-#' @keywords load_files
+#' @keywords correction_exception
 #'
 #'
 #' @return \code{NULL} invisibly.
@@ -1225,7 +1226,7 @@ check_metadata_req_col_names <- function(col_df, df_name, df_type) {
 #
 #' @param corrected_names a charvec with corrected colnames of df
 #' @param df_name a name of data.table ("" by default)
-#' @keywords load_files
+#' @keywords correction_exception
 #'
 #' @return a charvec with corrected colnames of df
 #'
@@ -1249,7 +1250,7 @@ check_metadata_field_names <- function(corrected_names, df_name) {
 #
 #' @param corrected_names a charvec with corrected colnames of df
 #' @param df_name a name of data.table ("" by default)
-#' @keywords load_files
+#' @keywords correction_exception
 #'
 #' @return a charvec with corrected colnames of df
 #'
@@ -1278,7 +1279,7 @@ check_metadata_against_spaces <- function(corrected_names, df_name) {
 #
 #' @param corrected_names a charvec with corrected colnames of df
 #' @param df_name a name of data.table ("" by default)
-#' @keywords load_files
+#' @keywords correction_exception
 #'
 #' @return a charvec with corrected colnames of df
 #'

@@ -16,4 +16,4 @@ logical flag
 \description{
 get sheets for given set of XLS files
 }
-\keyword{correction}
+\keyword{correction_exception}

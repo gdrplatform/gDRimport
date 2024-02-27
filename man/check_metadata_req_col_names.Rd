@@ -19,4 +19,4 @@ check_metadata_req_col_names(col_df, df_name, df_type)
 \description{
 Check metadata for required column names
 }
-\keyword{load_files}
+\keyword{correction_exception}

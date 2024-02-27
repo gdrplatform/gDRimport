@@ -19,6 +19,8 @@ or character with file path of templates file(s)}
 
 \item{results_file}{data.table, with datapaths and names of results file(s)
 or character with file path of results file(s)}
+
+\item{instrument}{character}
 }
 \value{
 a list with three data.tables for manifest/treatment and results

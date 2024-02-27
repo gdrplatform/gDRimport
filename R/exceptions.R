@@ -48,7 +48,7 @@ EXCEPTION_TABLE <- tibble::tribble(
 #' @examples
 #' get_exception_data(1)
 #' get_exception_data()
-#' @keywords exceptions
+#' @keywords correction_exception
 #' 
 #' @return A tibble row with exception data or all exceptions
 #' @export

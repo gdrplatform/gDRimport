@@ -3,7 +3,7 @@
 #' @examples 
 #' get_test_data()
 #' 
-#' @keywords test_data
+#' @keywords test_data_class
 #' @export
 #'
 #' @return object class "gdr_test_data" with with input data (manifest/template/result paths)

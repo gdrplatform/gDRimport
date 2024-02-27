@@ -3,7 +3,7 @@
 #' get sheets for given set of XLS files
 #' 
 #' @param files charvec with file paths
-#' @keywords correction
+#' @keywords correction_exception
 #'
 #' @return named list where names are the excel filenames
 #' and the values are the sheets within each file
@@ -21,7 +21,7 @@ get_xl_sheets <- function(files) {
 #' 
 #' get sheets for given set of XLS files
 #' @param ts list with template sheets info
-#' @keywords correction
+#' @keywords correction_exception
 #' 
 #' @return logical flag
 #' 
@@ -50,7 +50,7 @@ get_xl_sheets <- function(files) {
 #' Correct names of the template sheets (if required)
 #' 
 #' @param tfiles charvec with paths to template files
-#' @keywords correction
+#' @keywords correction_exception
 #' 
 #' @return charvec with paths to corrected sheet names
 correct_template_sheets <- function(tfiles) {
@@ -98,7 +98,7 @@ correct_template_sheets <- function(tfiles) {
 #' Get names of the sheets expected in templates xlsx
 #'
 #' @param type charvec type of the sheets
-#' @keywords correction
+#' @keywords correction_exception
 #' 
 #' @return string with type of the sheets
 #' 
@@ -134,7 +134,7 @@ get_expected_template_sheets <-
 #' are template sheet valid?
 #' 
 #' @param ts list with (per file) template sheets
-#' @keywords correction
+#' @keywords correction_exception
 #' 
 #' @seealso get_xl_sheets
 #' 
@@ -181,7 +181,7 @@ are_template_sheets_valid <- function(ts) {
 #' 'grepl' is used to find entries from 'ref' that might be 
 #' somehow pre- or post- fixed
 #' @param fix_underscores logical flag fix the issues with underscores in data identfiers? 
-#' @keywords correction
+#' @keywords correction_exception
 #' 
 #' @return list or charvec with corrected data
 #' 
@@ -241,7 +241,7 @@ fix_typos_with_reference <-
 #' @param x charvec with data
 #' @param do_unlist logical_flag unlist the final results?
 #' @param ... additional argument
-#' @keywords correction
+#' @keywords correction_exception
 #' 
 #' @return list of charvec with grep output
 #' 
