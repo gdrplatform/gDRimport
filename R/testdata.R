@@ -3,6 +3,7 @@
 #' @examples 
 #' get_test_data()
 #' 
+#' @keywords test_data_class
 #' @export
 #'
 #' @return object class "gdr_test_data" with with input data (manifest/template/result paths)
@@ -49,6 +50,7 @@ get_test_data <- function() {
 #' @examples 
 #' get_test_Tecan_data()
 #
+#' @keywords test_data
 #' @export
 #'
 #' @return list with with input data (manifest/template/result paths)
@@ -73,6 +75,7 @@ get_test_Tecan_data <- function() {
 #' @examples 
 #' get_test_D300_data()
 #
+#' @keywords test_data
 #' @export
 #'
 #' @return list with with input data (manifest/template/result paths)
@@ -104,6 +107,7 @@ get_test_D300_data <- function() {
 #' @examples 
 #' get_test_EnVision_data()
 #
+#' @keywords test_data
 #' @export
 #'
 #' @return list with with input data (manifest/template/result paths)

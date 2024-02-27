@@ -21,3 +21,4 @@ validate_template_xlsx(template_file, template_filename, template_sheets, idx)
 \description{
 Validate template xlsx data
 }
+\keyword{load_files}

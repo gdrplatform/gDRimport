@@ -1,4 +1,26 @@
-url: https://gdrplatform.github.io/gDRutils/
+url: https://gdrplatform.github.io/gDRimport/
 template:
   bootstrap: 5
 
+reference:
+- title: Load files
+- contents:
+  - has_keyword("load_files")
+- title: Pset conversion
+- contents:
+  - has_keyword("pset")
+- title: Import D300
+- contents:
+  - has_keyword("D300")
+- title: Input data validation/correction
+- contents:
+  - has_keyword("correction_exception")
+- title: Utils
+- contents:
+  - has_keyword("utils")
+- title: Test data class
+- contents:
+  - has_keyword("test_data_class")
+- title: Test data
+- contents:
+  - has_keyword("test_data")

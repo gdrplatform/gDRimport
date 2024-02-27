@@ -20,3 +20,4 @@ This functions loads and checks the manifest file(s)
  ml <- load_manifest(manifest_path(td))
 
 }
+\keyword{load_files}

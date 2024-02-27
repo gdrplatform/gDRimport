@@ -16,3 +16,4 @@ get test Tecan data
 \examples{
 get_test_Tecan_data()
 }
+\keyword{test_data}

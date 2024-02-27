@@ -2,6 +2,7 @@
 #' Check if all paths in vector are readable
 #'
 #' @param paths a character with path(s)
+#' @keywords utils
 #'
 #' @examples
 #' td2 <- get_test_Tecan_data()

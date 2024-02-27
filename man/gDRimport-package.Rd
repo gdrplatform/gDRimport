@@ -24,16 +24,16 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Arkadiusz Gladki \email{gladki.arkadiusz@gmail.com}
+\strong{Maintainer}: Arkadiusz Gladki \email{gladki.arkadiusz@gmail.com} (\href{https://orcid.org/0000-0002-7059-6378}{ORCID})
 
 Authors:
 \itemize{
-  \item Bartosz Czech
-  \item Marc Hafner
+  \item Bartosz Czech (\href{https://orcid.org/0000-0002-9908-3007}{ORCID})
+  \item Marc Hafner (\href{https://orcid.org/0000-0003-1337-7598}{ORCID})
   \item Sergiu Mocanu
   \item Dariusz Scigocki
   \item Allison Vuong
-  \item Luca Gerosa
+  \item Luca Gerosa (\href{https://orcid.org/0000-0001-6805-9410}{ORCID})
   \item Janina Smola
 }
 

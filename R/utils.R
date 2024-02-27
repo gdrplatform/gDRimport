@@ -4,6 +4,7 @@
 #'
 #' @param x a named array
 #' @param dictionary a named array
+#' @keywords utils
 #'
 #' @examples 
 #' standardize_record_values(c("Vehicle", "vehcle"))
@@ -26,6 +27,7 @@ standardize_record_values <- function(x, dictionary = DICTIONARY) {
 #'
 #' @param inDir a directory path of reference data
 #' @param prefix a prefix of reference file names ('ref' by default)
+#' @keywords utils
 #'
 #' @return a list of reference data
 #'
@@ -49,6 +51,7 @@ read_ref_data <- function(inDir, prefix = "ref") {
 #' Detect format of results data
 #'
 #' @param results_file path to results data
+#' @keywords utils
 #'
 #' @examples 
 #' td2 <- get_test_Tecan_data()
@@ -74,6 +77,7 @@ detect_file_format <- function(results_file) {
 #'
 #' @param path path to excel file
 #' @param ... other arguments that should be passed into `readxl::read_excel`
+#' @keywords utils
 #'
 #' @return data.table object with read excel file
 #' @export

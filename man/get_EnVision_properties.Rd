@@ -17,3 +17,4 @@ list with EnVision propertiesa
 \description{
 This function return properties of EnVision data
 }
+\keyword{load_files}

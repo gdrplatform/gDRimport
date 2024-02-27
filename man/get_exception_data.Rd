@@ -18,5 +18,5 @@ get exception data
 \examples{
 get_exception_data(1)
 get_exception_data()
-
 }
+\keyword{correction_exception}

@@ -22,3 +22,4 @@ The new assay is initialized with NA values.
 This is useful for when multiple Summarized Experiments in a given MAE do not have the same assays.
 And it is necessary to have the same assays in all Summarized Experiments in order to convert the MAE to a PSet.
 }
+\keyword{pset}

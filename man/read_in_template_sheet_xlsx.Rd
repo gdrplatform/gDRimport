@@ -21,3 +21,4 @@ data.table with template data
 \description{
 Read in data from xlsx template sheet
 }
+\keyword{load_files}

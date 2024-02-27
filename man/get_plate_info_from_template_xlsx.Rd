@@ -19,3 +19,4 @@ list with plate info
 \description{
 Get plate info from template xlsx
 }
+\keyword{load_files}

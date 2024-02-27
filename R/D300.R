@@ -6,6 +6,7 @@
 #' @param metadata_file character, file path to file with mapping from D300 names to Gnumbers 
 #' @param destination_path character, path to folder where template 
 #' files will be generated
+#' @keywords D300
 #' 
 #' @examples
 #' td3 <- get_test_D300_data()[["f_96w"]]
@@ -82,6 +83,7 @@ import_D300 <-
 #' @param trt_gnumber_conc list with treatment data
 #' @param wb pointer to xlsx workbook
 #' @param idfs charvec with identifiers
+#' @keywords D300
 #' 
 #' @return \code{NULL} invisibly.
 #' 
@@ -163,6 +165,7 @@ merge_D300_w_metadata <- function(D300, Gnums) {
 #' This function parses a D300 *.tdd file (XML format) into a data.table
 #'
 #' @param D300_file string, file path to D300 .tdd file
+#' @keywords D300
 #'
 #' @return data.table representing input \code{D300_file}.
 #' 

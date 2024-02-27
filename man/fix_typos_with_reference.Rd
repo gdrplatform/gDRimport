@@ -31,3 +31,4 @@ list or charvec with corrected data
 Fix typos using reference data
 Evaluate given list of ids and try to update them
 }
+\keyword{correction_exception}

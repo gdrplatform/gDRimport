@@ -17,3 +17,4 @@ get primary test data
 get_test_data()
 
 }
+\keyword{test_data_class}

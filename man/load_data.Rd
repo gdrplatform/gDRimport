@@ -33,3 +33,4 @@ This functions loads and checks the data file(s)
  l_tbl <- load_data(manifest_path(td), template_path(td), result_path(td))
 
 }
+\keyword{load_files}

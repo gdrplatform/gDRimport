@@ -18,3 +18,4 @@ are template sheet valid?
 \seealso{
 get_xl_sheets
 }
+\keyword{correction_exception}

@@ -16,3 +16,4 @@ get test D300 data
 \examples{
 get_test_D300_data()
 }
+\keyword{test_data}

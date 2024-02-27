@@ -17,3 +17,4 @@ a charvec with corrected colnames of df
 \description{
 Check metadata field names
 }
+\keyword{correction_exception}
