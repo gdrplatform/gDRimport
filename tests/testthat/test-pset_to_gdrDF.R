@@ -13,7 +13,7 @@ read_mocked_PSets <- function(canonical = FALSE) {
 }
 
 test_that("getPSet works as expected", {
-  pset <- testthat:::with_mock(
+  pset <- testthat::with_mock(
     `PharmacoGx::availablePSets` = read_mocked_PSets,
     suppressMessages(getPSet(
       "Tavor_2020", psetDir = system.file("extdata/pset", package = "gDRimport")
@@ -31,7 +31,7 @@ test_that("setEnvForPSet works as expected", {
 })
 
 test_that(".extractDoseResponse works as expected", {
-  pset <- testthat:::with_mock(
+  pset <- testthat::with_mock(
     `PharmacoGx::availablePSets` = read_mocked_PSets,
     suppressMessages(getPSet(
       "Tavor_2020", psetDir = system.file("extdata/pset", package = "gDRimport")
@@ -45,7 +45,7 @@ test_that(".extractDoseResponse works as expected", {
 })
 
 test_that(".extractDoseResponse, .removeNegatives, and .createPseudoData work as expected", {
-  pset <- testthat:::with_mock(
+  pset <- testthat::with_mock(
     `PharmacoGx::availablePSets` = read_mocked_PSets,
     suppressMessages(getPSet(
       "Tavor_2020", psetDir = system.file("extdata/pset", package = "gDRimport")
@@ -66,7 +66,7 @@ test_that(".extractDoseResponse, .removeNegatives, and .createPseudoData work as
 
 test_that("convert_pset_to_df works as expected", {
   on.exit(gDRutils::reset_env_identifiers())
-  pset <- testthat:::with_mock(
+  pset <- testthat::with_mock(
     `PharmacoGx::availablePSets` = read_mocked_PSets,
     suppressMessages(getPSet(
       "Tavor_2020", psetDir = system.file("extdata/pset", package = "gDRimport")

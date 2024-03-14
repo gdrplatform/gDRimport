@@ -27,15 +27,15 @@ test_that("parse_D300_xml", {
   
 })
 
-test_that("gDRimport:::parse_D300_metadata_file works as expected", {
+test_that("parse_D300_metadata_file works as expected", {
   
   fs <- td3[["f_96w"]]
-  Gnum_96w_file <- gDRimport:::parse_D300_metadata_file(fs$Gnum) 
+  Gnum_96w_file <- parse_D300_metadata_file(fs$Gnum) 
   ref_Gnum_96w_file <- qs::qread(fs$ref_Gnum)
   expect_equal(Gnum_96w_file, ref_Gnum_96w_file)
   
   fs <- td3[["f_384w"]]
-  Gnum_96w_file <- gDRimport:::parse_D300_metadata_file(fs$Gnum) 
+  Gnum_96w_file <- parse_D300_metadata_file(fs$Gnum) 
   ref_Gnum_96w_file <- qs::qread(fs$ref_Gnum)
   expect_equal(Gnum_96w_file, ref_Gnum_96w_file)
 })
@@ -103,27 +103,27 @@ test_that("import_D300", {
 
 
 test_that("get_conversion_factor  works as expected", {
-  expect_error(gDRimport:::get_conversion_factor("nL", "mL"), regexp = "conversion to unit 'mL' not supported")
-  expect_error(gDRimport:::get_conversion_factor("L", "µL"), regexp = "unsupported conversion factor: 'L'")
+  expect_error(get_conversion_factor("nL", "mL"), regexp = "conversion to unit 'mL' not supported")
+  expect_error(get_conversion_factor("L", "µL"), regexp = "unsupported conversion factor: 'L'")
 
-  expect_equal(gDRimport:::get_conversion_factor("nL", "µL"), 1e-3)
+  expect_equal(get_conversion_factor("nL", "µL"), 1e-3)
 })
 
 test_that("convert_units works as expected", {
-  expect_equal(gDRimport:::convert_units(1000, from = "mL", to = "µL"), 1000000)
+  expect_equal(convert_units(1000, from = "mL", to = "µL"), 1000000)
 })
 
 #######
 # Utils
 #######
 
-test_that("gDRimport:::fill_NA works as expected", {
+test_that("gfill_NA works as expected", {
   n <- 5
   df <- data.table::data.table(a = rep(NA, n), b = seq(n))
-  obs <- gDRimport:::fill_NA(df, "a", "b")
+  obs <- fill_NA(df, "a", "b")
   expect_equal(obs$a, df$b)
 
-  obs2 <- gDRimport:::fill_NA(df, "b", "a")
+  obs2 <- fill_NA(df, "b", "a")
   expect_equal(obs2$b, df$b)
   expect_equal(obs2$a, df$a)
 })

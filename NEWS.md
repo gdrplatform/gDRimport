@@ -1,4 +1,7 @@
-## gDRstyle 1.1.6 - 2024-02-26
+## gDRimport 1.1.7 - 2024-03-07
+* clean up the package
+
+## gDRimport 1.1.6 - 2024-02-26
 * improve pkgdown site
   * improved references
   * valid NEWS.md
