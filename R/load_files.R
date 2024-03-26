@@ -47,7 +47,7 @@ load_data <-
     treatments <- load_templates(df_template_files)
     data <- load_results(results_file, instrument, headers = headers)
 
-      # check the all template files are available
+    # check the all template files are available
     if (!all(unique(manifest[[headers[["template"]]]][manifest[[headers[["barcode"]]]] %in%
                                                       data[[headers[["barcode"]]]]])
              %in% basename(template_filename))) {
@@ -268,6 +268,7 @@ load_results <-
     stopifnot(any(inherits(df_results_files, "data.table"), checkmate::test_character(df_results_files)))
     checkmate::assert_string(instrument, pattern = "^EnVision$|^long_tsv$|^Tecan$")
     checkmate::assert_list(headers, null.ok = TRUE)
+    
     if (data.table::is.data.table(df_results_files)) {
       # for the shiny app
       results_file <- df_results_files$datapath
@@ -277,6 +278,10 @@ load_results <-
       results_filename <- basename(results_file)
     }
     checkmate::assert_file_exists(results_file)
+    
+    if (all(endsWith(results_file, ".tsv"))) {
+      instrument <- "long_tsv"
+    }
 
     if (instrument == "EnVision") {
       all_results <-
@@ -361,7 +366,7 @@ load_templates_tsv <-
 #' @return data.table with templates dataa
 #'
 read_in_tsv_template_files <- function(template_file, template_filename, templates) {
-    tmpl_l <- lapply(template_file, function(iF) {
+    tmpl_l <- lapply(seq_along(template_file), function(iF) {
       futile.logger::flog.info("Loading %s", template_filename[iF])
       # 1) check that the sheet names are ok and 2) identify drug_identifier sheet (case insensitive)
       Gnumber_idx <- grep(paste0(gDRutils::get_env_identifiers("drug"), "$"),
@@ -406,6 +411,7 @@ read_in_tsv_template_files <- function(template_file, template_filename, templat
       df_template$Template <- template_filename[iF]
       colnames(df_template) <-
         check_metadata_names(colnames(df_template), df_name = template_filename[iF])
+      df_template
     })
     do.call(rbind, tmpl_l)
 }
@@ -665,9 +671,12 @@ load_results_tsv <-
     results_filename <- basename(results_file)
 
     all_results <- read_in_result_files(results_file, results_filename, headers)
+    
+    cols_subset <- intersect(c(headers[["barcode"]], gDRutils::get_env_identifiers("well_position")),
+                             names(all_results))
 
-    if (dim(unique(all_results[, c(headers[["barcode"]], gDRutils::get_env_identifiers("well_position"))]))[1] !=
-        dim(all_results[, c(headers[["barcode"]], gDRutils::get_env_identifiers("well_position"))])[1]) {
+    if (dim(unique(all_results[, cols_subset, with = FALSE]))[1] !=
+        dim(all_results[, cols_subset, with = FALSE])[1]) {
       futile.logger::flog.error("Multiple rows with the same Barcode and Well across all files")
     }
 
@@ -687,8 +696,8 @@ load_results_tsv <-
 read_in_result_files <- function(results_file, results_filename, headers) {
 
     # read all files
-    res_l <- lapply(results_file, function(iF) {
-      futile.logger::flog.info("Reading file", results_file[iF])
+    res_l <- lapply(seq_along(results_file), function(iF) {
+      futile.logger::flog.info("Reading file %s", results_file[iF])
       tryCatch({
         df <-
         stats::na.omit(data.table::fread(
@@ -716,15 +725,20 @@ read_in_result_files <- function(results_file, results_filename, headers) {
           futile.logger::flog.error("%s needs to be a column of %s", coln, results_filename[iF])
         }
       }
-      if (dim(unique(df[, c(headers[["barcode"]], gDRutils::get_env_identifiers("well_position"))]))[1] !=
-          dim(df[, c(headers[["barcode"]], gDRutils::get_env_identifiers("well_position"))])[1]) {
+      
+      cols_subset <- intersect(c(headers[["barcode"]], gDRutils::get_env_identifiers("well_position")),
+                               names(df))
+      if (dim(unique(df[, cols_subset, with = FALSE]))[1] !=
+          dim(df[, cols_subset, with = FALSE])[1]) {
         futile.logger::flog.error("Multiple rows with the same Barcode and Well in %s",
                                   results_filename[iF])
       }
-      if (!("BackgroundValue" %in% colnames(df)))
+      if (!("BackgroundValue" %in% colnames(df))) {
         df$BackgroundValue <- 0
-      futile.logger::flog.info("File %s read; %d wells", results_filename[iF], nrow(df))
-      futile.logger::flog.info("File done")
+        futile.logger::flog.info("File %s read; %d wells", results_filename[iF], nrow(df))
+        futile.logger::flog.info("File done")
+      }
+      df
     })
     all_results <- do.call(rbind, res_l)
 }

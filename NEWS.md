@@ -1,3 +1,6 @@
+## gDRimport 1.1.8 - 2024-03-26
+* fix issue with reading tsv files
+
 ## gDRimport 1.1.7 - 2024-03-07
 * clean up the package
 
