@@ -181,12 +181,17 @@ test_that("load_data", {
   
   
   
-  data_tsv <- gDRimport::load_data(
-    manifest_file = system.file("extdata", "data5", "Manifest.tsv", package = "gDRimport"),
-    df_template_files = list.files(system.file("extdata", "data5", package = "gDRimport"),
-                                   pattern = "Template", full.names = TRUE),
-    results_file = system.file("extdata", "data5", "RawData.tsv", package = "gDRimport"))
-  expect_true(is.list(data_tsv))
+  # get test_tsv_data (tsv format)
+  td5 <- get_test_tsv_data()
+  l_tbl5 <-
+    load_data(td5$m_file, td5$t_files, td5$r_files)
+  ref_l <- qs::qread(td5$ref_l_path)
+  # valid output returned for manifest
+  expect_equal(ref_l$manifest, l_tbl5$manifest)
+  # valid output returned for templates
+  expect_equal(ref_l$treatments, l_tbl5$treatments)
+  # valid output returned for results
+  expect_equal(ref_l$data, l_tbl5$data)
 })
 
 test_that(".get_plate_size works as expected", {
