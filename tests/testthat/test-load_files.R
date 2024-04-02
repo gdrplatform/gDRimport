@@ -178,7 +178,20 @@ test_that("load_data", {
   err_msg6 <- "Assertion on 'results_file' failed: File does not exist: '/non/existent_file'."
   expect_error(load_data(manifest_path(td1), template_path(td1), c(result_path(td1)[1], "/non/existent_file")), 
                err_msg6)
-
+  
+  
+  
+  # get test_tsv_data (tsv format)
+  td5 <- get_test_tsv_data()
+  l_tbl5 <-
+    load_data(td5$m_file, td5$t_files, td5$r_files)
+  ref_l <- qs::qread(td5$ref_l_path)
+  # valid output returned for manifest
+  expect_equal(ref_l$manifest, l_tbl5$manifest)
+  # valid output returned for templates
+  expect_equal(ref_l$treatments, l_tbl5$treatments)
+  # valid output returned for results
+  expect_equal(ref_l$data, l_tbl5$data)
 })
 
 test_that(".get_plate_size works as expected", {
@@ -348,4 +361,3 @@ test_that("check_metadata_names works as expected", {
   #nolint end
   
 })
-

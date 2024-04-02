@@ -121,4 +121,26 @@ get_test_EnVision_data <- function() {
       t_files = grep("\\/Project40.+.xlsx$", fls, value = TRUE),
       ref_l_path = file.path(ddir, "ref_l.qs")
     )
-  }
+}
+
+
+#' get test tsv data
+#'
+#' @examples 
+#' get_test_tsv_data()
+#
+#' @keywords test_data
+#' @export
+#'
+#' @return list with with input data (manifest/template/result paths)
+#' and related reference data (.qs file paths)
+get_test_tsv_data <- function() {
+  ddir <- system.file(package = "gDRimport", "extdata", "data5")
+  fls <- list.files(ddir, full.names = TRUE)
+  list(
+    m_file = grep("\\/Manifest.tsv$", fls, value = TRUE),
+    r_files = grep("\\RawData.tsv$", fls, value = TRUE),
+    t_files = grep("\\Template.+.tsv$", fls, value = TRUE),
+    ref_l_path = file.path(ddir, "ref_l.qs")
+  )
+}
