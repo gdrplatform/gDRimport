@@ -186,7 +186,7 @@ test_that("load_data", {
     df_template_files = list.files(system.file("extdata", "data5", package = "gDRimport"),
                                    pattern = "Template", full.names = TRUE),
     results_file = system.file("extdata", "data5", "RawData.tsv", package = "gDRimport"))
-  expect_list(data_tsv)
+  expect_true(is.list(data_tsv))
 })
 
 test_that(".get_plate_size works as expected", {
