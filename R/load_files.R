@@ -350,7 +350,6 @@ load_templates_tsv <-
                        df_type = "template"
                      )})
 
-    metadata_fields <- NULL
     all_templates <- read_in_tsv_template_files(template_file, template_filename, templates)
     futile.logger::flog.info("Templates loaded successfully!")
     all_templates
@@ -363,9 +362,10 @@ load_templates_tsv <-
 #' @param templates list with templates data
 #' @keywords load_files
 #'
-#' @return data.table with templates dataa
+#' @return data.table with templates data
 #'
 read_in_tsv_template_files <- function(template_file, template_filename, templates) {
+    metadata_fields <- NULL
     tmpl_l <- lapply(seq_along(template_file), function(iF) {
       futile.logger::flog.info("Loading %s", template_filename[iF])
       # 1) check that the sheet names are ok and 2) identify drug_identifier sheet (case insensitive)

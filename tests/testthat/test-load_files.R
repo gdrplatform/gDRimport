@@ -178,7 +178,15 @@ test_that("load_data", {
   err_msg6 <- "Assertion on 'results_file' failed: File does not exist: '/non/existent_file'."
   expect_error(load_data(manifest_path(td1), template_path(td1), c(result_path(td1)[1], "/non/existent_file")), 
                err_msg6)
-
+  
+  
+  
+  data_tsv <- gDRimport::load_data(
+    manifest_file = system.file("extdata", "data5", "Manifest.tsv", package = "gDRimport"),
+    df_template_files = list.files(system.file("extdata", "data5", package = "gDRimport"),
+                                   pattern = "Template", full.names = TRUE),
+    results_file = system.file("extdata", "data5", "RawData.tsv", package = "gDRimport"))
+  expect_list(data_tsv)
 })
 
 test_that(".get_plate_size works as expected", {
@@ -348,4 +356,3 @@ test_that("check_metadata_names works as expected", {
   #nolint end
   
 })
-
