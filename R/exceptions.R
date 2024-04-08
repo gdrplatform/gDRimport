@@ -50,15 +50,18 @@ EXCEPTION_TABLE <- tibble::tribble(
 #' get_exception_data()
 #' @keywords correction_exception
 #' 
-#' @return A tibble row with exception data or all exceptions
+#' @return A data.table row with exception data or all exceptions
 #' @export
 get_exception_data <- function(status_code = NULL) {
   checkmate::assert_number(status_code, null.ok = TRUE)
-  if (!is.null(status_code)) {
+  
+  res <- if (!is.null(status_code)) {
     checkmate::assert_choice(toString(status_code), EXCEPTION_TABLE$status_code)
 
     EXCEPTION_TABLE[EXCEPTION_TABLE$status_code == status_code, ]
   } else {
     EXCEPTION_TABLE
   }
+  
+  data.table::as.data.table(res)
 }

@@ -10,7 +10,7 @@ get_exception_data(status_code = NULL)
 \item{status_code}{A numeric value}
 }
 \value{
-A tibble row with exception data or all exceptions
+A data.table row with exception data or all exceptions
 }
 \description{
 get exception data
