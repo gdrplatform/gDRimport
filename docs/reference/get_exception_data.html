@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">gDRimport</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.8</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.9</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -74,31 +74,136 @@
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>A tibble row with exception data or all exceptions</p>
+<p>A data.table row with exception data or all exceptions</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">get_exception_data</span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 5</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   status_code title                  sprintf_text               type  input_type</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> 1           Error loading manifest <span style="color: #949494;">"</span>There were errors loadin… error manifest  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    status_code                  title</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;char&gt;                 &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:           1 Error loading manifest</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                         sprintf_text   type input_type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                               &lt;char&gt; &lt;char&gt;     &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1: There were errors loading manifest. See logs:\n%s  error   manifest</span>
 <span class="r-in"><span><span class="fu">get_exception_data</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 36 × 5</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    status_code title                               sprintf_text type  input_type</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 1           Error loading manifest              <span style="color: #949494;">"</span>There were… error manifest  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 2           Manifest not found                  <span style="color: #949494;">"</span>Please loa… error manifest  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 3           Error loading treatment             <span style="color: #949494;">"</span>Some of th… error treatment </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 4           Warning loading treatment           <span style="color: #949494;">"</span>Some uploa… warn… treatment </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 5           Error loading treatment             <span style="color: #949494;">"</span>There were… error treatment </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 6           Missing data for some Barcode, Pla… <span style="color: #949494;">"</span>Some plate… warn… manifest  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 7           Missing data for some Barcode, Pla… <span style="color: #949494;">"</span>Some plate… warn… manifest  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 8           Error loading raw data              <span style="color: #949494;">"</span>Txt file i… error raw data  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 9           Error loading raw data              <span style="color: #949494;">"</span>There were… error raw data  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 10          Error during merging data           <span style="color: #949494;">"</span>There were… error merging d…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 26 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     status_code                                    title</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;char&gt;                                   &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:           1                   Error loading manifest</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:           2                       Manifest not found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:           3                  Error loading treatment</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:           4                Warning loading treatment</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:           5                  Error loading treatment</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:           6     Missing data for some Barcode, Plate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:           7     Missing data for some Barcode, Plate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:           8                   Error loading raw data</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:           9                   Error loading raw data</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:          10                Error during merging data</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11:          11                  Missing treatment files</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:          12                   Error reading Manifest</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13:          13                     Manifest file format</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14:          14                        Manifest barcodes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15:          15                       Treatment controls</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16:          16                          Instrument type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17:          17                     Treatment sheet name</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18:          18                     Treatment entry name</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19:          19                  Error loading treatment</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20:          20         Error loading specific treatment</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21:          21          Error reading specific raw data</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22:          22 Error reading sheet in the raw data file</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23:          23      Error with readout values in plates</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24:          24             Error with treatment headers</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25:          25         Error with treatment file sheets</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26:          26              Metadata special characters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27:          27                         Metadata invalid</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28:          28                       Raw Data delimiter</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29:          29                        Raw Data EnVision</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30:          30                      Raw Data Plate size</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31:          31                       Raw Data structure</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32:          32 Treatment File Gnumber and Concentration</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33:          33                Error loading input files</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34:          34                  Missing drug annotation</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35:          35             Missing cell line annotation</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36:          36                    Invalid averaged data</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     status_code                                    title</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                     sprintf_text</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                           &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:                                                                                                                                                            There were errors loading manifest. See logs:\n%s</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:                                                                                                                                                                                        Please load manifest!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:                                                        Some of the treatment files entered in the manifest have not been uploaded:\n%s\nPlease check the uploaded files and their name (including extension)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:                                                                                                                                                                    Some uploaded files (**%s**) are not used</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:                                                                                                                                                 There were errors when loading the treatments. See logs:\n%s</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:                                                                                                          Some plates (**%s**) found in the manifest are not reported in the data files and will be discarded</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:                                                                                                          Some plates (**%s**) found in the data files are not reported in the manifest and will be discarded</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:                                                                                                                        Txt file in an unsupported format. Please check if the file uses tab(\t) as separator</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:                                                                                                                                                       There were errors when loading raw data. See logs:\n%s</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:                                                                                                                                                           There were errors when merging data. See logs:\n%s</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11:                                                                                                                                                                         Some treatment files are missing: %s</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:                                                                                                                                        There were errors reading the manifest file. Please see the logs:\n%s</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13:                                                                                                                        %s file format is not supported. Please convert your file to one of the following: %s</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14:                                                                                                                                                                         Barcodes in Manifest must be unique!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15:                                                                                                                  No untreated controls were found in the treatment. Please upload the appropriate treatment.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16:                                                                                                                                                                                 Unrecognized instrument type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17:                                                                                                                                                        In untreated treatment file %s, sheet name must be %s</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18:                                                                                                                                                           In untreated treatment file %s, entries must be %s</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19:                                                                                                                                            There were errors loading the treatment. Please see the logs:\n%s</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20:                                                                                                                                                There were errors loading treatment %s. Please see logs: \n%s</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21:                                                                                                                                                                                             Error reading %s</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22:                                                                                                                                                                                   Error reading %s, sheet %s</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23:                                                                                                                                       In result file %s (sheet %s) readout values are misplaced for plate %s</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24:                                                                   Treatment does not contain all expected headers for a '%s'. '%s' is/are required. Please correct your treatment or change the identifiers.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25:                                                                                                                                 Treatment file %s does not contain %s sheets. Please correct your treatment.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26:                                                                                                                     Metadata field names for %s cannot contain special characters or start with a number: %s</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27:                                                                                                                                             Metadata field name: %s in %s is not valid (reserved for output)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28:                                                                                                                                                            Can't guess separator for the delimited files: %s</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29:                                                                                                                                                         Error reading %s: not an original EnVision .csv file</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30:                                                                                                                                                                           Error reading %s: wrong plate size</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31:                                                                                                                                      In result file %s (sheet %s) readout values are misplaced for plate %s.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32:                          Treatment file(s) %s do/does not contain the same number of Gnumber_* and Concentration_* sheets. Gnumber_* and Concentration_* sheets are required. Please correct your treatment.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33:                                                                                        Some input files are missing. Please upload only files with names starting with Manifest_*, Treatment_* and RawData_*</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34:                                                                                                                The following drugs IDs are missing: '%s'. &lt;br&gt;Don't worry, drug names will be used for them.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35:                                                                                                       The following cell line IDs are missing: '%s'. &lt;br&gt;Don't worry, cell line names will be used for them.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36: Averaged dose-reponse data for the selected cell line and drug: '%s' can be considered invalid. Please check your data in the module 'Manage Data' or contact gdrplatform team via 'gdr-support-d@gene.com'.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                     sprintf_text</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        type   input_type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      &lt;char&gt;       &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:   error     manifest</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:   error     manifest</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:   error    treatment</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4: warning    treatment</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:   error    treatment</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6: warning     manifest</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7: warning     manifest</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:   error     raw data</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:   error     raw data</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:   error merging data</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11:   error    treatment</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:   error     manifest</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13:   error     manifest</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14:   error     manifest</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15:   error    treatment</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16:   error     raw data</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17:   error    treatment</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18:   error    treatment</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19:   error    treatment</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20:   error    treatment</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21:   error     raw data</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22:   error     raw data</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23:   error     raw data</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24:   error    treatment</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25:   error    treatment</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26:   error     metadata</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27:   error     metadata</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28:   error     raw data</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29:   error     raw data</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30:   error     raw data</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31:   error     raw data</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32:   error    treatment</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33:   error  input files</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34: warning   submit tab</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35: warning   submit tab</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36:   error   assay data</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        type   input_type</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
