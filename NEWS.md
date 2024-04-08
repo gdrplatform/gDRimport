@@ -1,3 +1,6 @@
+## gDRimport 1.1.9 - 2024-04-08
+* change output of `get_exception_data` to data.table
+
 ## gDRimport 1.1.8 - 2024-03-26
 * fix issue with reading tsv files
 

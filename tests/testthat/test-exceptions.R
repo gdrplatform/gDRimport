@@ -2,11 +2,18 @@ library(testthat)
 
 test_that("check get_exception_data works correctly", {
   obs <- gDRimport::get_exception_data(1)
-  expect_equal(nrow(obs), 1)
+  expect_equal(NROW(obs), 1)
   expect_equal(colnames(obs),
                c("status_code", "title", "sprintf_text", "type", "input_type"))
   
   expect_true(all(dim(gDRimport::get_exception_data()) >= 5))
+  
+  obs <- gDRimport::get_exception_data(10)
+  expect_is(obs, "data.table")
+  
+  obs <- gDRimport::get_exception_data()
+  expect_gt(NROW(obs), 1)
+  expect_is(obs, "data.table")
   
   expect_error(
     gDRimport::get_exception_data("two"),
