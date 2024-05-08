@@ -7,7 +7,7 @@
 .extractDoseResponse(pset)
 }
 \value{
-data.table with dose-reponse data
+data.table with dose-response data
 }
 \description{
 Get dose and viability readouts and melt into large data table

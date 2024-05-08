@@ -1,3 +1,6 @@
+## gDRimport 1.1.10 - 2024-05-08
+* fix typo
+
 ## gDRimport 1.1.9 - 2024-04-08
 * change output of `get_exception_data` to data.table
 
