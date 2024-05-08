@@ -37,7 +37,7 @@ EXCEPTION_TABLE <- tibble::tribble(
   "33", "Error loading input files", "Some input files are missing. Please upload only files with names starting with Manifest_*, Treatment_* and RawData_*", "error", "input files",
   "34", "Missing drug annotation", "The following drugs IDs are missing: '%s'. <br>Don't worry, drug names will be used for them.", "warning", "submit tab",
   "35", "Missing cell line annotation", "The following cell line IDs are missing: '%s'. <br>Don't worry, cell line names will be used for them.", "warning", "submit tab",
-  "36", "Invalid averaged data", "Averaged dose-reponse data for the selected cell line and drug: '%s' can be considered invalid. Please check your data in the module 'Manage Data' or contact gdrplatform team via 'gdr-support-d@gene.com'.", "error", "assay data"
+  "36", "Invalid averaged data", "Averaged dose-response data for the selected cell line and drug: '%s' can be considered invalid. Please check your data in the module 'Manage Data' or contact gdrplatform team via 'gdr-support-d@gene.com'.", "error", "assay data"
 )
 #nolint end
 

@@ -132,7 +132,7 @@ getPSet <- function(pset_name,
 #' Get dose and viability readouts and melt into large data table
 #' @keywords internal
 #' 
-#' @return data.table with dose-reponse data
+#' @return data.table with dose-response data
 #' 
 .extractDoseResponse <- function(pset) {
   checkmate::assert_class(pset, "PharmacoSet")
