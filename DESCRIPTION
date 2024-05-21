@@ -1,4 +1,4 @@
-tPackage: gDRimport
+Package: gDRimport
 Type: Package
 Title: Package for handling the import of dose-response data
 Version: 1.1.11
