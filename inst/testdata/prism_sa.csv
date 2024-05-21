@@ -1,0 +1,2 @@
+rid,ccle_name,culture,pool_id,pert_iname,pert_id,pert_dose,pert_idose,pert_plate,pert_vehicle,pert_time,pert_type,sig_id,x_project_id,LFC,LFC_cb
+c-1_PR?,some_clid,PR?,P?,some_gnumber,6-85,0.003201,0.003201 ug/mL,sth1,gDRimport,120H,trt_cp,004101814-616-85_0.003201 ug/mL_120H,gDRimport,0.31918439119229997,0.38536262127370596
