@@ -99,9 +99,9 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
   checkmate::check_file_exists(cell_line_data_path)
   checkmate::check_file_exists(treatment_data_path)
 
-  cell_lines <- data.table::fread(cell_line_data_path)[1, ]
-  treatment <- data.table::fread(treatment_data_path)[1, ]
-  res <- data.table::fread(prism_data_path)[1, 1:2]
+  cell_lines <- data.table::fread(cell_line_data_path)
+  treatment <- data.table::fread(treatment_data_path)
+  res <- data.table::fread(prism_data_path)
   checkmate::assert_names(names(cell_lines), must.include = c("row_name",
                                                               "ccle_name"))
   checkmate::assert_names(names(treatment), must.include = c("column_name",
