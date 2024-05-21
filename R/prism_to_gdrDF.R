@@ -5,9 +5,14 @@
 #'
 #' @return \code{data.table} object with input data for gDR pipeline
 #' @keywords conversion
+#' 
+#' @examples
+#'  prism_data <- system.file("testdata/prism_sa.csv", package = "gDRimport")
+#'  convert_LEVEL5_prism_to_gDR_input(prism_data)
+#'
 #' @export
 convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
-                                     readout_min = 1.03) {
+                                              readout_min = 1.03) {
 
   checkmate::check_file_exists(prism_data_path)
 
@@ -77,19 +82,26 @@ convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
 #'
 #' @return \code{data.table} object with input data for gDR pipeline
 #' @keywords conversion
+#' @examples
+#'  prism_data_path <- system.file("testdata/prism_collapsed_LOGFC.csv", package = "gDRimport")
+#'  cell_line_data_path <- system.file("testdata/prism_cell_lines.csv", package = "gDRimport")
+#'  treatment_data_path <- system.file("testdata/prism_treatment.csv", package = "gDRimport")
+#'  convert_LEVEL6_prism_to_gDR_input(prism_data_path, cell_line_data_path, treatment_data_path)
+#'
+#' @export
 #' @export
 convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
-                                            cell_line_data_path,
-                                            treatment_data_path,
-                                            readout_min = 1.03) {
+                                              cell_line_data_path,
+                                              treatment_data_path,
+                                              readout_min = 1.03) {
 
   checkmate::check_file_exists(prism_data_path)
   checkmate::check_file_exists(cell_line_data_path)
   checkmate::check_file_exists(treatment_data_path)
 
-  cell_lines <- data.table::fread(cell_line_data_path)
-  treatment <- data.table::fread(treatment_data_path)
-  res <- data.table::fread(prism_data_path)
+  cell_lines <- data.table::fread(cell_line_data_path)[1, ]
+  treatment <- data.table::fread(treatment_data_path)[1, ]
+  res <- data.table::fread(prism_data_path)[1, 1:2]
   checkmate::assert_names(names(cell_lines), must.include = c("row_name",
                                                               "ccle_name"))
   checkmate::assert_names(names(treatment), must.include = c("column_name",
@@ -101,23 +113,15 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
   data.table::setnames(res_transform,
                        c("V1", "variable"),
                        c("row_name", "column_name"))
+  
+  data.table::setnames(cell_lines,
+                       "ccle_name",
+                       "clid")
 
-
-  gcell <- qs::qread(system.file("gcellgenomics", "gcell.qs", package = "gDRinternal"))
-
-  cell_meta <- merge(
-    x = cell_lines,
-    y = gcell[, .SD, .SDcols = c("ccle_name", "clid")],
-    by = "ccle_name",
-    all.x = TRUE
-  )
-
-  cell_meta$clid <- ifelse(is.na(cell_meta$clid), cell_meta$ccle_name, cell_meta$clid)
-
-
-  full_data <- merge(res_transform, cell_meta[, c("row_name", "clid")],
+  full_data <- merge(res_transform, cell_lines[, c("row_name", "clid")],
                      all.x = TRUE,
                      by = "row_name")
+
   full_data <- merge(full_data,
                      treatment[, c("column_name", "broad_id", "name", "dose", "moa")],
                      all.x = TRUE,
