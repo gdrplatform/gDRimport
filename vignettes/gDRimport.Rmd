@@ -60,6 +60,44 @@ l_tbl <-
 summary(l_tbl)
 ```
 
+# PRISM
+
+PRISM, the Multiplexed cancer cell line screening platform, facilitates rapid screening of a broad spectrum of drugs across more than 900 human cancer cell line models, employing a high-throughput, multiplexed approach. Publicly available PRISM data can be downloaded from the DepMap website ([DepMap](https://depmap.org/portal/download/all/)).
+
+The `gDRimport` package provides support for processing PRISM data at two levels: LEVEL5 and LEVEL6.
+
+* LEVEL5 Data: This format encapsulates all information about drugs, cell lines, and viability within a single file. To process LEVEL5 PRISM data, you can use the `convert_LEVEL5_prism_to_gDR_input()` function. This function not only transforms and cleans the data but also executes the gDR pipeline for further analysis.
+
+* LEVEL6 Data: In LEVEL6, PRISM data is distributed across three separate files:
+
+prism_data: containing collapsed log fold change data for viability assays.
+cell_line_data: providing information about cell lines.
+treatment_data: containing treatment data.
+
+Processing LEVEL6 PRISM data can be accomplished using the `convert_LEVEL6_prism_to_gDR_input()` function, which requires paths to these three files as input arguments.
+
+### Processing LEVEL5 PRISM Data
+
+To process LEVEL5 PRISM data, you can use the following function:
+
+```{r, echo=TRUE, eval=FALSE}
+convert_LEVEL5_prism_to_gDR_input("path_to_file")
+```
+
+Replace "path_to_file" with the actual path to your LEVEL5 PRISM data file. This function will handle the transformation, cleaning, and execution of the gDR pipeline automatically.
+
+
+### Processing LEVEL6 PRISM Data
+
+To process LEVEL6 PRISM data, you can use the following function:
+
+```{r, echo=TRUE, eval=FALSE}
+convert_LEVEL6_prism_to_gDR_input("prism_data_path", "cell_line_data_path", "treatment_data_path")
+```
+
+Replace "prism_data_path", "cell_line_data_path", and "treatment_data_path" with the respective paths to your LEVEL6 PRISM data files.
+
+
 ## Package installation
 The function `installAllDeps` assists in installing package dependencies.  
 

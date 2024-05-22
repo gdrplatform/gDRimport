@@ -1,3 +1,6 @@
+## gDRimport 1.1.11 - 2024-05-21
+* move functions for importing PRISM data
+
 ## gDRimport 1.1.10 - 2024-05-08
 * fix typo
 

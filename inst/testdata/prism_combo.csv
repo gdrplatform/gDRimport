@@ -1,0 +1,2 @@
+rid,ccle_name,culture,pool_id,pert_iname,pert_id,pert_dose,pert_idose,pert_plate,pert_vehicle,pert_time,pert_type,sig_id,x_project_id,LFC,LFC_cb
+c-1_PR?,some_clid,PR5?,P?,drug1|drug2,drug1|drug2,0.03|0.01111,0.03 uM|0.01111 uM,PCP?,DMSO,120H,trt_cp,drug1|drug2_0.03 uM|0.01111 uM_120H,gDRimport,-2.87970555905,-2.84876896059

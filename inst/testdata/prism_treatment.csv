@@ -1,0 +1,2 @@
+column_name,broad_id,name,dose,screen_id,moa,target,disease.area,indication,smiles,phase
+COL_ID1,some_drug_id,some_drug_name,2.325889319,MTS004,some_drug_moa,,,,,Phase X

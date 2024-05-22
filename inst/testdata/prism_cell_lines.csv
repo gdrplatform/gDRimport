@@ -1,0 +1,2 @@
+row_name,depmap_id,ccle_name,primary_tissue,secondary_tissue,tertiary_tissue,passed_str_profiling,str_profiling_notes,originally_assigned_depmap_id,originally_assigned_ccle_name
+some_depmap_id,some_depmap_id,some_clid,some_tissue,some_secondary_tissue,"",TRUE,,,
