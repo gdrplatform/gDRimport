@@ -1,3 +1,6 @@
+## gDRimport 1.3.1 - 2024-05-27
+* synchronize Bioconductor and GitHub versioning
+
 ## gDRimport 1.1.11 - 2024-05-21
 * move functions for importing PRISM data
 
