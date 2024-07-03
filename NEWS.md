@@ -1,3 +1,6 @@
+## gDRimport 1.3.2 - 2024-07-03
+* fix a bug with incorrect recognition of input file types
+
 ## gDRimport 1.3.1 - 2024-05-27
 * synchronize Bioconductor and GitHub versioning
 
