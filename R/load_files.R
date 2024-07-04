@@ -851,6 +851,9 @@ read_EnVision_xlsx <- function(results_file, results_sheet) {
   colsToKeep <- which(colSums(is.na(df[seq_len(colsRange), ])) != colsRange)
   df <-
     df[, colsToKeep, with = FALSE]
+  
+  # additional cleaning to avoid empty columns with only header info (2 rows)
+  df[, colSums(is.na(df)) != nrow(df) - 2, with = FALSE]
 }
 
 #' get Excel sheets names for a charvec of files
