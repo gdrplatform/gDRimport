@@ -1,3 +1,6 @@
+## gDRimport 1.3.3 - 2024-07-04
+* fix a bug with removing empty cols
+
 ## gDRimport 1.3.2 - 2024-07-03
 * fix a bug with incorrect recognition of input file types
 
