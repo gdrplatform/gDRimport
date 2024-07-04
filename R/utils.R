@@ -66,7 +66,10 @@ detect_file_format <- function(results_file) {
   
   if (all(c("System", "User", "Plate", "Plate-ID (Stacker)") %in% results_data[, 1])) {
     "Tecan"
-  } else if (c("Repeat Barcode") %in% do.call(paste, results_data[, 2:3])) {
+  } else if ("Repeat Barcode" %in% c(
+      do.call(paste, results_data[, 2:3]), 
+      paste(names(results_data[, 2:3]), collapse = " ")
+  )) {
     "EnVision"
   } else {
     "long_tsv"
