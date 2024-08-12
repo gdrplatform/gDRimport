@@ -1,3 +1,6 @@
+## gDRimport 1.3.3 - 2024-08-12
+* update function for importing public PRISM data
+
 ## gDRimport 1.3.2 - 2024-07-03
 * fix a bug with incorrect recognition of input file types
 
