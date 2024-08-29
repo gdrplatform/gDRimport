@@ -17,4 +17,4 @@ setEnvForPSet()
 gDRutils::reset_env_identifiers()
 
 }
-\keyword{pset}
+\keyword{pset_conversion}

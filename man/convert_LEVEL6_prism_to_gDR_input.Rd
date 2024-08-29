@@ -2,7 +2,7 @@
 % Please edit documentation in R/prism_to_gdrDF.R
 \name{convert_LEVEL6_prism_to_gDR_input}
 \alias{convert_LEVEL6_prism_to_gDR_input}
-\title{load, convert and process the level 6 PRISM data into a gDR input}
+\title{Load, convert and process the level 6 PRISM data into a gDR input}
 \usage{
 convert_LEVEL6_prism_to_gDR_input(
   prism_data_path,
@@ -25,7 +25,7 @@ log fold change data}
 \code{data.table} object with input data for gDR pipeline
 }
 \description{
-load, convert and process the level 6 PRISM data into a gDR input
+Load, convert and process the level 6 PRISM data into a gDR input
 }
 \examples{
  prism_data_path <- system.file("testdata/prism_collapsed_LOGFC.csv", package = "gDRimport")
@@ -34,4 +34,4 @@ load, convert and process the level 6 PRISM data into a gDR input
  convert_LEVEL6_prism_to_gDR_input(prism_data_path, cell_line_data_path, treatment_data_path)
 
 }
-\keyword{conversion}
+\keyword{prism_conversion}

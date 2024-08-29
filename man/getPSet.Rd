@@ -39,4 +39,4 @@ suppressMessages(getPSet(
 ))
 
 }
-\keyword{pset}
+\keyword{pset_conversion}

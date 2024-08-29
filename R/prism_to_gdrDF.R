@@ -1,10 +1,10 @@
-#' load, convert and process the level 5 PRISM data into a gDR input
+#' Load, convert and process the level 5 PRISM data into a gDR input
 #'
 #' @param prism_data_path path to PRISM LEVEL5 csv file with data
 #' @param readout_min minimum ReadoutValue
 #'
 #' @return \code{data.table} object with input data for gDR pipeline
-#' @keywords conversion
+#' @keywords prism_conversion
 #' 
 #' @examples
 #'  prism_data <- system.file("testdata/prism_sa.csv", package = "gDRimport")
@@ -72,7 +72,7 @@ convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
 
 
 
-#' load, convert and process the level 6 PRISM data into a gDR input
+#' Load, convert and process the level 6 PRISM data into a gDR input
 #'
 #' @param prism_data_path path to PRISM LEVEL6 csv file with collapsed
 #' log fold change data
@@ -81,14 +81,15 @@ convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
 #' @param readout_min minimum ReadoutValue
 #'
 #' @return \code{data.table} object with input data for gDR pipeline
-#' @keywords conversion
+#' 
+#' @keywords prism_conversion
+#' 
 #' @examples
 #'  prism_data_path <- system.file("testdata/prism_collapsed_LOGFC.csv", package = "gDRimport")
 #'  cell_line_data_path <- system.file("testdata/prism_cell_lines.csv", package = "gDRimport")
 #'  treatment_data_path <- system.file("testdata/prism_treatment.csv", package = "gDRimport")
 #'  convert_LEVEL6_prism_to_gDR_input(prism_data_path, cell_line_data_path, treatment_data_path)
 #'
-#' @export
 #' @export
 convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
                                               cell_line_data_path,
