@@ -32,4 +32,4 @@ mae <- MultiAssayExperiment::MultiAssayExperiment(experiments = list("single-age
 convert_MAE_to_PSet(mae, "my_pset")
 
 }
-\keyword{pset}
+\keyword{pset_conversion}

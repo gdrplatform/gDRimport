@@ -3,7 +3,9 @@
 #' @param pharmacoset PharmacoSet object
 #' @param run_parallel logical, TRUE (default) if to run functions in Parallel, FALSE to run in serial
 #' @param workers integer, number of workers defaults to 2L if run_parallel is TRUE
-#' @keywords pset
+#' 
+#' @keywords pset_conversion
+#' 
 #' @return data.table of PharmacoSet's dose response data with column names aligned with gDR standard
 #' 
 #' @examples
@@ -16,8 +18,8 @@
 #' gDRutils::reset_env_identifiers()
 #' 
 #' @author Jermiah Joseph -- collaboration with BHKLab
+#' 
 #' @export
-#'
 convert_pset_to_df <- function(pharmacoset,
                            run_parallel = TRUE,
                            workers = 2L) {
@@ -47,8 +49,10 @@ convert_pset_to_df <- function(pharmacoset,
 #' setEnvForPSet()
 #' gDRutils::reset_env_identifiers()
 #' 
-#' @keywords pset
+#' @keywords pset_conversion
+#' 
 #' @return \code{NULL}
+#' 
 #' @export
 setEnvForPSet <- function() {
   ## -- Set environment identifiers to map from our columns to gDR columns
@@ -76,7 +80,8 @@ setEnvForPSet <- function() {
 #' @param timeout maximum number of seconds allowed for PSet download
 #' @param use_local_PSets_list logical flag if PSets list should be used from 
 #' local. If FALSE PSets list will be taken from web.
-#' @keywords pset
+#' 
+#' @keywords pset_conversion
 #' 
 #' @examples  
 #' suppressMessages(getPSet(

@@ -2,7 +2,7 @@
 % Please edit documentation in R/prism_to_gdrDF.R
 \name{convert_LEVEL5_prism_to_gDR_input}
 \alias{convert_LEVEL5_prism_to_gDR_input}
-\title{load, convert and process the level 5 PRISM data into a gDR input}
+\title{Load, convert and process the level 5 PRISM data into a gDR input}
 \usage{
 convert_LEVEL5_prism_to_gDR_input(prism_data_path, readout_min = 1.03)
 }
@@ -15,11 +15,11 @@ convert_LEVEL5_prism_to_gDR_input(prism_data_path, readout_min = 1.03)
 \code{data.table} object with input data for gDR pipeline
 }
 \description{
-load, convert and process the level 5 PRISM data into a gDR input
+Load, convert and process the level 5 PRISM data into a gDR input
 }
 \examples{
  prism_data <- system.file("testdata/prism_sa.csv", package = "gDRimport")
  convert_LEVEL5_prism_to_gDR_input(prism_data)
 
 }
-\keyword{conversion}
+\keyword{prism_conversion}

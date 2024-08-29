@@ -8,7 +8,10 @@ reference:
   - has_keyword("load_files")
 - title: Pset conversion
 - contents:
-  - has_keyword("pset")
+  - has_keyword("pset_conversion")
+- title: PRISM conversion
+- contents:
+  - has_keyword("prism_conversion")
 - title: Import D300
 - contents:
   - has_keyword("D300")
