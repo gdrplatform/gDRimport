@@ -17,11 +17,10 @@ convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
   checkmate::check_file_exists(prism_data_path)
 
   data <- data.table::fread(prism_data_path)
-  checkmate::assert_names(names(data), must.include = c("rid", "ccle_name", "culture", "pool_id",
-                                                     "pert_iname", "pert_id", "pert_dose",
-                                                     "pert_idose", "pert_plate", "pert_vehicle",
-                                                     "pert_time", "pert_type", "sig_id",
-                                                     "x_project_id", "LFC", "LFC_cb"))
+  checkmate::assert_names(names(data), must.include = c("ccle_name", "culture", "pool_id",
+                                                     "pert_iname", "pert_dose",
+                                                     "pert_plate", "pert_vehicle",
+                                                     "pert_time", "LFC", "LFC_cb"))
   gDRutils::reset_env_identifiers()
   idfs <- gDRutils::get_env_identifiers()
 
@@ -102,6 +101,9 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
   cell_lines <- data.table::fread(cell_line_data_path)
   treatment <- data.table::fread(treatment_data_path)
   res <- data.table::fread(prism_data_path)
+  data.table::setnames(cell_lines, "row_id", "row_name", skip_absent = TRUE)
+  data.table::setnames(treatment, "profile_id", "column_name", skip_absent = TRUE)
+  
   checkmate::assert_names(names(cell_lines), must.include = c("row_name",
                                                               "ccle_name"))
   checkmate::assert_names(names(treatment), must.include = c("column_name",
@@ -122,8 +124,9 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
                      all.x = TRUE,
                      by = "row_name")
 
+  treatment_cols <- c("column_name", "broad_id", "name", "dose", "moa")
   full_data <- merge(full_data,
-                     treatment[, c("column_name", "broad_id", "name", "dose", "moa")],
+                     treatment[, intersect(names(treatment), treatment_cols), with = FALSE],
                      all.x = TRUE,
                      by = "column_name")
 
@@ -140,7 +143,7 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
   df_trt <- data.table::data.table(clid = full_data$clid,
                                    Gnumber = full_data$broad_id,
                                    DrugName = full_data$name,
-                                   drug_moa = full_data$moa,
+                                   drug_moa = ifelse(is.null(full_data$moa), "unknown", full_data$moa),
                                    Duration = 120,
                                    Concentration = full_data$dose,
                                    ReadoutValue = full_data$value,

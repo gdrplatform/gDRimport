@@ -859,7 +859,7 @@ read_EnVision_xlsx <- function(results_file, results_sheet) {
 #' get Excel sheets names for a charvec of files
 #' for non-Excel files return 0
 #'
-#' @param fls charvec with file pathsa
+#' @param fls charvec with file paths
 #' @keywords load_files
 #'
 #' @return list with one element per file with
@@ -896,7 +896,7 @@ get_excel_sheet_names <- function(fls) {
 #' @param n_col number of columns
 #' @param fname file name
 #' @param sheet_name name of the Excel sheet
-#' @param headers list with the headersa
+#' @param headers list with the headers
 #' @keywords load_files
 #'
 #' @return data.table derived from EnVision data
@@ -958,7 +958,7 @@ get_df_from_raw_edited_EnVision_df <-
 #'
 #' @param df raw data.table
 #' @param barcode_col column number for barcode data
-#' @param headers list with the headersa
+#' @param headers list with the headers
 #' @keywords load_files
 #'
 #' @return data.table derived from EnVision data
@@ -1438,7 +1438,7 @@ read_in_EnVision_file <- function(file, nrows, seps) {
 #' @param fname name of the input file
 #' @keywords load_files
 #'
-#' @return list with EnVision propertiesa
+#' @return list with EnVision properties
 #'
 get_EnVision_properties <- function(results.list, fname) {
 

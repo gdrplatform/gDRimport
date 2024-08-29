@@ -180,7 +180,7 @@ are_template_sheets_valid <- function(ts) {
 #' data (after corrections and uppercase'ing)
 #' 'grepl' is used to find entries from 'ref' that might be 
 #' somehow pre- or post- fixed
-#' @param fix_underscores logical flag fix the issues with underscores in data identfiers? 
+#' @param fix_underscores logical flag fix the issues with underscores in data identifiers? 
 #' @keywords correction_exception
 #' 
 #' @return list or charvec with corrected data

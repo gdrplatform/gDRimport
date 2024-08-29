@@ -76,7 +76,7 @@ detect_file_format <- function(results_file) {
   }
 }
 
-#' Read excel file and transorm it into data.table object
+#' Read excel file and transform it into data.table object
 #'
 #' @param path path to excel file
 #' @param ... other arguments that should be passed into `readxl::read_excel`

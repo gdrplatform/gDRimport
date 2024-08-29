@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{read_excel_to_dt}
 \alias{read_excel_to_dt}
-\title{Read excel file and transorm it into data.table object}
+\title{Read excel file and transform it into data.table object}
 \usage{
 read_excel_to_dt(path, ...)
 }
@@ -15,7 +15,7 @@ read_excel_to_dt(path, ...)
 data.table object with read excel file
 }
 \description{
-Read excel file and transorm it into data.table object
+Read excel file and transform it into data.table object
 }
 \examples{
 datasets <- readxl::readxl_example("datasets.xlsx")

@@ -11,7 +11,7 @@ enhance_raw_edited_EnVision_df(df, barcode_col, headers)
 
 \item{barcode_col}{column number for barcode data}
 
-\item{headers}{list with the headersa}
+\item{headers}{list with the headers}
 }
 \value{
 data.table derived from EnVision data

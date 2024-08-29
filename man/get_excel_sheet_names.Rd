@@ -8,7 +8,7 @@ for non-Excel files return 0}
 get_excel_sheet_names(fls)
 }
 \arguments{
-\item{fls}{charvec with file pathsa}
+\item{fls}{charvec with file paths}
 }
 \value{
 list with one element per file with

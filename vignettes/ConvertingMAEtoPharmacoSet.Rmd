@@ -31,7 +31,7 @@ library(MultiAssayExperiment)
 ## Introduction
 
 The `PharmacoGx` package is a popular tool from the Bioconductor project within the field of bioinformatics and computational biology. 
-Whereas the `gDR` package is a valuable tool that provides the framework for the import, processing, analysism and visualization of 
+Whereas the `gDR` package is a valuable tool that provides the framework for the import, processing, analysis and visualization of 
 high-dimensional drug response data, the `PharmacoGx` package provides functionality to containerize processed drug response and genomic data 
 to perform pharmacogenomic analyses. The data structure used by `PharmacoGx` is described as a `PharamcoSet` class, inherited from `CoreGx::CoreSet`. 
 Inspired by the `SummarizedExperiment` class, a new data structure class called the `TreatmentResponseExperiment` was developed to store drug response 

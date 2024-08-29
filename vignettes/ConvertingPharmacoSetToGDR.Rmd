@@ -30,7 +30,7 @@ library(gDRimport)
 The `gDRimport` package is a part of the gDR suite. It helps to prepare raw drug response data for downstream processing. 
 It mainly contains helper functions for importing/loading/validating dose response data provided from different scanner sources. 
 In collaboration with the BHKLab, `gDRimport` also provides functions that can convert a `PharmacoGx::PharamcoSet` object into a gDR object. 
-With this functionality, users familiar with the gDR suite of packages and methods can utilize the publically available, curated datasets from the PharmacoGx database. 
+<!-- With this functionality, users familiar with the gDR suite of packages and methods can utilize the publicly available, curated datasets from the PharmacoGx database.  -->
 The main step in this process is to extract the drug dose-response data from the PharmacoSets and transform them into a `data.table` that can be used as input for the `gDRcore::runDrugResponseProcessingPipeline`.
 
 

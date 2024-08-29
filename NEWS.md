@@ -229,4 +229,4 @@
 * code refactor using lintr
 
 ## gDRimport 0.0.1 - 2021-06-22
-* initial release -  importing fucntions moved from gDRcore package
+* initial release -  importing functions moved from gDRcore package

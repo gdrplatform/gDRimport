@@ -22,7 +22,7 @@ data (after corrections and uppercase'ing)
 'grepl' is used to find entries from 'ref' that might be
 somehow pre- or post- fixed}
 
-\item{fix_underscores}{logical flag fix the issues with underscores in data identfiers?}
+\item{fix_underscores}{logical flag fix the issues with underscores in data identifiers?}
 }
 \value{
 list or charvec with corrected data

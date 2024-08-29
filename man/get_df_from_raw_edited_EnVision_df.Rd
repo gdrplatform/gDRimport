@@ -31,7 +31,7 @@ get_df_from_raw_edited_EnVision_df(
 
 \item{sheet_name}{name of the Excel sheet}
 
-\item{headers}{list with the headersa}
+\item{headers}{list with the headers}
 }
 \value{
 data.table derived from EnVision data
