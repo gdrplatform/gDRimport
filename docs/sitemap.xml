@@ -46,6 +46,12 @@
     <loc>https://gdrplatform.github.io/gDRimport/reference/check_metadata_req_col_names.html</loc>
   </url>
   <url>
+    <loc>https://gdrplatform.github.io/gDRimport/reference/convert_LEVEL5_prism_to_gDR_input.html</loc>
+  </url>
+  <url>
+    <loc>https://gdrplatform.github.io/gDRimport/reference/convert_LEVEL6_prism_to_gDR_input.html</loc>
+  </url>
+  <url>
     <loc>https://gdrplatform.github.io/gDRimport/reference/convert_MAE_to_PSet.html</loc>
   </url>
   <url>
