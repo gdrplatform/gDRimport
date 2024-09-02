@@ -135,6 +135,8 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
                      by = "column_name")
 
   full_data$value <- pmin(readout_min, 2 ^ full_data$value)
+  full_data <- full_data[!(is.na(name) | is.na(value) | name == "DMSO")]
+  
   untrt_tag <- gDRutils::get_env_identifiers("untreated_tag")[1]
 
   df_ctrl <- data.table::data.table(clid = unique(full_data$clid),
