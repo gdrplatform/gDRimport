@@ -148,7 +148,7 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
                                     ReadoutValue = 1,
                                     masked = FALSE)
   df_trt <- data.table::data.table(clid = full_data$clid,
-                                   Gnumber = full_data$broad_id,
+                                   Gnumber = full_data$name,
                                    DrugName = full_data$name,
                                    drug_moa = ifelse(is.null(full_data$moa),
                                                      "unknown",
