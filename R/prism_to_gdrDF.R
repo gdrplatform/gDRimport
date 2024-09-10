@@ -104,13 +104,18 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
   treatment <- data.table::fread(treatment_data_path)
   res <- data.table::fread(prism_data_path)
   
-  data.table::setnames(cell_lines, "row_id", "row_name", skip_absent = TRUE)
-  data.table::setnames(treatment, "profile_id", "column_name", skip_absent = TRUE)
+  data.table::setnames(cell_lines,
+                       c("row_id", "depmap_id"),
+                       c("row_name", "row_name"),
+                       skip_absent = TRUE)
+  data.table::setnames(treatment,
+                       c("profile_id", "SampleID", "CompoundName", "GeneSymbolOfTargets"),
+                       c("column_name", "column_name", "name", "moa"),
+                       skip_absent = TRUE)
 
   checkmate::assert_names(names(cell_lines), must.include = c("row_name",
                                                               "ccle_name"))
-  checkmate::assert_names(names(treatment), must.include = c("column_name",
-                                                              "broad_id"))
+  checkmate::assert_names(names(treatment), must.include = "column_name")
   checkmate::assert_names(names(res), must.include = "V1")
 
 
@@ -119,23 +124,30 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
                        c("V1", "variable"),
                        c("row_name", "column_name"))
   
+  
+  if (all(grepl("::", res_transform$column_name)) && !"dose" %in% names(treatment)) {
+    res_transform[, c("column_name", "dose") := data.table::tstrsplit(column_name, "::", keep = c(1, 2))]
+  }
+
+  
   data.table::setnames(cell_lines,
                        "ccle_name",
                        "clid")
 
-  full_data <- merge(res_transform, cell_lines[, c("row_name", "clid")],
+  full_data <- merge(res_transform,
+                     unique(cell_lines[, c("row_name", "clid")]),
                      all.x = TRUE,
                      by = "row_name")
 
   full_data <- merge(full_data,
-                     treatment[, intersect(names(treatment),
-                                           c("column_name", "broad_id", "name", "dose", "moa")),
-                               with = FALSE],
+                     unique(treatment[, intersect(names(treatment),
+                                           c("column_name", "name", "dose", "moa")),
+                               with = FALSE]),
                      all.x = TRUE,
                      by = "column_name")
 
   full_data$value <- pmin(readout_min, 2 ^ full_data$value)
-  full_data <- full_data[!(is.na(name) | is.na(value) | name == "DMSO")]
+  full_data <- full_data[!(is.na(name) | is.na(value))]
   
   untrt_tag <- gDRutils::get_env_identifiers("untreated_tag")[1]
 
