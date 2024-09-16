@@ -20,6 +20,7 @@ if (getRversion() >= "2.15.1") {
       "Dose",
       "column_name",
       "name",
+      "..with",
       "value"
     ),
     utils::packageName())
