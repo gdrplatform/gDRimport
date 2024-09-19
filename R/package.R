@@ -16,11 +16,12 @@ DICTIONARY <- list(
 if (getRversion() >= "2.15.1") {
   utils::globalVariables(
     c(
-      "..barcode_col",
-      "..selected_cols",
-      "..with",
       ".SD",
-      "Dose"
+      "Dose",
+      "column_name",
+      "name",
+      "..with",
+      "value"
     ),
     utils::packageName())
 }
