@@ -1,3 +1,6 @@
+## gDRimport 1.3.5 - 2024-10-22
+* fix test for `load_files`
+
 ## gDRimport 1.3.4 - 2024-08-29
 * fix failing github page
 
