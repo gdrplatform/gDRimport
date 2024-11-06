@@ -1,3 +1,6 @@
+## gDRimport 1.5.1 - 2024-11-05
+* synchronize Bioconductor and GitHub versioning
+
 ## gDRimport 1.3.5 - 2024-10-22
 * fix test for `load_files`
 
