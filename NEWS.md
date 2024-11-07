@@ -1,3 +1,6 @@
+## gDRimport 1.5.2 - 2024-11-06
+* fix invalid moa for PRISM data
+
 ## gDRimport 1.5.1 - 2024-11-05
 * synchronize Bioconductor and GitHub versioning
 

@@ -49,7 +49,7 @@ convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
     raw_data[,  unlist(idfs[c("drug2", "concentration2")]) := NULL]
   }
 
-  df_ctrl <- data.table::data.table(clid = unique(raw_data$clid),
+  dt_ctrl <- data.table::data.table(clid = unique(raw_data$clid),
                                     Gnumber = gDRutils::get_env_identifiers("untreated_tag")[1],
                                     Gnumber_2 = gDRutils::get_env_identifiers("untreated_tag")[1],
                                     Duration = unique(raw_data$Duration),
@@ -59,15 +59,15 @@ convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
                                     BackgroundValue = 0,
                                     masked = FALSE)
 
-  data.table::setnames(df_ctrl, c("clid", "Duration", "Gnumber", "Gnumber_2",
+  data.table::setnames(dt_ctrl, c("clid", "Duration", "Gnumber", "Gnumber_2",
                                   "Concentration", "Concentration_2", "masked"),
                        unlist(idfs[c("cellline", "duration", "drug", "drug2",
                                      "concentration", "concentration2", "masked_tag")]))
 
   if (!all(unlist(idfs[c("drug2", "concentration2")]) %in% names(raw_data))) {
-    df_ctrl[, unlist(idfs[c("drug2", "concentration2")]) := NULL]
+    dt_ctrl[, unlist(idfs[c("drug2", "concentration2")]) := NULL]
   }
-  rbind(raw_data, df_ctrl)
+  rbind(raw_data, dt_ctrl)
 }
 
 
@@ -148,10 +148,10 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
 
   full_data$value <- pmin(readout_min, 2 ^ full_data$value)
   full_data <- full_data[!(is.na(name) | is.na(value))]
-  
-  untrt_tag <- gDRutils::get_env_identifiers("untreated_tag")[1]
 
-  df_ctrl <- data.table::data.table(clid = unique(full_data$clid),
+  # data for conc = 0
+  untrt_tag <- gDRutils::get_env_identifiers("untreated_tag")[1]
+  dt_ctrl <- data.table::data.table(clid = unique(full_data$clid),
                                     Gnumber = untrt_tag,
                                     DrugName = untrt_tag,
                                     drug_moa = untrt_tag,
@@ -159,19 +159,22 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
                                     Concentration = 0,
                                     ReadoutValue = 1,
                                     masked = FALSE)
-  df_trt <- data.table::data.table(clid = full_data$clid,
-                                   Gnumber = full_data$name,
-                                   DrugName = full_data$name,
-                                   drug_moa = ifelse(is.null(full_data$moa),
-                                                     "unknown",
-                                                     full_data$moa),
-                                   Duration = 120,
-                                   Concentration = full_data$dose,
-                                   ReadoutValue = full_data$value,
-                                   masked = FALSE)
+  # data for treatment
+  ls_col <- intersect(c("clid", "name", "moa", "dose", "value"), colnames(full_data))
+  dt_trt <- data.table::copy(full_data[, c(ls_col), with = FALSE])
+  if (is.null(dt_trt$moa)) dt_trt$moa <- "unknown"
+  data.table::setnames(dt_trt,
+                       old = c("name", "moa", "dose", "value"),
+                       new = c("Gnumber", "drug_moa", "Concentration", "ReadoutValue"))
+  dt_trt$DrugName <- full_data$name
+  dt_trt$Duration <- 120
+  dt_trt$masked <- FALSE
+  data.table::setcolorder(dt_trt, neworder = colnames(dt_ctrl))
+  
+  # final
   gDRutils::reset_env_identifiers()
   idfs <- gDRutils::get_env_identifiers()
-  merged_data <- rbind(df_trt, df_ctrl)
+  merged_data <- rbind(dt_trt, dt_ctrl)
   data.table::setnames(merged_data,
                        c("clid", "Gnumber", "DrugName", "drug_moa",
                          "Duration", "Concentration", "masked"),
