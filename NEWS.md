@@ -1,3 +1,6 @@
+## gDRimport 1.5.3 - 2024-12-04
+* support old private PRISM data format
+
 ## gDRimport 1.5.2 - 2024-11-06
 * fix invalid moa for PRISM data
 
