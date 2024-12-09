@@ -15,19 +15,45 @@ convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
                                               readout_min = 1.03) {
 
   checkmate::check_file_exists(prism_data_path)
-
+  
   data <- data.table::fread(prism_data_path)
-  checkmate::assert_names(names(data), must.include = c("rid", "ccle_name", "culture", "pool_id",
-                                                     "pert_iname", "pert_id", "pert_dose",
-                                                     "pert_idose", "pert_plate", "pert_vehicle",
-                                                     "pert_time", "pert_type", "sig_id",
-                                                     "x_project_id", "LFC", "LFC_cb"))
+  
+  # Define the mapping for old column names
+  column_mappings <- list(
+    LFC_cb = c("LFC_cb", "LFC.cb", "LFC"),
+    pert_iname = c("pert_iname", "pert_name")
+  )
+  
+  # Rename columns based on mapping if default column is missing
+  for (col in names(column_mappings)) {
+    if (!col %in% names(data)) {
+      for (old_col in column_mappings[[col]]) {
+        if (old_col %in% names(data)) {
+          data.table::setnames(data, old_col, col)
+          break
+        }
+      }
+    }
+  }
+  
+  checkmate::assert_names(names(data), must.include = c("ccle_name",
+                                                        "pert_iname",
+                                                        "pert_dose",
+                                                        "pert_time",
+                                                        "LFC_cb"))
   gDRutils::reset_env_identifiers()
   idfs <- gDRutils::get_env_identifiers()
-
-  data[, unlist(idfs[c("drug", "drug2")]) := data.table::tstrsplit(data$pert_iname, "|", fixed = TRUE)]
+  
+  # Check and split pert_iname and pert_dose by | or _
+  if (any(grepl("\\|", data$pert_iname))) {
+    separator <- "|"
+  } else {
+    separator <- "_"
+  }
+  data[, unlist(idfs[c("drug", "drug2")]) :=
+         data.table::tstrsplit(data$pert_iname, separator, fixed = TRUE)]
   data[, unlist(idfs[c("concentration", "concentration2")]) :=
-         data.table::tstrsplit(data$pert_dose, "|", fixed = TRUE, type.convert = TRUE)]
+         data.table::tstrsplit(data$pert_dose, separator, fixed = TRUE, type.convert = TRUE)]
 
   raw_data <- data.table::data.table(clid = data$ccle_name,
                                      Duration = as.numeric(gsub("H", "", data$pert_time)),
