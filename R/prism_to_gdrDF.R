@@ -56,7 +56,9 @@ convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
          data.table::tstrsplit(data$pert_dose, separator, fixed = TRUE, type.convert = TRUE)]
 
   raw_data <- data.table::data.table(clid = data$ccle_name,
-                                     Duration = as.numeric(gsub("H", "", data$pert_time)),
+                                     Duration = as.numeric(ifelse(grepl("d", data$pert_time),
+                                                                  as.numeric(gsub("d", "", data$pert_time)) * 24,
+                                                                  gsub("H", "", data$pert_time))),
                                      ReadoutValue = pmin(readout_min, 2 ^ data$LFC_cb),
                                      BackgroundValue = 0,
                                      Gnumber = data[[idfs$drug]],
