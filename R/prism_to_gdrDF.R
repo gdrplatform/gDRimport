@@ -20,7 +20,7 @@ convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
   
   # Define the mapping for old column names
   column_mappings <- list(
-    LFC_cb = c("LFC_cb","LFC.cb", "LFC"),
+    LFC_cb = c("LFC_cb", "LFC.cb", "LFC"),
     pert_iname = c("pert_iname", "pert_name")
   )
   
