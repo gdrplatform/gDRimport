@@ -47,12 +47,9 @@ convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
   # Check and split pert_iname and pert_dose by | or _
   if (any(grepl("\\|", data$pert_iname))) {
     separator <- "|"
-  } else if (any(grepl("_", data$pert_iname))) {
-    separator <- "_"
   } else {
-    stop("Unknown separator in pert_iname")
+    separator <- "_"
   }
-  
   data[, unlist(idfs[c("drug", "drug2")]) :=
          data.table::tstrsplit(data$pert_iname, separator, fixed = TRUE)]
   data[, unlist(idfs[c("concentration", "concentration2")]) :=
