@@ -140,6 +140,13 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
                        c("profile_id", "SampleID", "CompoundName", "GeneSymbolOfTargets"),
                        c("column_name", "column_name", "name", "moa"),
                        skip_absent = TRUE)
+  
+  # take into account different runs
+  treatment[, new_name := if(.N > 1) paste0(name, "_run",
+                                            data.table::frank(column_name, ties.method = "dense")) else as.character(name),
+            by = name]
+  treatment[, name := new_name]
+  treatment[, new_name := NULL]
 
   checkmate::assert_names(names(cell_lines), must.include = c("row_name",
                                                               "ccle_name"))
@@ -177,6 +184,8 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
   full_data$value <- pmin(readout_min, 2 ^ full_data$value)
   full_data <- full_data[!(is.na(name) | is.na(value))]
 
+
+  
   # data for conc = 0
   untrt_tag <- gDRutils::get_env_identifiers("untreated_tag")[1]
   dt_ctrl <- data.table::data.table(clid = unique(full_data$clid),
