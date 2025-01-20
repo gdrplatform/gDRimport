@@ -142,8 +142,9 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
                        skip_absent = TRUE)
   
   # take into account different runs
-  treatment[, new_name := if(.N > 1) paste0(name, "_run",
-                                            data.table::frank(column_name, ties.method = "dense")) else as.character(name),
+  treatment[, new_name := if (.N > 1) paste0(name, "_run",
+                                             data.table::frank(column_name,
+                                                               ties.method = "dense")) else as.character(name),
             by = name]
   treatment[, name := new_name]
   treatment[, new_name := NULL]

@@ -26,8 +26,11 @@ test_that("prism level6  data can be processed into gDR format ", {
                                                                 cell_line_data_path,
                                                                 treatment_data_path)
   expect_is(df_prism$result, "data.table")
-  expect_equal(dim(df_prism$result), c(2, 8))
+  expect_equal(dim(df_prism$result), c(3, 8))
   expect_true(all(gDRutils::get_env_identifiers(c("drug", "cellline"),
                                                 simplify = FALSE) %in% names(df_prism$result)))
+  expect_equal(df_prism[["result"]][[gDRutils::get_env_identifiers("drug")]],
+               c("some_drug_name_run1", "some_drug_name_run2", "vehicle"))
+  
 })
 
