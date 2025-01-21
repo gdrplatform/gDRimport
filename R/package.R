@@ -21,7 +21,9 @@ if (getRversion() >= "2.15.1") {
       "column_name",
       "name",
       "..with",
-      "value"
+      "value",
+      ".N",
+      "new_name"
     ),
     utils::packageName())
 }
