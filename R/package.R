@@ -16,14 +16,14 @@ DICTIONARY <- list(
 if (getRversion() >= "2.15.1") {
   utils::globalVariables(
     c(
+      "..with",
+      ".N",
       ".SD",
       "Dose",
       "column_name",
       "name",
-      "..with",
-      "value",
-      ".N",
-      "new_name"
+      "new_name",
+      "value"
     ),
     utils::packageName())
 }
