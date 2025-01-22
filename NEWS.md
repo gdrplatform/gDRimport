@@ -1,3 +1,6 @@
+## gDRimport 1.5.5 - 2025-01-11
+* take into account run in public PRISM data
+
 ## gDRimport 1.5.4 - 2024-12-09
 * support Duration in old private PRISM data format
 
