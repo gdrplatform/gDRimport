@@ -1,3 +1,6 @@
+## gDRimport 1.5.6 - 2025-02-04
+* update error message, to make them less confusing
+
 ## gDRimport 1.5.5 - 2025-01-11
 * take into account run in public PRISM data
 
