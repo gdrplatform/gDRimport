@@ -5,6 +5,8 @@ test_that("check get_exception_data works correctly", {
   expect_equal(NROW(obs), 1)
   expect_equal(colnames(obs),
                c("status_code", "title", "sprintf_text", "type", "input_type"))
+  expect_equal(obs$sprintf_text,
+               "There were errors loading manifest. Check error message below:\n```\n%s\n```")
   
   expect_true(all(dim(gDRimport::get_exception_data()) >= 5))
   
