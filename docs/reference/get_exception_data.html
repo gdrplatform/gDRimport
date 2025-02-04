@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">gDRimport</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.6</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -83,9 +83,12 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>    status_code                  title</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;char&gt;                 &lt;char&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1:           1 Error loading manifest</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                         sprintf_text   type input_type</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                               &lt;char&gt; &lt;char&gt;     &lt;char&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1: There were errors loading manifest. See logs:\n%s  error   manifest</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                    sprintf_text</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                          &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1: There were errors loading manifest. Check error message below:\n```\n%s\n```</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      type input_type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;char&gt;     &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:  error   manifest</span>
 <span class="r-in"><span><span class="fu">get_exception_data</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     status_code                                    title</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;char&gt;                                   &lt;char&gt;</span>
@@ -128,26 +131,26 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>     status_code                                    title</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                      sprintf_text</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                            &lt;char&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  1:                                                                                                                                                             There were errors loading manifest. See logs:\n%s</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:                                                                                                                                  There were errors loading manifest. Check error message below:\n```\n%s\n```</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  2:                                                                                                                                                                                         Please load manifest!</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  3:                                                         Some of the treatment files entered in the manifest have not been uploaded:\n%s\nPlease check the uploaded files and their name (including extension)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  4:                                                                                                                                                                     Some uploaded files (**%s**) are not used</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5:                                                                                                                                                  There were errors when loading the treatments. See logs:\n%s</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:                                                                                                                       There were errors when loading the treatments. Check error message below:\n```\n%s\n```</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  6:                                                                                                           Some plates (**%s**) found in the manifest are not reported in the data files and will be discarded</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  7:                                                                                                           Some plates (**%s**) found in the data files are not reported in the manifest and will be discarded</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  8:                                                                                                                         Txt file in an unsupported format. Please check if the file uses tab(\t) as separator</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9:                                                                                                                                                        There were errors when loading raw data. See logs:\n%s</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10:                                                                                                                                                            There were errors when merging data. See logs:\n%s</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:                                                                                                                             There were errors when loading raw data. Check error message below:\n```\n%s\n```</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:                                                                                                                                 There were errors when merging data. Check error message below:\n```\n%s\n```</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 11:                                                                                                                                                                          Some treatment files are missing: %s</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12:                                                                                                                                         There were errors reading the manifest file. Please see the logs:\n%s</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:                                                                                                                         There were errors reading the manifest file. Check error message below:\n```\n%s\n```</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 13:                                                                                                                         %s file format is not supported. Please convert your file to one of the following: %s</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 14:                                                                                                                                                                          Barcodes in Manifest must be unique!</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 15:                                                                                                                   No untreated controls were found in the treatment. Please upload the appropriate treatment.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 16:                                                                                                                                                                                  Unrecognized instrument type</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 17:                                                                                                                                                         In untreated treatment file %s, sheet name must be %s</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 18:                                                                                                                                                            In untreated treatment file %s, entries must be %s</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19:                                                                                                                                             There were errors loading the treatment. Please see the logs:\n%s</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20:                                                                                                                                                 There were errors loading treatment %s. Please see logs: \n%s</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19:                                                                                                                             There were errors loading the treatment. Check error message below:\n```\n%s\n```</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20:                                                                                                                                       There were errors loading treatment %s. Check error message below: \n%s</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 21:                                                                                                                                                                                              Error reading %s</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 22:                                                                                                                                                                                    Error reading %s, sheet %s</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 23:                                                                                                                                        In result file %s (sheet %s) readout values are misplaced for plate %s</span>
