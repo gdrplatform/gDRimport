@@ -1,3 +1,6 @@
+## gDRimport 1.5.7 - 2025-02-07
+* extract Tissue information for cell lines in PRISM data
+
 ## gDRimport 1.5.6 - 2025-02-04
 * update error messages, to make them less confusing
 
