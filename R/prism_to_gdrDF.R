@@ -15,6 +15,9 @@ convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
                                               readout_min = 1.03) {
 
   checkmate::check_file_exists(prism_data_path)
+  gDRutils::reset_env_identifiers()
+  idfs <- gDRutils::get_env_identifiers()
+  
   
   data <- data.table::fread(prism_data_path)
   
@@ -41,9 +44,7 @@ convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
                                                         "pert_dose",
                                                         "pert_time",
                                                         "LFC_cb"))
-  gDRutils::reset_env_identifiers()
-  idfs <- gDRutils::get_env_identifiers()
-  
+
   # Check and split pert_iname and pert_dose by | or _
   if (any(grepl("\\|", data$pert_iname))) {
     separator <- "|"
@@ -153,6 +154,9 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
   checkmate::check_file_exists(prism_data_path)
   checkmate::check_file_exists(cell_line_data_path)
   checkmate::check_file_exists(treatment_data_path)
+  
+  gDRutils::reset_env_identifiers()
+  idfs <- gDRutils::get_env_identifiers()
 
   cell_lines <- data.table::fread(cell_line_data_path)
   treatment <- data.table::fread(treatment_data_path)
@@ -261,9 +265,6 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
   dt_trt$masked <- FALSE
   data.table::setcolorder(dt_trt, neworder = colnames(dt_ctrl))
   
-  # final
-  gDRutils::reset_env_identifiers()
-  idfs <- gDRutils::get_env_identifiers()
   merged_data <- rbind(dt_trt, dt_ctrl)
   data.table::setnames(merged_data,
                        c("clid", "Gnumber", "DrugName", "drug_moa",
