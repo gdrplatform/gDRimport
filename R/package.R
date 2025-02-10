@@ -23,7 +23,8 @@ if (getRversion() >= "2.15.1") {
       "column_name",
       "name",
       "new_name",
-      "value"
+      "value",
+      "ccle_name"
     ),
     utils::packageName())
 }
