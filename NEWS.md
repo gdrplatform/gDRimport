@@ -1,19 +1,19 @@
-## gDRimport 1.5.6 - 2025-02-04
+## gDRimport 1.4.6 - 2025-02-04
 * update error messages, to make them less confusing
 
-## gDRimport 1.5.5 - 2025-01-11
+## gDRimport 1.4.5 - 2025-01-11
 * take into account run in public PRISM data
 
-## gDRimport 1.5.4 - 2024-12-09
+## gDRimport 1.4.4 - 2024-12-09
 * support Duration in old private PRISM data format
 
-## gDRimport 1.5.3 - 2024-12-04
+## gDRimport 1.4.3 - 2024-12-04
 * support old private PRISM data format
 
-## gDRimport 1.5.2 - 2024-11-06
+## gDRimport 1.4.2 - 2024-11-06
 * fix invalid moa for PRISM data
 
-## gDRimport 1.5.1 - 2024-11-05
+## gDRimport 1.4.1 - 2024-11-05
 * synchronize Bioconductor and GitHub versioning
 
 ## gDRimport 1.3.5 - 2024-10-22
