@@ -58,10 +58,13 @@ convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
   
   data[, unlist(idfs[c("cellline_name", "cellline_tissue")]) := {
     split_names <- strsplit(ccle_name, "_", fixed = TRUE)
-    list(
-      vapply(split_names, function(x) x[1], ""),
-      vapply(split_names, function(x) paste(x[-1], collapse = "_"), "")
-    )
+    cellline_name <- vapply(split_names, function(x) x[1], "")
+    cellline_tissue <- vapply(split_names, function(x) paste(x[-1], collapse = "_"), "")
+    
+    # replace empty strings in cellline_tissue with "unknown"
+    cellline_tissue[cellline_tissue == ""] <- "unknown"
+    
+    list(cellline_name, cellline_tissue)
   }]
   
   data[, unlist(idfs[c("cellline_parental_identifier", "cellline_subtype", "cellline_ref_div_time")]) :=
@@ -197,10 +200,13 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
 
   cell_lines[, unlist(idfs[c("cellline_name", "cellline_tissue")]) := {
     split_names <- strsplit(ccle_name, "_", fixed = TRUE)
-    list(
-      vapply(split_names, function(x) x[1], ""),
-      vapply(split_names, function(x) paste(x[-1], collapse = "_"), "")
-    )
+    cellline_name <- vapply(split_names, function(x) x[1], "")
+    cellline_tissue <- vapply(split_names, function(x) paste(x[-1], collapse = "_"), "")
+    
+    # replace empty strings in cellline_tissue with "unknown"
+    cellline_tissue[cellline_tissue == ""] <- "unknown"
+    
+    list(cellline_name, cellline_tissue)
   }]
   
   cell_lines[, unlist(idfs[c("cellline_parental_identifier", "cellline_subtype", "cellline_ref_div_time")]) :=
