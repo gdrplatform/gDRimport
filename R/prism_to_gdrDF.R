@@ -15,6 +15,9 @@ convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
                                               readout_min = 1.03) {
 
   checkmate::check_file_exists(prism_data_path)
+  gDRutils::reset_env_identifiers()
+  idfs <- gDRutils::get_env_identifiers()
+  
   
   data <- data.table::fread(prism_data_path)
   
@@ -41,9 +44,7 @@ convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
                                                         "pert_dose",
                                                         "pert_time",
                                                         "LFC_cb"))
-  gDRutils::reset_env_identifiers()
-  idfs <- gDRutils::get_env_identifiers()
-  
+
   # Check and split pert_iname and pert_dose by | or _
   if (any(grepl("\\|", data$pert_iname))) {
     separator <- "|"
@@ -54,8 +55,27 @@ convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
          data.table::tstrsplit(data$pert_iname, separator, fixed = TRUE)]
   data[, unlist(idfs[c("concentration", "concentration2")]) :=
          data.table::tstrsplit(data$pert_dose, separator, fixed = TRUE, type.convert = TRUE)]
-
+  
+  data[, unlist(idfs[c("cellline_name", "cellline_tissue")]) := {
+    split_names <- strsplit(ccle_name, "_", fixed = TRUE)
+    cellline_name <- vapply(split_names, function(x) x[1], "")
+    cellline_tissue <- vapply(split_names, function(x) paste(x[-1], collapse = "_"), "")
+    
+    # replace empty strings in cellline_tissue with "unknown"
+    cellline_tissue[cellline_tissue == ""] <- "unknown"
+    
+    list(cellline_name, cellline_tissue)
+  }]
+  
+  data[, unlist(idfs[c("cellline_parental_identifier", "cellline_subtype", "cellline_ref_div_time")]) :=
+                  list("unknown", "unknown", as.numeric(NA))]
+    
   raw_data <- data.table::data.table(clid = data$ccle_name,
+                                     CellLineName = data$CellLineName,
+                                     Tissue = data$Tissue,
+                                     parental_identifier = data$parental_identifier,
+                                     subtype = data$subtype,
+                                     ReferenceDivisionTime = data$ReferenceDivisionTime,
                                      Duration = as.numeric(ifelse(grepl("d", data$pert_time),
                                                                   as.numeric(gsub("d", "", data$pert_time)) * 24,
                                                                   gsub("H", "", data$pert_time))),
@@ -67,9 +87,12 @@ convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
                                      Concentration_2 = data[[idfs$concentration2]],
                                      masked = FALSE)
 
-  data.table::setnames(raw_data, c("clid", "Duration", "Gnumber", "Gnumber_2",
-                                   "Concentration", "Concentration_2", "masked"),
-                       unlist(idfs[c("cellline", "duration", "drug", "drug2",
+  data.table::setnames(raw_data, c("clid", "CellLineName", "Tissue", "parental_identifier",
+                                   "subtype", "ReferenceDivisionTime", "Duration", "Gnumber",
+                                   "Gnumber_2", "Concentration", "Concentration_2", "masked"),
+                       unlist(idfs[c("cellline", "cellline_name", "cellline_tissue",
+                                     "cellline_parental_identifier", "cellline_subtype",
+                                     "cellline_ref_div_time", "duration", "drug", "drug2",
                                      "concentration", "concentration2", "masked_tag")]))
 
   if (all(raw_data[[idfs$drug]] == raw_data[[idfs$drug2]]) &&
@@ -86,6 +109,13 @@ convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
                                     ReadoutValue = 1,
                                     BackgroundValue = 0,
                                     masked = FALSE)
+  
+  
+  dt_ctrl <- merge(dt_ctrl,
+                   unique(raw_data[, unlist(idfs[c("cellline", "cellline_name", "cellline_tissue",
+                                                   "cellline_parental_identifier", "cellline_subtype",
+                                                   "cellline_ref_div_time")]), with = FALSE]), all.x = TRUE)
+          
 
   data.table::setnames(dt_ctrl, c("clid", "Duration", "Gnumber", "Gnumber_2",
                                   "Concentration", "Concentration_2", "masked"),
@@ -127,6 +157,9 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
   checkmate::check_file_exists(prism_data_path)
   checkmate::check_file_exists(cell_line_data_path)
   checkmate::check_file_exists(treatment_data_path)
+  
+  gDRutils::reset_env_identifiers()
+  idfs <- gDRutils::get_env_identifiers()
 
   cell_lines <- data.table::fread(cell_line_data_path)
   treatment <- data.table::fread(treatment_data_path)
@@ -165,13 +198,33 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
     res_transform[, c("column_name", "dose") := data.table::tstrsplit(column_name, "::", keep = c(1, 2))]
   }
 
+  cell_lines[, unlist(idfs[c("cellline_name", "cellline_tissue")]) := {
+    split_names <- strsplit(ccle_name, "_", fixed = TRUE)
+    cellline_name <- vapply(split_names, function(x) x[1], "")
+    cellline_tissue <- vapply(split_names, function(x) paste(x[-1], collapse = "_"), "")
+    
+    # replace empty strings in cellline_tissue with "unknown"
+    cellline_tissue[cellline_tissue == ""] <- "unknown"
+    
+    list(cellline_name, cellline_tissue)
+  }]
+  
+  cell_lines[, unlist(idfs[c("cellline_parental_identifier", "cellline_subtype", "cellline_ref_div_time")]) :=
+               list("unknown", "unknown", as.numeric(NA))]
+  
   
   data.table::setnames(cell_lines,
                        "ccle_name",
                        "clid")
 
   full_data <- merge(res_transform,
-                     unique(cell_lines[, c("row_name", "clid")]),
+                     unique(cell_lines[, c("row_name",
+                                           unlist(idfs[c("cellline",
+                                                         "cellline_name",
+                                                         "cellline_tissue",
+                                                         "cellline_parental_identifier",
+                                                         "cellline_subtype",
+                                                         "cellline_ref_div_time")])), with = FALSE]),
                      all.x = TRUE,
                      by = "row_name")
 
@@ -185,7 +238,6 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
   full_data$value <- pmin(readout_min, 2 ^ full_data$value)
   full_data <- full_data[!(is.na(name) | is.na(value))]
 
-
   
   # data for conc = 0
   untrt_tag <- gDRutils::get_env_identifiers("untreated_tag")[1]
@@ -197,8 +249,18 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
                                     Concentration = 0,
                                     ReadoutValue = 1,
                                     masked = FALSE)
+  
+  dt_ctrl <- merge(dt_ctrl,
+                   unique(full_data[, unlist(idfs[c("cellline", "cellline_name", "cellline_tissue",
+                                                    "cellline_parental_identifier", "cellline_subtype",
+                                                    "cellline_ref_div_time")]), with = FALSE]), all.x = TRUE)
+  
   # data for treatment
-  ls_col <- intersect(c("clid", "name", "moa", "dose", "value"), colnames(full_data))
+  ls_col <- intersect(c("clid", "name", "moa", "dose", "value",
+                        unlist(idfs[c("cellline", "cellline_name", "cellline_tissue",
+                                      "cellline_parental_identifier", "cellline_subtype",
+                                      "cellline_ref_div_time")])),
+                      colnames(full_data))
   dt_trt <- data.table::copy(full_data[, c(ls_col), with = FALSE])
   if (is.null(dt_trt$moa)) dt_trt$moa <- "unknown"
   data.table::setnames(dt_trt,
@@ -209,9 +271,6 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
   dt_trt$masked <- FALSE
   data.table::setcolorder(dt_trt, neworder = colnames(dt_ctrl))
   
-  # final
-  gDRutils::reset_env_identifiers()
-  idfs <- gDRutils::get_env_identifiers()
   merged_data <- rbind(dt_trt, dt_ctrl)
   data.table::setnames(merged_data,
                        c("clid", "Gnumber", "DrugName", "drug_moa",
