@@ -1,3 +1,6 @@
+## gDRimport 1.5.8 - 2025-02-18
+* update extracting Tissue information for cell lines in PRISM data
+
 ## gDRimport 1.5.7 - 2025-02-07
 * extract Tissue information for cell lines in PRISM data
 
