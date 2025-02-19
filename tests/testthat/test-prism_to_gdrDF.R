@@ -1,5 +1,6 @@
 prism_data <- system.file("testdata/prism_sa.csv", package = "gDRimport")
-prism_data2 <- system.file("testdata/prism_combo.csv", package = "gDRimport")
+prism_data_2 <- system.file("testdata/prism_sa_2.csv", package = "gDRimport")
+prism_data_3 <- system.file("testdata/prism_combo.csv", package = "gDRimport")
 prism_data_path <- system.file("testdata/prism_collapsed_LOGFC.csv", package = "gDRimport")
 cell_line_data_path <- system.file("testdata/prism_cell_lines.csv", package = "gDRimport")
 treatment_data_path <- system.file("testdata/prism_treatment.csv", package = "gDRimport")
@@ -14,10 +15,24 @@ test_that("prism level5 single-agent data can be processed into gDR input format
   expect_equal(df_prism$result$Duration, c(120, 240, 120, 240))
   expect_true(all(gDRutils::get_env_identifiers(c("drug", "cellline"),
                                                 simplify = FALSE) %in% names(df_prism$result)))
+  
+  # testing format of clid, CellLineName and Tissue column
+  expect_equal(df_prism$result$clid, df_prism$result$CellLineName)
+  expect_equal(
+    df_prism$result$Tissue,
+    vapply(df_prism$result$CellLineName, function(x) strsplit(x, "_")[[1]][2], character(1), USE.NAMES = FALSE))
+  
+  df_prism_unknown <- purrr::quietly(convert_LEVEL5_prism_to_gDR_input)(prism_data_2)
+  expect_is(df_prism_unknown$result, "data.table")
+  expect_equal(dim(df_prism_unknown$result), c(4, 12))
+  
+  # testing format of clid, CellLineName and Tissue column
+  expect_equal(df_prism_unknown$result$clid, df_prism_unknown$result$CellLineName)
+  expect_equal(df_prism_unknown$result$Tissue, c("unknown", "ts2", "unknown", "ts2"))
 })
 
 test_that("prism level5 combo data can be processed into gDR input format ", {
-  df_prism <- purrr::quietly(convert_LEVEL5_prism_to_gDR_input)(prism_data2)
+  df_prism <- purrr::quietly(convert_LEVEL5_prism_to_gDR_input)(prism_data_3)
   expect_is(df_prism$result, "data.table")
   expect_equal(dim(df_prism$result), c(2, 14))
   expect_equal(names(df_prism$result), c("clid", "CellLineName", "Tissue", "parental_identifier", "subtype",
@@ -25,6 +40,12 @@ test_that("prism level5 combo data can be processed into gDR input format ", {
                                          "Gnumber", "Gnumber_2", "Concentration", "Concentration_2", "masked"))
   expect_true(all(gDRutils::get_env_identifiers(c("drug", "drug2", "cellline"),
                                                 simplify = FALSE) %in% names(df_prism$result)))
+  
+  # testing format of clid, CellLineName and Tissue column
+  expect_equal(df_prism$result$clid, df_prism$result$CellLineName)
+  expect_equal(
+    df_prism$result$Tissue,
+    vapply(df_prism$result$CellLineName, function(x) strsplit(x, "_")[[1]][2], character(1), USE.NAMES = FALSE))
 })
 
 test_that("prism level6  data can be processed into gDR format ", {
@@ -41,5 +62,10 @@ test_that("prism level6  data can be processed into gDR format ", {
   expect_equal(df_prism[["result"]][[gDRutils::get_env_identifiers("drug")]],
                c("some_drug_name_run1", "some_drug_name_run2", "vehicle"))
   
+  # testing format of clid, CellLineName and Tissue column
+  expect_equal(df_prism$result$clid, df_prism$result$CellLineName)
+  expect_equal(
+    df_prism$result$Tissue,
+    vapply(df_prism$result$CellLineName, function(x) strsplit(x, "_")[[1]][2], character(1), USE.NAMES = FALSE))
 })
 
