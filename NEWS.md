@@ -1,3 +1,6 @@
+## gDRimport 1.5.9 - 2025-03-12
+* add support for using `OncotreeLineage` as a tissue annotation if available in PRISM data
+
 ## gDRimport 1.5.8 - 2025-02-18
 * update extracting Tissue information for cell lines in PRISM data
 
