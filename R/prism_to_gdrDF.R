@@ -59,8 +59,12 @@ convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
   data[, unlist(idfs[c("cellline_name", "cellline_tissue")]) := {
     cellline_name <- ccle_name
     split_names <- strsplit(ccle_name, "_", fixed = TRUE)
-    cellline_tissue <- vapply(split_names, function(x) paste(x[-1], collapse = "_"), "")
-    
+    cellline_tissue <- if ("OncotreeLineage" %in% names(data)) {
+      data[["OncotreeLineage"]]
+    } else {
+      vapply(split_names, function(x) paste(x[-1], collapse = "_"), "")
+    }
+
     # replace empty strings in cellline_tissue with "unknown"
     cellline_tissue[cellline_tissue == ""] <- "unknown"
     
@@ -201,7 +205,11 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
   cell_lines[, unlist(idfs[c("cellline_name", "cellline_tissue")]) := {
     cellline_name <- ccle_name
     split_names <- strsplit(ccle_name, "_", fixed = TRUE)
-    cellline_tissue <- vapply(split_names, function(x) paste(x[-1], collapse = "_"), "")
+    cellline_tissue <- if ("OncotreeLineage" %in% names(cell_lines)) {
+      cell_lines[["OncotreeLineage"]]
+      } else {
+        vapply(split_names, function(x) paste(x[-1], collapse = "_"), "")
+      }
     
     # replace empty strings in cellline_tissue with "unknown"
     cellline_tissue[cellline_tissue == ""] <- "unknown"
