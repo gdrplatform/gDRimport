@@ -1,6 +1,8 @@
 #' Load, convert and process the level 5 PRISM data into a gDR input
 #'
 #' @param prism_data_path path to PRISM LEVEL5 csv file with data
+#' @param meta_data_path path to metadata file describing all cancer models/cell lines
+#' which are referenced by a dataset contained within the DepMap portal
 #' @param readout_min minimum ReadoutValue
 #'
 #' @return \code{data.table} object with input data for gDR pipeline
@@ -12,6 +14,7 @@
 #'
 #' @export
 convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
+                                              meta_data_path,
                                               readout_min = 1.03) {
 
   checkmate::check_file_exists(prism_data_path)
@@ -20,6 +23,11 @@ convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
   
   
   data <- data.table::fread(prism_data_path)
+  meta <- data.table::fread(meta_data_path)
+  
+  checkmate::assert_names(names(meta),
+                          must.include = c("ModelID",
+                                           "CCLEName"))
   
   # Define the mapping for old column names
   column_mappings <- list(
@@ -140,6 +148,8 @@ convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
 #' log fold change data
 #' @param cell_line_data_path path to cell line info data
 #' @param treatment_data_path path to collapsed treatment info data
+#' @param meta_data_path path to metadata file describing all cancer models/cell lines
+#' which are referenced by a dataset contained within the DepMap portal
 #' @param readout_min minimum ReadoutValue
 #'
 #' @return \code{data.table} object with input data for gDR pipeline
@@ -156,6 +166,7 @@ convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
 convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
                                               cell_line_data_path,
                                               treatment_data_path,
+                                              meta_data_path,
                                               readout_min = 1.03) {
 
   checkmate::check_file_exists(prism_data_path)
@@ -168,6 +179,7 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
   cell_lines <- data.table::fread(cell_line_data_path)
   treatment <- data.table::fread(treatment_data_path)
   res <- data.table::fread(prism_data_path)
+  meta <- data.table::fread(meta_data_path)
   
   data.table::setnames(cell_lines,
                        c("row_id", "depmap_id"),
