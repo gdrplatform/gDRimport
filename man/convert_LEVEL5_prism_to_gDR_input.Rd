@@ -4,10 +4,17 @@
 \alias{convert_LEVEL5_prism_to_gDR_input}
 \title{Load, convert and process the level 5 PRISM data into a gDR input}
 \usage{
-convert_LEVEL5_prism_to_gDR_input(prism_data_path, readout_min = 1.03)
+convert_LEVEL5_prism_to_gDR_input(
+  prism_data_path,
+  meta_data_path,
+  readout_min = 1.03
+)
 }
 \arguments{
 \item{prism_data_path}{path to PRISM LEVEL5 csv file with data}
+
+\item{meta_data_path}{path to metadata file describing all cancer models/cell lines
+which are referenced by a dataset contained within the DepMap portal}
 
 \item{readout_min}{minimum ReadoutValue}
 }
@@ -19,7 +26,8 @@ Load, convert and process the level 5 PRISM data into a gDR input
 }
 \examples{
  prism_data <- system.file("testdata/prism_sa.csv", package = "gDRimport")
- convert_LEVEL5_prism_to_gDR_input(prism_data)
+ prism_meta <- system.file("testdata/prism_model.csv", package = "gDRimport")
+ convert_LEVEL5_prism_to_gDR_input(prism_data, prism_meta)
 
 }
 \keyword{prism_conversion}

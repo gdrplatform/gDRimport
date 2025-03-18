@@ -8,6 +8,7 @@ convert_LEVEL6_prism_to_gDR_input(
   prism_data_path,
   cell_line_data_path,
   treatment_data_path,
+  meta_data_path,
   readout_min = 1.03
 )
 }
@@ -18,6 +19,9 @@ log fold change data}
 \item{cell_line_data_path}{path to cell line info data}
 
 \item{treatment_data_path}{path to collapsed treatment info data}
+
+\item{meta_data_path}{path to metadata file describing all cancer models/cell lines
+which are referenced by a dataset contained within the DepMap portal}
 
 \item{readout_min}{minimum ReadoutValue}
 }
@@ -31,7 +35,8 @@ Load, convert and process the level 6 PRISM data into a gDR input
  prism_data_path <- system.file("testdata/prism_collapsed_LOGFC.csv", package = "gDRimport")
  cell_line_data_path <- system.file("testdata/prism_cell_lines.csv", package = "gDRimport")
  treatment_data_path <- system.file("testdata/prism_treatment.csv", package = "gDRimport")
- convert_LEVEL6_prism_to_gDR_input(prism_data_path, cell_line_data_path, treatment_data_path)
+ prism_meta <- system.file("testdata/prism_model.csv", package = "gDRimport")
+ convert_LEVEL6_prism_to_gDR_input(prism_data_path, cell_line_data_path, treatment_data_path, prism_meta)
 
 }
 \keyword{prism_conversion}
