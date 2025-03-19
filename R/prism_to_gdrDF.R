@@ -72,9 +72,7 @@ convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
                   list("unknown", "unknown", as.numeric(NA))]
     
   raw_data <- data.table::data.table(clid = data$CCLEName,
-                                     CellLineName = ifelse(is.na(data$CellLineName),
-                                                           data$CCLEName,
-                                                           data$CellLineName),
+                                     CellLineName = data$CCLEName,
                                      Tissue = ifelse(is.na(data$OncotreeLineage),
                                                      "unknown",
                                                      data$OncotreeLineage),
