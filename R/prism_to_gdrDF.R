@@ -66,10 +66,10 @@ convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
   data[, unlist(idfs[c("concentration", "concentration2")]) :=
          data.table::tstrsplit(data$pert_dose, separator, fixed = TRUE, type.convert = TRUE)]
   
-  data <- meta[,.SD, .SDcols =  c("ModelID",
-                                  "CCLEName",
-                                  "OncotreeLineage",
-                                  "CellLineName")][data, on = .(CCLEName = ccle_name)]
+  data <- meta[, .SD, .SDcols =  c("ModelID",
+                                   "CCLEName",
+                                   "OncotreeLineage",
+                                   "CellLineName")][data, on = .(CCLEName = ccle_name)]
   
   data[, unlist(idfs[c("cellline_parental_identifier", "cellline_subtype", "cellline_ref_div_time")]) :=
                   list("unknown", "unknown", as.numeric(NA))]
@@ -215,10 +215,10 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
   }
   
   
-  cell_lines <- meta[,.SD, .SDcols =  c("ModelID",
-                                        "CCLEName",
-                                        "OncotreeLineage",
-                                        "CellLineName")][cell_lines, on = .(ModelID = row_name)]
+  cell_lines <- meta[, .SD, .SDcols =  c("ModelID",
+                                         "CCLEName",
+                                         "OncotreeLineage",
+                                         "CellLineName")][cell_lines, on = .(ModelID = row_name)]
   cell_lines[, unlist(idfs[c("cellline_parental_identifier", "cellline_subtype", "cellline_ref_div_time")]) :=
                list("unknown", "unknown", as.numeric(NA))]
   
