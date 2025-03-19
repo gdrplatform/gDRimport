@@ -1,6 +1,8 @@
 #' Load, convert and process the level 5 PRISM data into a gDR input
 #'
 #' @param prism_data_path path to PRISM LEVEL5 csv file with data
+#' @param meta_data_path path to metadata file describing all cancer models/cell lines
+#' which are referenced by a dataset contained within the DepMap portal
 #' @param readout_min minimum ReadoutValue
 #'
 #' @return \code{data.table} object with input data for gDR pipeline
@@ -8,10 +10,12 @@
 #' 
 #' @examples
 #'  prism_data <- system.file("testdata/prism_sa.csv", package = "gDRimport")
-#'  convert_LEVEL5_prism_to_gDR_input(prism_data)
+#'  prism_meta <- system.file("testdata/prism_model.csv", package = "gDRimport")
+#'  convert_LEVEL5_prism_to_gDR_input(prism_data, prism_meta)
 #'
 #' @export
 convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
+                                              meta_data_path,
                                               readout_min = 1.03) {
 
   checkmate::check_file_exists(prism_data_path)
@@ -20,6 +24,12 @@ convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
   
   
   data <- data.table::fread(prism_data_path)
+  meta <- data.table::fread(meta_data_path)
+  
+  checkmate::assert_names(names(meta),
+                          must.include = c("ModelID",
+                                           "CCLEName",
+                                           "OncotreeLineage"))
   
   # Define the mapping for old column names
   column_mappings <- list(
@@ -56,23 +66,19 @@ convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
   data[, unlist(idfs[c("concentration", "concentration2")]) :=
          data.table::tstrsplit(data$pert_dose, separator, fixed = TRUE, type.convert = TRUE)]
   
-  data[, unlist(idfs[c("cellline_name", "cellline_tissue")]) := {
-    cellline_name <- ccle_name
-    split_names <- strsplit(ccle_name, "_", fixed = TRUE)
-    cellline_tissue <- vapply(split_names, function(x) paste(x[-1], collapse = "_"), "")
-    
-    # replace empty strings in cellline_tissue with "unknown"
-    cellline_tissue[cellline_tissue == ""] <- "unknown"
-    
-    list(cellline_name, cellline_tissue)
-  }]
+  data <- meta[, .SD, .SDcols =  c("ModelID",
+                                   "CCLEName",
+                                   "OncotreeLineage",
+                                   "CellLineName")][data, on = .(CCLEName = ccle_name)]
   
   data[, unlist(idfs[c("cellline_parental_identifier", "cellline_subtype", "cellline_ref_div_time")]) :=
                   list("unknown", "unknown", as.numeric(NA))]
     
-  raw_data <- data.table::data.table(clid = data$ccle_name,
-                                     CellLineName = data$CellLineName,
-                                     Tissue = data$Tissue,
+  raw_data <- data.table::data.table(clid = data$CCLEName,
+                                     CellLineName = data$CCLEName,
+                                     Tissue = ifelse(is.na(data$OncotreeLineage),
+                                                     "unknown",
+                                                     data$OncotreeLineage),
                                      parental_identifier = data$parental_identifier,
                                      subtype = data$subtype,
                                      ReferenceDivisionTime = data$ReferenceDivisionTime,
@@ -136,6 +142,8 @@ convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
 #' log fold change data
 #' @param cell_line_data_path path to cell line info data
 #' @param treatment_data_path path to collapsed treatment info data
+#' @param meta_data_path path to metadata file describing all cancer models/cell lines
+#' which are referenced by a dataset contained within the DepMap portal
 #' @param readout_min minimum ReadoutValue
 #'
 #' @return \code{data.table} object with input data for gDR pipeline
@@ -146,24 +154,34 @@ convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
 #'  prism_data_path <- system.file("testdata/prism_collapsed_LOGFC.csv", package = "gDRimport")
 #'  cell_line_data_path <- system.file("testdata/prism_cell_lines.csv", package = "gDRimport")
 #'  treatment_data_path <- system.file("testdata/prism_treatment.csv", package = "gDRimport")
-#'  convert_LEVEL6_prism_to_gDR_input(prism_data_path, cell_line_data_path, treatment_data_path)
+#'  prism_meta <- system.file("testdata/prism_model.csv", package = "gDRimport")
+#'  convert_LEVEL6_prism_to_gDR_input(prism_data_path, cell_line_data_path, treatment_data_path, prism_meta)
 #'
 #' @export
 convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
                                               cell_line_data_path,
                                               treatment_data_path,
+                                              meta_data_path,
                                               readout_min = 1.03) {
-
-  checkmate::check_file_exists(prism_data_path)
-  checkmate::check_file_exists(cell_line_data_path)
-  checkmate::check_file_exists(treatment_data_path)
+  
+  checkmate::assert_file_exists(prism_data_path)
+  checkmate::assert_file_exists(cell_line_data_path)
+  
+  checkmate::assert_file_exists(treatment_data_path)
+  checkmate::assert_file_exists(meta_data_path)
   
   gDRutils::reset_env_identifiers()
   idfs <- gDRutils::get_env_identifiers()
-
+  
   cell_lines <- data.table::fread(cell_line_data_path)
   treatment <- data.table::fread(treatment_data_path)
   res <- data.table::fread(prism_data_path)
+  meta <- data.table::fread(meta_data_path)
+  
+  checkmate::assert_names(names(meta),
+                          must.include = c("ModelID",
+                                           "CCLEName",
+                                           "OncotreeLineage"))
   
   data.table::setnames(cell_lines,
                        c("row_id", "depmap_id"),
@@ -181,13 +199,11 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
             by = name]
   treatment[, name := new_name]
   treatment[, new_name := NULL]
-
-  checkmate::assert_names(names(cell_lines), must.include = c("row_name",
-                                                              "ccle_name"))
+  
+  checkmate::assert_names(names(cell_lines), must.include = "row_name")
   checkmate::assert_names(names(treatment), must.include = "column_name")
   checkmate::assert_names(names(res), must.include = "V1")
-
-
+  
   res_transform <- data.table::melt(res, id.vars = "V1")
   data.table::setnames(res_transform,
                        c("V1", "variable"),
@@ -197,28 +213,27 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
   if (all(grepl("::", res_transform$column_name)) && !"dose" %in% names(treatment)) {
     res_transform[, c("column_name", "dose") := data.table::tstrsplit(column_name, "::", keep = c(1, 2))]
   }
-
-  cell_lines[, unlist(idfs[c("cellline_name", "cellline_tissue")]) := {
-    cellline_name <- ccle_name
-    split_names <- strsplit(ccle_name, "_", fixed = TRUE)
-    cellline_tissue <- vapply(split_names, function(x) paste(x[-1], collapse = "_"), "")
-    
-    # replace empty strings in cellline_tissue with "unknown"
-    cellline_tissue[cellline_tissue == ""] <- "unknown"
-    
-    list(cellline_name, cellline_tissue)
-  }]
   
+  
+  cell_lines <- meta[, .SD, .SDcols =  c("ModelID",
+                                         "CCLEName",
+                                         "OncotreeLineage",
+                                         "CellLineName")][cell_lines, on = .(ModelID = row_name)]
   cell_lines[, unlist(idfs[c("cellline_parental_identifier", "cellline_subtype", "cellline_ref_div_time")]) :=
                list("unknown", "unknown", as.numeric(NA))]
   
+  cell_lines[, (idfs[["cellline_name"]]) := ifelse(is.na(get(idfs[["cellline_name"]])),
+                                                   CCLEName,
+                                                   get(idfs[["cellline_name"]]))]
+  cell_lines[, OncotreeLineage := data.table::fcoalesce(OncotreeLineage, "unknown")]
   
   data.table::setnames(cell_lines,
-                       "ccle_name",
-                       "clid")
-
+                       c("CCLEName", "OncotreeLineage"),
+                       unlist(idfs[c("cellline", "cellline_tissue")]))
+  cell_lines[[idfs[["cellline_name"]]]] <- cell_lines[[idfs[["cellline"]]]]
+  
   full_data <- merge(res_transform,
-                     unique(cell_lines[, c("row_name",
+                     unique(cell_lines[, c("ModelID",
                                            unlist(idfs[c("cellline",
                                                          "cellline_name",
                                                          "cellline_tissue",
@@ -226,18 +241,19 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
                                                          "cellline_subtype",
                                                          "cellline_ref_div_time")])), with = FALSE]),
                      all.x = TRUE,
-                     by = "row_name")
-
+                     by.x = "row_name",
+                     by.y = "ModelID")
+  
   full_data <- merge(full_data,
                      unique(treatment[, intersect(names(treatment),
-                                           c("column_name", "name", "dose", "moa")),
-                               with = FALSE]),
+                                                  c("column_name", "name", "dose", "moa")),
+                                      with = FALSE]),
                      all.x = TRUE,
                      by = "column_name")
-
+  
   full_data$value <- pmin(readout_min, 2 ^ full_data$value)
   full_data <- full_data[!(is.na(name) | is.na(value))]
-
+  
   
   # data for conc = 0
   untrt_tag <- gDRutils::get_env_identifiers("untreated_tag")[1]
@@ -278,7 +294,7 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
                        unlist(idfs[c("cellline", "drug", "drug_name",
                                      "drug_moa", "duration", "concentration",
                                      "masked_tag")]))
-
-
+  
+  
   merged_data
 }

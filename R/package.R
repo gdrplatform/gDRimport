@@ -24,7 +24,11 @@ if (getRversion() >= "2.15.1") {
       "name",
       "new_name",
       "value",
-      "ccle_name"
+      "ccle_name",
+      ".",
+      "CCLEName",
+      "OncotreeLineage",
+      "row_name"
     ),
     utils::packageName())
 }
