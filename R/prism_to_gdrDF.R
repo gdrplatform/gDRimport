@@ -68,8 +68,7 @@ convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
   
   data <- meta[, .SD, .SDcols =  c("ModelID",
                                    "CCLEName",
-                                   "OncotreeLineage",
-                                   "CellLineName")][data, on = .(CCLEName = ccle_name)]
+                                   "OncotreeLineage")][data, on = .(CCLEName = ccle_name)]
   
   data[, unlist(idfs[c("cellline_parental_identifier", "cellline_subtype", "cellline_ref_div_time")]) :=
                   list("unknown", "unknown", as.numeric(NA))]
@@ -209,28 +208,22 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
                        c("V1", "variable"),
                        c("row_name", "column_name"))
   
-  
   if (all(grepl("::", res_transform$column_name)) && !"dose" %in% names(treatment)) {
     res_transform[, c("column_name", "dose") := data.table::tstrsplit(column_name, "::", keep = c(1, 2))]
   }
   
-  
   cell_lines <- meta[, .SD, .SDcols =  c("ModelID",
                                          "CCLEName",
-                                         "OncotreeLineage",
-                                         "CellLineName")][cell_lines, on = .(ModelID = row_name)]
+                                         "OncotreeLineage")][cell_lines, on = .(ModelID = row_name)]
   cell_lines[, unlist(idfs[c("cellline_parental_identifier", "cellline_subtype", "cellline_ref_div_time")]) :=
                list("unknown", "unknown", as.numeric(NA))]
   
-  cell_lines[, (idfs[["cellline_name"]]) := ifelse(is.na(get(idfs[["cellline_name"]])),
-                                                   CCLEName,
-                                                   get(idfs[["cellline_name"]]))]
+  cell_lines[, (idfs[["cellline_name"]]) := CCLEName]
   cell_lines[, OncotreeLineage := data.table::fcoalesce(OncotreeLineage, "unknown")]
   
   data.table::setnames(cell_lines,
                        c("CCLEName", "OncotreeLineage"),
                        unlist(idfs[c("cellline", "cellline_tissue")]))
-  cell_lines[[idfs[["cellline_name"]]]] <- cell_lines[[idfs[["cellline"]]]]
   
   full_data <- merge(res_transform,
                      unique(cell_lines[, c("ModelID",
