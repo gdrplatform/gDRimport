@@ -1,3 +1,6 @@
+## gDRimport 1.5.10 - 2025-03-26
+* unify support for using `OncotreeLineage` for PRISM level 5 and level 6
+
 ## gDRimport 1.5.9 - 2025-03-12
 * add support for using `OncotreeLineage` as a tissue annotation if available in PRISM data
 
