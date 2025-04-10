@@ -1,3 +1,6 @@
+## gDRimport 1.5.11 - 2025-04-10
+* replace with_mock with with_mocked_bindings
+
 ## gDRimport 1.5.10 - 2025-03-26
 * unify support for using `OncotreeLineage` for PRISM level 5 and level 6
 
