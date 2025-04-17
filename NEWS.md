@@ -1,3 +1,6 @@
+## gDRimport 1.7.1 - 2025-04-16
+* synchronize Bioconductor and GitHub versioning
+
 ## gDRimport 1.5.11 - 2025-04-10
 * replace with_mock with with_mocked_bindings
 
