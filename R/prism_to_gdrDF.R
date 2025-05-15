@@ -182,10 +182,11 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
                                            "CCLEName",
                                            "OncotreeLineage"))
   # rename cell_lines and treatment
-  data.table::setnames(cell_lines,
-                       c("row_id", "depmap_id"),
-                       c("row_name", "row_name"),
-                       skip_absent = TRUE)
+  if ("depmap_id" %in% names(cell_lines)) {
+    data.table::setnames(cell_lines, "depmap_id", "row_name", skip_absent = TRUE)
+  } else {
+    data.table::setnames(cell_lines, "row_id", "row_name", skip_absent = TRUE)
+  }
   data.table::setnames(treatment,
                        c("profile_id", "SampleID", "CompoundName", "GeneSymbolOfTargets"),
                        c("column_name", "column_name", "name", "moa"),
@@ -201,15 +202,19 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
   
   checkmate::assert_names(names(cell_lines), must.include = "row_name")
   checkmate::assert_names(names(treatment), must.include = "column_name")
-  checkmate::assert_names(names(res), must.include = "V1")
   
-  res_transform <- data.table::melt(res, id.vars = "V1")
-  data.table::setnames(res_transform,
-                       c("V1", "variable"),
-                       c("row_name", "column_name"))
-  
-  if (all(grepl("::", res_transform$column_name)) && !"dose" %in% names(treatment)) {
-    res_transform[, c("column_name", "dose") := data.table::tstrsplit(column_name, "::", keep = c(1, 2))]
+  if (!"LFC" %in% names(res)) {
+    checkmate::assert_names(names(res), must.include = "V1")
+    res <- data.table::melt(res, id.vars = "V1")
+    data.table::setnames(res,
+                         c("V1", "variable"),
+                         c("row_name", "column_name"))
+    
+    if (all(grepl("::", res$column_name)) && !"dose" %in% names(treatment)) {
+      res[, c("column_name", "dose") := data.table::tstrsplit(column_name, "::", keep = c(1, 2))]
+    }
+  } else {
+    data.table::setnames(res, c("row_id", "profile_id"), c("row_name", "column_name"))
   }
   
   # add meta data to cell_line
@@ -226,7 +231,9 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
                        unlist(idfs[c("cellline", "cellline_tissue")]))
   
   # merge results with cell_line data
-  full_data <- merge(res_transform,
+  res$row_name <- gsub("::.*", "", res$row_name)
+  
+  full_data <- merge(res,
                      unique(cell_lines[, c("ModelID",
                                            unlist(idfs[c("cellline",
                                                          "cellline_name",
@@ -237,6 +244,8 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
                      all.x = TRUE,
                      by.x = "row_name",
                      by.y = "ModelID")
+  
+  
   # merge results with treatment data
   full_data <- merge(full_data,
                      unique(treatment[, intersect(names(treatment),
@@ -244,7 +253,12 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
                                       with = FALSE]),
                      all.x = TRUE,
                      by = "column_name")
-  full_data$value <- pmin(readout_min, 2 ^ full_data$value)
+  value_col <- if ("LFC" %in% names(full_data)) {
+    "LFC"
+  } else {
+    "value"
+  }
+  full_data$value <- pmin(readout_min, 2 ^ full_data[[value_col]])
   full_data <- full_data[!(is.na(name) | is.na(value))]
   
   # data for conc = 0

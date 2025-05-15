@@ -1,3 +1,6 @@
+## gDRimport 1.7.2 - 2025-05-15
+* add support for depmap public PRISM data
+
 ## gDRimport 1.7.1 - 2025-04-16
 * synchronize Bioconductor and GitHub versioning
 
