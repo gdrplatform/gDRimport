@@ -32,8 +32,9 @@ convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
   
   # Define the mapping for old column names
   column_mappings <- list(
-    LFC_cb = c("LFC_cb", "LFC.cb", "LFC"),
-    pert_iname = c("pert_iname", "pert_name")
+    LFC_cb = c("LFC_cb", "LFC.cb", "LFC", "l2fc"),
+    pert_iname = c("pert_iname", "pert_name"),
+    pert_time = c("pert_time", "day")
   )
   
   # Rename columns based on mapping if default column is missing
@@ -48,11 +49,17 @@ convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
     }
   }
   
+  if (!"ccle_name" %in% names(data)) {
+    data$ccle_name <- meta$CCLEName[match(data$depmap_id, meta$ModelID)]
+  }
+  
   checkmate::assert_names(names(data), must.include = c("ccle_name",
                                                         "pert_iname",
                                                         "pert_dose",
                                                         "pert_time",
                                                         "LFC_cb"))
+  
+  data <- data[data$ccle_name != "", ]
   
   # Check and split pert_iname and pert_dose by | or _
   if (any(grepl("\\|", data$pert_iname))) {
@@ -80,7 +87,7 @@ convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
                                      parental_identifier = data$parental_identifier,
                                      subtype = data$subtype,
                                      ReferenceDivisionTime = data$ReferenceDivisionTime,
-                                     Duration = as.numeric(ifelse(grepl("d", data$pert_time),
+                                     Duration = as.numeric(ifelse(grepl("d|\\d+", data$pert_time),
                                                                   as.numeric(gsub("d", "", data$pert_time)) * 24,
                                                                   gsub("H", "", data$pert_time))),
                                      ReadoutValue = pmin(readout_min, 2 ^ data$LFC_cb),
@@ -191,14 +198,6 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
                        c("profile_id", "SampleID", "CompoundName", "GeneSymbolOfTargets"),
                        c("column_name", "column_name", "name", "moa"),
                        skip_absent = TRUE)
-  
-  # take into account different runs
-  treatment[, new_name := if (.N > 1) paste0(name, "_run",
-                                             data.table::frank(column_name,
-                                                               ties.method = "dense")) else as.character(name),
-            by = name]
-  treatment[, name := new_name]
-  treatment[, new_name := NULL]
   
   checkmate::assert_names(names(cell_lines), must.include = "row_name")
   checkmate::assert_names(names(treatment), must.include = "column_name")
