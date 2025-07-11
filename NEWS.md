@@ -1,3 +1,6 @@
+## gDRimport 1.7.3 - 2025-07-10
+* add support for new format of private PRISM data
+
 ## gDRimport 1.7.2 - 2025-05-15
 * add support for depmap public PRISM data
 
