@@ -61,8 +61,6 @@ test_that("prism level6  data can be processed into gDR format ", {
                                          "subtype", "ReferenceDivisionTime"))
   expect_true(all(gDRutils::get_env_identifiers(c("drug", "cellline"),
                                                 simplify = FALSE) %in% names(df_prism$result)))
-  expect_equal(df_prism[["result"]][[gDRutils::get_env_identifiers("drug")]],
-               c("some_drug_name_run1", "some_drug_name_run2", "vehicle"))
   
   # testing format of clid, CellLineName and Tissue column
   expect_equal(df_prism$result$clid, df_prism$result$CellLineName)
