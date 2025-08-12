@@ -1,3 +1,6 @@
+## gDRimport 1.7.5 - 2025-08-12
+* fix usage of `ifelse`
+
 ## gDRimport 1.7.4 - 2025-07-17
 * remove run suffix in the PRISM data
 
