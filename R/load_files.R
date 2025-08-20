@@ -1185,7 +1185,7 @@ load_results_Incucyte <-
         df_input$plate <- substr(regmatches(iP, gregexec("\\d.txt", iP)), 1, 1)
         df_input$Barcode <- barcode
       } else {
-        df_input <- read.delim(iP, skip = 7, sep = "\t")
+        df_input <- utils::read.delim(iP, skip = 7, sep = "\t")
         df_input <- reshape2::melt(
           df_input[, -1],
           id.vars = 1,
@@ -1223,7 +1223,7 @@ load_results_Incucyte <-
     all_data$CellCount <- NULL
     all_data$Elapsed <- NULL
     
-    all_data <- as.data.table(all_data)
+    all_data <- data.table::as.data.table(all_data)
     all_data$Barcode <- unlist(all_data$Barcode)
     all_data$WellRow <- unlist(all_data$WellRow)
     all_data$WellColumn <- unlist(all_data$WellColumn)
