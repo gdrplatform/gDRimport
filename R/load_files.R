@@ -295,8 +295,7 @@ load_results <-
     } else if (instrument == "Incucyte") {
       all_results <-
         load_results_Incucyte(results_file, headers = headers)
-    }
-      else {
+    } else {
       exception_data <- get_exception_data(16)
       stop(exception_data$sprintf_text)
     }
@@ -1157,56 +1156,73 @@ read_in_results_Tecan <- function(results_file, results_sheets, headers) {
 #'
 #' @return data.table derived from Incucyte data
 #'
-load_results_Incucyte <- 
+load_results_Incucyte <-
   function(plates, headers) {
-    all_data = data.frame()
+    all_data <- data.frame()
     for (iP in plates) {
-      if (grepl(".xlsx$", iP)){
-          df_raw <- readxl::read_excel(iP, sheet = 1)
-          idx <- which(is.na(df_raw$...4) == FALSE)[1]
-          idx_end <- which(is.na(df_raw$...4))[1]
-
-          results_slice <- data.frame(df_raw[idx+1:nrow(df_raw),1:ncol(df_raw)])
-          idx_end <- which(is.na(results_slice[1:nrow(results_slice),1]))[1]
-          results_slice <- results_slice[1:idx_end-1,1:ncol(results_slice)]
-
-          colnames(results_slice) <- df_raw[idx,]
-          barcode_idx <- which(df_raw[1:idx,1] == "Barcode")
-          barcode <- unlist(df_raw[1:idx,2])[barcode_idx]
-
-          df_input = reshape2::melt(results_slice[,-1], id.vars = 1, variable.name = 'Well', value.name = 'CellCount')
-
-          df_input$Well = gsub('X..', '', df_input$Well)
-          df_input$plate_name = iP
-          df_input$plate = substr(regmatches(iP, gregexec('\\d.txt', iP)),1,1)
-          df_input$Barcode <- barcode
+      if (grepl(".xlsx$", iP)) {
+        df_raw <- readxl::read_excel(iP, sheet = 1)
+        idx <- which(is.na(df_raw$...4) == FALSE)[1]
+        idx_end <- which(is.na(df_raw$...4))[1]
+        
+        results_slice <- data.frame(df_raw[idx + 1:nrow(df_raw), 1:ncol(df_raw)])
+        idx_end <- which(is.na(results_slice[1:nrow(results_slice), 1]))[1]
+        results_slice <- results_slice[1:idx_end - 1, 1:ncol(results_slice)]
+        
+        colnames(results_slice) <- df_raw[idx, ]
+        barcode_idx <- which(df_raw[1:idx, 1] == "Barcode")
+        barcode <- unlist(df_raw[1:idx, 2])[barcode_idx]
+        
+        df_input <- reshape2::melt(
+          results_slice[, -1],
+          id.vars = 1,
+          variable.name = "Well",
+          value.name = "CellCount"
+        )
+        
+        df_input$Well <- gsub("X..", "", df_input$Well)
+        df_input$plate_name <- iP
+        df_input$plate <- substr(regmatches(iP, gregexec("\\d.txt", iP)), 1, 1)
+        df_input$Barcode <- barcode
       } else {
-          df_input <- read.delim(iP, skip = 7, sep = '\t')
-          df_input = reshape2::melt(df_input[,-1], id.vars = 1, variable.name = 'Well', value.name = 'CellCount')
-          df_input$Well = gsub('X..', '', df_input$Well)
-          df_input$plate_name = iP
-          df_input$plate = substr(regmatches(iP, gregexec('\\d.txt', iP)),1,1)
-          df_input$Barcode = lapply(df_input$plate, function(x) paste0(x, "A"))
+        df_input <- read.delim(iP, skip = 7, sep = "\t")
+        df_input <- reshape2::melt(
+          df_input[, -1],
+          id.vars = 1,
+          variable.name = "Well",
+          value.name = "CellCount"
+        )
+        df_input$Well <- gsub("X..", "", df_input$Well)
+        df_input$plate_name <- iP
+        df_input$plate <- substr(regmatches(iP, gregexec("\\d.txt", iP)), 1, 1)
+        df_input$Barcode <- lapply(df_input$plate, function(x) {
+          paste0(x, "A")
+        })
       }
       
-      all_data = rbind(all_data, df_input)
+      all_data <- rbind(all_data, df_input)
     }
-
-    all_data$Elapsed = as.numeric(all_data$Elapsed)
-    all_data$CellCount = as.numeric(all_data$CellCount)
-    all_data = all_data[!is.na(all_data$Elapsed) & !is.na(all_data$CellCount),]
-
-    all_data$WellRow = lapply(all_data$Well, function(x) substring(x, 1, 1))
-    all_data$WellColumn = lapply(all_data$Well, function(x) substring(x, 2, 2))
+    
+    all_data$Elapsed <- as.numeric(all_data$Elapsed)
+    all_data$CellCount <- as.numeric(all_data$CellCount)
+    all_data <- all_data[!is.na(all_data$Elapsed) &
+                          !is.na(all_data$CellCount), ]
+    
+    all_data$WellRow <- lapply(all_data$Well, function(x) {
+      substring(x, 1, 1)
+    })
+    all_data$WellColumn <- lapply(all_data$Well, function(x) {
+      substring(x, 2, 2)
+    })
     all_data$Duration <- all_data$Elapsed
     all_data$ReadoutValue <- all_data$CellCount
-
+    
     all_data$Well <- NULL
     all_data$plate_name <- NULL
     all_data$plate <- NULL
     all_data$CellCount <- NULL
     all_data$Elapsed <- NULL
-
+    
     all_data <- as.data.table(all_data)
     all_data$Barcode <- unlist(all_data$Barcode)
     all_data$WellRow <- unlist(all_data$WellRow)
