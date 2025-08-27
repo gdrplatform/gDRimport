@@ -589,8 +589,13 @@ get_plate_info_from_template_xlsx <- function(template_file, Gnumber_idx, idx) {
         )) / 1.5))
       n_row <- max(n_row, n_col / 1.5)
       n_col <- max(1.5 * n_row, n_col)
+      plate_range_val <- if (n_col < 26) {
+        paste0("A1:", LETTERS[n_col], n_row)
+      } else {
+        "A1:AV32"
+      }
       list(
-        plate_range = ifelse(n_col < 26, paste0("A1:", LETTERS[n_col], n_row), "A1:AV32"),
+        plate_range = plate_range_val,
         n_row = n_row,
         n_col = n_col
       )
