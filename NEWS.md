@@ -1,3 +1,6 @@
+## gDRimport 1.7.3 - 2025-09-25
+* add support for Incucyte data
+
 ## gDRimport 1.7.2 - 2025-05-15
 * add support for depmap public PRISM data
 
