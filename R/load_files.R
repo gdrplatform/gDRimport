@@ -1157,7 +1157,8 @@ read_in_results_Tecan <- function(results_file, results_sheets, headers) {
 #' @return data.table derived from Incucyte data
 #'
 load_results_Incucyte <-
-  function(plates, headers) {
+function(results_file, 
+         headers = gDRutils::get_env_identifiers())) {
     all_data <- data.frame()
     for (iP in plates) {
       if (grepl(".xlsx$", iP)) {
