@@ -1183,7 +1183,7 @@ function(results_file,
         
         df_input$Well <- gsub("X..", "", df_input$Well)
         df_input$plate_name <- iP
-        df_input$plate <- substr(regmatches(iP, gregexec("\\d.txt", iP)), 1, 1)
+        df_input$plate <- substr(regmatches(iP, gregexec("\\d.xlsx", iP)), 1, 1)
         df_input$Barcode <- barcode
       } else {
         df_input <- utils::read.delim(iP, skip = 7, sep = "\t")
