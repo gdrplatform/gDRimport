@@ -1162,7 +1162,7 @@ function(results_file,
     all_data <- data.table::data.table()
     for (iP in plates) {
       if (grepl(".xlsx$", iP)) {
-        df_raw <- readxl::read_excel(iP, sheet = 1)
+        df_raw <- read_excel_to_dt(iP)
         idx <- which(is.na(df_raw$...4) == FALSE)[1]
         idx_end <- which(is.na(df_raw$...4))[1]
         
