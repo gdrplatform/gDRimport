@@ -1,5 +1,14 @@
-## gDRimport 1.7.3 - 2025-09-25
+## gDRimport 1.7.6 - 2025-10-08
 * add support for Incucyte data
+
+## gDRimport 1.7.5 - 2025-08-12
+* fix usage of `ifelse`
+
+## gDRimport 1.7.4 - 2025-07-17
+* remove run suffix in the PRISM data
+
+## gDRimport 1.7.3 - 2025-07-10
+* add support for new format of private PRISM data
 
 ## gDRimport 1.7.2 - 2025-05-15
 * add support for depmap public PRISM data
