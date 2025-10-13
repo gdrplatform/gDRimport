@@ -266,7 +266,7 @@ load_results <-
   function(df_results_files, instrument = "EnVision", headers = gDRutils::get_env_identifiers()) {
 
     stopifnot(any(inherits(df_results_files, "data.table"), checkmate::test_character(df_results_files)))
-    checkmate::assert_string(instrument, pattern = "^EnVision$|^long_tsv$|^Tecan$")
+    checkmate::assert_string(instrument, pattern = "^EnVision$|^long_tsv$|^Tecan$|^Incucyte$")
     checkmate::assert_list(headers, null.ok = TRUE)
     
     if (data.table::is.data.table(df_results_files)) {
@@ -292,6 +292,9 @@ load_results <-
     } else if (instrument == "Tecan") {
       all_results <-
         load_results_Tecan(results_file, headers = headers)
+    } else if (instrument == "Incucyte") {
+      all_results <-
+        load_results_Incucyte(results_file, headers = headers)
     } else {
       exception_data <- get_exception_data(16)
       stop(exception_data$sprintf_text)
@@ -1147,6 +1150,86 @@ read_in_results_Tecan <- function(results_file, results_sheets, headers) {
   all_results
 }
 
+
+#' Load incucyte results from plain text
+#'
+#' This functions loads incucyte time-course cell count file
+#'
+#' @param results_file list of strings: file paths to result paths from individual plates
+#' @param headers list of headers identified in the manifest
+#' @keywords load_files
+#'
+#' @return data.table derived from Incucyte data
+#'
+load_results_Incucyte <-
+function(results_file, 
+         headers = gDRutils::get_env_identifiers()) {
+  
+    INCUCYTE_TXT_HEADER_ROWS <- 7
+    all_data <- data.table::data.table()
+    for (iP in results_file) {
+      if (grepl(".xlsx$", iP)) {
+        dt_raw <- read_excel_to_dt(iP)
+        idx <- which(!is.na(dt_raw[[4]]))[1]
+      
+        results_slice <- data.table::data.table(dt_raw[(idx + 1):nrow(dt_raw), 1:ncol(dt_raw)])
+       
+        colnames(results_slice) <- as.character(dt_raw[idx, ])
+        barcode_idx <- which(dt_raw[seq_len(idx), 1] == "Barcode")
+        barcode <- unlist(dt_raw[seq_len(idx), 2])[barcode_idx]
+       
+        df_input <- data.table::melt(
+          results_slice[, -1],
+          id.vars = 1,
+          variable.name = "Well",
+          value.name = "CellCount"
+        )
+        
+        df_input$Well <- gsub("X..", "", df_input$Well)
+        df_input$plate_name <- iP
+        df_input$plate <- regmatches(iP, regexpr("\\d+", iP))
+        df_input$Barcode <- barcode
+      } else {
+        df_input <- utils::read.delim(iP, skip = INCUCYTE_TXT_HEADER_ROWS, sep = "\t")
+        df_input <- data.table::melt(
+          df_input[, -1],
+          id.vars = 1,
+          variable.name = "Well",
+          value.name = "CellCount"
+        )
+        df_input$Well <- gsub("X..", "", df_input$Well)
+        df_input$plate_name <- iP
+        df_input$plate <- regmatches(iP, regexpr("\\d+", iP))
+        df_input$Barcode <- paste0(df_input$plate, "A")
+      }
+      
+      all_data <- rbind(all_data, df_input)
+    }
+    
+    all_data[, `:=`(Elapsed = as.numeric(Elapsed),
+                    CellCount = as.numeric(CellCount))]
+    all_data <- all_data[!is.na(all_data$Elapsed) &
+                           !is.na(all_data$CellCount), ]
+    
+    all_data$WellRow <- substring(all_data$Well, 1, 1)
+    all_data$WellColumn <- substring(all_data$Well, 2)
+    data.table::setnames(
+      all_data,
+      old = c("Elapsed", "CellCount"),
+      new = c("Duration", "ReadoutValue")
+    )
+    
+    # Define the columns for each operation
+    cols_to_remove <- c("Well", "plate_name", "plate")
+    cols_to_unlist <- c("Barcode", "WellRow", "WellColumn")
+    
+    # Chain the operations for efficiency 🔧
+    all_data[, (cols_to_remove) := NULL][, (cols_to_unlist) := lapply(.SD, unlist), .SDcols = cols_to_unlist]
+    
+    return(all_data)
+  }
+
+                                  
 #' check_metadata_names
 #'
 #' Check whether all metadata names are correct
