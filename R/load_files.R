@@ -1206,26 +1206,26 @@ function(results_file,
       all_data <- rbind(all_data, df_input)
     }
     
-    all_data$Elapsed <- as.numeric(all_data$Elapsed)
-    all_data$CellCount <- as.numeric(all_data$CellCount)
+    all_data[, `:=`(Elapsed = as.numeric(Elapsed),
+                    CellCount = as.numeric(CellCount))]
     all_data <- all_data[!is.na(all_data$Elapsed) &
-                          !is.na(all_data$CellCount), ]
+                           !is.na(all_data$CellCount), ]
     
     all_data$WellRow <- substring(all_data$Well, 1, 1)
     all_data$WellColumn <- substring(all_data$Well, 2)
-    all_data$Duration <- all_data$Elapsed
-    all_data$ReadoutValue <- all_data$CellCount
+    data.table::setnames(
+      all_data,
+      old = c("Elapsed", "CellCount"),
+      new = c("Duration", "ReadoutValue")
+    )
     
-    all_data$Well <- NULL
-    all_data$plate_name <- NULL
-    all_data$plate <- NULL
-    all_data$CellCount <- NULL
-    all_data$Elapsed <- NULL
+    # Define the columns for each operation
+    cols_to_remove <- c("Well", "plate_name", "plate")
+    cols_to_unlist <- c("Barcode", "WellRow", "WellColumn")
     
-    all_data <- data.table::as.data.table(all_data)
-    all_data$Barcode <- unlist(all_data$Barcode)
-    all_data$WellRow <- unlist(all_data$WellRow)
-    all_data$WellColumn <- unlist(all_data$WellColumn)
+    # Chain the operations for efficiency 🔧
+    all_data[, (cols_to_remove) := NULL][, (cols_to_unlist) := lapply(.SD, unlist), .SDcols = cols_to_unlist]
+    
     return(all_data)
   }
 
