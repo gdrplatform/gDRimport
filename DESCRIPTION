@@ -34,7 +34,6 @@ Imports:
     methods,
     MultiAssayExperiment,
     readxl,
-    reshape2,
     rio,
     S4Vectors,
     stats,

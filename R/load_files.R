@@ -1171,17 +1171,9 @@ function(results_file,
       if (grepl(".xlsx$", iP)) {
         df_raw <- read_excel_to_dt(iP)
         idx <- which(!is.na(df_raw[[4]]))[1]
-        #idx_end <- which(is.na(df_raw[[4]]))[1]
       
-        #browser() 
-        #results_slice <- data.frame(df_raw[idx + 1:nrow(df_raw), 1:ncol(df_raw)])
-        #results_slice <- data.frame(df_raw[(idx + 1):nrow(df_raw), 1:ncol(df_raw)])
         results_slice <- data.table::data.table(df_raw[(idx + 1):nrow(df_raw), 1:ncol(df_raw)])
-        #idx_end <- which(is.na(results_slice[1:nrow(results_slice), 1]))[1]
-        #results_slice <- results_slice[1:idx_end - 1, 1:ncol(results_slice)]
-        #results_slice <- results_slice[1:(idx_end - 1), 1:ncol(results_slice)]
         
-        #colnames(results_slice) <- df_raw[idx, ]
         colnames(results_slice) <- as.character(df_raw[idx, ])
         barcode_idx <- which(df_raw[1:idx, 1] == "Barcode")
         barcode <- unlist(df_raw[1:idx, 2])[barcode_idx]
