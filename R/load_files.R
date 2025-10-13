@@ -1163,7 +1163,7 @@ read_in_results_Tecan <- function(results_file, results_sheets, headers) {
 #'
 load_results_Incucyte <-
 function(results_file, 
-         headers = gDRutils::get_env_identifiers())) {
+         headers = gDRutils::get_env_identifiers()) {
     all_data <- data.table::data.table()
     for (iP in plates) {
       if (grepl(".xlsx$", iP)) {
