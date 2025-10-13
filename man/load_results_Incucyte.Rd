@@ -4,10 +4,10 @@
 \alias{load_results_Incucyte}
 \title{Load incucyte results from plain text}
 \usage{
-load_results_Incucyte(plates, headers)
+load_results_Incucyte(results_file, headers = gDRutils::get_env_identifiers())
 }
 \arguments{
-\item{plates}{list of strings: file paths to result paths from individual plates}
+\item{results_file}{list of strings: file paths to result paths from individual plates}
 
 \item{headers}{list of headers identified in the manifest}
 }

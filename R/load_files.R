@@ -1155,7 +1155,7 @@ read_in_results_Tecan <- function(results_file, results_sheets, headers) {
 #'
 #' This functions loads incucyte time-course cell count file
 #'
-#' @param plates list of strings: file paths to result paths from individual plates
+#' @param results_file list of strings: file paths to result paths from individual plates
 #' @param headers list of headers identified in the manifest
 #' @keywords load_files
 #'
@@ -1164,22 +1164,29 @@ read_in_results_Tecan <- function(results_file, results_sheets, headers) {
 load_results_Incucyte <-
 function(results_file, 
          headers = gDRutils::get_env_identifiers()) {
+  
+    INCUCYTE_TXT_HEADER_ROWS <- 7
     all_data <- data.table::data.table()
-    for (iP in plates) {
+    for (iP in results_file) {
       if (grepl(".xlsx$", iP)) {
         df_raw <- read_excel_to_dt(iP)
-        idx <- which(is.na(df_raw$...4) == FALSE)[1]
-        idx_end <- which(is.na(df_raw$...4))[1]
+        idx <- which(!is.na(df_raw[[4]]))[1]
+        #idx_end <- which(is.na(df_raw[[4]]))[1]
+      
+        #browser() 
+        #results_slice <- data.frame(df_raw[idx + 1:nrow(df_raw), 1:ncol(df_raw)])
+        #results_slice <- data.frame(df_raw[(idx + 1):nrow(df_raw), 1:ncol(df_raw)])
+        results_slice <- data.table::data.table(df_raw[(idx + 1):nrow(df_raw), 1:ncol(df_raw)])
+        #idx_end <- which(is.na(results_slice[1:nrow(results_slice), 1]))[1]
+        #results_slice <- results_slice[1:idx_end - 1, 1:ncol(results_slice)]
+        #results_slice <- results_slice[1:(idx_end - 1), 1:ncol(results_slice)]
         
-        results_slice <- data.frame(df_raw[idx + 1:nrow(df_raw), 1:ncol(df_raw)])
-        idx_end <- which(is.na(results_slice[1:nrow(results_slice), 1]))[1]
-        results_slice <- results_slice[1:idx_end - 1, 1:ncol(results_slice)]
-        
-        colnames(results_slice) <- df_raw[idx, ]
+        #colnames(results_slice) <- df_raw[idx, ]
+        colnames(results_slice) <- as.character(df_raw[idx, ])
         barcode_idx <- which(df_raw[1:idx, 1] == "Barcode")
         barcode <- unlist(df_raw[1:idx, 2])[barcode_idx]
-        
-        df_input <- reshape2::melt(
+       
+        df_input <- data.table::melt(
           results_slice[, -1],
           id.vars = 1,
           variable.name = "Well",
@@ -1188,11 +1195,11 @@ function(results_file,
         
         df_input$Well <- gsub("X..", "", df_input$Well)
         df_input$plate_name <- iP
-        df_input$plate <- substr(regmatches(iP, gregexec("\\d.xlsx", iP)), 1, 1)
+        df_input$plate <- regmatches(iP, regexpr("\\d+", iP))
         df_input$Barcode <- barcode
       } else {
-        df_input <- utils::read.delim(iP, skip = 7, sep = "\t")
-        df_input <- reshape2::melt(
+        df_input <- utils::read.delim(iP, skip = INCUCYTE_TXT_HEADER_ROWS, sep = "\t")
+        df_input <- data.table::melt(
           df_input[, -1],
           id.vars = 1,
           variable.name = "Well",
@@ -1200,10 +1207,8 @@ function(results_file,
         )
         df_input$Well <- gsub("X..", "", df_input$Well)
         df_input$plate_name <- iP
-        df_input$plate <- substr(regmatches(iP, gregexec("\\d.txt", iP)), 1, 1)
-        df_input$Barcode <- lapply(df_input$plate, function(x) {
-          paste0(x, "A")
-        })
+        df_input$plate <- regmatches(iP, regexpr("\\d+", iP))
+        df_input$Barcode <- paste0(df_input$plate, "A")
       }
       
       all_data <- rbind(all_data, df_input)
@@ -1214,12 +1219,8 @@ function(results_file,
     all_data <- all_data[!is.na(all_data$Elapsed) &
                           !is.na(all_data$CellCount), ]
     
-    all_data$WellRow <- lapply(all_data$Well, function(x) {
-      substring(x, 1, 1)
-    })
-    all_data$WellColumn <- lapply(all_data$Well, function(x) {
-      substring(x, 2, 2)
-    })
+    all_data$WellRow <- substring(all_data$Well, 1, 1)
+    all_data$WellColumn <- substring(all_data$Well, 2)
     all_data$Duration <- all_data$Elapsed
     all_data$ReadoutValue <- all_data$CellCount
     
