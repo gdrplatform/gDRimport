@@ -153,6 +153,7 @@ read_in_manifest_file <- function(manifest_file, available_formats) {
     } else if (manifest_ext %in% c("text/tsv",
                                    "text/tab-separated-values",
                                    "tsv")) {
+      
       df <- tryCatch({
         stats::na.omit(data.table::fread(
           x, sep = "\t", header = TRUE, na.strings = c("", "NA")))
@@ -1150,7 +1151,6 @@ read_in_results_Tecan <- function(results_file, results_sheets, headers) {
   all_results
 }
 
-
 #' Load incucyte results from plain text
 #'
 #' This functions loads incucyte time-course cell count file
@@ -1162,23 +1162,25 @@ read_in_results_Tecan <- function(results_file, results_sheets, headers) {
 #' @return data.table derived from Incucyte data
 #'
 load_results_Incucyte <-
-function(results_file, 
-         headers = gDRutils::get_env_identifiers()) {
-
-   # identifiers
-   bcode_name <- headers$barcode[1]
-   d_name <- headers$duration
-   
-    all_data <- data.table::data.table()
+  function(results_file,
+           headers = gDRutils::get_env_identifiers()) {
+    
+    # identifiers
+    bcode_name <- headers$barcode[1]
+    d_name <- headers$duration
+    
+    # use a list to store DTs for efficient binding
+    all_data_list <- list()
+    
     for (iP in results_file) {
       header_dt <- if (grepl(".xlsx$", iP)) {
         tryCatch({
           df <- read_excel_to_dt(iP, n_max = 20)
         }, error = function(e) {
           exception_data <- get_exception_data(22)
-          stop(sprintf(exception_data$sprintf_text, results_file, iS))
+          stop(sprintf(exception_data$sprintf_text, iP))
         })
-      } else { 
+      } else {
         tryCatch({
           data.table::fread(iP, nrows = 20)
         }, error = function(e) {
@@ -1186,27 +1188,39 @@ function(results_file,
           stop(sprintf(exception_data$sprintf_text, iP))
         })
       }
+      
       dstart_idx <- which(header_dt[, 1] == "Date Time")
+      if (length(dstart_idx) == 0) { 
+        exception_data <- get_exception_data(37)
+        stop(sprintf(exception_data$sprintf_text, "missing 'Data Time' column"))
+      }
       barcode_idx <- which(header_dt[, 1] == bcode_name)
+      if (length(barcode_idx) == 0) { 
+        exception_data <- get_exception_data(37)
+        stop(sprintf(exception_data$sprintf_text, "missing 'Barcode' column"))
+      }
       barcode <- header_dt[barcode_idx, 2][[1]]
-        
+      
       dt_input <- if (grepl(".xlsx$", iP)) {
         read_excel_to_dt(iP, skip = dstart_idx)
       } else {
         data.table::fread(iP, skip = dstart_idx - 1)
       }
       
-        dt_input <- data.table::melt(
-          dt_input[, -1],
-          id.vars = 1,
-          variable.name = "Well",
-          value.name = "ReadoutValue"
-        )
-       
-        dt_input[[bcode_name]] <- barcode
-      }
+      dt_input <- data.table::melt(
+        dt_input[, -1],
+        id.vars = 1,
+        variable.name = "Well",
+        value.name = "ReadoutValue"
+      )
       
-    all_data <- rbind(all_data, dt_input)
+      dt_input[[bcode_name]] <- barcode
+      
+      # add the processed data.table to our list
+      all_data_list[[iP]] <- dt_input
+    }
+    
+    all_data <- data.table::rbindlist(all_data_list)
     
     all_data[, (d_name) := as.numeric(Elapsed)]
     all_data[, ReadoutValue := as.numeric(ReadoutValue)]
