@@ -1164,64 +1164,62 @@ read_in_results_Tecan <- function(results_file, results_sheets, headers) {
 load_results_Incucyte <-
 function(results_file, 
          headers = gDRutils::get_env_identifiers()) {
-  
-    INCUCYTE_TXT_HEADER_ROWS <- 7
+
+   # identifiers
+   bcode_name <- headers$barcode[1]
+   d_name <- headers$duration
+   
     all_data <- data.table::data.table()
     for (iP in results_file) {
-      if (grepl(".xlsx$", iP)) {
-        dt_raw <- read_excel_to_dt(iP)
-        idx <- which(!is.na(dt_raw[[4]]))[1]
-      
-        results_slice <- data.table::data.table(dt_raw[(idx + 1):nrow(dt_raw), 1:ncol(dt_raw)])
-       
-        colnames(results_slice) <- as.character(dt_raw[idx, ])
-        barcode_idx <- which(dt_raw[seq_len(idx), 1] == "Barcode")
-        barcode <- unlist(dt_raw[seq_len(idx), 2])[barcode_idx]
-       
-        df_input <- data.table::melt(
-          results_slice[, -1],
-          id.vars = 1,
-          variable.name = "Well",
-          value.name = "CellCount"
-        )
+      header_dt <- if (grepl(".xlsx$", iP)) {
+        tryCatch({
+          df <- read_excel_to_dt(iP, n_max = 20)
+        }, error = function(e) {
+          exception_data <- get_exception_data(22)
+          stop(sprintf(exception_data$sprintf_text, results_file, iS))
+        })
+      } else { 
+        tryCatch({
+          data.table::fread(iP, nrows = 20)
+        }, error = function(e) {
+          exception_data <- get_exception_data(21)
+          stop(sprintf(exception_data$sprintf_text, iP))
+        })
+      }
+      dstart_idx <- which(header_dt[, 1] == "Date Time")
+      barcode_idx <- which(header_dt[, 1] == bcode_name)
+      barcode <- header_dt[barcode_idx, 2][[1]]
         
-        df_input$Well <- gsub("X..", "", df_input$Well)
-        df_input$plate_name <- iP
-        df_input$plate <- regmatches(iP, regexpr("\\d+", iP))
-        df_input$Barcode <- barcode
+      dt_input <- if (grepl(".xlsx$", iP)) {
+        read_excel_to_dt(iP, skip = dstart_idx)
       } else {
-        df_input <- utils::read.delim(iP, skip = INCUCYTE_TXT_HEADER_ROWS, sep = "\t")
-        df_input <- data.table::melt(
-          df_input[, -1],
-          id.vars = 1,
-          variable.name = "Well",
-          value.name = "CellCount"
-        )
-        df_input$Well <- gsub("X..", "", df_input$Well)
-        df_input$plate_name <- iP
-        df_input$plate <- regmatches(iP, regexpr("\\d+", iP))
-        df_input$Barcode <- paste0(df_input$plate, "A")
+        data.table::fread(iP, skip = dstart_idx - 1)
       }
       
-      all_data <- rbind(all_data, df_input)
-    }
+        dt_input <- data.table::melt(
+          dt_input[, -1],
+          id.vars = 1,
+          variable.name = "Well",
+          value.name = "ReadoutValue"
+        )
+       
+        dt_input[[bcode_name]] <- barcode
+      }
+      
+    all_data <- rbind(all_data, dt_input)
     
-    all_data[, `:=`(Elapsed = as.numeric(Elapsed),
-                    CellCount = as.numeric(CellCount))]
-    all_data <- all_data[!is.na(all_data$Elapsed) &
-                           !is.na(all_data$CellCount), ]
+    all_data[, (d_name) := as.numeric(Elapsed)]
+    all_data[, ReadoutValue := as.numeric(ReadoutValue)]
+    all_data <- all_data[!is.na(get(d_name)) & !is.na(ReadoutValue)]
     
-    all_data$WellRow <- substring(all_data$Well, 1, 1)
-    all_data$WellColumn <- substring(all_data$Well, 2)
-    data.table::setnames(
-      all_data,
-      old = c("Elapsed", "CellCount"),
-      new = c("Duration", "ReadoutValue")
-    )
+    well_rname <- headers$well_position[1]
+    well_cname <- headers$well_position[2]
+    all_data[[well_rname]] <- substring(all_data$Well, 1, 1)
+    all_data[[well_cname]] <- substring(all_data$Well, 2)
     
     # Define the columns for each operation
-    cols_to_remove <- c("Well", "plate_name", "plate")
-    cols_to_unlist <- c("Barcode", "WellRow", "WellColumn")
+    cols_to_remove <- c("Well", "Elapsed")
+    cols_to_unlist <- c(bcode_name, well_rname, well_cname)
     
     # Chain the operations for efficiency 🔧
     all_data[, (cols_to_remove) := NULL][, (cols_to_unlist) := lapply(.SD, unlist), .SDcols = cols_to_unlist]
