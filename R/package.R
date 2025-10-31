@@ -28,7 +28,9 @@ if (getRversion() >= "2.15.1") {
       ".",
       "CCLEName",
       "OncotreeLineage",
-      "row_name"
+      "row_name",
+      "ReadoutValue",
+      "Elapsed"
     ),
     utils::packageName())
 }
