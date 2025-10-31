@@ -465,10 +465,7 @@ test_that("load_results_Incucyte works as expected", {
       "Vessel Name: Bad Barcode Plate,,,",
       "Notes: No barcode line,,,",
       "Date Time,Elapsed,A1,A2",
-      "8/18/25",
-      "0",
-      "100",
-      "200"
+      "8/18/25,0,100,200"
     ),
     file_bad_barcode_path
   )
