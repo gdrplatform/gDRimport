@@ -1,5 +1,8 @@
-## gDRimport 1.7.6 - 2025-10-08
+## gDRimport 1.9.2 - 2025-11-03
 * add support for Incucyte data
+
+## gDRimport 1.9.1 - 2025-10-30
+* synchronize Bioconductor and GitHub versioning
 
 ## gDRimport 1.7.5 - 2025-08-12
 * fix usage of `ifelse`
