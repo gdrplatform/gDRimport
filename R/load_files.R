@@ -895,7 +895,6 @@ load_results_EnVision_new <- function(results_file, headers = gDRutils::get_env_
     all_results <- rbind(all_results, melted_data)
   }
   
-  # Re-order columns to match gDR standard
   std_cols <- c(headers[["barcode"]], "WellRow", "WellColumn", "ReadoutValue", "BackgroundValue")
   data.table::setcolorder(all_results, intersect(std_cols, names(all_results)))
   
