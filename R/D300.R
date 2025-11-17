@@ -334,21 +334,25 @@ convert_units <- function(x, from, to) {
 #########
 
 parse_D300_metadata_file <- function(metadata_file) {
-  D300_Gnum_sheets <- readxl::excel_sheets(metadata_file)
-  nsheets <- length(D300_Gnum_sheets)
-
-  # Assertions.
-  assertthat::assert_that(is.character(metadata_file), msg = "'metadata_file' must be a character vector")
-  assertthat::assert_that(assertthat::is.readable(metadata_file), msg = "'metadata_file' must be a readable path")
-
-  if (nsheets != 1L) {
-    futile.logger::flog.error("only one data sheet is supported, found '%s' sheets in '%s'",
-                              nsheets, metadata_file)
+  if (tools::file_ext(metadata_file) %in% c("xls", "xlsx")) {
+    D300_Gnum_sheets <- readxl::excel_sheets(metadata_file)
+    nsheets <- length(D300_Gnum_sheets)
+  
+    # Assertions.
+    assertthat::assert_that(is.character(metadata_file), msg = "'metadata_file' must be a character vector")
+    assertthat::assert_that(assertthat::is.readable(metadata_file), msg = "'metadata_file' must be a readable path")
+  
+    if (nsheets != 1L) {
+      futile.logger::flog.error("only one data sheet is supported, found '%s' sheets in '%s'",
+                                nsheets, metadata_file)
+    }
+  
+    metadata <- read_excel_to_dt(metadata_file,
+                                 sheet = D300_Gnum_sheets[[1]],
+                                 col_names = TRUE)
+  } else {
+    metadata <- data.table::fread(metadata_file, header = FALSE)
   }
-
-  metadata <- read_excel_to_dt(metadata_file,
-                               sheet = D300_Gnum_sheets[[1]],
-                               col_names = TRUE)
   metadata
 }
 
