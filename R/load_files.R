@@ -821,7 +821,7 @@ load_results_EnVision <-
 
 #' Load results from EnVision_new (CSV)
 #'
-#' This functions loads and checks the results file(s) from a Revvity EnVision_new instrument
+#' This functions loads and checks the results file(s) from a new Envision instrument
 #' in the CSV format.
 #'
 #' @param results_file character, file path(s) to result file(s)

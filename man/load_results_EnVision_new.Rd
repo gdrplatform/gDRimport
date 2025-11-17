@@ -18,7 +18,7 @@ load_results_EnVision_new(
 data.table with results data
 }
 \description{
-This functions loads and checks the results file(s) from a Revvity EnVision_new instrument
+This functions loads and checks the results file(s) from a new Envision instrument
 in the CSV format.
 }
 \keyword{load_files}
