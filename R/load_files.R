@@ -845,8 +845,8 @@ load_results_EnVision_new <- function(results_file, headers = gDRutils::get_env_
     lines <- readLines(current_file)
     
     barcode_header_idx <- grep("^Plate Barcode", lines)[1]
-    if (length(barcode_header_idx) == 0) {
-      stop(paste("Could not find 'Plate Barcode' header in file:", current_file))
+    if (is.na(barcode_header_idx)) {
+      stop(sprintf("Could not find 'Plate Barcode' header in file: '%s'", current_file))
     }
     barcode_line_idx <- barcode_header_idx[1] + 1
     barcode_line <- lines[barcode_line_idx]
