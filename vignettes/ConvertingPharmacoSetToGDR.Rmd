@@ -50,11 +50,12 @@ read_mocked_PSets <- function(canonical = FALSE) {
   )
 }
 pset <- testthat::with_mocked_bindings(
-    `PharmacoGx::availablePSets` = read_mocked_PSets,
+    availablePSets = read_mocked_PSets,
+    .package = "PharmacoGx",
     suppressMessages(getPSet(
       "Tavor_2020", psetDir = system.file("extdata/pset", package = "gDRimport")
     ))
-  )
+)
 pset
 ```
 
