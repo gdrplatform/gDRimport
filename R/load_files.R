@@ -854,7 +854,7 @@ load_results_EnVision_new <- function(results_file, headers = gDRutils::get_env_
 
     data_header_idx <- grep("^;1;2;3", lines)
     if (length(data_header_idx) == 0) {
-      stop(paste("Could not find data matrix header (e.g., ';1;2;3...') in file:", current_file))
+      stop(sprintf("Could not find data matrix header (e.g., ';1;2;3...') in file: %s", current_file))
     }
     data_start_line <- data_header_idx[1]
 
