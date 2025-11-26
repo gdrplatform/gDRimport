@@ -66,9 +66,11 @@ detect_file_format <- function(results_file) {
   
   if (all(c("System", "User", "Plate", "Plate-ID (Stacker)") %in% results_data[, 1])) {
     "Tecan"
+  } else if (any(grepl("Instrument Results from", c(names(results_data)[1], results_data[, 1])), na.rm = TRUE)) {
+    "EnVision_new"
   } else if ("Repeat Barcode" %in% c(
-      do.call(paste, results_data[, 2:3]), 
-      paste(names(results_data[, 2:3]), collapse = " ")
+    do.call(paste, results_data[, 2:3]), 
+    paste(names(results_data[, 2:3]), collapse = " ")
   )) {
     "EnVision"
   } else {

@@ -49,12 +49,13 @@ read_mocked_PSets <- function(canonical = FALSE) {
     system.file("extdata", "data_for_unittests", "PSets.qs", package = "gDRimport")
   )
 }
-pset <- testthat::with_mock(
-    `PharmacoGx::availablePSets` = read_mocked_PSets,
+pset <- testthat::with_mocked_bindings(
+    availablePSets = read_mocked_PSets,
+    .package = "PharmacoGx",
     suppressMessages(getPSet(
       "Tavor_2020", psetDir = system.file("extdata/pset", package = "gDRimport")
     ))
-  )
+)
 pset
 ```
 
