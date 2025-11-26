@@ -31,6 +31,8 @@ if (getRversion() >= "2.15.1") {
       "row_name",
       "ReadoutValue",
       "Elapsed"
+      "BackgroundValue",
+      "WellColumn"
     ),
     utils::packageName())
 }

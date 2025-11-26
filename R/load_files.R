@@ -265,9 +265,9 @@ load_templates <- function(df_template_files) {
 #'
 load_results <-
   function(df_results_files, instrument = "EnVision", headers = gDRutils::get_env_identifiers()) {
-
+    
     stopifnot(any(inherits(df_results_files, "data.table"), checkmate::test_character(df_results_files)))
-    checkmate::assert_string(instrument, pattern = "^EnVision$|^long_tsv$|^Tecan$|^Incucyte$")
+    checkmate::assert_string(instrument, pattern = "^EnVision$|^long_tsv$|^Tecan$|^EnVision_new$|^Incucyte$") 
     checkmate::assert_list(headers, null.ok = TRUE)
     
     if (data.table::is.data.table(df_results_files)) {
@@ -283,7 +283,7 @@ load_results <-
     if (all(endsWith(results_file, ".tsv"))) {
       instrument <- "long_tsv"
     }
-
+    
     if (instrument == "EnVision") {
       all_results <-
         load_results_EnVision(results_file, headers = headers)
@@ -296,6 +296,9 @@ load_results <-
     } else if (instrument == "Incucyte") {
       all_results <-
         load_results_Incucyte(results_file, headers = headers)
+    } else if (instrument == "EnVision_new") {
+      all_results <-
+        load_results_EnVision_new(results_file, headers = headers)
     } else {
       exception_data <- get_exception_data(16)
       stop(exception_data$sprintf_text)
@@ -817,6 +820,89 @@ load_results_EnVision <-
 
     all_results
   }
+
+#' Load results from EnVision_new (CSV)
+#'
+#' This functions loads and checks the results file(s) from a new Envision instrument
+#' in the CSV format.
+#'
+#' @param results_file character, file path(s) to result file(s)
+#' @param headers list of headers identified in the manifest
+#' @keywords load_files
+#'
+#' @return data.table with results data
+#'
+load_results_EnVision_new <- function(results_file, headers = gDRutils::get_env_identifiers()) {
+  
+  checkmate::assert_character(results_file)
+  checkmate::assert_list(headers, null.ok = TRUE)
+  
+  all_results <- data.table::data.table()
+  
+  for (iF in seq_along(results_file)) {
+    current_file <- results_file[iF]
+    futile.logger::flog.info("Reading EnVision_new file %s", current_file)
+    
+    # Read all lines to find metadata and data start
+    lines <- readLines(current_file)
+    
+    barcode_header_idx <- grep("^Plate Barcode", lines)[1]
+    if (is.na(barcode_header_idx)) {
+      stop(sprintf("Could not find 'Plate Barcode' header in file: '%s'", current_file))
+    }
+    barcode_line_idx <- barcode_header_idx[1] + 1
+    barcode_line <- lines[barcode_line_idx]
+    barcode <- strsplit(barcode_line, ";")[[1]][1]
+
+    data_header_idx <- grep("^;1;2;3", lines)
+    if (length(data_header_idx) == 0) {
+      stop(sprintf("Could not find data matrix header (e.g., ';1;2;3...') in file: %s", current_file))
+    }
+    data_start_line <- data_header_idx[1]
+
+    tryCatch({
+      raw_data <- data.table::fread(
+        current_file,
+        skip = data_start_line - 1,
+        nrows = 16, # Standard 384-well plate (Rows A-P)
+        header = TRUE
+      )
+    }, error = function(e) {
+      exception_data <- get_exception_data(21) 
+      stop(sprintf(exception_data$sprintf_text, current_file))
+    })
+    
+    data.table::setnames(raw_data, old = names(raw_data)[1], new = "WellRow")
+    
+    melted_data <- data.table::melt(
+      raw_data,
+      id.vars = "WellRow",
+      variable.name = "WellColumn",
+      value.name = "ReadoutValue"
+    )
+
+    melted_data[, WellColumn := as.integer(as.character(WellColumn))]
+    melted_data[, (headers[["barcode"]]) := barcode]
+    melted_data[, BackgroundValue := 0] 
+    melted_data[, ReadoutValue := as.numeric(ReadoutValue)]
+    
+    if (any(is.na(melted_data$ReadoutValue))) {
+      futile.logger::flog.warn("Non-numeric readout values found and coerced to NA in %s", current_file)
+    }
+    
+    futile.logger::flog.info("Plate %s read; %d wells",
+                             barcode,
+                             nrow(melted_data))
+    
+    all_results <- rbind(all_results, melted_data)
+  }
+  
+  std_cols <- c(headers[["barcode"]], "WellRow", "WellColumn", "ReadoutValue", "BackgroundValue")
+  data.table::setcolorder(all_results, intersect(std_cols, names(all_results)))
+  
+  return(unique(all_results))
+}
+
 
 #' Read in single xlsx data from EnVision
 #'
