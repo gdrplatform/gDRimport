@@ -1318,12 +1318,10 @@ load_results_Incucyte <-
     all_data[[well_rname]] <- gsub("([A-Za-z]+).*", "\\1", all_data$Well)
     all_data[[well_cname]] <- gsub("[A-Za-z]+(.*)", "\\1", all_data$Well)
     
-    # Define the columns for each operation
+    # Cleanup intermediate columns
     cols_to_remove <- c("Well", "Elapsed")
-    cols_to_unlist <- c(bcode_name, well_rname, well_cname)
-    
-    # Chain the operations for efficiency 🔧
-    all_data[, (cols_to_remove) := NULL][, (cols_to_unlist) := lapply(.SD, unlist), .SDcols = cols_to_unlist]
+    all_data[, (cols_to_remove) := NULL]
+
     
     return(all_data)
   }
