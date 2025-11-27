@@ -70,8 +70,9 @@ test_that("load_results", {
   expect_error(load_results(c(result_path(td1)[1], "/non/existent_file")), err_msg1)
 
   # expected error(s) returned
-  err_msg2 <-
-    "Assertion on 'instrument' failed: Must comply to pattern '^EnVision$|^long_tsv$|^Tecan$|^EnVision_new$|^Incucyte$'."
+  err_msg_2a <- "Assertion on 'instrument' failed: "
+  err_msg2b <- "Must comply to pattern '^EnVision$|^long_tsv$|^Tecan$|^EnVision_new$|^Incucyte$'."
+  err_msg2 <- paste0(err_msg_2a, err_msg2b)
   expect_error(load_results(result_path(td1), "invalid_instrument"), err_msg2, fixed = TRUE)
 })
 
@@ -171,8 +172,9 @@ test_that("load_data", {
                          result_path(td1)), err_msg4, fixed = TRUE)
 
   # expected error(s) returned
-  err_msg5 <-
-    "Assertion on 'instrument' failed: Must comply to pattern '^EnVision$|^long_tsv$|^Tecan$|^EnVision_new$|^Incucyte$'."
+  err_msg_5a <- "Assertion on 'instrument' failed: "
+  err_msg5b <- "Must comply to pattern '^EnVision$|^long_tsv$|^Tecan$|^EnVision_new$|^Incucyte$'."
+  err_msg5 <- paste0(err_msg_5a, err_msg5b)
   expect_error(load_data(manifest_path(td1), template_path(td1), result_path(td1), "invalid_instrument"), 
                err_msg5, fixed = TRUE)
 
