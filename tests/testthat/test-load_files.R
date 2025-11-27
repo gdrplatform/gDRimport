@@ -556,17 +556,17 @@ test_that("load_results_Incucyte works as expected", {
       file_tsv_3_path,
       file_xlsx_4_path)
   dt_all <- load_results_Incucyte(all_files, headers)
-  
+ 
   expect_s3_class(dt_all, "data.table")
   
   # File 1 (CSV): 4 rows
-  # File 2 (CSV_NA): 2 wells * 3 timepoints = 6 rows.
+  # File 2 (CSV_NA): 2 wells * 4 timepoints = 6 rows.
   #         One ReadoutValue=NA is removed (1 row).
   #         One Elapsed=NA is removed (2 rows).
-  #         Total valid from File 2 = 6 - 1 - 2 = 3 rows.
+  #         Total valid from File 2 = 8 - 1 - 2 = 5 rows.
   # File 3 (TSV): 4 rows
   # File 4 (XLSX): 4 rows
-  # Total rows = 4 + 3 + 4 + 4 = 15
+  # Total rows = 4 + 5 + 4 + 4 = 15
   expect_equal(nrow(dt_all), 17)
   
   # Check content
