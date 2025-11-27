@@ -1268,7 +1268,7 @@ load_results_Incucyte <-
         })
       } else {
         tryCatch({
-          data.table::fread(iP, nrows = 20)
+          data.table::fread(iP, nrows = 20, header = TRUE)
         }, error = function(e) {
           exception_data <- get_exception_data(21)
           stop(sprintf(exception_data$sprintf_text, iP))
@@ -1290,7 +1290,7 @@ load_results_Incucyte <-
       dt_input <- if (grepl(".xlsx$", iP)) {
         read_excel_to_dt(iP, skip = dstart_idx)
       } else {
-        data.table::fread(iP, skip = dstart_idx - 1)
+        data.table::fread(iP, skip = dstart_idx, header = TRUE)
       }
       
       dt_input <- data.table::melt(
@@ -1307,7 +1307,7 @@ load_results_Incucyte <-
     }
     
     all_data <- data.table::rbindlist(all_data_list)
-    
+   
     all_data[, (d_name) := as.numeric(Elapsed)]
     all_data[, ReadoutValue := as.numeric(ReadoutValue)]
     all_data <- all_data[!is.na(get(d_name)) & !is.na(ReadoutValue)]

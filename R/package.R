@@ -30,7 +30,7 @@ if (getRversion() >= "2.15.1") {
       "OncotreeLineage",
       "row_name",
       "ReadoutValue",
-      "Elapsed"
+      "Elapsed",
       "BackgroundValue",
       "WellColumn"
     ),

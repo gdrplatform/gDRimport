@@ -436,7 +436,7 @@ test_that("load_results_Incucyte works as expected", {
     V1 = c(
       "Vessel Name",
       "Barcode",
-      NA,
+       "Notes",
       "Date Time",
       "8/18/25 3:02",
       "8/18/25 9:02"
@@ -499,7 +499,7 @@ test_that("load_results_Incucyte works as expected", {
   ))
   # --- End Setup ---
   
-  
+ 
   # (1) Test: single CSV file
   dt_csv <- load_results_Incucyte(file_csv_1_path, headers)
   
