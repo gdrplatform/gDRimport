@@ -1262,15 +1262,14 @@ load_results_Incucyte <-
     
     # identifiers
     bcode_name <- headers$barcode[1]
-    d_name <- headers$duration
+    dur_name <- headers$duration
     
-    # use a list to store DTs for efficient binding
-    all_data_list <- list()
-    
-    for (iP in results_file) {
+    # Use lapply instead of for loop for better performance and idiomatic R style
+    all_data_list <- lapply(results_file, function(iP) {
+      
       header_dt <- if (grepl(".xlsx$", iP)) {
         tryCatch({
-          df <- read_excel_to_dt(iP, n_max = 20)
+          read_excel_to_dt(iP, n_max = 20)
         }, error = function(e) {
           exception_data <- get_exception_data(22)
           stop(sprintf(exception_data$sprintf_text, iP))
@@ -1283,7 +1282,7 @@ load_results_Incucyte <-
           stop(sprintf(exception_data$sprintf_text, iP))
         })
       }
-     
+      
       dstart_idx <- .find_header(header_dt, "Date Time", "missing 'Date Time' column")
       barcode_idx <- .find_header(header_dt, bcode_name, sprintf("missing '%s' column", bcode_name)) 
       barcode <- header_dt[barcode_idx, 2][[1]]
@@ -1303,15 +1302,14 @@ load_results_Incucyte <-
       
       dt_input[[bcode_name]] <- barcode
       
-      # add the processed data.table to our list
-      all_data_list[[iP]] <- dt_input
-    }
+      return(dt_input)
+    })
     
     all_data <- data.table::rbindlist(all_data_list)
-   
-    all_data[, (d_name) := as.numeric(Elapsed)]
+    
+    all_data[, (dur_name) := as.numeric(Elapsed)]
     all_data[, ReadoutValue := as.numeric(ReadoutValue)]
-    all_data <- all_data[!is.na(get(d_name)) & !is.na(ReadoutValue)]
+    all_data <- all_data[!is.na(get(dur_name)) & !is.na(ReadoutValue)]
     
     well_rname <- headers$well_position[1]
     well_cname <- headers$well_position[2]
@@ -1321,7 +1319,6 @@ load_results_Incucyte <-
     # Cleanup intermediate columns
     cols_to_remove <- c("Well", "Elapsed")
     all_data[, (cols_to_remove) := NULL]
-
     
     return(all_data)
   }
