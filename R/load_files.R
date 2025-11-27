@@ -153,6 +153,7 @@ read_in_manifest_file <- function(manifest_file, available_formats) {
     } else if (manifest_ext %in% c("text/tsv",
                                    "text/tab-separated-values",
                                    "tsv")) {
+      
       df <- tryCatch({
         stats::na.omit(data.table::fread(
           x, sep = "\t", header = TRUE, na.strings = c("", "NA")))
@@ -266,8 +267,7 @@ load_results <-
   function(df_results_files, instrument = "EnVision", headers = gDRutils::get_env_identifiers()) {
     
     stopifnot(any(inherits(df_results_files, "data.table"), checkmate::test_character(df_results_files)))
-    checkmate::assert_string(instrument, pattern = "^EnVision$|^long_tsv$|^Tecan$|^EnVision_new$") 
-    
+    checkmate::assert_string(instrument, pattern = "^EnVision$|^long_tsv$|^Tecan$|^EnVision_new$|^Incucyte$") 
     checkmate::assert_list(headers, null.ok = TRUE)
     
     if (data.table::is.data.table(df_results_files)) {
@@ -293,10 +293,12 @@ load_results <-
     } else if (instrument == "Tecan") {
       all_results <-
         load_results_Tecan(results_file, headers = headers)
+    } else if (instrument == "Incucyte") {
+      all_results <-
+        load_results_Incucyte(results_file, headers = headers)
     } else if (instrument == "EnVision_new") {
       all_results <-
         load_results_EnVision_new(results_file, headers = headers)
-      
     } else {
       exception_data <- get_exception_data(16)
       stop(exception_data$sprintf_text)
@@ -1235,6 +1237,93 @@ read_in_results_Tecan <- function(results_file, results_sheets, headers) {
   all_results
 }
 
+.find_header <- function(header_dt, header_name, error_msg) {
+  idx <- which(header_dt[[1]] == header_name)
+  if (length(idx) == 0) {
+    exception_data <- get_exception_data(37)
+    stop(sprintf(exception_data$sprintf_text, error_msg))
+  }
+  idx
+}
+
+#' Load incucyte results from plain text
+#'
+#' This functions loads incucyte time-course cell count file
+#'
+#' @param results_file list of strings: file paths to result paths from individual plates
+#' @param headers list of headers identified in the manifest
+#' @keywords load_files
+#'
+#' @return data.table derived from Incucyte data
+#'
+load_results_Incucyte <-
+  function(results_file,
+           headers = gDRutils::get_env_identifiers()) {
+    
+    # identifiers
+    bcode_name <- headers$barcode[1]
+    dur_name <- headers$duration
+    
+    # Use lapply instead of for loop for better performance and idiomatic R style
+    all_data_list <- lapply(results_file, function(iP) {
+      
+      header_dt <- if (grepl(".xlsx$", iP)) {
+        tryCatch({
+          read_excel_to_dt(iP, n_max = 20)
+        }, error = function(e) {
+          exception_data <- get_exception_data(22)
+          stop(sprintf(exception_data$sprintf_text, iP))
+        })
+      } else {
+        tryCatch({
+          data.table::fread(iP, nrows = 20, header = TRUE)
+        }, error = function(e) {
+          exception_data <- get_exception_data(21)
+          stop(sprintf(exception_data$sprintf_text, iP))
+        })
+      }
+      
+      dstart_idx <- .find_header(header_dt, "Date Time", "missing 'Date Time' column")
+      barcode_idx <- .find_header(header_dt, bcode_name, sprintf("missing '%s' column", bcode_name)) 
+      barcode <- header_dt[barcode_idx, 2][[1]]
+      
+      dt_input <- if (grepl(".xlsx$", iP)) {
+        read_excel_to_dt(iP, skip = dstart_idx)
+      } else {
+        data.table::fread(iP, skip = dstart_idx, header = TRUE)
+      }
+      
+      dt_input <- data.table::melt(
+        dt_input[, -1],
+        id.vars = 1,
+        variable.name = "Well",
+        value.name = "ReadoutValue"
+      )
+      
+      dt_input[[bcode_name]] <- barcode
+      
+      return(dt_input)
+    })
+    
+    all_data <- data.table::rbindlist(all_data_list)
+    
+    all_data[, (dur_name) := as.numeric(Elapsed)]
+    all_data[, ReadoutValue := as.numeric(ReadoutValue)]
+    all_data <- all_data[!is.na(get(dur_name)) & !is.na(ReadoutValue)]
+    
+    well_rname <- headers$well_position[1]
+    well_cname <- headers$well_position[2]
+    all_data[[well_rname]] <- gsub("([A-Za-z]+).*", "\\1", all_data$Well)
+    all_data[[well_cname]] <- gsub("[A-Za-z]+(.*)", "\\1", all_data$Well)
+    
+    # Cleanup intermediate columns
+    cols_to_remove <- c("Well", "Elapsed")
+    all_data[, (cols_to_remove) := NULL]
+    
+    return(all_data)
+  }
+
+                                  
 #' check_metadata_names
 #'
 #' Check whether all metadata names are correct

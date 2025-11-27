@@ -70,8 +70,9 @@ test_that("load_results", {
   expect_error(load_results(c(result_path(td1)[1], "/non/existent_file")), err_msg1)
 
   # expected error(s) returned
-  err_msg2 <-
-    "Assertion on 'instrument' failed: Must comply to pattern '^EnVision$|^long_tsv$|^Tecan$|^EnVision_new$'."
+  err_msg_2a <- "Assertion on 'instrument' failed: "
+  err_msg2b <- "Must comply to pattern '^EnVision$|^long_tsv$|^Tecan$|^EnVision_new$|^Incucyte$'."
+  err_msg2 <- paste0(err_msg_2a, err_msg2b)
   expect_error(load_results(result_path(td1), "invalid_instrument"), err_msg2, fixed = TRUE)
 })
 
@@ -171,8 +172,9 @@ test_that("load_data", {
                          result_path(td1)), err_msg4, fixed = TRUE)
 
   # expected error(s) returned
-  err_msg5 <-
-    "Assertion on 'instrument' failed: Must comply to pattern '^EnVision$|^long_tsv$|^Tecan$|^EnVision_new$'."
+  err_msg_5a <- "Assertion on 'instrument' failed: "
+  err_msg5b <- "Must comply to pattern '^EnVision$|^long_tsv$|^Tecan$|^EnVision_new$|^Incucyte$'."
+  err_msg5 <- paste0(err_msg_5a, err_msg5b)
   expect_error(load_data(manifest_path(td1), template_path(td1), result_path(td1), "invalid_instrument"), 
                err_msg5, fixed = TRUE)
 
@@ -362,4 +364,251 @@ test_that("check_metadata_names works as expected", {
   # )
   #nolint end
   
+})
+
+test_that("load_results_Incucyte works as expected", {
+  # --- Test Setup ---
+  # This setup runs once when the file is sourced by testthat.
+  
+  # Define standard headers to pass to the function
+  headers <- gDRutils::get_env_identifiers()
+  bcode_name <- headers$barcode[1]
+  d_name <- headers$duration
+  well_rname <- headers$well_position[1]
+  well_cname <- headers$well_position[2]
+  
+  # Define paths for temporary test files
+  file_csv_1_path <- tempfile(fileext = ".csv")
+  file_csv_2_na_path <- tempfile(fileext = ".csv")
+  file_tsv_3_path <- tempfile(fileext = ".tsv")
+  file_xlsx_4_path <- tempfile(fileext = ".xlsx")
+  file_bad_header_path <- tempfile(fileext = ".csv")
+  file_bad_barcode_path <- tempfile(fileext = ".csv")
+  file_custom_header_path <- tempfile(fileext = ".csv")
+  
+  # Content for File 1 (CSV)
+  # Barcode on line 4, Data starts on line 7 (dstart_idx = 7)
+  writeLines(
+    c(
+      "Vessel Name: Test Plate 1,,,",
+      "Metric: Red Object Count,,,",
+      "Notes:,,,",
+      sprintf("Barcode,%s", "PLATE_001_CSV,,"),
+      "Some extra metadata line,,,",
+      "Another metadata line,,,",
+      "Date Time,Elapsed,A1,A2",
+      "8/18/25 3:02,0,100,200",
+      "8/18/25 9:02,6,110,210"
+    ),
+    file_csv_1_path
+  )
+  
+  # Content for File 2 (CSV with NAs)
+  # Barcode on line 2, Data starts on line 4 (dstart_idx = 4)
+  writeLines(
+    c(
+      "Vessel Name: Test Plate 2,,,",
+      sprintf("Barcode,%s", "PLATE_002_CSV_NA,,"),
+      "Cell Type: MCF-7,,,",
+      "Date Time,Elapsed,B1,B2",
+      "8/18/25 3:02,0,300,400",
+      "8/18/25 9:02,6,310,410",
+      "8/18/25 15:02,12,320,NA",
+      # This NA ReadoutValue should be dropped
+      "8/18/25 21:02,NA,330,430" # This NA Elapsed should drop 2 rows
+    ),
+    file_csv_2_na_path
+  )
+  
+  # Content for File 3 (TSV)
+  # Barcode on line 2, Data starts on line 4 (dstart_idx = 4)
+  writeLines(c(
+    paste("Vessel Name\tTest Plate 3\t\t"),
+    paste("Barcode\tPLATE_003_TSV\t\t"),
+    paste("Cell Type\tA549\t\t"),
+    paste("Date Time", "Elapsed", "C1", "C2", sep = "\t"),
+    paste("8/18/25 3:02", "0", "500", "600", sep = "\t"),
+    paste("8/18/25 9:02", "6", "510", "610", sep = "\t")
+  ),
+  file_tsv_3_path)
+  
+  # Content for File 4 (XLSX)
+  # Barcode on line 2, Data starts on line 4 (dstart_idx = 4)
+  xlsx_df <- data.frame(
+    V1 = c(
+      "Vessel Name",
+      "Barcode",
+       "Notes",
+      "Date Time",
+      "8/18/25 3:02",
+      "8/18/25 9:02"
+    ),
+    V2 = c("Test Plate 4", "PLATE_004_XLSX", NA, "Elapsed", "0", "6"),
+    V3 = c(NA, NA, NA, "D1", "700", "710"),
+    V4 = c(NA, NA, NA, "D2", "800", "810"),
+    stringsAsFactors = FALSE
+  )
+  # Write to .xlsx file without column names
+  openxlsx::write.xlsx(xlsx_df, file_xlsx_4_path, colNames = FALSE)
+  
+  
+  # Content for Bad Header File (Missing 'Date Time')
+  writeLines(
+    c(
+      "Vessel Name: Bad Plate,,",
+      sprintf("Barcode,%s", "PLATE_005_BAD,"),
+      "Elapsed,A1,A2",
+      "0,100,200"
+    ),
+    file_bad_header_path
+  )
+  
+  # Content for Bad Barcode File (Missing Barcode)
+  writeLines(
+    c(
+      "Vessel Name: Bad Barcode Plate,,,",
+      "Notes: No barcode line,,,",
+      "Date Time,Elapsed,A1,A2",
+      "8/18/25,0,100,200"
+    ),
+    file_bad_barcode_path
+  )
+  
+  # Content for Custom Header Test
+  writeLines(
+    c(
+      "Vessel,PLATE_CUSTOM",
+      # Using 'Vessel' as barcode header
+      "Notes: custom test",
+      "Date Time,Elapsed,A1",
+      "8/18/25 3:02,0,900",
+      "8/18/25 9:02,6,950"
+    ),
+    file_custom_header_path
+  )
+  
+  # Clean up all temporary files when tests are done
+  on.exit(unlink(
+    c(
+      file_csv_1_path,
+      file_csv_2_na_path,
+      file_tsv_3_path,
+      file_xlsx_4_path,
+      file_bad_header_path,
+      file_bad_barcode_path,
+      file_custom_header_path
+    )
+  ))
+  # --- End Setup ---
+  
+ 
+  # (1) Test: single CSV file
+  dt_csv <- load_results_Incucyte(file_csv_1_path, headers)
+  
+  expect_s3_class(dt_csv, "data.table")
+  # 2 wells * 2 timepoints = 4 rows
+  expect_equal(nrow(dt_csv), 4)
+  
+  # Check column names
+  expect_true(all(
+    c(bcode_name, d_name, well_rname, well_cname, "ReadoutValue") %in% names(dt_csv)
+  ))
+  expect_false(any(c("Well", "Elapsed") %in% names(dt_csv)))
+  
+  # Check content
+  expect_equal(unique(dt_csv[[bcode_name]]), "PLATE_001_CSV")
+  expect_equal(sort(unique(dt_csv[[d_name]])), c(0, 6))
+  expect_equal(sort(dt_csv$ReadoutValue), c(100, 110, 200, 210))
+  expect_equal(sort(unique(dt_csv[[well_rname]])), "A")
+  expect_equal(sort(unique(dt_csv[[well_cname]])), c("1", "2"))
+  
+  
+  # (2) Test: single TSV file
+  # Note: The function uses data.table::fread, which auto-detects sep.
+  dt_tsv <- load_results_Incucyte(file_tsv_3_path, headers)
+  
+  expect_s3_class(dt_tsv, "data.table")
+  # 2 wells * 2 timepoints = 4 rows
+  expect_equal(nrow(dt_tsv), 4)
+  
+  # Check content
+  expect_equal(unique(dt_tsv[[bcode_name]]), "PLATE_003_TSV")
+  expect_equal(sort(dt_tsv$ReadoutValue), c(500, 510, 600, 610))
+  expect_equal(sort(unique(dt_tsv[[well_rname]])), "C")
+  expect_equal(sort(unique(dt_tsv[[well_cname]])), c("1", "2"))
+  
+  
+  # (3) Test: single XLSX file
+  dt_xlsx <- load_results_Incucyte(file_xlsx_4_path, headers)
+  
+  expect_s3_class(dt_xlsx, "data.table")
+  # 2 wells * 2 timepoints = 4 rows
+  expect_equal(nrow(dt_xlsx), 4)
+  
+  # Check content
+  expect_equal(unique(dt_xlsx[[bcode_name]]), "PLATE_004_XLSX")
+  expect_equal(sort(dt_xlsx$ReadoutValue), c(700, 710, 800, 810))
+  expect_equal(sort(unique(dt_xlsx[[well_rname]])), "D")
+  expect_equal(sort(unique(dt_xlsx[[well_cname]])), c("1", "2"))
+  
+  # (4) Test: multiple files (CSV, TSV, XLSX) and NA handling
+  all_files <-
+    c(file_csv_1_path,
+      file_csv_2_na_path,
+      file_tsv_3_path,
+      file_xlsx_4_path)
+  dt_all <- load_results_Incucyte(all_files, headers)
+ 
+  expect_s3_class(dt_all, "data.table")
+  
+  # File 1 (CSV): 4 rows
+  # File 2 (CSV_NA): 2 wells * 4 timepoints = 6 rows.
+  #         One ReadoutValue=NA is removed (1 row).
+  #         One Elapsed=NA is removed (2 rows).
+  #         Total valid from File 2 = 8 - 1 - 2 = 5 rows.
+  # File 3 (TSV): 4 rows
+  # File 4 (XLSX): 4 rows
+  # Total rows = 4 + 5 + 4 + 4 = 15
+  expect_equal(nrow(dt_all), 17)
+  
+  # Check content
+  expect_equal(
+    sort(unique(dt_all[[bcode_name]])),
+    c(
+      "PLATE_001_CSV",
+      "PLATE_002_CSV_NA",
+      "PLATE_003_TSV",
+      "PLATE_004_XLSX"
+    )
+  )
+  
+  # Check that NA rows were truly dropped from all files
+  expect_false(any(is.na(dt_all$ReadoutValue)))
+  expect_false(any(is.na(dt_all[[d_name]])))
+  
+  
+  # (5) Test: Error conditions
+  
+  # Missing file (relies on the tryCatch inside the function)
+  missing_file <- "/non/existent/file.csv"
+  expect_error(
+    load_results_Incucyte(missing_file, headers),
+    "Error reading /non/existent/file.csv"
+  )
+  
+  # Bad header (missing 'Date Time')
+  # This will cause dstart_idx to be integer(0), which fails on subsetting
+  expect_error(
+    load_results_Incucyte(file_bad_header_path, headers),
+    "Invalid header in the result file: (missing 'Date Time' column)",
+    fixed = TRUE
+  )
+  
+  # Bad header (missing barcode)
+  # This will cause barcode_idx to be integer(0), which fails on subsetting
+  expect_error(
+    load_results_Incucyte(file_bad_barcode_path, headers),
+    "Invalid header in the result file: (missing 'Barcode' column)",
+    fixed = TRUE
+  )
 })

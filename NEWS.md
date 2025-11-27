@@ -1,3 +1,6 @@
+## gDRimport 1.9.3 - 2025-11-26
+* add support for Incucyte data
+
 ## gDRimport 1.9.2 - 2025-11-17
 * add support for new EnVision format
 
