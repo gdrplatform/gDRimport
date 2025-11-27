@@ -598,7 +598,7 @@ test_that("load_results_Incucyte works as expected", {
   # This will cause dstart_idx to be integer(0), which fails on subsetting
   expect_error(
     load_results_Incucyte(file_bad_header_path, headers),
-    "Invalid header in the result file: (missing 'Data Time' column)",
+    "Invalid header in the result file: (missing 'Date Time' column)",
     fixed = TRUE
   )
   

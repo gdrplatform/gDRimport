@@ -1237,6 +1237,15 @@ read_in_results_Tecan <- function(results_file, results_sheets, headers) {
   all_results
 }
 
+.find_header <- function(header_dt, header_name, error_msg) {
+  idx <- which(header_dt[[1]] == header_name)
+  if (length(idx) == 0) {
+    exception_data <- get_exception_data(37)
+    stop(sprintf(exception_data$sprintf_text, error_msg))
+  }
+  idx
+}
+
 #' Load incucyte results from plain text
 #'
 #' This functions loads incucyte time-course cell count file
@@ -1274,17 +1283,9 @@ load_results_Incucyte <-
           stop(sprintf(exception_data$sprintf_text, iP))
         })
       }
-      
-      dstart_idx <- which(header_dt[, 1] == "Date Time")
-      if (length(dstart_idx) == 0) { 
-        exception_data <- get_exception_data(37)
-        stop(sprintf(exception_data$sprintf_text, "missing 'Data Time' column"))
-      }
-      barcode_idx <- which(header_dt[, 1] == bcode_name)
-      if (length(barcode_idx) == 0) { 
-        exception_data <- get_exception_data(37)
-        stop(sprintf(exception_data$sprintf_text, "missing 'Barcode' column"))
-      }
+     
+      dstart_idx <- .find_header(header_dt, "Date Time", "missing 'Date Time' column")
+      barcode_idx <- .find_header(header_dt, bcode_name, sprintf("missing '%s' column", bcode_name)) 
       barcode <- header_dt[barcode_idx, 2][[1]]
       
       dt_input <- if (grepl(".xlsx$", iP)) {
@@ -1314,8 +1315,8 @@ load_results_Incucyte <-
     
     well_rname <- headers$well_position[1]
     well_cname <- headers$well_position[2]
-    all_data[[well_rname]] <- substring(all_data$Well, 1, 1)
-    all_data[[well_cname]] <- substring(all_data$Well, 2)
+    all_data[[well_rname]] <- gsub("([A-Za-z]+).*", "\\1", all_data$Well)
+    all_data[[well_cname]] <- gsub("[A-Za-z]+(.*)", "\\1", all_data$Well)
     
     # Define the columns for each operation
     cols_to_remove <- c("Well", "Elapsed")
