@@ -248,7 +248,7 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
   # merge results with treatment data
   full_data <- merge(full_data,
                      unique(treatment[, intersect(names(treatment),
-                                                  c("column_name", "name", "dose", "moa")),
+                                                  c("column_name", "name", "dose", "broad_id", "moa")),
                                       with = FALSE]),
                      all.x = TRUE,
                      by = "column_name")
@@ -277,7 +277,7 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
                                                     "cellline_ref_div_time")]), with = FALSE]), all.x = TRUE)
   
   # data for treatment
-  ls_col <- intersect(c("clid", "name", "moa", "dose", "value",
+  ls_col <- intersect(c("clid", "name", "broad_id", "moa", "dose", "value",
                         unlist(idfs[c("cellline", "cellline_name", "cellline_tissue",
                                       "cellline_parental_identifier", "cellline_subtype",
                                       "cellline_ref_div_time")])),
@@ -285,9 +285,8 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
   dt_trt <- data.table::copy(full_data[, c(ls_col), with = FALSE])
   if (is.null(dt_trt$moa)) dt_trt$moa <- "unknown"
   data.table::setnames(dt_trt,
-                       old = c("name", "moa", "dose", "value"),
-                       new = c("Gnumber", "drug_moa", "Concentration", "ReadoutValue"))
-  dt_trt$DrugName <- full_data$name
+                       old = c("broad_id", "name", "moa", "dose", "value"),
+                       new = c("Gnumber", "DrugName", "drug_moa", "Concentration", "ReadoutValue"))
   dt_trt$Duration <- 120
   dt_trt$masked <- FALSE
   data.table::setcolorder(dt_trt, neworder = colnames(dt_ctrl))
