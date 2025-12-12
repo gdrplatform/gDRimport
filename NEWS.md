@@ -1,3 +1,6 @@
+## gDRimport 1.9.4 - 2025-12-10
+* make barcode detection more robust (Incucyte)
+
 ## gDRimport 1.9.3 - 2025-11-26
 * add support for Incucyte data
 

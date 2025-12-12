@@ -1238,7 +1238,7 @@ read_in_results_Tecan <- function(results_file, results_sheets, headers) {
 }
 
 .find_header <- function(header_dt, header_name, error_msg) {
-  idx <- which(header_dt[[1]] == header_name)
+  idx <- which(header_dt[[1]] %in% header_name)
   if (length(idx) == 0) {
     exception_data <- get_exception_data(37)
     stop(sprintf(exception_data$sprintf_text, error_msg))
@@ -1262,6 +1262,7 @@ load_results_Incucyte <-
     
     # identifiers
     bcode_name <- headers$barcode[1]
+    bcode_names <- c(bcode_name, paste0(bcode_name, ":"))
     dur_name <- headers$duration
     
     # Use lapply instead of for loop for better performance and idiomatic R style
@@ -1284,7 +1285,7 @@ load_results_Incucyte <-
       }
       
       dstart_idx <- .find_header(header_dt, "Date Time", "missing 'Date Time' column")
-      barcode_idx <- .find_header(header_dt, bcode_name, sprintf("missing '%s' column", bcode_name)) 
+      barcode_idx <- .find_header(header_dt, bcode_names, sprintf("missing '%s' column", bcode_name)) 
       barcode <- header_dt[barcode_idx, 2][[1]]
       
       dt_input <- if (grepl(".xlsx$", iP)) {
