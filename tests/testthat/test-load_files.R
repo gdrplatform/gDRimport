@@ -385,6 +385,7 @@ test_that("load_results_Incucyte works as expected", {
   file_bad_header_path <- tempfile(fileext = ".csv")
   file_bad_barcode_path <- tempfile(fileext = ".csv")
   file_custom_header_path <- tempfile(fileext = ".csv")
+  file_colon_header_path <- tempfile(fileext = ".csv")
   
   # Content for File 1 (CSV)
   # Barcode on line 4, Data starts on line 7 (dstart_idx = 7)
@@ -485,6 +486,19 @@ test_that("load_results_Incucyte works as expected", {
       "8/18/25 9:02,6,950"
     ),
     file_custom_header_path
+  )
+
+  # Content for File with Colon in Barcode Header
+  # Note: We use 3 columns consistently (Metadata and Data) to avoid parsing errors
+  # and to ensure we don't create an empty 4th column that triggers melt() type warnings.
+  writeLines(
+    c(
+      "Vessel Name: Colon Test,,", 
+      sprintf("%s:,%s", bcode_name, "PLATE_COLON_TEST,"), 
+      "Date Time,Elapsed,A1", 
+      "8/18/25 3:02,0,999"
+    ),
+    file_colon_header_path
   )
   
   # Clean up all temporary files when tests are done
@@ -611,4 +625,13 @@ test_that("load_results_Incucyte works as expected", {
     "Invalid header in the result file: (missing 'Barcode' column)",
     fixed = TRUE
   )
+
+  # (6) Test: Barcode header with colon
+  dt_colon <- load_results_Incucyte(file_colon_header_path, headers)
+  
+  expect_s3_class(dt_colon, "data.table")
+  # Verify it extracted the barcode despite the colon in the header
+  expect_equal(unique(dt_colon[[bcode_name]]), "PLATE_COLON_TEST")
+  expect_equal(dt_colon$ReadoutValue, 999)
+
 })
