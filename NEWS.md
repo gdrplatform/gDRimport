@@ -1,5 +1,9 @@
-## gDRimport 1.9.4 - 2025-12-09
+## gDRimport 1.9.5 - 2025-12-17
 * add support broad_id in PRISM data
+* add suport for combo data in private prism data
+
+## gDRimport 1.9.4 - 2025-12-10
+* make barcode detection more robust (Incucyte)
 
 ## gDRimport 1.9.3 - 2025-11-26
 * add support for Incucyte data
