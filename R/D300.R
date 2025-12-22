@@ -39,7 +39,7 @@ import_D300 <-
     Gnums <- parse_D300_metadata_file(metadata_file)
     D300 <- parse_D300_xml(D300_file)
     D300 <- fill_NA(D300, from = "D300_Barcode", with = "D300_Plate_N")
-
+    
     treatment <- merge_D300_w_metadata(D300, Gnums)
     req_cols <- c("Row", "Col")
     if (!all(present <- req_cols %in% colnames(treatment))) {
@@ -50,21 +50,29 @@ import_D300 <-
       untreated_tags = gDRutils::get_env_identifiers("untreated_tag"),
       drug_identifier = gDRutils::get_env_identifiers("drug"),
       conc_identifier = gDRutils::get_env_identifiers("concentration")) #standard identifiers
+    existing_files <- list.files(destination_path, pattern = "^trt_P\\d+\\.xlsx$")
+    
+    # Calculate the starting offset
+    max_idx <- 0
+    if (length(existing_files) > 0) {
+      nums <- as.numeric(gsub("trt_P|\\.xlsx", "", existing_files))
+      max_idx <- max(nums, na.rm = TRUE)
+    }
     
     for (i in seq_along(uplates)) {
       wb <- openxlsx::createWorkbook()
       idx <- treatment$D300_Plate_N == uplates[i] # Filter to 1 plate.
       trt_filt <- treatment[idx, ]
-
-      #create a list with Gnumber and Concentration 
+      
+      # create a list with Gnumber and Concentration 
       trt_filt$gn_conc <- apply(trt_filt, 1, function(x) list(x[idfs$drug_identifier], x[idfs$conc_identifier]))
       trt_gnumber_conc <- data.table::dcast(trt_filt, Row ~ Col, 
-                                          value.var = c("gn_conc"), 
-                                          fun.aggregate = list)
+                                            value.var = c("gn_conc"), 
+                                            fun.aggregate = list)
       rownames_trt_gnumber_conc <- trt_gnumber_conc$Row
       trt_gnumber_conc <- trt_gnumber_conc[, setdiff(colnames(trt_gnumber_conc), "Row"), with = FALSE]
-
-      #count number of drugs,conc in each well 
+      
+      # count number of drugs,conc in each well 
       trt_n_drugs <- apply(trt_gnumber_conc, c(1, 2), function(x) length(x[[1]]))
       trt_info <- list(
         max_drugs_per_well =  max(trt_n_drugs),
@@ -72,7 +80,9 @@ import_D300 <-
         row_idx = strtoi(rownames_trt_gnumber_conc)
       )
       save_drug_info_per_well(trt_info, trt_gnumber_conc, wb, idfs) 
-      fname <- sprintf("trt_P%s.xlsx", uplates[i])
+      current_file_num <- max_idx + i
+      fname <- sprintf("trt_P%d.xlsx", current_file_num)
+      
       openxlsx::saveWorkbook(wb, file.path(destination_path, fname), overwrite = TRUE)
     }
   }

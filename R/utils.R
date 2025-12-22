@@ -62,11 +62,14 @@ read_ref_data <- function(inDir, prefix = "ref") {
 #' @export
 detect_file_format <- function(results_file) {
   checkmate::assert_character(results_file)
-  results_data <- rio::import(results_file)
+  results_data <- rio::import(results_file, fill = TRUE)
   
   if (all(c("System", "User", "Plate", "Plate-ID (Stacker)") %in% results_data[, 1])) {
     "Tecan"
-  } else if (any(grepl("Instrument Results from", c(names(results_data)[1], results_data[, 1])), na.rm = TRUE)) {
+  } else if (any(grepl("Instrument Results from", c(names(results_data)[1],
+                                                    results_data[, 1],
+                                                    paste(results_data[1, ], collapse = " "))),
+                 na.rm = TRUE)) {
     "EnVision_new"
   } else if ("Repeat Barcode" %in% c(
     do.call(paste, results_data[, 2:3]), 

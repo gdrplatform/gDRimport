@@ -34,7 +34,9 @@ convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
   column_mappings <- list(
     LFC_cb = c("LFC_cb", "LFC.cb", "LFC", "l2fc"),
     pert_iname = c("pert_iname", "pert_name"),
-    pert_time = c("pert_time", "day")
+    pert_time = c("pert_time", "day"),
+    pert2_iname = c("pert2_name", "pert2_iname", "drug2", "compound2"),
+    pert2_dose = c("pert2_dose", "concentration2", "dose2")
   )
   
   # Rename columns based on mapping if default column is missing
@@ -61,16 +63,26 @@ convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
   
   data <- data[data$ccle_name != "", ]
   
-  # Check and split pert_iname and pert_dose by | or _
-  if (any(grepl("\\|", data$pert_iname))) {
-    separator <- "|"
+  if ("pert2_iname" %in% names(data) && "pert2_dose" %in% names(data)) {
+    data[, (idfs$drug) := pert_iname]
+    data[, (idfs$concentration) := as.numeric(pert_dose)]
+    
+    data[, (idfs$drug2) := pert2_iname]
+    data[, (idfs$concentration2) := as.numeric(pert2_dose)]
+    
   } else {
-    separator <- "_"
+    if (any(grepl("\\|", data$pert_iname))) {
+      separator <- "|"
+    } else {
+      separator <- "_"
+    }
+    
+    data[, unlist(idfs[c("drug", "drug2")]) := 
+           data.table::tstrsplit(data$pert_iname, separator, fixed = TRUE)]
+    
+    data[, unlist(idfs[c("concentration", "concentration2")]) := 
+           data.table::tstrsplit(data$pert_dose, separator, fixed = TRUE, type.convert = TRUE)]
   }
-  data[, unlist(idfs[c("drug", "drug2")]) :=
-         data.table::tstrsplit(data$pert_iname, separator, fixed = TRUE)]
-  data[, unlist(idfs[c("concentration", "concentration2")]) :=
-         data.table::tstrsplit(data$pert_dose, separator, fixed = TRUE, type.convert = TRUE)]
   
   data <- meta[, .SD, .SDcols =  c("ModelID",
                                    "CCLEName",
@@ -248,7 +260,7 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
   # merge results with treatment data
   full_data <- merge(full_data,
                      unique(treatment[, intersect(names(treatment),
-                                                  c("column_name", "name", "dose", "moa")),
+                                                  c("column_name", "name", "dose", "broad_id", "moa")),
                                       with = FALSE]),
                      all.x = TRUE,
                      by = "column_name")
@@ -277,7 +289,7 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
                                                     "cellline_ref_div_time")]), with = FALSE]), all.x = TRUE)
   
   # data for treatment
-  ls_col <- intersect(c("clid", "name", "moa", "dose", "value",
+  ls_col <- intersect(c("clid", "name", "broad_id", "moa", "dose", "value",
                         unlist(idfs[c("cellline", "cellline_name", "cellline_tissue",
                                       "cellline_parental_identifier", "cellline_subtype",
                                       "cellline_ref_div_time")])),
@@ -285,9 +297,8 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
   dt_trt <- data.table::copy(full_data[, c(ls_col), with = FALSE])
   if (is.null(dt_trt$moa)) dt_trt$moa <- "unknown"
   data.table::setnames(dt_trt,
-                       old = c("name", "moa", "dose", "value"),
-                       new = c("Gnumber", "drug_moa", "Concentration", "ReadoutValue"))
-  dt_trt$DrugName <- full_data$name
+                       old = c("broad_id", "name", "moa", "dose", "value"),
+                       new = c("Gnumber", "DrugName", "drug_moa", "Concentration", "ReadoutValue"))
   dt_trt$Duration <- 120
   dt_trt$masked <- FALSE
   data.table::setcolorder(dt_trt, neworder = colnames(dt_ctrl))
