@@ -854,9 +854,10 @@ load_results_EnVision_new <- function(results_file, headers = gDRutils::get_env_
     barcode_line <- lines[barcode_line_idx]
     barcode <- strsplit(barcode_line, ";")[[1]][1]
 
-    data_header_idx <- grep("^;1;2;3", lines)
+    data_header_idx <- grep("^[;,]1[;,]2[;,]3", lines)
+    
     if (length(data_header_idx) == 0) {
-      stop(sprintf("Could not find data matrix header (e.g., ';1;2;3...') in file: %s", current_file))
+      stop(sprintf("Could not find data matrix header (e.g., ';1;2;3...' or ',1,2,3...') in file: %s", current_file))
     }
     data_start_line <- data_header_idx[1]
 
