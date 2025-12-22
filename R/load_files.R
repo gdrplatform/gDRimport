@@ -852,7 +852,7 @@ load_results_EnVision_new <- function(results_file, headers = gDRutils::get_env_
     }
     barcode_line_idx <- barcode_header_idx[1] + 1
     barcode_line <- lines[barcode_line_idx]
-    barcode <- strsplit(barcode_line, ";")[[1]][1]
+    barcode <- strsplit(barcode_line, ";|,")[[1]][1]
 
     data_header_idx <- grep("^[;,]1[;,]2[;,]3", lines)
     
