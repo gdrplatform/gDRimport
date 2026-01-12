@@ -332,10 +332,10 @@ load_templates_tsv <-
 
     # read columns in files
     templates <- lapply(template_file, function(x) {
-      data.table::fread(x,
-                        sep = "\t",
-                        header = TRUE,
-                        na.strings = c("", "NA")) %>% stats::na.omit()
+      stats::na.omit(data.table::fread(x,
+                                       sep = "\t",
+                                       header = TRUE,
+                                       na.strings = c("", "NA")))
     })
     names(templates) <- template_filename
     # check WellRow/WellColumn is present in each df
