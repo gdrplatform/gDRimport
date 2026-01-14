@@ -32,7 +32,11 @@ if (getRversion() >= "2.15.1") {
       "ReadoutValue",
       "Elapsed",
       "BackgroundValue",
-      "WellColumn"
+      "WellColumn",
+      "pert_iname",
+      "pert_dose",
+      "pert2_iname",
+      "pert2_dose"
     ),
     utils::packageName())
 }
