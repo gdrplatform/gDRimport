@@ -74,7 +74,7 @@ detect_file_format <- function(results_file) {
   } else if ("Repeat Barcode" %in% c(
     do.call(paste, results_data[, 2:3]), 
     paste(names(results_data[, 2:3]), collapse = " ")
-  )) {
+  ) | any(grepl("Repeat,Barcode", results_data[, 1]))) {
     "EnVision"
   } else {
     "long_tsv"
