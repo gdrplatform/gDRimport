@@ -1,3 +1,6 @@
+## gDRimport 1.9.6 - 2025-12-27
+* extend support for csv EnVision format
+
 ## gDRimport 1.9.5 - 2025-12-17
 * add support broad_id in PRISM data
 * add suport for combo data in private prism data
