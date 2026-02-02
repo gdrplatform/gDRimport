@@ -1590,7 +1590,7 @@ read_in_EnVision_file <- function(file, nrows, seps) {
   current.line <- 1
   
   while (length(line <- readLines(con, n = 1, warn = FALSE)) > 0 && current.line < nrows) {
-    cleaned.line <- gsub('="([^"]*)"', '\\1', line)
+    cleaned.line <- gsub("=\"([^\"]*)\"", "\\1", line)
     results.list[[current.line]] <- cleaned.line
     current.line <- current.line + 1
   }
