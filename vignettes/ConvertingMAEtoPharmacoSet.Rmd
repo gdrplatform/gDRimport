@@ -12,7 +12,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
+```{r knitr-options, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup, include=FALSE}
+```{r load-libraries, include=FALSE}
 library(PharmacoGx)
 library(gDRimport)
 library(MultiAssayExperiment)
@@ -44,7 +44,7 @@ In collaboration with the BHKLab, we have developed functionality to convert bet
 # Loading the gDR-generated MAE object
 This workflow assumes that you have already generated a `MAE` object using the `gDR` package. We will load in a `MAE` object generated using 
 the data from the [KW. Song et al, 2022](https://doi.org/10.1158/2159-8290.CD-21-0072) study. This `MAE` contains two drugs (`treatments`) and 7 cell lines (`samples`).  
-``` {r loadMae}
+``` {r load-mae-data}
 (mae <- qs::qread(
     system.file("extdata", "kyung2022mae", "MAE_E2.qs", package = "gDRimport")
   )
@@ -53,24 +53,24 @@ the data from the [KW. Song et al, 2022](https://doi.org/10.1158/2159-8290.CD-21
 
 # Converting the MAE object into a PharmacoSet object
 First we will view the experiments and assays within the MultiAssayExperiment object. 
-``` {r viewAssays}
+``` {r inspect-mae-assays}
 gDRutils::MAEpply(mae, assays)
 ```
 
 We will now convert the `MAE` object into a `PharmacoSet` object. We need to provide a name for the data object, in this example
 we will use the name of the study.
-``` {r, warning=FALSE}
+``` {r convert-mae-to-pset, warning=FALSE}
 pset <- convert_MAE_to_PSet(mae, pset_name="Kyung2022")
 ```
 
 We can now view the `PharmacoSet` object. 
-``` {r viewPharmacoSet}
+``` {r display-pset-object}
 pset
 ```
 
 We can view information about the drugs and cell lines in the `PharmacoSet` object using the `treatment` and `sample` slots:
 
-``` {r}
+``` {r inspect-metadata}
 head(treatmentInfo(pset))
 
 head(sampleInfo(pset))
@@ -84,13 +84,13 @@ This vignette will cover some basics about this class, however for more informat
 [TreatmentResponseExperiment](https://bioconductor.org/packages/release/bioc/vignettes/CoreGx/inst/doc/TreatmentResponseExperiment.html)****.
 
 ## Row and Column Names
-```{r rownames, echo=TRUE}
+```{r inspect-tre-rows, echo=TRUE}
 tre <- treatmentResponse(pset)
 head(rownames(tre))
 head(rowData(tre))
 ```
 
-```{r colnames, echo=TRUE}
+```{r inspect-tre-cols, echo=TRUE}
 head(colnames(tre))
 head(colData(tre))
 ```
@@ -105,7 +105,7 @@ expressions to be evaluated inside the `i` and `j` arguments for
 
 For example if we want to subset to rows where the cell line is "CL131891_EFM-19_Breast_EFM-19_unknown_64" and drug is "G02967907_GDC-0077_PI3K-A_168".
 
-```{r , echo=TRUE}
+```{r subset-tre-data-table echo=TRUE}
 tre[
   .(treatmentid=="G02967907_GDC-0077_PI3K-A_168"), # query on row
   .(sampleid=="CL131891_EFM-19_Breast_EFM-19_unknown_64") # query on column
@@ -114,7 +114,7 @@ tre[
 
 We can also invert matches or subset on other columns in `rowData` or `colData`:
 
-```{r echo=TRUE}
+```{r invert-subset-tre echo=TRUE}
 tre[
   .(treatmentid!="G02967907_GDC-0077_PI3K-A_168"), # query on row
   .(sampleid!="CL131891_EFM-19_Breast_EFM-19_unknown_64") # query on column
@@ -126,17 +126,17 @@ tre[
 The assays can be viewed through the `assays` function. Each assay has a column "data_type" which references which `SummarizedExperiment` from
 the `MAE` the data corresponds with. 
 
-``` {r viewTREAssays}
+``` {r view-tre-assays}
 lapply(assays(tre), head)
 ```
 
 
-``` {r viewAssayNames}
+``` {r view-tre-assay-names}
 assayNames(tre)
 ```
 
 
-``` {r viewAssay}
+``` {r inspect-metrics-assay}
 head(assay(tre, "Metrics"),3)
 ```
 
@@ -145,6 +145,6 @@ head(assay(tre, "Metrics"),3)
    RTK-dependent inducible degradation of mutant PI3K drives GDC-0077 (Inavolisib) efficacy. Cancer discovery, 12(1), 204-219.
 
 
-```{r sessionInfo}
+```{r session-info}
 sessionInfo()
 ```
