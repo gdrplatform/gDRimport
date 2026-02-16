@@ -105,7 +105,7 @@ expressions to be evaluated inside the `i` and `j` arguments for
 
 For example if we want to subset to rows where the cell line is "CL131891_EFM-19_Breast_EFM-19_unknown_64" and drug is "G02967907_GDC-0077_PI3K-A_168".
 
-```{r subset-tre-data-table echo=TRUE}
+```{r subset-tre-data-table, echo=TRUE}
 tre[
   .(treatmentid=="G02967907_GDC-0077_PI3K-A_168"), # query on row
   .(sampleid=="CL131891_EFM-19_Breast_EFM-19_unknown_64") # query on column
@@ -114,7 +114,7 @@ tre[
 
 We can also invert matches or subset on other columns in `rowData` or `colData`:
 
-```{r invert-subset-tre echo=TRUE}
+```{r invert-subset-tre, echo=TRUE}
 tre[
   .(treatmentid!="G02967907_GDC-0077_PI3K-A_168"), # query on row
   .(sampleid!="CL131891_EFM-19_Breast_EFM-19_unknown_64") # query on column

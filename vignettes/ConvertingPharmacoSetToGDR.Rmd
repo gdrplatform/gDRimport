@@ -38,7 +38,7 @@ The main step in this process is to extract the drug dose-response data from the
 Whereas a user might already have a pharmacoset loaded in their R session, if they wish to obtain a different pharmacoset or use the same script in the future we provide a helper function to do so. 
 It helps to have a user directory in which to store all pharmacosets, and by passing this directory into the function as a parameter, the function will also check to see if the PSet exists in the user-defined directory.
 This is to ensure that the PSet is not being re-downloaded if it already has.  
-```{r get-pset-example eval = FALSE}
+```{r get-pset-example, eval = FALSE}
 pset <- getPSet("Tavor_2020")
 pset
 ```
@@ -84,13 +84,13 @@ x
 # Running drug response pipeline with data
 The subsetted data can now be used as input for the `gDRcore::runDrugResponseProcessingPipeline()`. The output of this function is a `MultiAssayExperiment` object which can be accessed with `gDRutils::convert_se_assay_to_dt()`
 
-```{r run-gdr-pipeline eval = FALSE}
+```{r run-gdr-pipeline, eval = FALSE}
 # RUN DRUG RESPONSE PROCESSING PIPELINE
 se <- gDRcore::runDrugResponseProcessingPipeline(x)
 se
 ``` 
 
-```{r convert-se-to-dt eval = FALSE}
+```{r convert-se-to-dt, eval = FALSE}
 # Convert Summarized Experiments to data.table 
 # Available SEs : "RawTreatred", "Controls", "Normalized", "Averaged", "Metrics"
 
