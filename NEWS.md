@@ -1,3 +1,6 @@
+## gDRimport 1.9.7 - 2026-02-16
+* fix stack imbalance warnings during byte-compilation 
+
 ## gDRimport 1.9.6 - 2025-12-27
 * extend support for csv EnVision format
 

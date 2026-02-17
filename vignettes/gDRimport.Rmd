@@ -8,7 +8,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, echo=FALSE}
+```{r init-import, echo=FALSE}
 library(gDRimport)
 log_level <- futile.logger::flog.threshold("ERROR")
 ```
@@ -22,7 +22,7 @@ The `gDRimport` package is a part of the gDR suite. It helps to prepare raw drug
 ## Test Data 
 There are currently four test datasets that can be used to see what's the expected input data for the gDRimport. 
 
-```{r}
+```{r load-test-datasets}
 # primary test data
 td1 <- get_test_data()
 summary(td1)
@@ -44,7 +44,7 @@ summary(td4)
 ## Load data
 The `load_data` is the key function. It wraps `load_manifest`, `load_templates` and `load_results` functions and supports different file formats.
 
-```{r}
+```{r execute-data-loading}
 ml <- load_manifest(manifest_path(td1))
 summary(ml)
 
@@ -80,7 +80,7 @@ Processing LEVEL6 PRISM data can be accomplished using the `convert_LEVEL6_prism
 
 To process LEVEL5 PRISM data, you can use the following function:
 
-```{r, echo=TRUE, eval=FALSE}
+```{r process-prism-level5, echo=TRUE, eval=FALSE}
 convert_LEVEL5_prism_to_gDR_input("path_to_file")
 ```
 
@@ -91,7 +91,7 @@ Replace "path_to_file" with the actual path to your LEVEL5 PRISM data file. This
 
 To process LEVEL6 PRISM data, you can use the following function:
 
-```{r, echo=TRUE, eval=FALSE}
+```{r process-prism-level6, echo=TRUE, eval=FALSE}
 convert_LEVEL6_prism_to_gDR_input("prism_data_path", "cell_line_data_path", "treatment_data_path")
 ```
 
@@ -103,6 +103,6 @@ The function `installAllDeps` assists in installing package dependencies.
 
 # SessionInfo {-}
 
-```{r sessionInfo}
+```{r session-info}
 sessionInfo()
 ```

@@ -13,14 +13,14 @@ vignette: >
 ---
 
 
-```{r, include = FALSE}
+```{r knitr-init, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
 ```
 
-```{r setup}
+```{r load-deps}
 library(PharmacoGx)
 library(gDRimport)
 ```
@@ -38,12 +38,12 @@ The main step in this process is to extract the drug dose-response data from the
 Whereas a user might already have a pharmacoset loaded in their R session, if they wish to obtain a different pharmacoset or use the same script in the future we provide a helper function to do so. 
 It helps to have a user directory in which to store all pharmacosets, and by passing this directory into the function as a parameter, the function will also check to see if the PSet exists in the user-defined directory.
 This is to ensure that the PSet is not being re-downloaded if it already has.  
-```{r eval = FALSE}
+```{r get-pset-example, eval = FALSE}
 pset <- getPSet("Tavor_2020")
 pset
 ```
 
-```{r, include = FALSE}
+```{r load-mocked-psets, include = FALSE}
 read_mocked_PSets <- function(canonical = FALSE) {
   qs::qread(
     system.file("extdata", "data_for_unittests", "PSets.qs", package = "gDRimport")
@@ -64,7 +64,7 @@ pset
 The dose response data is stored in a `treatmentResponseExperiment` object and the function `gDRimport::convert_pset_to_df` extracts this information to 
 build a `data.table` that can be used as input to the gDR pipeline. 
 
-```{r}
+```{r convert-pset-to-dt}
 # Store treatment response data in df_ 
 dt <- convert_pset_to_df(pharmacoset = pset)
 str(dt)
@@ -74,7 +74,7 @@ str(dt)
 Most canonical `PharmacoSets` have data pertaining to many cell lines and their response to many drugs (drug-combination data is available in some but its conversion to gDR is not currently supported).
 As such, in the interest of time and resources, it may be useful to subset the data before providing it as input for the gDR pipeline. 
 
-```{r}
+```{r subset-by-cell-line}
 # example subset using only 1 cell line
 subset_cl <- dt$Clid[1]
 x <- dt[Clid == subset_cl]
@@ -84,13 +84,13 @@ x
 # Running drug response pipeline with data
 The subsetted data can now be used as input for the `gDRcore::runDrugResponseProcessingPipeline()`. The output of this function is a `MultiAssayExperiment` object which can be accessed with `gDRutils::convert_se_assay_to_dt()`
 
-```{r eval = FALSE}
+```{r run-gdr-pipeline, eval = FALSE}
 # RUN DRUG RESPONSE PROCESSING PIPELINE
 se <- gDRcore::runDrugResponseProcessingPipeline(x)
 se
 ``` 
 
-```{r eval = FALSE}
+```{r convert-se-to-dt, eval = FALSE}
 # Convert Summarized Experiments to data.table 
 # Available SEs : "RawTreatred", "Controls", "Normalized", "Averaged", "Metrics"
 
@@ -99,13 +99,13 @@ str(gDRutils::convert_se_assay_to_dt(se[[1]], "Metrics"))
 ```
 
 
-```{r, include = FALSE}
+```{r reset-identifiers, include = FALSE}
 gDRutils::reset_env_identifiers()
 ```
 
 
 # SessionInfo {-}
 
-```{r sessionInfo}
+```{r session-info}
 sessionInfo()
 ```
