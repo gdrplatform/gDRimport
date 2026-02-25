@@ -1,3 +1,6 @@
+## gDRimport 1.9.8 - 2026-02-25
+* add support for multi-plate new envision format
+
 ## gDRimport 1.9.7 - 2026-02-16
 * fix stack imbalance warnings during byte-compilation 
 
