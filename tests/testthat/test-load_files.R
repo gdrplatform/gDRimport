@@ -635,3 +635,82 @@ test_that("load_results_Incucyte works as expected", {
   expect_equal(dt_colon$ReadoutValue, 999)
 
 })
+
+test_that("load_results_EnVision_new works as expected", {
+  headers <- gDRutils::get_env_identifiers()
+  bcode_name <- headers$barcode[1]
+  
+  file_envision_multi <- tempfile(fileext = ".csv")
+  file_envision_error <- tempfile(fileext = ".csv")
+  
+  # Content for multiple plates in one file (simulating EnVision new format)
+  writeLines(
+    c(
+      "Instrument Results from;;;;;;",
+      "Protocol Name;CyQuant 96w;;;;;",
+      ";;;;;;",
+      "Result of Fluorescence Intensity Filter 1;;;;;;",
+      "Plate Barcode;Loop;Repeat;Point X;Point Y;Exc WL[nm];", # Standard header
+      "P01;;1;;;485 / 20;",
+      ";;;;;;",
+      ";1;2;3",
+      "A;10;20;30",
+      "B;40;OVR;60",   # Test coercion to NA for invalid text ("OVR")
+      "C;70;;90",      # Test empty string coercion to NA
+      ";;;;;;",
+      "Measurement Information;;;;;;",
+      "Measurement GUID;;747f1a39-507e-4049;;;;",
+      "Result of Fluorescence Intensity Filter 1;;;;;;",
+      "Plate Barcode;Loop;Repeat;Point X;Point Y;Exc WL[nm];", 
+      "P02;;1;;;485 / 20;",
+      ";;;;;;",
+      ";1;2;3",
+      "A;11;21;31",
+      "B;41;51;61",
+      "C;71;81;91"
+    ),
+    file_envision_multi
+  )
+  
+  writeLines(
+    c(
+      "Instrument Results from;;;;;;",
+      "Plate Barcode;;ERROR_PLATE;;;;"
+    ),
+    file_envision_error
+  )
+  
+  on.exit(unlink(c(file_envision_multi, file_envision_error)))
+  
+  dt_multi <- expect_warning(
+    load_results_EnVision_new(file_envision_multi, headers),
+    NA
+  )
+  
+  expect_s3_class(dt_multi, "data.table")
+  # 2 plates * 3 rows * 3 cols = 18 wells total
+  expect_equal(nrow(dt_multi), 18)
+  
+  # Ensure both barcodes were picked up correctly using the header methods
+  expect_equal(unique(dt_multi[[bcode_name]]), c("P01", "P02"))
+  
+  # Check standard columns
+  expect_true(all(c(bcode_name, "WellRow", "WellColumn", "ReadoutValue", "BackgroundValue") %in% names(dt_multi)))
+  
+  # Check Plate 1 data
+  plate1 <- dt_multi[dt_multi[[bcode_name]] == "P01", ]
+  expect_equal(plate1[WellRow == "A" & WellColumn == 1, ReadoutValue], 10)
+  expect_true(is.na(plate1[WellRow == "B" & WellColumn == 2, ReadoutValue]))
+  expect_true(is.na(plate1[WellRow == "C" & WellColumn == 2, ReadoutValue]))
+  
+  # Check Plate 2 data
+  plate2 <- dt_multi[dt_multi[[bcode_name]] == "P02", ]
+  expect_false(any(is.na(plate2$ReadoutValue)))
+  expect_equal(plate2[WellRow == "A" & WellColumn == 1, ReadoutValue], 11)
+  expect_equal(plate2[WellRow == "C" & WellColumn == 3, ReadoutValue], 91)
+  
+  expect_error(
+    load_results_EnVision_new(file_envision_error, headers),
+    "Could not find data matrix header"
+  )
+})
