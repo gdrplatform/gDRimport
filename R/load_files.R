@@ -860,7 +860,7 @@ load_results_EnVision_new <- function(results_file, headers = gDRutils::get_env_
       
       barcode <- NA
       # 1. Look upward for the specific table header: "Plate Barcode;Loop;Repeat..."
-      for (r in (data_start_line - 1):1) {
+      for (r in rev(seq_len(data_start_line - 1))) {
         if (grepl("^Plate Barcode[;,]Loop", lines[r], ignore.case = TRUE)) {
           barcode_line <- lines[r + 1]
           barcode <- strsplit(barcode_line, ";|,")[[1]][1]
@@ -870,7 +870,7 @@ load_results_EnVision_new <- function(results_file, headers = gDRutils::get_env_
       
       # 2. Fallback: If not found or empty, look upward for an inline "Plate Barcode;;Value"
       if (is.na(barcode) || barcode == "") {
-        for (r in (data_start_line - 1):1) {
+        for (r in rev(seq_len(data_start_line - 1))) {
           if (grepl("^Plate Barcode[;,]", lines[r], ignore.case = TRUE)) {
             parts <- strsplit(lines[r], ";|,")[[1]]
             # Find the first non-empty string that isn't the header itself
@@ -884,13 +884,14 @@ load_results_EnVision_new <- function(results_file, headers = gDRutils::get_env_
       }
       
       if (is.na(barcode) || barcode == "") {
-        stop(sprintf("Could not structurally resolve 'Plate Barcode' for matrix at line %d in file: '%s'", data_start_line, current_file))
+        stop(sprintf("Could not structurally resolve 'Plate Barcode' for matrix at line %d in file: '%s'",
+                     data_start_line, current_file))
       }
       
       # Determine number of rows dynamically for the current plate (e.g., 8 for 96-well, 16 for 384-well)
       n_rows <- 0
       for (r in (data_start_line + 1):length(lines)) {
-        if (grepl("^[A-Za-z][;,]", lines[r])) {
+        if (grepl("^[A-Za-z]+[;,]", lines[r])) {
           n_rows <- n_rows + 1
         } else {
           break
