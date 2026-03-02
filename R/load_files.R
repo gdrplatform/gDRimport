@@ -954,7 +954,8 @@ load_results_EnVision_new <- function(results_file, headers = gDRutils::get_env_
       invalid_idx <- !valid_num_idx & !is_empty_or_na
       
       if (any(invalid_idx)) {
-        futile.logger::flog.warn("Non-numeric readout values found and coerced to NA in plate %s of %s", barcode, current_file)
+        futile.logger::flog.warn("Non-numeric readout values found and coerced to NA in plate %s of %s",
+                                 barcode, current_file)
         melted_data[invalid_idx, ReadoutValue := NA_character_]
       }
       
