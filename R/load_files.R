@@ -824,7 +824,8 @@ load_results_EnVision <-
 #' Load results from EnVision_new (CSV)
 #'
 #' This functions loads and checks the results file(s) from a new Envision instrument
-#' in the CSV format.
+#' in the CSV format. Supports multiple plates in a single file by robustly checking
+#' the file structure.
 #'
 #' @param results_file character, file path(s) to result file(s)
 #' @param headers list of headers identified in the manifest
@@ -844,58 +845,130 @@ load_results_EnVision_new <- function(results_file, headers = gDRutils::get_env_
     futile.logger::flog.info("Reading EnVision_new file %s", current_file)
     
     # Read all lines to find metadata and data start
-    lines <- readLines(current_file)
+    lines <- readLines(current_file, warn = FALSE)
     
-    barcode_header_idx <- grep("^Plate Barcode", lines)[1]
-    if (is.na(barcode_header_idx)) {
-      stop(sprintf("Could not find 'Plate Barcode' header in file: '%s'", current_file))
-    }
-    barcode_line_idx <- barcode_header_idx[1] + 1
-    barcode_line <- lines[barcode_line_idx]
-    barcode <- strsplit(barcode_line, ";|,")[[1]][1]
-
+    # Find all data matrix headers inside the file
     data_header_idx <- grep("^[;,]1[;,]2[;,]3", lines)
     
     if (length(data_header_idx) == 0) {
       stop(sprintf("Could not find data matrix header (e.g., ';1;2;3...' or ',1,2,3...') in file: %s", current_file))
     }
-    data_start_line <- data_header_idx[1]
-
-    tryCatch({
-      raw_data <- data.table::fread(
-        current_file,
-        skip = data_start_line - 1,
-        nrows = 16, # Standard 384-well plate (Rows A-P)
-        header = TRUE
+    
+    # Iterate over each found plate data matrix
+    for (idx in seq_along(data_header_idx)) {
+      data_start_line <- data_header_idx[idx]
+      
+      barcode <- NA
+      # 1. Look upward for the specific table header: "Plate Barcode;Loop;Repeat..."
+      for (r in rev(seq_len(data_start_line - 1))) {
+        if (grepl("^Plate Barcode[;,]Loop", lines[r], ignore.case = TRUE)) {
+          barcode_line <- lines[r + 1]
+          barcode <- strsplit(barcode_line, ";|,")[[1]][1]
+          break
+        }
+      }
+      
+      # 2. Fallback: If not found or empty, look upward for an inline "Plate Barcode;;Value"
+      if (is.na(barcode) || barcode == "") {
+        for (r in rev(seq_len(data_start_line - 1))) {
+          if (grepl("^Plate Barcode[;,]", lines[r], ignore.case = TRUE)) {
+            parts <- strsplit(lines[r], ";|,")[[1]]
+            # Find the first non-empty string that isn't the header itself
+            vals <- parts[parts != "" & toupper(parts) != "PLATE BARCODE"]
+            if (length(vals) > 0) {
+              barcode <- vals[1]
+              break
+            }
+          }
+        }
+      }
+      
+      if (is.na(barcode) || barcode == "") {
+        stop(sprintf("Could not structurally resolve 'Plate Barcode' for matrix at line %d in file: '%s'",
+                     data_start_line, current_file))
+      }
+      
+      # Determine number of rows dynamically for the current plate (e.g., 8 for 96-well, 16 for 384-well)
+      n_rows <- 0
+      for (r in (data_start_line + 1):length(lines)) {
+        if (grepl("^[A-Za-z]+[;,]", lines[r])) {
+          n_rows <- n_rows + 1
+        } else {
+          break
+        }
+      }
+      
+      if (n_rows == 0) {
+        n_rows <- 16 # Fallback to standard 384-well plate
+      }
+      
+      tryCatch({
+        raw_data <- data.table::fread(
+          current_file,
+          skip = data_start_line - 1,
+          nrows = n_rows,
+          header = TRUE,
+          colClasses = "character" # Helps, but doesn't always override data.table's internal guesses
+        )
+      }, error = function(e) {
+        exception_data <- get_exception_data(21) 
+        stop(sprintf(exception_data$sprintf_text, current_file))
+      })
+      
+      data.table::setnames(raw_data, old = names(raw_data)[1], new = "WellRow")
+      
+      # --- BULLETPROOF FIX FOR MELT WARNING ---
+      # Explicitly overwrite raw_data with a new data.table where everything is a character
+      raw_data <- raw_data[, lapply(.SD, as.character)]
+      
+      melted_data <- data.table::melt(
+        raw_data,
+        id.vars = "WellRow",
+        variable.name = "WellColumn",
+        value.name = "ReadoutValue"
       )
-    }, error = function(e) {
-      exception_data <- get_exception_data(21) 
-      stop(sprintf(exception_data$sprintf_text, current_file))
-    })
-    
-    data.table::setnames(raw_data, old = names(raw_data)[1], new = "WellRow")
-    
-    melted_data <- data.table::melt(
-      raw_data,
-      id.vars = "WellRow",
-      variable.name = "WellColumn",
-      value.name = "ReadoutValue"
-    )
-
-    melted_data[, WellColumn := as.integer(as.character(WellColumn))]
-    melted_data[, (headers[["barcode"]]) := barcode]
-    melted_data[, BackgroundValue := 0] 
-    melted_data[, ReadoutValue := as.numeric(ReadoutValue)]
-    
-    if (any(is.na(melted_data$ReadoutValue))) {
-      futile.logger::flog.warn("Non-numeric readout values found and coerced to NA in %s", current_file)
+      
+      # Ensure WellColumn is clean before coercing
+      invalid_cols <- !grepl("^[0-9]+$", melted_data$WellColumn)
+      if (any(invalid_cols)) {
+        melted_data[invalid_cols, WellColumn := NA_character_]
+      }
+      melted_data[, WellColumn := as.integer(WellColumn)]
+      
+      melted_data[, (headers[["barcode"]]) := barcode]
+      melted_data[, BackgroundValue := 0] 
+      
+      # Sanitize ReadoutValue before coercing to numeric
+      melted_data[, ReadoutValue := trimws(ReadoutValue)]
+      
+      # Identify standard missing values
+      is_empty_or_na <- is.na(melted_data$ReadoutValue) | 
+        melted_data$ReadoutValue == "" | 
+        toupper(melted_data$ReadoutValue) %in% c("NA", "NAN", "INF", "-INF")
+      
+      # Identify valid numeric strings (handles integers, decimals, negatives, scientific notation)
+      num_regex <- "^[-+]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)([eE][-+]?[0-9]+)?$"
+      valid_num_idx <- grepl(num_regex, melted_data$ReadoutValue)
+      
+      # Anything left is truly invalid string text (like "OVR")
+      invalid_idx <- !valid_num_idx & !is_empty_or_na
+      
+      if (any(invalid_idx)) {
+        futile.logger::flog.warn("Non-numeric readout values found and coerced to NA in plate %s of %s",
+                                 barcode, current_file)
+        melted_data[invalid_idx, ReadoutValue := NA_character_]
+      }
+      
+      # Safely swap known empty items to NA character, then safely coerce
+      melted_data[is_empty_or_na, ReadoutValue := NA_character_]
+      melted_data[, ReadoutValue := as.numeric(ReadoutValue)]
+      
+      futile.logger::flog.info("Plate %s read; %d wells",
+                               barcode,
+                               nrow(melted_data))
+      
+      all_results <- rbind(all_results, melted_data)
     }
-    
-    futile.logger::flog.info("Plate %s read; %d wells",
-                             barcode,
-                             nrow(melted_data))
-    
-    all_results <- rbind(all_results, melted_data)
   }
   
   std_cols <- c(headers[["barcode"]], "WellRow", "WellColumn", "ReadoutValue", "BackgroundValue")
