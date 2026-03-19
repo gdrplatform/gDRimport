@@ -844,7 +844,6 @@ load_results_EnVision_new <- function(results_file, headers = gDRutils::get_env_
     current_file <- results_file[iF]
     is_excel <- grepl("\\.xlsx?$", current_file, ignore.case = TRUE)
     
-    # Store lines in a list so we can handle both single CSVs and multi-sheet Excels easily
     lines_list <- list()
     
     if (is_excel) {
@@ -852,17 +851,12 @@ load_results_EnVision_new <- function(results_file, headers = gDRutils::get_env_
       sheets <- readxl::excel_sheets(current_file)
       
       for (sheet in sheets) {
-        # Rely on the existing helper to read the sheet
         dt <- read_excel_to_dt(current_file, sheet = sheet, col_names = FALSE)
-        
-        # Convert to character and replace NA with empty strings
         dt_char <- dt[, lapply(.SD, function(x) {
           char_x <- as.character(x)
           char_x[is.na(char_x)] <- ""
           char_x
         })]
-        
-        # Collapse rows into comma-separated strings to mimic CSV structure
         lines_list[[sheet]] <- do.call(paste, c(dt_char, sep = ","))
       }
     } else {
@@ -870,7 +864,6 @@ load_results_EnVision_new <- function(results_file, headers = gDRutils::get_env_
       lines_list[["csv"]] <- readLines(current_file, warn = FALSE)
     }
     
-    # Process each chunk of lines (each Excel sheet, or the single CSV file)
     for (sheet_name in names(lines_list)) {
       lines <- lines_list[[sheet_name]]
       
@@ -878,38 +871,42 @@ load_results_EnVision_new <- function(results_file, headers = gDRutils::get_env_
         futile.logger::flog.info("Processing sheet '%s' from %s", sheet_name, current_file)
       }
       
-      # Find all data matrix headers inside the file/sheet
-      data_header_idx <- grep("^[;,]1[;,]2[;,]3", lines)
+      # More robust regex to handle potential quotes around the leading comma
+      data_header_idx <- grep("^\"?\"?[;,]\"?1\"?[;,]\"?2\"?[;,]\"?3\"?", lines)
       
       if (length(data_header_idx) == 0) {
         if (is_excel) {
-          futile.logger::flog.warn("Could not find data matrix header in file: %s, sheet: '%s'. Skipping sheet.", current_file, sheet_name)
+          futile.logger::flog.warn("Could not find data matrix header in file: %s, sheet: '%s'. Skipping.", current_file, sheet_name)
           next
         } else {
-          stop(sprintf("Could not find data matrix header (e.g., ';1;2;3...' or ',1,2,3...') in file: %s", current_file))
+          stop(sprintf("Could not find data matrix header (e.g., ';1;2;3...') in file: %s", current_file))
         }
       }
       
-      # Iterate over each found plate data matrix
       for (idx in seq_along(data_header_idx)) {
         data_start_line <- data_header_idx[idx]
         
         barcode <- NA
-        # 1. Look upward for the specific table header: "Plate Barcode;Loop;Repeat..."
-        for (r in rev(seq_len(data_start_line - 1))) {
-          if (grepl("^Plate Barcode[;,]Loop", lines[r], ignore.case = TRUE)) {
+        # Limit the lookback to at most 15 lines above the matrix. 
+        # This prevents picking up an old barcode for dummy matrices at the end of the file.
+        search_limit <- max(1, data_start_line - 15)
+        
+        # 1. Look upward for the specific table header
+        for (r in seq(data_start_line - 1, search_limit, by = -1)) {
+          if (grepl("^\"?Plate Barcode\"?[;,]\"?Loop\"?", lines[r], ignore.case = TRUE)) {
             barcode_line <- lines[r + 1]
             barcode <- strsplit(barcode_line, ";|,")[[1]][1]
+            barcode <- gsub('^"|"$', '', barcode) # Strip stray quotes
             break
           }
         }
         
-        # 2. Fallback: If not found or empty, look upward for an inline "Plate Barcode;;Value"
+        # 2. Fallback: inline "Plate Barcode;;Value"
         if (is.na(barcode) || barcode == "") {
-          for (r in rev(seq_len(data_start_line - 1))) {
-            if (grepl("^Plate Barcode[;,]", lines[r], ignore.case = TRUE)) {
+          for (r in seq(data_start_line - 1, search_limit, by = -1)) {
+            if (grepl("^\"?Plate Barcode\"?[;,]", lines[r], ignore.case = TRUE)) {
               parts <- strsplit(lines[r], ";|,")[[1]]
-              # Find the first non-empty string that isn't the header itself
+              parts <- gsub('^"|"$', '', parts)
               vals <- parts[parts != "" & toupper(parts) != "PLATE BARCODE"]
               if (length(vals) > 0) {
                 barcode <- vals[1]
@@ -919,32 +916,34 @@ load_results_EnVision_new <- function(results_file, headers = gDRutils::get_env_
           }
         }
         
+        # If no barcode is found within the limit, it's likely a dummy Plate Map matrix. Skip it.
         if (is.na(barcode) || barcode == "") {
-          stop(sprintf("Could not structurally resolve 'Plate Barcode' for matrix at line %d in file: '%s'",
-                       data_start_line, current_file))
+          futile.logger::flog.info("Skipping matrix at line %d in file '%s': no associated 'Plate Barcode' found within 15 lines.",
+                                   data_start_line, current_file)
+          next
         }
         
-        # Determine number of rows dynamically for the current plate (e.g., 8 for 96-well, 16 for 384-well)
+        # Determine number of rows dynamically (handling quoted row letters e.g. "A", "B")
         n_rows <- 0
         for (r in (data_start_line + 1):length(lines)) {
-          if (grepl("^[A-Za-z]+[;,]", lines[r])) {
+          if (grepl("^\"?[A-Za-z]+\"?[;,]", lines[r])) {
             n_rows <- n_rows + 1
           } else {
             break
           }
         }
         
-        if (n_rows == 0) {
-          n_rows <- 16 # Fallback to standard 384-well plate
-        }
+        if (n_rows == 0) n_rows <- 16 
+        
+        # ISOLATE EXACT LINES: This prevents fread from misaligning rows due to blank lines above
+        data_lines <- lines[data_start_line:(data_start_line + n_rows)]
         
         tryCatch({
           raw_data <- data.table::fread(
-            text = paste(lines, collapse = "\n"), # <-- Pass the dynamically generated text block instead of file
-            skip = data_start_line - 1,
-            nrows = n_rows,
+            text = data_lines, 
             header = TRUE,
-            colClasses = "character" 
+            colClasses = "character",
+            blank.lines.skip = FALSE
           )
         }, error = function(e) {
           exception_data <- get_exception_data(21) 
@@ -952,9 +951,6 @@ load_results_EnVision_new <- function(results_file, headers = gDRutils::get_env_
         })
         
         data.table::setnames(raw_data, old = names(raw_data)[1], new = "WellRow")
-        
-        # --- BULLETPROOF FIX FOR MELT WARNING ---
-        # Explicitly overwrite raw_data with a new data.table where everything is a character
         raw_data <- raw_data[, lapply(.SD, as.character)]
         
         melted_data <- data.table::melt(
@@ -964,29 +960,25 @@ load_results_EnVision_new <- function(results_file, headers = gDRutils::get_env_
           value.name = "ReadoutValue"
         )
         
-        # Ensure WellColumn is clean before coercing
+        # Clean up WellColumn and immediately drop phantom columns (e.g., V14, V15)
+        melted_data[, WellColumn := gsub('^"|"$', '', WellColumn)] 
         invalid_cols <- !grepl("^[0-9]+$", melted_data$WellColumn)
-        if (any(invalid_cols)) {
-          melted_data[invalid_cols, WellColumn := NA_character_]
-        }
+        melted_data <- melted_data[!invalid_cols] 
+        
         melted_data[, WellColumn := as.integer(WellColumn)]
         
         melted_data[, (headers[["barcode"]]) := barcode]
         melted_data[, BackgroundValue := 0] 
         
-        # Sanitize ReadoutValue before coercing to numeric
         melted_data[, ReadoutValue := trimws(ReadoutValue)]
         
-        # Identify standard missing values
         is_empty_or_na <- is.na(melted_data$ReadoutValue) | 
           melted_data$ReadoutValue == "" | 
           toupper(melted_data$ReadoutValue) %in% c("NA", "NAN", "INF", "-INF")
         
-        # Identify valid numeric strings (handles integers, decimals, negatives, scientific notation)
         num_regex <- "^[-+]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)([eE][-+]?[0-9]+)?$"
         valid_num_idx <- grepl(num_regex, melted_data$ReadoutValue)
         
-        # Anything left is truly invalid string text (like "OVR")
         invalid_idx <- !valid_num_idx & !is_empty_or_na
         
         if (any(invalid_idx)) {
@@ -995,13 +987,10 @@ load_results_EnVision_new <- function(results_file, headers = gDRutils::get_env_
           melted_data[invalid_idx, ReadoutValue := NA_character_]
         }
         
-        # Safely swap known empty items to NA character, then safely coerce
         melted_data[is_empty_or_na, ReadoutValue := NA_character_]
         melted_data[, ReadoutValue := as.numeric(ReadoutValue)]
         
-        futile.logger::flog.info("Plate %s read; %d wells",
-                                 barcode,
-                                 nrow(melted_data))
+        futile.logger::flog.info("Plate %s read; %d wells", barcode, nrow(melted_data))
         
         all_results <- rbind(all_results, melted_data)
       }
