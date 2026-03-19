@@ -2,7 +2,7 @@
 % Please edit documentation in R/load_files.R
 \name{load_results_EnVision_new}
 \alias{load_results_EnVision_new}
-\title{Load results from EnVision_new (CSV)}
+\title{Load results from EnVision_new (CSV and XLSX)}
 \usage{
 load_results_EnVision_new(
   results_file,
@@ -19,6 +19,7 @@ data.table with results data
 }
 \description{
 This functions loads and checks the results file(s) from a new Envision instrument
-in the CSV format.
+in the CSV or XLSX format. Supports multiple plates in a single file or multiple
+sheets in an Excel file by robustly checking the file structure.
 }
 \keyword{load_files}

@@ -4,15 +4,15 @@
 \alias{import_D300}
 \title{Import D300}
 \usage{
-import_D300(D300_file, metadata_file, destination_path)
+import_D300(D300_file, destination_path, metadata_file = NULL)
 }
 \arguments{
 \item{D300_file}{character, file path to D300 file}
 
-\item{metadata_file}{character, file path to file with mapping from D300 names to Gnumbers}
-
 \item{destination_path}{character, path to folder where template
 files will be generated}
+
+\item{metadata_file}{character, file path to file with mapping from D300 names to Gnumbers. Defaults to NULL.}
 }
 \value{
 Create one Excel file per plate. Each sheet in each plate file describes
@@ -34,7 +34,7 @@ For example, wells treated with 2 drugs in combination will result in 4 sheets p
 td3 <- get_test_D300_data()[["f_96w"]]
 o_path <- file.path(tempdir(), "td3")
 dir.create(o_path)
-import_D300(td3$d300, td3$Gnum, o_path)
+import_D300(td3$d300, o_path, td3$Gnum)
 list.files(o_path)
 unlink(o_path, recursive = TRUE)
 
