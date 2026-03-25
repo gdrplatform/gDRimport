@@ -1,3 +1,6 @@
+## gDRimport 1.9.9 - 2026-03-25
+* add support for D300 files without mapping file
+
 ## gDRimport 1.9.8 - 2026-02-25
 * add support for multi-plate new envision format
 
