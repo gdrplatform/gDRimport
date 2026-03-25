@@ -36,7 +36,6 @@ import_D300 <-
     assertthat::assert_that(assertthat::is.readable(destination_path), 
                             msg = "'destination_path' must be a readable path")
     
-    # Parse the D300 file first
     D300 <- parse_D300_xml(D300_file)
     D300 <- fill_NA(D300, from = "D300_Barcode", with = "D300_Plate_N")
     
@@ -45,12 +44,10 @@ import_D300 <-
       drug_identifier = gDRutils::get_env_identifiers("drug"),
       conc_identifier = gDRutils::get_env_identifiers("concentration")) #standard identifiers
     
-    # Conditionally process metadata if provided
     if (!is.null(metadata_file)) {
       Gnums <- parse_D300_metadata_file(metadata_file)
       treatment <- merge_D300_w_metadata(D300, Gnums)
     } else {
-      # Use the original identifiers straight from the D300 file
       treatment <- D300
       treatment[[idfs$drug_identifier]] <- treatment$Name
     }
@@ -60,7 +57,6 @@ import_D300 <-
       stop(sprintf("missing required columns from D300 file: '%s'", paste0(req_cols[!present], collapse = ", ")))
     }
     
-    # FIX: Force numerical sorting of the plate list so 1 through 8 stay in chronological order
     uplates <- sort(as.numeric(unique(treatment$D300_Plate_N)))
     
     existing_files <- list.files(destination_path, pattern = "^trt_P\\d+\\.xlsx$")
@@ -88,7 +84,6 @@ import_D300 <-
       # count number of drugs,conc in each well 
       trt_n_drugs <- apply(trt_gnumber_conc, c(1, 2), function(x) length(x[[1]]))
       
-      # Extract actual plate dimensions from the XML Dimension tag (e.g. "(8,12)")
       dim_str <- trt_filt$Dimension[1]
       dims <- as.integer(strsplit(gsub("\\(|\\)", "", dim_str), ",")[[1]])
       
@@ -121,11 +116,9 @@ import_D300 <-
 save_drug_info_per_well <-
   function(trt_info, trt_gnumber_conc, wb, idfs) {
     
-    # Use the physical plate dimensions to ensure empty edge wells are populated
     nrow <- trt_info$plate_nrow
     ncol <- trt_info$plate_ncol
     
-    # Fallback just in case dimension parsing failed
     if (is.null(nrow) || is.na(nrow)) nrow <- max(trt_info$row_idx)
     if (is.null(ncol) || is.na(ncol)) ncol <- max(trt_info$col_idx)
     
@@ -140,42 +133,36 @@ save_drug_info_per_well <-
         conc_sname <- paste0(conc_sname, "_", j)
       }
       
-      # Pre-fill matrices to hold final Excel data
       conc_mat <- matrix(as.numeric(NA), nrow = nrow, ncol = ncol)
       drug_mat <- matrix(character(nwells), nrow = nrow, ncol = ncol)
       
       for (m in seq_len(nrow)) {
         for (n in seq_len(ncol)) {
           
-          # Identify outer edge wells to leave explicitly blank
           is_edge <- (m == 1 || m == nrow || n == 1 || n == ncol)
           
-          # Map physical plate coordinate to the parsed data index
           r_idx <- which(trt_info$row_idx == m)
           c_idx <- which(trt_info$col_idx == n)
           
           if (length(r_idx) > 0 && length(c_idx) > 0) {
             drug_entry <- trt_gnumber_conc[[r_idx, c_idx]]
           } else {
-            drug_entry <- list() # Well was completely empty in D300 XML
+            drug_entry <- list()
           }
           
           if (length(drug_entry) >= j) {
             drug <- drug_entry[[j]][[1]]
             conc <- as.numeric(drug_entry[[j]][[2]])
             
-            # Explicit vehicle fluids assigned zero
             if (drug %in% idfs$untreated_tags) {
               conc <- 0.0
             }
             
           } else {
-            # Handle XML-missing empty wells without Metadata mapping
             if (is_edge) {
               drug <- ""
               conc <- NA  # openxlsx handles NA by creating an empty cell
             } else {
-              # Inner empty wells (e.g. Columns 10 & 11) become Vehicles
               drug <- idfs$untreated_tags[[1]]
               conc <- 0.0
             }
@@ -192,7 +179,6 @@ save_drug_info_per_well <-
       openxlsx::addWorksheet(wb, drug_sname)
       openxlsx::writeData(wb, sheet = (j * 2) - 1, drug_data, colNames = FALSE)
       openxlsx::addWorksheet(wb, conc_sname)
-      # keepNA = FALSE ensures NA values render as truly empty cells in the final Excel file
       openxlsx::writeData(wb, sheet = (j * 2), conc_data, colNames = FALSE, keepNA = FALSE)
     }
   }
@@ -212,7 +198,6 @@ merge_D300_w_metadata <- function(D300, Gnums) {
   merge_metadata_col <- "D300_Label"
   validate_columns(merge_metadata_col, Gnums)
   
-  # Added sort = FALSE to prevent scrambling
   merge(D300, Gnums, by.x = merge_trt_col, by.y = merge_metadata_col, all.x = TRUE, sort = FALSE)
 }
 
@@ -241,11 +226,9 @@ parse_D300_xml <- function(D300_file) {
   assertthat::assert_that(is.character(D300_file), msg = "'D300_file' must be a character vector")
   assertthat::assert_that(assertthat::is.readable(D300_file), msg = "'D300_file' must be a readable path")
   
-  # Open D300 XML format.
   D300_xml.tree <- XML::xmlTreeParse(D300_file, useInternal = TRUE) 
   top <- XML::xmlRoot(D300_xml.tree)
   
-  # Safely retrieve units (prevents UseMethod error if node is missing).
   node_vol <- top[["VolumeUnit"]]
   vol_unit  <- if (!is.null(node_vol)) XML::xmlValue(node_vol) else NA
   
@@ -255,12 +238,10 @@ parse_D300_xml <- function(D300_file) {
   node_mol <- top[["MolarityConcentrationUnit"]]
   mol_conc_unit <- if (!is.null(node_mol)) XML::xmlValue(node_mol) else NA
   
-  # Handle missing ConcentrationUnit in newer D300 software versions
   if (is.na(conc_unit)) {
     conc_unit <- mol_conc_unit
   }
   
-  # Assertions.
   if (!is.na(conc_unit) && !is.na(mol_conc_unit)) {
     assertthat::assert_that(conc_unit == mol_conc_unit, 
                             msg = "Mismatch between the units for ConcentrationUnit and MolarityConcentrationUnit")
@@ -276,7 +257,6 @@ parse_D300_xml <- function(D300_file) {
   df_drug <- get_D300_xml_drugs(top, id_col)
   df_trt <- get_D300_xml_treatments(top, id_col, vol_unit, conc_unit)
   
-  # Added sort = FALSE to prevent scrambling
   df_D300 <- merge(df_trt, df_drug, by.x = id_col, by.y = id_col, all.x = TRUE, sort = FALSE)
   df_D300
 }
@@ -287,7 +267,7 @@ get_D300_xml_drugs <-
     
     drug_cols <- c(id_col, "Name", "Stock_Conc", "Stock_Unit")
     
-    # Safely extract information for every fluid (i.e. drugs) using XPath
+    # extract information for every fluid (i.e. drugs) using XPath
     fluids <- XML::xpathSApply(xml_tree_root, ".//Fluids/Fluid")
     nfluids <- length(fluids)
     df_drug <- vector("list", nfluids)

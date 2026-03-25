@@ -871,7 +871,6 @@ load_results_EnVision_new <- function(results_file, headers = gDRutils::get_env_
         futile.logger::flog.info("Processing sheet '%s' from %s", sheet_name, current_file)
       }
       
-      # More robust regex to handle potential quotes around the leading comma
       data_header_idx <- grep("^\"?\"?[;,]\"?1\"?[;,]\"?2\"?[;,]\"?3\"?", lines)
       
       if (length(data_header_idx) == 0) {
@@ -887,8 +886,8 @@ load_results_EnVision_new <- function(results_file, headers = gDRutils::get_env_
         data_start_line <- data_header_idx[idx]
         
         barcode <- NA
-        # Limit the lookback to at most 15 lines above the matrix. 
-        # This prevents picking up an old barcode for dummy matrices at the end of the file.
+        # limit the lookback to at most 15 lines above the matrix. 
+        # this prevents picking up an old barcode for dummy matrices at the end of the file.
         search_limit <- max(1, data_start_line - 15)
         
         # 1. Look upward for the specific table header
@@ -916,7 +915,6 @@ load_results_EnVision_new <- function(results_file, headers = gDRutils::get_env_
           }
         }
         
-        # If no barcode is found within the limit, it's likely a dummy Plate Map matrix. Skip it.
         if (is.na(barcode) || barcode == "") {
           futile.logger::flog.info("Skipping matrix at line %d in file '%s': no associated 'Plate Barcode' found within 15 lines.",
                                    data_start_line, current_file)
