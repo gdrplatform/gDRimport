@@ -59,7 +59,9 @@ import_D300 <-
     if (!all(present <- req_cols %in% colnames(treatment))) {
       stop(sprintf("missing required columns from D300 file: '%s'", paste0(req_cols[!present], collapse = ", ")))
     }
-    uplates <- unique(treatment$D300_Plate_N)
+    
+    # FIX: Force numerical sorting of the plate list so 1 through 8 stay in chronological order
+    uplates <- sort(as.numeric(unique(treatment$D300_Plate_N)))
     
     existing_files <- list.files(destination_path, pattern = "^trt_P\\d+\\.xlsx$")
     
@@ -138,12 +140,15 @@ save_drug_info_per_well <-
         conc_sname <- paste0(conc_sname, "_", j)
       }
       
-      # Pre-fill matrices with vehicle values (untreated + 0.0 conc)
-      conc_mat <- matrix(rep(0.0, nwells), nrow = nrow, ncol = ncol)
-      drug_mat <- matrix(rep(idfs$untreated_tags[[1]], nwells), nrow = nrow, ncol = ncol)
+      # Pre-fill matrices to hold final Excel data
+      conc_mat <- matrix(as.numeric(NA), nrow = nrow, ncol = ncol)
+      drug_mat <- matrix(character(nwells), nrow = nrow, ncol = ncol)
       
       for (m in seq_len(nrow)) {
         for (n in seq_len(ncol)) {
+          
+          # Identify outer edge wells to leave explicitly blank
+          is_edge <- (m == 1 || m == nrow || n == 1 || n == ncol)
           
           # Map physical plate coordinate to the parsed data index
           r_idx <- which(trt_info$row_idx == m)
@@ -157,7 +162,7 @@ save_drug_info_per_well <-
           
           if (length(drug_entry) >= j) {
             drug <- drug_entry[[j]][[1]]
-            conc <- drug_entry[[j]][[2]]
+            conc <- as.numeric(drug_entry[[j]][[2]])
             
             # Explicit vehicle fluids assigned zero
             if (drug %in% idfs$untreated_tags) {
@@ -165,9 +170,15 @@ save_drug_info_per_well <-
             }
             
           } else {
-            # If no drug is specified, assign untreated
-            drug <- idfs$untreated_tags[[1]]
-            conc <- 0.0
+            # Handle XML-missing empty wells without Metadata mapping
+            if (is_edge) {
+              drug <- ""
+              conc <- NA  # openxlsx handles NA by creating an empty cell
+            } else {
+              # Inner empty wells (e.g. Columns 10 & 11) become Vehicles
+              drug <- idfs$untreated_tags[[1]]
+              conc <- 0.0
+            }
           }
           
           conc_mat[m, n] <- conc
@@ -181,7 +192,8 @@ save_drug_info_per_well <-
       openxlsx::addWorksheet(wb, drug_sname)
       openxlsx::writeData(wb, sheet = (j * 2) - 1, drug_data, colNames = FALSE)
       openxlsx::addWorksheet(wb, conc_sname)
-      openxlsx::writeData(wb, sheet = (j * 2), conc_data, colNames = FALSE)
+      # keepNA = FALSE ensures NA values render as truly empty cells in the final Excel file
+      openxlsx::writeData(wb, sheet = (j * 2), conc_data, colNames = FALSE, keepNA = FALSE)
     }
   }
 
@@ -200,7 +212,8 @@ merge_D300_w_metadata <- function(D300, Gnums) {
   merge_metadata_col <- "D300_Label"
   validate_columns(merge_metadata_col, Gnums)
   
-  merge(D300, Gnums, by.x = merge_trt_col, by.y = merge_metadata_col, all.x = TRUE)
+  # Added sort = FALSE to prevent scrambling
+  merge(D300, Gnums, by.x = merge_trt_col, by.y = merge_metadata_col, all.x = TRUE, sort = FALSE)
 }
 
 
@@ -263,7 +276,8 @@ parse_D300_xml <- function(D300_file) {
   df_drug <- get_D300_xml_drugs(top, id_col)
   df_trt <- get_D300_xml_treatments(top, id_col, vol_unit, conc_unit)
   
-  df_D300 <- merge(df_trt, df_drug, by.x = id_col, by.y = id_col, all.x = TRUE)
+  # Added sort = FALSE to prevent scrambling
+  df_D300 <- merge(df_trt, df_drug, by.x = id_col, by.y = id_col, all.x = TRUE, sort = FALSE)
   df_D300
 }
 
@@ -344,15 +358,12 @@ get_D300_xml_treatments <-
       # extract drug dispensing information for each well using XPath
       wells <- XML::xpathSApply(plate, ".//Wells/Well")
       
-      # Determine if indexing is 0-based or 1-based by checking the first row
-      row_indices <- as.numeric(sapply(wells, function(w) XML::xmlAttrs(w)[["Row"]]))
-      offset <- if (length(row_indices) > 0 && min(row_indices) == 0) 1 else 0
-      
       wl <- lapply(wells, function(well) {
         
         well_attr <- XML::xmlAttrs(well)
-        row_well <- strtoi(well_attr[["Row"]]) + offset
-        col_well <- strtoi(well_attr[["Col"]]) + offset
+        # D300 files are always 0-indexed. Hardcoding the +1 shift to match Excel matrices.
+        row_well <- strtoi(well_attr[["Row"]]) + 1
+        col_well <- strtoi(well_attr[["Col"]]) + 1
         
         # extract information each fluid delivered in well 
         fluids <- XML::xpathSApply(well, ".//Fluid")
