@@ -1,74 +1,74 @@
 context("load_files")
 
-test_that("load_manifest", {
-
+test_that("load_manifest works as expected", {
+  
   # get test_data
   td1 <- get_test_data()
-
+  
   # valid output returned for "manifest.xlsx"
   m_df <- load_manifest(manifest_path(td1))
   expect_identical(td1@ref_m_df, m_df$data)
-
+  
   #get test data2
   td2 <- get_test_Tecan_data()
-
+  
   # valid output returned for "manifest.xlsx"
   m_df <- load_manifest(td2$m_file)
   ref_m_df <- qs::qread(td2$ref_m_df)
   expect_equal(m_df, ref_m_df)
-
+  
   # expected error(s) returned
   err_msg1 <- "Assertion on 'manifest_file' failed: File does not exist: '/non/existent_file'."
   expect_error(load_manifest("/non/existent_file"), err_msg1)
-
+  
   err_msg2 <- "'manifest_file' must be a character vector"
   expect_error(load_manifest(c(2, 3)), err_msg2)
-
+  
   err_msg3 <- "Barcodes in Manifest must be unique!"
   expect_error(load_manifest(c(manifest_path(td1), manifest_path(td1))), err_msg3)
-
+  
 })
 
 
-test_that("load_results", {
-
+test_that("load_results works as expected", {
+  
   # get test_data
   td1 <- get_test_data()
-
+  
   headers <- gDRutils::get_env_identifiers()
   headers$barcode <- headers$barcode[[1]]
-
+  
   # valid output returned for the two xlsx files
   res_tbl <- load_results(df_results_files = c(result_path(td1)), headers = headers)
   ## check with reference
   ## reference obtained with: write.csv2(res_tbl,file = "ref_RawData_day0_day7_xlsx.csv",row.names = FALSE) # nolint
   ref_tbl <- data.table::fread(td1@ref_r1_r2)
   expect_equal(res_tbl, ref_tbl)
-
+  
   # valid output returned for data.table input
   df_results <- data.table::data.table(datapath = result_path(td1), name = basename(result_path(td1)))
   res_df_tbl <- load_results(df_results, headers = headers)
   expect_equal(res_df_tbl, ref_tbl)
-
+  
   # valid output is returned for a single xlsx file
   res_tbl2 <- load_results(df_results_files = c(result_path(td1)[1]), headers = headers)
   ## check with reference
   ref_tbl2 <- data.table::fread(td1@ref_r1)
   expect_equal(res_tbl2, ref_tbl2)
-
+  
   # get test_Tecan_data
   td2 <- get_test_Tecan_data()
-
+  
   # valid output returned for Tecan format
   res_tbl3 <- load_results(df_results_files = c(td2$r_files), instrument = "Tecan", headers = headers)
   ## check with reference
   ref_tbl3 <- qs::qread(td2$ref_r_df)
   expect_equal(res_tbl3, ref_tbl3)
-
+  
   # expected error(s) returned
   err_msg1 <- "Assertion on 'results_file' failed: File does not exist: '/non/existent_file'."
   expect_error(load_results(c(result_path(td1)[1], "/non/existent_file")), err_msg1)
-
+  
   # expected error(s) returned
   err_msg_2a <- "Assertion on 'instrument' failed: "
   err_msg2b <- "Must comply to pattern '^EnVision$|^long_tsv$|^Tecan$|^EnVision_new$|^Incucyte$'."
@@ -77,49 +77,49 @@ test_that("load_results", {
 })
 
 
-test_that("load_templates", {
-
+test_that("load_templates works as expected", {
+  
   # get test_data
   td1 <- get_test_data()
-
+  
   # valid output returned for the two xlsx files
   t_tbl <- load_templates(df_template_files = c(template_path(td1)))
   ## check with reference
   ref_tbl <- data.table::fread(td1@ref_t1_t2, colClasses = "character")
   expect_equal(t_tbl, ref_tbl)
-
+  
   # valid output returned for data.table input
   df_templates <- data.table::data.table(datapath = template_path(td1), name = basename(template_path(td1)))
   res_t_tbl <- load_templates(df_templates)
   expect_equal(res_t_tbl, ref_tbl)
-
+  
   # get test_Tecan_data
   td2 <- get_test_Tecan_data()
-
+  
   # valid output is returned for xlsx files
   res_t_tbl3 <- load_templates(df_template_files = c(td2$t_files))
   ## check with reference
   ref_tbl3 <- .standardize_untreated_values(qs::qread(td2$ref_t_df))
   expect_equal(res_t_tbl3, ref_tbl3)
-
+  
   # expected error(s) returned
   err_msg1 <- "Assertion on 'template_file' failed: File does not exist: '/non/existent_file'."
   expect_error(load_templates(c(template_path(td1)[1], "/non/existent_file")), err_msg1)
 })
 
 
-test_that("load_templates returns an error when there is no untreated conditions", {
+test_that("load_templates with no untreated conditions works as expected", {
   err_msg <- "No untreated controls were found in the treatment. Please upload the appropriate treatment."
   expect_error(load_templates(system.file("extdata/data_for_unittests/Template_7daytreated.xlsx",
                                           package = "gDRimport")), err_msg)
-
+  
 })
 
-test_that("load_data", {
-
+test_that("load_data works as expected", {
+  
   # get test_data
   td1 <- get_test_data()
-
+  
   l_tbl <- load_data(manifest_path(td1), template_path(td1), result_path(td1))
   # valid output returned for manifest
   expect_identical(td1@ref_m_df, l_tbl$manifest)
@@ -129,10 +129,10 @@ test_that("load_data", {
   # valid output returned for results
   ref_tbl <- data.table::fread(td1@ref_r1_r2)
   expect_equal(l_tbl$data, ref_tbl)
-
+  
   #get test_Tecan_data (Tecan format)
   td2 <- get_test_Tecan_data()
-
+  
   l_tbl2 <- load_data(td2$m_file, td2$t_files, td2$r_files, instrument = "Tecan")
   # valid output returned for manifest
   ref_m_df <- qs::qread(td2$ref_m_df)
@@ -159,25 +159,25 @@ test_that("load_data", {
   # expected error(s) returned - manifest
   err_msg1 <- "'manifest_file' must be a readable path"
   expect_error(load_data("/non/existent_file", template_path(td1), result_path(td1)), err_msg1)
-
+  
   err_msg2 <- "'manifest_file' must be a character vector"
   expect_error(load_data(c(2, 3), template_path(td1), result_path(td1)), err_msg2)
-
+  
   err_msg3 <- "Barcodes in Manifest must be unique!"
   expect_error(load_manifest(c(manifest_path(td1), manifest_path(td1))), err_msg3)
-
+  
   # expected error(s) returned - templates
   err_msg4 <- "Following path(s) with no read permission found: '/non/existent_file'"
   expect_error(load_data(manifest_path(td1), c(result_path(td1)[1], "/non/existent_file"), 
                          result_path(td1)), err_msg4, fixed = TRUE)
-
+  
   # expected error(s) returned
   err_msg_5a <- "Assertion on 'instrument' failed: "
   err_msg5b <- "Must comply to pattern '^EnVision$|^long_tsv$|^Tecan$|^EnVision_new$|^Incucyte$'."
   err_msg5 <- paste0(err_msg_5a, err_msg5b)
   expect_error(load_data(manifest_path(td1), template_path(td1), result_path(td1), "invalid_instrument"), 
                err_msg5, fixed = TRUE)
-
+  
   # expected error(s) returned - results
   err_msg6 <- "Assertion on 'results_file' failed: File does not exist: '/non/existent_file'."
   expect_error(load_data(manifest_path(td1), template_path(td1), c(result_path(td1)[1], "/non/existent_file")), 
@@ -246,10 +246,10 @@ test_that(".check_file_structure works as expected", {
   barcode_col <- 3
   expect_null(.check_file_structure(df, basename(results_filename[[iF]]), 
                                     iS, readout_offset, n_row, n_col, iB, barcode_col))
-
+  
   df2 <- read_excel_to_dt(system.file("extdata/data1/RawData_day7.xlsx", package = "gDRimport"))
   expect_error(.check_file_structure(df2, basename(results_filename[[iF]]),
-                                    iS, readout_offset, n_row, n_col, iB, barcode_col))
+                                     iS, readout_offset, n_row, n_col, iB, barcode_col))
 })
 
 test_that(".fill_empty_wells works as expected", {
@@ -285,9 +285,9 @@ test_that(".fill_empty_wells works as expected", {
 
 test_that(".standardize_untreated_values works as expected", {
   untreated_tags <- gDRutils::get_env_identifiers("untreated_tag")
-
+  
   df_test <- data.table::data.table(a = c(untreated_tags[[1]], untreated_tags[[2]],
-                              toupper(untreated_tags[[1]]), tolower(untreated_tags[[2]])))
+                                          toupper(untreated_tags[[1]]), tolower(untreated_tags[[2]])))
   df_corrected <- .standardize_untreated_values(df_test)
   expect_true(all(unlist(df_corrected) == untreated_tags[[1]]))
 })
@@ -439,7 +439,7 @@ test_that("load_results_Incucyte works as expected", {
     V1 = c(
       "Vessel Name",
       "Barcode",
-       "Notes",
+      "Notes",
       "Date Time",
       "8/18/25 3:02",
       "8/18/25 9:02"
@@ -487,7 +487,7 @@ test_that("load_results_Incucyte works as expected", {
     ),
     file_custom_header_path
   )
-
+  
   # Content for File with Colon in Barcode Header
   # Note: We use 3 columns consistently (Metadata and Data) to avoid parsing errors
   # and to ensure we don't create an empty 4th column that triggers melt() type warnings.
@@ -515,7 +515,7 @@ test_that("load_results_Incucyte works as expected", {
   ))
   # --- End Setup ---
   
- 
+  
   # (1) Test: single CSV file
   dt_csv <- load_results_Incucyte(file_csv_1_path, headers)
   
@@ -572,7 +572,7 @@ test_that("load_results_Incucyte works as expected", {
       file_tsv_3_path,
       file_xlsx_4_path)
   dt_all <- load_results_Incucyte(all_files, headers)
- 
+  
   expect_s3_class(dt_all, "data.table")
   
   # File 1 (CSV): 4 rows
@@ -625,7 +625,7 @@ test_that("load_results_Incucyte works as expected", {
     "Invalid header in the result file: (missing 'Barcode' column)",
     fixed = TRUE
   )
-
+  
   # (6) Test: Barcode header with colon
   dt_colon <- load_results_Incucyte(file_colon_header_path, headers)
   
@@ -633,7 +633,7 @@ test_that("load_results_Incucyte works as expected", {
   # Verify it extracted the barcode despite the colon in the header
   expect_equal(unique(dt_colon[[bcode_name]]), "PLATE_COLON_TEST")
   expect_equal(dt_colon$ReadoutValue, 999)
-
+  
 })
 
 test_that("load_results_EnVision_new works as expected", {
@@ -643,20 +643,19 @@ test_that("load_results_EnVision_new works as expected", {
   file_envision_multi <- tempfile(fileext = ".csv")
   file_envision_error <- tempfile(fileext = ".csv")
   
-  # Content for multiple plates in one file (simulating EnVision new format)
   writeLines(
     c(
       "Instrument Results from;;;;;;",
       "Protocol Name;CyQuant 96w;;;;;",
       ";;;;;;",
       "Result of Fluorescence Intensity Filter 1;;;;;;",
-      "Plate Barcode;Loop;Repeat;Point X;Point Y;Exc WL[nm];", # Standard header
+      "Plate Barcode;Loop;Repeat;Point X;Point Y;Exc WL[nm];",
       "P01;;1;;;485 / 20;",
       ";;;;;;",
       ";1;2;3",
       "A;10;20;30",
-      "B;40;OVR;60",   # Test coercion to NA for invalid text ("OVR")
-      "C;70;;90",      # Test empty string coercion to NA
+      "B;40;OVR;60",
+      "C;70;;90",
       ";;;;;;",
       "Measurement Information;;;;;;",
       "Measurement GUID;;747f1a39-507e-4049;;;;",
@@ -667,7 +666,13 @@ test_that("load_results_EnVision_new works as expected", {
       ";1;2;3",
       "A;11;21;31",
       "B;41;51;61",
-      "C;71;81;91"
+      "C;71;81;91",
+      rep(";;;;;;", 16),
+      "Plate Map;;;;;;",
+      ";1;2;3",
+      "A;-;-;-",
+      "B;-;-;-",
+      "C;-;-;-"
     ),
     file_envision_multi
   )
@@ -688,22 +693,17 @@ test_that("load_results_EnVision_new works as expected", {
   )
   
   expect_s3_class(dt_multi, "data.table")
-  # 2 plates * 3 rows * 3 cols = 18 wells total
   expect_equal(nrow(dt_multi), 18)
   
-  # Ensure both barcodes were picked up correctly using the header methods
   expect_equal(unique(dt_multi[[bcode_name]]), c("P01", "P02"))
   
-  # Check standard columns
   expect_true(all(c(bcode_name, "WellRow", "WellColumn", "ReadoutValue", "BackgroundValue") %in% names(dt_multi)))
   
-  # Check Plate 1 data
   plate1 <- dt_multi[dt_multi[[bcode_name]] == "P01", ]
   expect_equal(plate1[WellRow == "A" & WellColumn == 1, ReadoutValue], 10)
   expect_true(is.na(plate1[WellRow == "B" & WellColumn == 2, ReadoutValue]))
   expect_true(is.na(plate1[WellRow == "C" & WellColumn == 2, ReadoutValue]))
   
-  # Check Plate 2 data
   plate2 <- dt_multi[dt_multi[[bcode_name]] == "P02", ]
   expect_false(any(is.na(plate2$ReadoutValue)))
   expect_equal(plate2[WellRow == "A" & WellColumn == 1, ReadoutValue], 11)

@@ -2,7 +2,7 @@ Package: gDRimport
 Type: Package
 Title: Package for handling the import of dose-response data
 Version: 1.9.9
-Date: 2026-03-25
+Date: 2026-04-07
 Authors@R: c(
     person("Arkadiusz", "Gladki", role=c("aut", "cre"), email="gladki.arkadiusz@gmail.com",
            comment = c(ORCID = "0000-0002-7059-6378")),

@@ -871,13 +871,12 @@ load_results_EnVision_new <- function(results_file, headers = gDRutils::get_env_
         futile.logger::flog.info("Processing sheet '%s' from %s", sheet_name, current_file)
       }
       
+      # More robust regex to handle potential quotes around the leading comma
       data_header_idx <- grep("^\"?\"?[;,]\"?1\"?[;,]\"?2\"?[;,]\"?3\"?", lines)
       
       if (length(data_header_idx) == 0) {
         if (is_excel) {
-          futile.logger::flog.warn("Could not find data matrix header in file: %s, sheet: '%s'. Skipping.",
-                                   current_file,
-                                   sheet_name)
+          futile.logger::flog.warn("Could not find data matrix header in file: %s, sheet: '%s'. Skipping.", current_file, sheet_name)
           next
         } else {
           stop(sprintf("Could not find data matrix header (e.g., ';1;2;3...') in file: %s", current_file))
@@ -888,8 +887,8 @@ load_results_EnVision_new <- function(results_file, headers = gDRutils::get_env_
         data_start_line <- data_header_idx[idx]
         
         barcode <- NA
-        # limit the lookback to at most 15 lines above the matrix. 
-        # this prevents picking up an old barcode for dummy matrices at the end of the file.
+        # Limit the lookback to at most 15 lines above the matrix. 
+        # This prevents picking up an old barcode for dummy matrices at the end of the file.
         search_limit <- max(1, data_start_line - 15)
         
         # 1. Look upward for the specific table header
@@ -897,7 +896,7 @@ load_results_EnVision_new <- function(results_file, headers = gDRutils::get_env_
           if (grepl("^\"?Plate Barcode\"?[;,]\"?Loop\"?", lines[r], ignore.case = TRUE)) {
             barcode_line <- lines[r + 1]
             barcode <- strsplit(barcode_line, ";|,")[[1]][1]
-            barcode <- gsub("^\"|\"$", "", barcode) # Strip stray quotes
+            barcode <- gsub('^"|"$', '', barcode) # Strip stray quotes
             break
           }
         }
@@ -907,7 +906,7 @@ load_results_EnVision_new <- function(results_file, headers = gDRutils::get_env_
           for (r in seq(data_start_line - 1, search_limit, by = -1)) {
             if (grepl("^\"?Plate Barcode\"?[;,]", lines[r], ignore.case = TRUE)) {
               parts <- strsplit(lines[r], ";|,")[[1]]
-              parts <- gsub("^\"|\"$", "", parts)
+              parts <- gsub('^"|"$', '', parts)
               vals <- parts[parts != "" & toupper(parts) != "PLATE BARCODE"]
               if (length(vals) > 0) {
                 barcode <- vals[1]
@@ -917,9 +916,9 @@ load_results_EnVision_new <- function(results_file, headers = gDRutils::get_env_
           }
         }
         
+        # If no barcode is found within the limit, it's likely a dummy Plate Map matrix. Skip it.
         if (is.na(barcode) || barcode == "") {
-          futile.logger::flog.info("Skipping matrix at line %d in file '%s': no associated 
-                                   'Plate Barcode' found within 15 lines.",
+          futile.logger::flog.info("Skipping matrix at line %d in file '%s': no associated 'Plate Barcode' found within 15 lines.",
                                    data_start_line, current_file)
           next
         }
@@ -962,7 +961,7 @@ load_results_EnVision_new <- function(results_file, headers = gDRutils::get_env_
         )
         
         # Clean up WellColumn and immediately drop phantom columns (e.g., V14, V15)
-        melted_data[, WellColumn := gsub("^\"|\"$", "", WellColumn)]
+        melted_data[, WellColumn := gsub('^"|"$', '', WellColumn)] 
         invalid_cols <- !grepl("^[0-9]+$", melted_data$WellColumn)
         melted_data <- melted_data[!invalid_cols] 
         
