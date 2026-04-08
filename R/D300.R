@@ -345,7 +345,9 @@ get_D300_xml_treatments <-
       wells <- XML::xpathSApply(plate, ".//Wells/Well")
       
       # Determine if indexing is 0-based or 1-based by checking the first row
-      row_indices <- as.numeric(sapply(wells, function(w) XML::xmlAttrs(w)[["Row"]]))
+      row_indices <- vapply(wells, function(w) {
+        as.numeric(XML::xmlAttrs(w)[["Row"]])
+      }, FUN.VALUE = numeric(1))
       offset <- if (length(row_indices) > 0 && min(row_indices) == 0) 1 else 0
       
       wl <- lapply(wells, function(well) {
