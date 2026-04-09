@@ -552,7 +552,8 @@ test_that("load_results_EnVision_new works as expected", {
   )
   
   xlsx_df <- data.frame(
-    V1 = c("Instrument Results from", "Protocol Name", NA, "Result of Fluorescence", "Plate Barcode", "P03", NA, NA, "A", "B", "C"),
+    V1 = c("Instrument Results from", "Protocol Name", NA, "Result of Fluorescence",
+           "Plate Barcode", "P03", NA, NA, "A", "B", "C"),
     V2 = c(NA, "CyQuant 96w", NA, NA, "Loop", NA, NA, "1", "12", "42", "72"),
     V3 = c(NA, NA, NA, NA, "Repeat", "1", NA, "2", "22", "52", "82"),
     V4 = c(NA, NA, NA, NA, "Point X", NA, NA, "3", "32", "62", "92"),
