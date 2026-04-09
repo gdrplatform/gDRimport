@@ -871,8 +871,8 @@ load_results_EnVision_new <- function(results_file, headers = gDRutils::get_env_
         futile.logger::flog.info("Processing sheet '%s' from %s", sheet_name, current_file)
       }
       
-      clean_lines <- gsub('^"|"$', '', lines) 
-      clean_lines <- gsub('"', '', clean_lines) 
+      clean_lines <- gsub("^\"|\"$", "", lines)
+      clean_lines <- gsub("\"", "", clean_lines)
       
       data_header_idx <- grep("^[;, \t]*1[;, \t]+2[;, \t]+3", clean_lines)
       
@@ -919,7 +919,8 @@ load_results_EnVision_new <- function(results_file, headers = gDRutils::get_env_
         }
         
         if (is.na(barcode) || barcode == "") {
-          futile.logger::flog.info("Skipping matrix at line %d in file '%s': no associated 'Plate Barcode' found within 15 lines.",
+          futile.logger::flog.info("Skipping matrix at line %d in file '%s':
+                                   no associated 'Plate Barcode' found within 15 lines.",
                                    data_start_line, current_file)
           next
         }
@@ -959,7 +960,7 @@ load_results_EnVision_new <- function(results_file, headers = gDRutils::get_env_
           value.name = "ReadoutValue"
         )
         
-        melted_data[, WellColumn := gsub('^"|"$', '', WellColumn)] 
+        melted_data[, WellColumn := gsub("^\"|\"$", "", WellColumn)]
         invalid_cols <- !grepl("^[0-9]+$", melted_data$WellColumn)
         melted_data <- melted_data[!invalid_cols] 
         
