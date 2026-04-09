@@ -66,7 +66,7 @@ test_that("import_D300", {
     } 
     
     # run import_D300
-    import_D300(D300_file, Gnum_file, dest_path)
+    import_D300(D300_file, dest_path, Gnum_file)
     
     # test every output file against reference file 
     fs <- list.files(path = dest_path)

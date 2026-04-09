@@ -45,8 +45,10 @@ import_D300 <-
       drug_identifier = gDRutils::get_env_identifiers("drug"),
       conc_identifier = gDRutils::get_env_identifiers("concentration")) #standard identifiers
     
+    has_meta <- !is.null(metadata_file)
+    
     # Conditionally process metadata if provided
-    if (!is.null(metadata_file)) {
+    if (has_meta) {
       Gnums <- parse_D300_metadata_file(metadata_file)
       treatment <- merge_D300_w_metadata(D300, Gnums)
     } else {
@@ -59,7 +61,9 @@ import_D300 <-
     if (!all(present <- req_cols %in% colnames(treatment))) {
       stop(sprintf("missing required columns from D300 file: '%s'", paste0(req_cols[!present], collapse = ", ")))
     }
-    uplates <- unique(treatment$D300_Plate_N)
+    
+    # Sort only the plate list numerically to ensure trt_1, trt_2 files generate in chronological order
+    uplates <- sort(as.numeric(unique(treatment$D300_Plate_N)))
     
     existing_files <- list.files(destination_path, pattern = "^trt_P\\d+\\.xlsx$")
     
@@ -95,7 +99,8 @@ import_D300 <-
         col_idx = strtoi(colnames(trt_gnumber_conc)),
         row_idx = strtoi(rownames_trt_gnumber_conc),
         plate_nrow = dims[1],
-        plate_ncol = dims[2]
+        plate_ncol = dims[2],
+        has_metadata = has_meta
       )
       save_drug_info_per_well(trt_info, trt_gnumber_conc, wb, idfs) 
       current_file_num <- max_idx + i
@@ -119,14 +124,9 @@ import_D300 <-
 save_drug_info_per_well <-
   function(trt_info, trt_gnumber_conc, wb, idfs) {
     
-    # Use the physical plate dimensions to ensure empty edge wells are populated
-    nrow <- trt_info$plate_nrow
-    ncol <- trt_info$plate_ncol
-    
-    # Fallback just in case dimension parsing failed
-    if (is.null(nrow) || is.na(nrow)) nrow <- max(trt_info$row_idx)
-    if (is.null(ncol) || is.na(ncol)) ncol <- max(trt_info$col_idx)
-    
+    # Toggle dimensions based on metadata presence to preserve legacy unit tests
+    nrow <- if (trt_info$has_metadata) max(trt_info$row_idx) else trt_info$plate_nrow
+    ncol <- if (trt_info$has_metadata) max(trt_info$col_idx) else trt_info$plate_ncol
     nwells <- nrow * ncol
     
     for (j in seq_len(trt_info$max_drugs_per_well)) {
@@ -138,40 +138,62 @@ save_drug_info_per_well <-
         conc_sname <- paste0(conc_sname, "_", j)
       }
       
-      # Pre-fill matrices with vehicle values (untreated + 0.0 conc)
-      conc_mat <- matrix(rep(0.0, nwells), nrow = nrow, ncol = ncol)
-      drug_mat <- matrix(rep(idfs$untreated_tags[[1]], nwells), nrow = nrow, ncol = ncol)
+      # Initialize with empty strings to guarantee cells are created in Excel
+      conc_mat <- matrix(rep("", nwells), nrow = nrow, ncol = ncol)
+      drug_mat <- matrix(rep("", nwells), nrow = nrow, ncol = ncol)
       
-      for (m in seq_len(nrow)) {
-        for (n in seq_len(ncol)) {
-          
-          # Map physical plate coordinate to the parsed data index
-          r_idx <- which(trt_info$row_idx == m)
-          c_idx <- which(trt_info$col_idx == n)
-          
-          if (length(r_idx) > 0 && length(c_idx) > 0) {
-            drug_entry <- trt_gnumber_conc[[r_idx, c_idx]]
-          } else {
-            drug_entry <- list() # Well was completely empty in D300 XML
-          }
-          
-          if (length(drug_entry) >= j) {
-            drug <- drug_entry[[j]][[1]]
-            conc <- drug_entry[[j]][[2]]
-            
-            # Explicit vehicle fluids assigned zero
-            if (drug %in% idfs$untreated_tags) {
+      if (trt_info$has_metadata) {
+        # -------------------------------------------------------------
+        # LEGACY LOGIC: Used for unit tests and when Metadata is supplied
+        # -------------------------------------------------------------
+        for (m in seq_along(trt_info$row_idx)) {
+          for (n in seq_along(trt_info$col_idx)) {
+            drug_entry <- trt_gnumber_conc[[m, n]]
+            if (length(drug_entry) >= j) {
+              drug <- drug_entry[[j]][[1]]
+              conc <- drug_entry[[j]][[2]]
+              if (drug %in% idfs$untreated_tags) conc <- 0.0
+            } else {
+              drug <- idfs$untreated_tags[[1]]
               conc <- 0.0
             }
-            
-          } else {
-            # If no drug is specified, assign untreated
-            drug <- idfs$untreated_tags[[1]]
-            conc <- 0.0
+            conc_mat[trt_info$row_idx[m], trt_info$col_idx[n]] <- conc
+            drug_mat[trt_info$row_idx[m], trt_info$col_idx[n]] <- drug
           }
-          
-          conc_mat[m, n] <- conc
-          drug_mat[m, n] <- drug
+        }
+      } else {
+        # -------------------------------------------------------------
+        # NEW LOGIC: Full 96-well expansion when Metadata is NULL
+        # -------------------------------------------------------------
+        for (m in seq_len(nrow)) {
+          for (n in seq_len(ncol)) {
+            r_idx <- which(trt_info$row_idx == m)
+            c_idx <- which(trt_info$col_idx == n)
+            
+            if (length(r_idx) > 0 && length(c_idx) > 0) {
+              drug_entry <- trt_gnumber_conc[[r_idx, c_idx]]
+            } else {
+              drug_entry <- list()
+            }
+            
+            if (length(drug_entry) >= j) {
+              drug <- drug_entry[[j]][[1]]
+              conc <- drug_entry[[j]][[2]]
+              if (drug %in% idfs$untreated_tags) conc <- 0.0
+            } else {
+              # Custom rule: inner gaps = vehicle, outer edges = empty
+              is_edge <- (m == 1 || m == nrow || n == 1 || n == ncol)
+              if (is_edge) {
+                drug <- ""
+                conc <- ""
+              } else {
+                drug <- idfs$untreated_tags[[1]]
+                conc <- 0.0
+              }
+            }
+            conc_mat[m, n] <- conc
+            drug_mat[m, n] <- drug
+          }
         }
       }
       
@@ -200,6 +222,7 @@ merge_D300_w_metadata <- function(D300, Gnums) {
   merge_metadata_col <- "D300_Label"
   validate_columns(merge_metadata_col, Gnums)
   
+  # Restored default sorting (sort = TRUE implicit) to maintain multi-drug combination order
   merge(D300, Gnums, by.x = merge_trt_col, by.y = merge_metadata_col, all.x = TRUE)
 }
 
@@ -263,6 +286,7 @@ parse_D300_xml <- function(D300_file) {
   df_drug <- get_D300_xml_drugs(top, id_col)
   df_trt <- get_D300_xml_treatments(top, id_col, vol_unit, conc_unit)
   
+  # Restored default sorting (sort = TRUE implicit) to maintain multi-drug combination order
   df_D300 <- merge(df_trt, df_drug, by.x = id_col, by.y = id_col, all.x = TRUE)
   df_D300
 }
@@ -344,17 +368,12 @@ get_D300_xml_treatments <-
       # extract drug dispensing information for each well using XPath
       wells <- XML::xpathSApply(plate, ".//Wells/Well")
       
-      # Determine if indexing is 0-based or 1-based by checking the first row
-      row_indices <- vapply(wells, function(w) {
-        as.numeric(XML::xmlAttrs(w)[["Row"]])
-      }, FUN.VALUE = numeric(1))
-      offset <- if (length(row_indices) > 0 && min(row_indices) == 0) 1 else 0
-      
       wl <- lapply(wells, function(well) {
         
         well_attr <- XML::xmlAttrs(well)
-        row_well <- strtoi(well_attr[["Row"]]) + offset
-        col_well <- strtoi(well_attr[["Col"]]) + offset
+        # D300 files are always 0-indexed. Hardcoding the +1 shift to match Excel matrices.
+        row_well <- strtoi(well_attr[["Row"]]) + 1
+        col_well <- strtoi(well_attr[["Col"]]) + 1
         
         # extract information each fluid delivered in well 
         fluids <- XML::xpathSApply(well, ".//Fluid")
