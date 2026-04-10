@@ -1,3 +1,6 @@
+## gDRimport 1.9.9 - 2026-04-07
+* add support for excel format of new envision data
+
 ## gDRimport 1.9.8 - 2026-02-25
 * add support for multi-plate new envision format
 
