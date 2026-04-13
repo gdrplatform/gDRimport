@@ -44,14 +44,14 @@ Imports:
     utils,
     XML,
     yaml,
-    openxlsx
+    openxlsx,
+    qs2
 Suggests:
     BiocStyle,
     gDRtestData (>= 1.7.1),
     gDRstyle (>= 1.7.1),
     knitr,
     purrr,
-    qs2,
     testthat
 URL: https://github.com/gdrplatform/gDRimport, https://gdrplatform.github.io/gDRimport/
 BugReports: https://github.com/gdrplatform/gDRimport/issues
