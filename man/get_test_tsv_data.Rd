@@ -8,7 +8,7 @@ get_test_tsv_data()
 }
 \value{
 list with with input data (manifest/template/result paths)
-and related reference data (.qs file paths)
+and related reference data (.qs2 file paths)
 }
 \description{
 get test tsv data
