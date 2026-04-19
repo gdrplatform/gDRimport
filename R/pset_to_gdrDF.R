@@ -106,7 +106,7 @@ getPSet <- function(pset_name,
   checkmate::assert_numeric(timeout)
   
   availPSets <- if (use_local_PSets_list) {
-    qs::qread(system.file("extdata", "data_for_unittests", "PSets.qs", package = "gDRimport"))
+    qs2::qs_read(system.file("extdata", "data_for_unittests", "PSets.qs2", package = "gDRimport"))
   } else {
     PharmacoGx::availablePSets(canonical = canonical)
   }  
@@ -123,9 +123,9 @@ getPSet <- function(pset_name,
   
   # Check if PSet exists in directories where PSets are stored. 
   # Read in if exists, download otherwise
-  pset <- if (file.exists(file.path(psetDir, paste0(pset_name_param, ".qs")))) {
-    message("PSet exists in user-provided directory, reading .qs file")
-    qs::qread(file.path(psetDir, paste0(pset_name_param, ".qs")))
+  pset <- if (file.exists(file.path(psetDir, paste0(pset_name_param, ".qs2")))) {
+    message("PSet exists in user-provided directory, reading .qs2 file")
+    qs2::qs_read(file.path(psetDir, paste0(pset_name_param, ".qs2")))
     } else {
       message("PSet does not exist in user-provided directory, downloading from database.")
       PharmacoGx::downloadPSet(pset_name_param, saveDir = psetDir, timeout = timeout)

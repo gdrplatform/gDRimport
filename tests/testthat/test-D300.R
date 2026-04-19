@@ -8,15 +8,15 @@ test_that("parse_D300_xml", {
   # valid output returned for the D300 96 well plate example
   fs <- td3[["f_96w"]]
   dose_df <- parse_D300_xml(fs[["d300"]])
-  ref_dose_df <- data.table::setDT(qs::qread(fs[["ref_d300"]]))
+  ref_dose_df <- data.table::setDT(qs2::qs_read(fs[["ref_d300"]]))
   data.table::setorder(dose_df, Row, Col, D300_Plate_N)
   data.table::setorder(ref_dose_df, Row, Col, D300_Plate_N)
   expect_identical(dose_df, ref_dose_df)
   
-  # valid output returned for the D300 348 well plate example
+  # valid output returned for the D300 384 well plate example
   fs2 <- td3[["f_384w"]]
-  dose_df <- parse_D300_xml(fs[["d300"]])
-  ref_dose_df <- data.table::setDT(qs::qread(fs[["ref_d300"]]))
+  dose_df <- parse_D300_xml(fs2[["d300"]])
+  ref_dose_df <- data.table::setDT(qs2::qs_read(fs2[["ref_d300"]]))
   data.table::setorder(dose_df, Row, Col, D300_Plate_N)
   data.table::setorder(ref_dose_df, Row, Col, D300_Plate_N)
   expect_identical(dose_df, ref_dose_df)
@@ -31,13 +31,13 @@ test_that("parse_D300_metadata_file works as expected", {
   
   fs <- td3[["f_96w"]]
   Gnum_96w_file <- parse_D300_metadata_file(fs$Gnum) 
-  ref_Gnum_96w_file <- qs::qread(fs$ref_Gnum)
+  ref_Gnum_96w_file <- qs2::qs_read(fs$ref_Gnum)
   expect_equal(Gnum_96w_file, ref_Gnum_96w_file)
   
   fs <- td3[["f_384w"]]
-  Gnum_96w_file <- parse_D300_metadata_file(fs$Gnum) 
-  ref_Gnum_96w_file <- qs::qread(fs$ref_Gnum)
-  expect_equal(Gnum_96w_file, ref_Gnum_96w_file)
+  Gnum_384w_file <- parse_D300_metadata_file(fs$Gnum)
+  ref_Gnum_384w_file <- qs2::qs_read(fs$ref_Gnum)
+  expect_equal(Gnum_384w_file, ref_Gnum_384w_file)
 })
 
 

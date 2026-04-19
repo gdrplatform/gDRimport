@@ -7,7 +7,7 @@
 #' @export
 #'
 #' @return object class "gdr_test_data" with with input data (manifest/template/result paths)
-#' and related reference data (qs file paths)
+#' and related reference data (qs2 file paths)
 get_test_data <- function() {
     
     ddir <- system.file(package = "gDRimport", "extdata", "data1")
@@ -54,7 +54,7 @@ get_test_data <- function() {
 #' @export
 #'
 #' @return list with with input data (manifest/template/result paths)
-#' and related reference data (qs file paths)
+#' and related reference data (qs2 file paths)
 get_test_Tecan_data <- function() {
     ddir <- system.file(package = "gDRimport", "extdata", "data2")
     list(
@@ -64,9 +64,9 @@ get_test_Tecan_data <- function() {
         c(
           file.path(ddir, "D300_trt_Tecan_96_well_plates.xlsx")
         ),
-      ref_m_df = file.path(ddir, "ref_manifest_Tecan_96_well_plates.qs"),
-      ref_r_df = file.path(ddir, "ref_RawData_Tecan_96_well_plates.qs"),
-      ref_t_df = file.path(ddir, "ref_D300_trt_Tecan_96_well_plates.qs")
+      ref_m_df = file.path(ddir, "ref_manifest_Tecan_96_well_plates.qs2"),
+      ref_r_df = file.path(ddir, "ref_RawData_Tecan_96_well_plates.qs2"),
+      ref_t_df = file.path(ddir, "ref_D300_trt_Tecan_96_well_plates.qs2")
     )
   }
 
@@ -79,7 +79,7 @@ get_test_Tecan_data <- function() {
 #' @export
 #'
 #' @return list with with input data (manifest/template/result paths)
-#' and related reference data (qs file paths)
+#' and related reference data (qs2 file paths)
 get_test_D300_data <- function() {
     ddir <- system.file(package = "gDRimport", "extdata", "data3")
     list(
@@ -87,15 +87,15 @@ get_test_D300_data <- function() {
         d300 = file.path(ddir, "D300_96_well_plate_example.tdd"),
         Gnum = file.path(ddir, "Gnumber_D300_96_well_plate.xlsx"),
         dest_path = file.path(ddir, "output_files_96w", "output"),
-        ref_d300 = file.path(ddir, "ref_D300_96_well_plate_example.qs"),
-        ref_Gnum = file.path(ddir, "ref_Gnumber_D300_96_well_plate.qs"),
+        ref_d300 = file.path(ddir, "ref_D300_96_well_plate_example.qs2"),
+        ref_Gnum = file.path(ddir, "ref_Gnumber_D300_96_well_plate.qs2"),
         ref_output_path = file.path(ddir, "output_files_96w", "reference")
       ),
       f_384w = list(
         d300 = file.path(ddir, "D300_384_well_plate_example.tdd"),
         Gnum = file.path(ddir, "Gnumber_D300_384_well_plate.xlsx"),
-        ref_Gnum = file.path(ddir, "ref_Gnumber_D300_384_well_plate.qs"),
-        ref_d300 = file.path(ddir, "ref_D300_384_well_plate_example.qs"),
+        ref_Gnum = file.path(ddir, "ref_Gnumber_D300_384_well_plate.qs2"),
+        ref_d300 = file.path(ddir, "ref_D300_384_well_plate_example.qs2"),
         dest_path = file.path(ddir, "output_files_384w", "output"),
         ref_output_path = file.path(ddir, "output_files_384w", "reference")
       )
@@ -111,7 +111,7 @@ get_test_D300_data <- function() {
 #' @export
 #'
 #' @return list with with input data (manifest/template/result paths)
-#' and related reference data (.qs file paths)
+#' and related reference data (.qs2 file paths)
 get_test_EnVision_data <- function() {
     ddir <- system.file(package = "gDRimport", "extdata", "data4")
     fls <- list.files(ddir, full.names = TRUE)
@@ -119,7 +119,7 @@ get_test_EnVision_data <- function() {
       m_file = grep("\\/Manifest.xlsx$", fls, value = TRUE),
       r_files = grep("\\/[H|K].+.csv$", fls, value = TRUE),
       t_files = grep("\\/Project40.+.xlsx$", fls, value = TRUE),
-      ref_l_path = file.path(ddir, "ref_l.qs")
+      ref_l_path = file.path(ddir, "ref_l.qs2")
     )
 }
 
@@ -133,7 +133,7 @@ get_test_EnVision_data <- function() {
 #' @export
 #'
 #' @return list with with input data (manifest/template/result paths)
-#' and related reference data (.qs file paths)
+#' and related reference data (.qs2 file paths)
 get_test_tsv_data <- function() {
   ddir <- system.file(package = "gDRimport", "extdata", "data5")
   fls <- list.files(ddir, full.names = TRUE)
@@ -141,6 +141,6 @@ get_test_tsv_data <- function() {
     m_file = grep("\\/Manifest.tsv$", fls, value = TRUE),
     r_files = grep("\\RawData.tsv$", fls, value = TRUE),
     t_files = grep("\\Template.+.tsv$", fls, value = TRUE),
-    ref_l_path = file.path(ddir, "ref_l.qs")
+    ref_l_path = file.path(ddir, "ref_l.qs2")
   )
 }
