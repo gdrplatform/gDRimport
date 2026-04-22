@@ -3,8 +3,6 @@ td3 <- get_test_D300_data()
 
 test_that("parse_D300_xml", {
   
-  # get test_D300_data
- 
   # valid output returned for the D300 96 well plate example
   fs <- td3[["f_96w"]]
   dose_df <- parse_D300_xml(fs[["d300"]])
@@ -13,10 +11,10 @@ test_that("parse_D300_xml", {
   data.table::setorder(ref_dose_df, Row, Col, D300_Plate_N)
   expect_identical(dose_df, ref_dose_df)
   
-  # valid output returned for the D300 348 well plate example
+  # valid output returned for the D300 384 well plate example
   fs2 <- td3[["f_384w"]]
-  dose_df <- parse_D300_xml(fs[["d300"]])
-  ref_dose_df <- data.table::setDT(qs::qread(fs[["ref_d300"]]))
+  dose_df <- parse_D300_xml(fs2[["d300"]])
+  ref_dose_df <- data.table::setDT(qs::qread(fs2[["ref_d300"]]))
   data.table::setorder(dose_df, Row, Col, D300_Plate_N)
   data.table::setorder(ref_dose_df, Row, Col, D300_Plate_N)
   expect_identical(dose_df, ref_dose_df)
@@ -34,15 +32,13 @@ test_that("parse_D300_metadata_file works as expected", {
   ref_Gnum_96w_file <- qs::qread(fs$ref_Gnum)
   expect_equal(Gnum_96w_file, ref_Gnum_96w_file)
   
-  fs <- td3[["f_384w"]]
-  Gnum_96w_file <- parse_D300_metadata_file(fs$Gnum) 
-  ref_Gnum_96w_file <- qs::qread(fs$ref_Gnum)
-  expect_equal(Gnum_96w_file, ref_Gnum_96w_file)
+  fs2 <- td3[["f_384w"]]
+  Gnum_384w_file <- parse_D300_metadata_file(fs2$Gnum)
+  ref_Gnum_384w_file <- qs::qread(fs2$ref_Gnum)
+  expect_equal(Gnum_384w_file, ref_Gnum_384w_file)
 })
 
-
-
-test_that("import_D300", {
+test_that("import_D300 works with standard metadata", {
   
   on.exit({
     lapply(names(td3), function(x) {
@@ -59,7 +55,7 @@ test_that("import_D300", {
     ref_path <- fs$ref_output_path
     D300_file <- fs$d300
     Gnum_file <- fs$Gnum
-   
+    
     # create directory if not existing
     if (!file.exists(dest_path)) {
       dir.create(dest_path, recursive = TRUE)
@@ -69,11 +65,11 @@ test_that("import_D300", {
     import_D300(D300_file, dest_path, Gnum_file)
     
     # test every output file against reference file 
-    fs <- list.files(path = dest_path)
-    idx <- c(1, length(fs)) # test with first and last file
+    fs_files <- list.files(path = dest_path)
+    idx <- c(1, length(fs_files)) # test with first and last file
     for (i in idx) {
-      output_file_path <- file.path(dest_path, fs[i])
-      ref_file_path <- file.path(ref_path, fs[i])
+      output_file_path <- file.path(dest_path, fs_files[i])
+      ref_file_path <- file.path(ref_path, fs_files[i])
       #load sheets
       output_sheets <- readxl::excel_sheets(output_file_path)
       ref_sheets <- readxl::excel_sheets(ref_file_path) 
@@ -81,31 +77,31 @@ test_that("import_D300", {
       expect_equal(output_sheets, ref_sheets)
       #test content of sheets is identical
       for (j in seq_len(length(output_sheets))) {
-          output_sheet <- read_excel_to_dt(output_file_path,
-                                             sheet = output_sheets[[j]],
-                                             col_names = FALSE)
-          ref_sheet <- read_excel_to_dt(ref_file_path,
-                                          sheet = ref_sheets[[j]],
-                                          col_names = FALSE)
-          untreated_tags <- gDRutils::get_env_identifiers("untreated_tag")
-          ref_sheet[, names(ref_sheet) := lapply(.SD, function(x) {
-            if (is.character(x)) {
-              gsub(untreated_tags[[2]], untreated_tags[[1]], x)
-            } else {
-              x
-            }
-            }), .SDcols = names(ref_sheet)]
-          expect_equal(output_sheet, ref_sheet)
+        output_sheet <- read_excel_to_dt(output_file_path,
+                                         sheet = output_sheets[[j]],
+                                         col_names = FALSE)
+        ref_sheet <- read_excel_to_dt(ref_file_path,
+                                      sheet = ref_sheets[[j]],
+                                      col_names = FALSE)
+        untreated_tags <- gDRutils::get_env_identifiers("untreated_tag")
+        ref_sheet[, names(ref_sheet) := lapply(.SD, function(x) {
+          if (is.character(x)) {
+            gsub(untreated_tags[[2]], untreated_tags[[1]], x)
+          } else {
+            x
+          }
+        }), .SDcols = names(ref_sheet)]
+        expect_equal(output_sheet, ref_sheet)
       }    
     }
   }
 })
 
 
-test_that("get_conversion_factor  works as expected", {
+test_that("get_conversion_factor works as expected", {
   expect_error(get_conversion_factor("nL", "mL"), regexp = "conversion to unit 'mL' not supported")
   expect_error(get_conversion_factor("L", "µL"), regexp = "unsupported conversion factor: 'L'")
-
+  
   expect_equal(get_conversion_factor("nL", "µL"), 1e-3)
 })
 
@@ -117,12 +113,12 @@ test_that("convert_units works as expected", {
 # Utils
 #######
 
-test_that("gfill_NA works as expected", {
+test_that("fill_NA works as expected", {
   n <- 5
   df <- data.table::data.table(a = rep(NA, n), b = seq(n))
   obs <- fill_NA(df, "a", "b")
   expect_equal(obs$a, df$b)
-
+  
   obs2 <- fill_NA(df, "b", "a")
   expect_equal(obs2$b, df$b)
   expect_equal(obs2$a, df$a)
