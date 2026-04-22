@@ -1,3 +1,6 @@
+## gDRimport 1.9.10 - 2026-04-22
+* add support for generation of day0 template for tdd files
+
 ## gDRimport 1.9.9 - 2026-04-07
 * add support for excel format of new envision data
 
