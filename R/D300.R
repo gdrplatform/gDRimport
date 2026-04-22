@@ -6,6 +6,7 @@
 #' @param destination_path character, path to folder where template 
 #' files will be generated
 #' @param metadata_file character, file path to file with mapping from D300 names to Gnumbers. Defaults to NULL.
+#' @param day0 logical, if TRUE, creates a template file for Day 0 data filled with vehicles in addition to the standard plates. Defaults to FALSE.
 #' @keywords D300
 #' 
 #' @examples
@@ -30,86 +31,137 @@
 #'
 #' @export
 #'
-import_D300 <-
-  function(D300_file, destination_path, metadata_file = NULL) {
-    assertthat::assert_that(is.character(destination_path), msg = "'destination_path' must be a character vector")
-    assertthat::assert_that(assertthat::is.readable(destination_path), 
-                            msg = "'destination_path' must be a readable path")
-    
-    # Parse the D300 file first
-    D300 <- parse_D300_xml(D300_file)
-    D300 <- fill_NA(D300, from = "D300_Barcode", with = "D300_Plate_N")
-    
-    idfs <- list(
-      untreated_tags = gDRutils::get_env_identifiers("untreated_tag"),
-      drug_identifier = gDRutils::get_env_identifiers("drug"),
-      conc_identifier = gDRutils::get_env_identifiers("concentration")) #standard identifiers
-    
-    has_meta <- !is.null(metadata_file)
-    
-    # Conditionally process metadata if provided
-    if (has_meta) {
-      Gnums <- parse_D300_metadata_file(metadata_file)
-      treatment <- merge_D300_w_metadata(D300, Gnums)
-    } else {
-      # Use the original identifiers straight from the D300 file
-      treatment <- D300
-      treatment[[idfs$drug_identifier]] <- treatment$Name
-    }
-    
-    req_cols <- c("Row", "Col")
-    if (!all(present <- req_cols %in% colnames(treatment))) {
-      stop(sprintf("missing required columns from D300 file: '%s'", paste0(req_cols[!present], collapse = ", ")))
-    }
-    
-    # Sort only the plate list numerically to ensure trt_1, trt_2 files generate in chronological order
-    uplates <- sort(as.numeric(unique(treatment$D300_Plate_N)))
-    
-    existing_files <- list.files(destination_path, pattern = "^trt_P\\d+\\.xlsx$")
-    
-    # Calculate the starting offset
-    max_idx <- 0
-    if (length(existing_files) > 0) {
-      nums <- as.numeric(gsub("trt_P|\\.xlsx", "", existing_files))
-      max_idx <- max(nums, na.rm = TRUE)
-    }
-    
-    for (i in seq_along(uplates)) {
-      wb <- openxlsx::createWorkbook()
-      idx <- treatment$D300_Plate_N == uplates[i] # Filter to 1 plate.
-      trt_filt <- treatment[idx, ]
-      
-      # create a list with Gnumber and Concentration 
-      trt_filt$gn_conc <- apply(trt_filt, 1, function(x) list(x[idfs$drug_identifier], x[idfs$conc_identifier]))
-      trt_gnumber_conc <- data.table::dcast(trt_filt, Row ~ Col, 
-                                            value.var = c("gn_conc"), 
-                                            fun.aggregate = list)
-      rownames_trt_gnumber_conc <- trt_gnumber_conc$Row
-      trt_gnumber_conc <- trt_gnumber_conc[, setdiff(colnames(trt_gnumber_conc), "Row"), with = FALSE]
-      
-      # count number of drugs,conc in each well 
-      trt_n_drugs <- apply(trt_gnumber_conc, c(1, 2), function(x) length(x[[1]]))
-      
-      # Extract actual plate dimensions from the XML Dimension tag (e.g. "(8,12)")
-      dim_str <- trt_filt$Dimension[1]
-      dims <- as.integer(strsplit(gsub("\\(|\\)", "", dim_str), ",")[[1]])
-      
-      trt_info <- list(
-        max_drugs_per_well =  max(trt_n_drugs),
-        col_idx = strtoi(colnames(trt_gnumber_conc)),
-        row_idx = strtoi(rownames_trt_gnumber_conc),
-        plate_nrow = dims[1],
-        plate_ncol = dims[2],
-        has_metadata = has_meta
-      )
-      save_drug_info_per_well(trt_info, trt_gnumber_conc, wb, idfs) 
-      current_file_num <- max_idx + i
-      fname <- sprintf("trt_P%d.xlsx", current_file_num)
-      
-      openxlsx::saveWorkbook(wb, file.path(destination_path, fname), overwrite = TRUE)
-    }
+import_D300 <- function(D300_file,
+                        destination_path,
+                        metadata_file = NULL,
+                        day0 = FALSE) {
+  assertthat::assert_that(is.character(destination_path), msg = "'destination_path' must be a character vector")
+  assertthat::assert_that(assertthat::is.readable(destination_path), 
+                          msg = "'destination_path' must be a readable path")
+  
+  # Parse the D300 file first
+  D300 <- parse_D300_xml(D300_file)
+  D300 <- fill_NA(D300, from = "D300_Barcode", with = "D300_Plate_N")
+  
+  idfs <- list(
+    untreated_tags = gDRutils::get_env_identifiers("untreated_tag"),
+    drug_identifier = gDRutils::get_env_identifiers("drug"),
+    conc_identifier = gDRutils::get_env_identifiers("concentration")) #standard identifiers
+  
+  has_meta <- !is.null(metadata_file)
+  
+  # Conditionally process metadata if provided
+  if (has_meta) {
+    Gnums <- parse_D300_metadata_file(metadata_file)
+    treatment <- merge_D300_w_metadata(D300, Gnums)
+  } else {
+    # Use the original identifiers straight from the D300 file
+    treatment <- D300
+    treatment[[idfs$drug_identifier]] <- treatment$Name
   }
-
+  
+  req_cols <- c("Row", "Col")
+  if (!all(present <- req_cols %in% colnames(treatment))) {
+    stop(sprintf("missing required columns from D300 file: '%s'", paste0(req_cols[!present], collapse = ", ")))
+  }
+  
+  if (day0) {
+    # Safely extract actual plate dimensions from the XML Dimension tag (e.g. "(8,12)")
+    # This works reliably regardless of whether metadata was merged or not.
+    dim_str <- treatment$Dimension[1]
+    dims <- as.integer(strsplit(gsub("\\(|\\)", "", dim_str), ",")[[1]])
+    nrow_plate <- dims[1]
+    ncol_plate <- dims[2]
+    
+    # Fallback to absolute max if dimension string is somehow corrupt
+    if (is.na(nrow_plate) || is.na(ncol_plate)) {
+      nrow_plate <- max(as.numeric(treatment$Row), na.rm = TRUE)
+      ncol_plate <- max(as.numeric(treatment$Col), na.rm = TRUE)
+    }
+    
+    wb <- openxlsx::createWorkbook()
+    
+    # Initialize with empty strings
+    drug_mat <- matrix("", nrow = nrow_plate, ncol = ncol_plate)
+    conc_mat <- matrix("", nrow = nrow_plate, ncol = ncol_plate)
+    
+    for (m in seq_len(nrow_plate)) {
+      for (n in seq_len(ncol_plate)) {
+        if (has_meta) {
+          # Legacy logic: fill full bounding box (Unit Tests expect this)
+          drug_mat[m, n] <- idfs$untreated_tags[[1]]
+          conc_mat[m, n] <- 0.0
+        } else {
+          # New logic: explicitly respect the outer edge blanking rule
+          is_edge <- (m == 1 || m == nrow_plate || n == 1 || n == ncol_plate)
+          if (is_edge) {
+            drug_mat[m, n] <- ""
+            conc_mat[m, n] <- ""
+          } else {
+            drug_mat[m, n] <- idfs$untreated_tags[[1]]
+            conc_mat[m, n] <- 0.0
+          }
+        }
+      }
+    }
+    
+    openxlsx::addWorksheet(wb, idfs$drug_identifier)
+    openxlsx::writeData(wb, sheet = 1, data.table::data.table(drug_mat), colNames = FALSE)
+    
+    openxlsx::addWorksheet(wb, idfs$conc_identifier)
+    openxlsx::writeData(wb, sheet = 2, data.table::data.table(conc_mat), colNames = FALSE)
+    
+    fname <- "trt_day0.xlsx"
+    openxlsx::saveWorkbook(wb, file.path(destination_path, fname), overwrite = TRUE)
+  }
+  
+  # Sort only the plate list numerically to ensure trt_1, trt_2 files generate in chronological order
+  uplates <- sort(as.numeric(unique(treatment$D300_Plate_N)))
+  
+  existing_files <- list.files(destination_path, pattern = "^trt_P\\d+\\.xlsx$")
+  
+  # Calculate the starting offset
+  max_idx <- 0
+  if (length(existing_files) > 0) {
+    nums <- as.numeric(gsub("trt_P|\\.xlsx", "", existing_files))
+    max_idx <- max(nums, na.rm = TRUE)
+  }
+  
+  for (i in seq_along(uplates)) {
+    wb <- openxlsx::createWorkbook()
+    idx <- treatment$D300_Plate_N == uplates[i] # Filter to 1 plate.
+    trt_filt <- treatment[idx, ]
+    
+    # create a list with Gnumber and Concentration 
+    trt_filt$gn_conc <- apply(trt_filt, 1, function(x) list(x[idfs$drug_identifier], x[idfs$conc_identifier]))
+    trt_gnumber_conc <- data.table::dcast(trt_filt, Row ~ Col, 
+                                          value.var = c("gn_conc"), 
+                                          fun.aggregate = list)
+    rownames_trt_gnumber_conc <- trt_gnumber_conc$Row
+    trt_gnumber_conc <- trt_gnumber_conc[, setdiff(colnames(trt_gnumber_conc), "Row"), with = FALSE]
+    
+    # count number of drugs,conc in each well 
+    trt_n_drugs <- apply(trt_gnumber_conc, c(1, 2), function(x) length(x[[1]]))
+    
+    # Extract actual plate dimensions from the XML Dimension tag (e.g. "(8,12)")
+    dim_str <- trt_filt$Dimension[1]
+    dims <- as.integer(strsplit(gsub("\\(|\\)", "", dim_str), ",")[[1]])
+    
+    trt_info <- list(
+      max_drugs_per_well =  max(trt_n_drugs),
+      col_idx = strtoi(colnames(trt_gnumber_conc)),
+      row_idx = strtoi(rownames_trt_gnumber_conc),
+      plate_nrow = dims[1],
+      plate_ncol = dims[2],
+      has_metadata = has_meta
+    )
+    save_drug_info_per_well(trt_info, trt_gnumber_conc, wb, idfs) 
+    current_file_num <- max_idx + i
+    fname <- sprintf("trt_P%d.xlsx", current_file_num)
+    
+    openxlsx::saveWorkbook(wb, file.path(destination_path, fname), overwrite = TRUE)
+  }
+}
 
 #' for each drug create a Gnumber and Concentration information for each well
 #' 
