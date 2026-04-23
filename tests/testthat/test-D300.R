@@ -34,7 +34,7 @@ test_that("parse_D300_metadata_file works as expected", {
   
   fs2 <- td3[["f_384w"]]
   Gnum_384w_file <- parse_D300_metadata_file(fs2$Gnum)
-  ref_Gnum_384w_file <- qs2::qread(fs2$ref_Gnum)
+  ref_Gnum_384w_file <- qs2::qs_read(fs2$ref_Gnum)
   expect_equal(Gnum_384w_file, ref_Gnum_384w_file)
 })
 
