@@ -6,7 +6,8 @@
 #' @param destination_path character, path to folder where template 
 #' files will be generated
 #' @param metadata_file character, file path to file with mapping from D300 names to Gnumbers. Defaults to NULL.
-#' @param day0 logical, if TRUE, creates a template file for Day 0 data filled with vehicles in addition to the standard plates. Defaults to FALSE.
+#' @param day0 logical, if TRUE, creates a template file for Day 0 data filled with vehicles in addition to
+#' the standard plates. Defaults to FALSE.
 #' @keywords D300
 #' 
 #' @examples

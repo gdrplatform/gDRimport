@@ -14,7 +14,8 @@ files will be generated}
 
 \item{metadata_file}{character, file path to file with mapping from D300 names to Gnumbers. Defaults to NULL.}
 
-\item{day0}{logical, if TRUE, creates a template file for Day 0 data filled with vehicles in addition to the standard plates. Defaults to FALSE.}
+\item{day0}{logical, if TRUE, creates a template file for Day 0 data filled with vehicles in addition to
+the standard plates. Defaults to FALSE.}
 }
 \value{
 Create one Excel file per plate. Each sheet in each plate file describes
