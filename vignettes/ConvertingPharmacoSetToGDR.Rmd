@@ -45,8 +45,8 @@ pset
 
 ```{r load-mocked-psets, include = FALSE}
 read_mocked_PSets <- function(canonical = FALSE) {
-  qs::qread(
-    system.file("extdata", "data_for_unittests", "PSets.qs", package = "gDRimport")
+  qs2::qs_read(
+    system.file("extdata", "data_for_unittests", "PSets.qs2", package = "gDRimport")
   )
 }
 pset <- testthat::with_mocked_bindings(

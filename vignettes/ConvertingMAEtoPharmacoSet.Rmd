@@ -45,8 +45,8 @@ In collaboration with the BHKLab, we have developed functionality to convert bet
 This workflow assumes that you have already generated a `MAE` object using the `gDR` package. We will load in a `MAE` object generated using 
 the data from the [KW. Song et al, 2022](https://doi.org/10.1158/2159-8290.CD-21-0072) study. This `MAE` contains two drugs (`treatments`) and 7 cell lines (`samples`).  
 ``` {r load-mae-data}
-(mae <- qs::qread(
-    system.file("extdata", "kyung2022mae", "MAE_E2.qs", package = "gDRimport")
+(mae <- qs2::qs_read(
+    system.file("extdata", "kyung2022mae", "MAE_E2.qs2", package = "gDRimport")
   )
 )
 ```

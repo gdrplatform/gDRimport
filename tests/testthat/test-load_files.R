@@ -10,7 +10,7 @@ test_that("load_manifest works as expected", {
   td2 <- get_test_Tecan_data()
   
   m_df <- load_manifest(td2$m_file)
-  ref_m_df <- qs::qread(td2$ref_m_df)
+  ref_m_df <- qs2::qs_read(td2$ref_m_df)
   expect_equal(m_df, ref_m_df)
   
   err_msg1 <- "Assertion on 'manifest_file' failed: File does not exist: '/non/existent_file'."
@@ -46,7 +46,7 @@ test_that("load_results works as expected", {
   td2 <- get_test_Tecan_data()
   
   res_tbl3 <- load_results(df_results_files = c(td2$r_files), instrument = "Tecan", headers = headers)
-  ref_tbl3 <- qs::qread(td2$ref_r_df)
+  ref_tbl3 <- qs2::qs_read(td2$ref_r_df)
   expect_equal(res_tbl3, ref_tbl3)
   
   err_msg1 <- "Assertion on 'results_file' failed: File does not exist: '/non/existent_file'."
@@ -73,7 +73,7 @@ test_that("load_templates works as expected", {
   td2 <- get_test_Tecan_data()
   
   res_t_tbl3 <- load_templates(df_template_files = c(td2$t_files))
-  ref_tbl3 <- .standardize_untreated_values(qs::qread(td2$ref_t_df))
+  ref_tbl3 <- .standardize_untreated_values(qs2::qs_read(td2$ref_t_df))
   expect_equal(res_t_tbl3, ref_tbl3)
   
   err_msg1 <- "Assertion on 'template_file' failed: File does not exist: '/non/existent_file'."
@@ -101,17 +101,17 @@ test_that("load_data works as expected", {
   td2 <- get_test_Tecan_data()
   
   l_tbl2 <- load_data(td2$m_file, td2$t_files, td2$r_files, instrument = "Tecan")
-  ref_m_df <- qs::qread(td2$ref_m_df)
+  ref_m_df <- qs2::qs_read(td2$ref_m_df)
   expect_equal(ref_m_df$data, l_tbl2$manifest)
-  ref_t_df <- .standardize_untreated_values(qs::qread(td2$ref_t_df))
+  ref_t_df <- .standardize_untreated_values(qs2::qs_read(td2$ref_t_df))
   expect_equal(ref_t_df, l_tbl2$treatments)
-  ref_r_df <- qs::qread(td2$ref_r_df)
+  ref_r_df <- qs2::qs_read(td2$ref_r_df)
   expect_equal(l_tbl2$data, ref_r_df)
   
   td4 <- get_test_EnVision_data()
   l_tbl4 <-
     load_data(td4$m_file, td4$t_files, td4$r_files, instrument = "EnVision")
-  ref_l <- qs::qread(td4$ref_l_path)
+  ref_l <- qs2::qs_read(td4$ref_l_path)
   expect_equal(ref_l$manifest, l_tbl4$manifest)
   expect_equal(ref_l$treatments, l_tbl4$treatments)
   expect_equal(ref_l$data, l_tbl4$data)
@@ -142,7 +142,7 @@ test_that("load_data works as expected", {
   td5 <- get_test_tsv_data()
   l_tbl5 <-
     load_data(td5$m_file, td5$t_files, td5$r_files)
-  ref_l <- qs::qread(td5$ref_l_path)
+  ref_l <- qs2::qs_read(td5$ref_l_path)
   expect_equal(ref_l$manifest, l_tbl5$manifest)
   expect_equal(ref_l$treatments, l_tbl5$treatments)
   expect_equal(ref_l$data, l_tbl5$data)

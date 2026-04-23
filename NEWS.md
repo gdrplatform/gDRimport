@@ -1,5 +1,9 @@
-## gDRimport 1.9.10 - 2026-04-22
+## gDRimport 1.9.11 - 2026-04-23
 * add support for generation of day0 template for tdd files
+
+## gDRimport 1.9.10 - 2026-04-13
+* migrate from `qs` to `qs2` package (`qs::qread` → `qs2::qs_read`, `qs::qsave` → `qs2::qs_save`)
+* update test data and reference file extensions from `.qs` to `.qs2`
 
 ## gDRimport 1.9.9 - 2026-04-07
 * add support for excel format of new envision data
