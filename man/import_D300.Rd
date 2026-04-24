@@ -4,7 +4,7 @@
 \alias{import_D300}
 \title{Import D300}
 \usage{
-import_D300(D300_file, destination_path, metadata_file = NULL)
+import_D300(D300_file, destination_path, metadata_file = NULL, day0 = FALSE)
 }
 \arguments{
 \item{D300_file}{character, file path to D300 file}
@@ -13,6 +13,9 @@ import_D300(D300_file, destination_path, metadata_file = NULL)
 files will be generated}
 
 \item{metadata_file}{character, file path to file with mapping from D300 names to Gnumbers. Defaults to NULL.}
+
+\item{day0}{logical, if TRUE, creates a template file for Day 0 data filled with vehicles in addition to
+the standard plates. Defaults to FALSE.}
 }
 \value{
 Create one Excel file per plate. Each sheet in each plate file describes
