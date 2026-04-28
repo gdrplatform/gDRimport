@@ -278,7 +278,7 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
                                     Gnumber = untrt_tag,
                                     DrugName = untrt_tag,
                                     drug_moa = untrt_tag,
-                                    Duration = 120,
+                                    Duration = NA_real_,
                                     Concentration = 0,
                                     ReadoutValue = 1,
                                     masked = FALSE)
@@ -299,7 +299,7 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
   data.table::setnames(dt_trt,
                        old = c("broad_id", "name", "moa", "dose", "value"),
                        new = c("Gnumber", "DrugName", "drug_moa", "Concentration", "ReadoutValue"))
-  dt_trt$Duration <- 120
+  dt_trt$Duration <- NA_real_
   dt_trt$masked <- FALSE
   data.table::setcolorder(dt_trt, neworder = colnames(dt_ctrl))
   
