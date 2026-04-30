@@ -1,3 +1,6 @@
+## gDRimport 1.11.1 - 2026-04-29
+* synchronize Bioconductor and GitHub versioning
+
 ## gDRimport 1.9.11 - 2026-04-23
 * add support for generation of day0 template for tdd files
 
