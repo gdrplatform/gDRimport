@@ -202,9 +202,8 @@ getPSet <- function(pset_name,
   refDivTime <- gDRutils::get_env_identifiers("cellline_ref_div_time")
   
   
-  # Some datasets do not have duration specified so let's assign any value, since it is required by gDR
   if (!duration %in% names(dt)) {
-    dt[, (duration) := 72]
+    dt[, (duration) := NA_real_]
   }
   if (!refDivTime %in% names(dt)) {
     dt[, (refDivTime) := NA]
