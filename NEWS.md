@@ -1,3 +1,6 @@
+## gDRimport 1.11.3 - 2026-05-18
+* fix linting violations from updated gDRstyle rules
+
 ## gDRimport 1.11.2 - 2026-05-04
 * replace hardcoded `Duration` values with `NA_real_` in PRISM and PSet importers
 
