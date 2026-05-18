@@ -1,57 +1,57 @@
 context("load_files")
 
 test_that("load_manifest works as expected", {
-  
+
   td1 <- get_test_data()
-  
+
   m_df <- load_manifest(manifest_path(td1))
   expect_identical(td1@ref_m_df, m_df$data)
-  
+
   td2 <- get_test_Tecan_data()
-  
+
   m_df <- load_manifest(td2$m_file)
-  ref_m_df <- qs2::qs_read(td2$ref_m_df)
+  ref_m_df <- qs::qread(td2$ref_m_df)
   expect_equal(m_df, ref_m_df)
-  
+
   err_msg1 <- "Assertion on 'manifest_file' failed: File does not exist: '/non/existent_file'."
   expect_error(load_manifest("/non/existent_file"), err_msg1)
-  
+
   err_msg2 <- "'manifest_file' must be a character vector"
   expect_error(load_manifest(c(2, 3)), err_msg2)
-  
+
   err_msg3 <- "Barcodes in Manifest must be unique!"
   expect_error(load_manifest(c(manifest_path(td1), manifest_path(td1))), err_msg3)
-  
+
 })
 
 test_that("load_results works as expected", {
-  
+
   td1 <- get_test_data()
-  
+
   headers <- gDRutils::get_env_identifiers()
   headers$barcode <- headers$barcode[[1]]
-  
+
   res_tbl <- load_results(df_results_files = c(result_path(td1)), headers = headers)
   ref_tbl <- data.table::fread(td1@ref_r1_r2)
   expect_equal(res_tbl, ref_tbl)
-  
+
   df_results <- data.table::data.table(datapath = result_path(td1), name = basename(result_path(td1)))
   res_df_tbl <- load_results(df_results, headers = headers)
   expect_equal(res_df_tbl, ref_tbl)
-  
+
   res_tbl2 <- load_results(df_results_files = c(result_path(td1)[1]), headers = headers)
   ref_tbl2 <- data.table::fread(td1@ref_r1)
   expect_equal(res_tbl2, ref_tbl2)
-  
+
   td2 <- get_test_Tecan_data()
-  
+
   res_tbl3 <- load_results(df_results_files = c(td2$r_files), instrument = "Tecan", headers = headers)
-  ref_tbl3 <- qs2::qs_read(td2$ref_r_df)
+  ref_tbl3 <- qs::qread(td2$ref_r_df)
   expect_equal(res_tbl3, ref_tbl3)
-  
+
   err_msg1 <- "Assertion on 'results_file' failed: File does not exist: '/non/existent_file'."
   expect_error(load_results(c(result_path(td1)[1], "/non/existent_file")), err_msg1)
-  
+
   err_msg_2a <- "Assertion on 'instrument' failed: "
   err_msg2b <- "Must comply to pattern '^EnVision$|^long_tsv$|^Tecan$|^EnVision_new$|^Incucyte$'."
   err_msg2 <- paste0(err_msg_2a, err_msg2b)
@@ -59,23 +59,23 @@ test_that("load_results works as expected", {
 })
 
 test_that("load_templates works as expected", {
-  
+
   td1 <- get_test_data()
-  
+
   t_tbl <- load_templates(df_template_files = c(template_path(td1)))
   ref_tbl <- data.table::fread(td1@ref_t1_t2, colClasses = "character")
   expect_equal(t_tbl, ref_tbl)
-  
+
   df_templates <- data.table::data.table(datapath = template_path(td1), name = basename(template_path(td1)))
   res_t_tbl <- load_templates(df_templates)
   expect_equal(res_t_tbl, ref_tbl)
-  
+
   td2 <- get_test_Tecan_data()
-  
+
   res_t_tbl3 <- load_templates(df_template_files = c(td2$t_files))
-  ref_tbl3 <- .standardize_untreated_values(qs2::qs_read(td2$ref_t_df))
+  ref_tbl3 <- .standardize_untreated_values(qs::qread(td2$ref_t_df))
   expect_equal(res_t_tbl3, ref_tbl3)
-  
+
   err_msg1 <- "Assertion on 'template_file' failed: File does not exist: '/non/existent_file'."
   expect_error(load_templates(c(template_path(td1)[1], "/non/existent_file")), err_msg1)
 })
@@ -84,65 +84,65 @@ test_that("load_templates with no untreated conditions works as expected", {
   err_msg <- "No untreated controls were found in the treatment. Please upload the appropriate treatment."
   expect_error(load_templates(system.file("extdata/data_for_unittests/Template_7daytreated.xlsx",
                                           package = "gDRimport")), err_msg)
-  
+
 })
 
 test_that("load_data works as expected", {
-  
+
   td1 <- get_test_data()
-  
+
   l_tbl <- load_data(manifest_path(td1), template_path(td1), result_path(td1))
   expect_identical(td1@ref_m_df, l_tbl$manifest)
   ref_tbl <- .standardize_untreated_values(data.table::fread(td1@ref_t1_t2))
   expect_equal(l_tbl$treatments, ref_tbl)
   ref_tbl <- data.table::fread(td1@ref_r1_r2)
   expect_equal(l_tbl$data, ref_tbl)
-  
+
   td2 <- get_test_Tecan_data()
-  
+
   l_tbl2 <- load_data(td2$m_file, td2$t_files, td2$r_files, instrument = "Tecan")
-  ref_m_df <- qs2::qs_read(td2$ref_m_df)
+  ref_m_df <- qs::qread(td2$ref_m_df)
   expect_equal(ref_m_df$data, l_tbl2$manifest)
-  ref_t_df <- .standardize_untreated_values(qs2::qs_read(td2$ref_t_df))
+  ref_t_df <- .standardize_untreated_values(qs::qread(td2$ref_t_df))
   expect_equal(ref_t_df, l_tbl2$treatments)
-  ref_r_df <- qs2::qs_read(td2$ref_r_df)
+  ref_r_df <- qs::qread(td2$ref_r_df)
   expect_equal(l_tbl2$data, ref_r_df)
-  
+
   td4 <- get_test_EnVision_data()
   l_tbl4 <-
     load_data(td4$m_file, td4$t_files, td4$r_files, instrument = "EnVision")
-  ref_l <- qs2::qs_read(td4$ref_l_path)
+  ref_l <- qs::qread(td4$ref_l_path)
   expect_equal(ref_l$manifest, l_tbl4$manifest)
   expect_equal(ref_l$treatments, l_tbl4$treatments)
   expect_equal(ref_l$data, l_tbl4$data)
-  
+
   err_msg1 <- "'manifest_file' must be a readable path"
   expect_error(load_data("/non/existent_file", template_path(td1), result_path(td1)), err_msg1)
-  
+
   err_msg2 <- "'manifest_file' must be a character vector"
   expect_error(load_data(c(2, 3), template_path(td1), result_path(td1)), err_msg2)
-  
+
   err_msg3 <- "Barcodes in Manifest must be unique!"
   expect_error(load_manifest(c(manifest_path(td1), manifest_path(td1))), err_msg3)
-  
+
   err_msg4 <- "Following path(s) with no read permission found: '/non/existent_file'"
-  expect_error(load_data(manifest_path(td1), c(result_path(td1)[1], "/non/existent_file"), 
+  expect_error(load_data(manifest_path(td1), c(result_path(td1)[1], "/non/existent_file"),
                          result_path(td1)), err_msg4, fixed = TRUE)
-  
+
   err_msg_5a <- "Assertion on 'instrument' failed: "
   err_msg5b <- "Must comply to pattern '^EnVision$|^long_tsv$|^Tecan$|^EnVision_new$|^Incucyte$'."
   err_msg5 <- paste0(err_msg_5a, err_msg5b)
-  expect_error(load_data(manifest_path(td1), template_path(td1), result_path(td1), "invalid_instrument"), 
+  expect_error(load_data(manifest_path(td1), template_path(td1), result_path(td1), "invalid_instrument"),
                err_msg5, fixed = TRUE)
-  
+
   err_msg6 <- "Assertion on 'results_file' failed: File does not exist: '/non/existent_file'."
-  expect_error(load_data(manifest_path(td1), template_path(td1), c(result_path(td1)[1], "/non/existent_file")), 
+  expect_error(load_data(manifest_path(td1), template_path(td1), c(result_path(td1)[1], "/non/existent_file")),
                err_msg6)
-  
+
   td5 <- get_test_tsv_data()
   l_tbl5 <-
     load_data(td5$m_file, td5$t_files, td5$r_files)
-  ref_l <- qs2::qs_read(td5$ref_l_path)
+  ref_l <- qs::qread(td5$ref_l_path)
   expect_equal(ref_l$manifest, l_tbl5$manifest)
   expect_equal(ref_l$treatments, l_tbl5$treatments)
   expect_equal(ref_l$data, l_tbl5$data)
@@ -182,7 +182,7 @@ test_that(".check_file_structure works as expected", {
   gaps <-
     min(which(full_rows)[(diff(which(full_rows)) > 20)] + 1, dim(df)[1])
   df <-
-    df[full_rows_index[full_rows_index <= gaps], ] 
+    df[full_rows_index[full_rows_index <= gaps], ]
   if (ncol(df) < n_col) {
     df[, (ncol(df) + 1):n_col] <- NA
   }
@@ -193,9 +193,9 @@ test_that(".check_file_structure works as expected", {
   ref_bckgrd <- 4
   readout_offset <- 1 + ref_bckgrd
   barcode_col <- 3
-  expect_null(.check_file_structure(df, basename(results_filename[[iF]]), 
+  expect_null(.check_file_structure(df, basename(results_filename[[iF]]),
                                     iS, readout_offset, n_row, n_col, iB, barcode_col))
-  
+
   df2 <- read_excel_to_dt(system.file("extdata/data1/RawData_day7.xlsx", package = "gDRimport"))
   expect_error(.check_file_structure(df2, basename(results_filename[[iF]]),
                                      iS, readout_offset, n_row, n_col, iB, barcode_col))
@@ -233,7 +233,7 @@ test_that(".fill_empty_wells works as expected", {
 
 test_that(".standardize_untreated_values works as expected", {
   untreated_tags <- gDRutils::get_env_identifiers("untreated_tag")
-  
+
   df_test <- data.table::data.table(a = c(untreated_tags[[1]], untreated_tags[[2]],
                                           toupper(untreated_tags[[1]]), tolower(untreated_tags[[2]])))
   df_corrected <- .standardize_untreated_values(df_test)
@@ -241,17 +241,17 @@ test_that(".standardize_untreated_values works as expected", {
 })
 
 test_that("check_metadata_names works as expected", {
-  
+
   td1 <- get_test_data()
   m_file <- manifest_path(td1)
   m_data <- read_excel_to_dt(m_file)
-  
+
   result <- check_metadata_names(col_df = colnames(m_data))
   expect_equal(result, colnames(m_data))
-  
+
   result <- check_metadata_names(col_df = colnames(m_data), m_file, df_type = "manifest")
   expect_equal(result, colnames(m_data))
-  
+
   t_file <- template_path(td1)[[1]]
   t_data <- correct_template_sheets(t_file)
   result <- check_metadata_names(col_df = t_data[[1]])
@@ -260,44 +260,44 @@ test_that("check_metadata_names works as expected", {
   expect_equal(result, t_data[[1]])
   result <- check_metadata_names(col_df = t_data[[1]], df_type = "template_treatment")
   expect_equal(result, t_data[[1]])
-  
+
   expect_error(check_metadata_names(col_df = t_data[[1]][-1], df_type = "template_treatment"))
   expect_error(check_metadata_names(col_df = t_data[[1]][-3], df_type = "template_treatment"), "Treatment file")
-  
+
   t_data_with_space <- t_data[[1]]
   t_data_with_space[1] <- "Gnumber "
   expect_no_error(check_metadata_names(col_df = t_data_with_space))
-  
+
   t_data_with_number <- t_data[[1]]
   t_data_with_number[5] <- "1"
   expect_error(
-    check_metadata_names(col_df = t_data_with_number), 
+    check_metadata_names(col_df = t_data_with_number),
     "cannot contain special characters or start with a number"
   )
-  
+
   t_data_with_duplication <- t_data[[1]]
   t_data_with_duplication[5] <- "Gnumber"
   t_data_with_duplication[6] <- "GnumbeR"
   expect_no_error(check_metadata_names(col_df = t_data_with_duplication))
-  
+
   t_data_with_resticted_name <- t_data[[1]]
   t_data_with_resticted_name[5] <- "Tissue"
   expect_error(check_metadata_names(col_df = t_data_with_resticted_name), "Metadata field name")
-  
+
   expect_error(check_metadata_names(col_df = NULL), "Assertion on 'col_df' failed")
   expect_error(check_metadata_names(col_df = colnames(m_data), df_name = NULL), "Assertion on 'df_name'")
   expect_error(check_metadata_names(col_df = colnames(m_data), df_type = 5), "Assertion on 'df_type'")
-  
+
 })
 
 test_that("load_results_Incucyte works as expected", {
-  
+
   headers <- gDRutils::get_env_identifiers()
   bcode_name <- headers$barcode[1]
   d_name <- headers$duration
   well_rname <- headers$well_position[1]
   well_cname <- headers$well_position[2]
-  
+
   file_csv_1_path <- tempfile(fileext = ".csv")
   file_csv_2_na_path <- tempfile(fileext = ".csv")
   file_tsv_3_path <- tempfile(fileext = ".tsv")
@@ -306,7 +306,7 @@ test_that("load_results_Incucyte works as expected", {
   file_bad_barcode_path <- tempfile(fileext = ".csv")
   file_custom_header_path <- tempfile(fileext = ".csv")
   file_colon_header_path <- tempfile(fileext = ".csv")
-  
+
   writeLines(
     c(
       "Vessel Name: Test Plate 1,,,",
@@ -321,7 +321,7 @@ test_that("load_results_Incucyte works as expected", {
     ),
     file_csv_1_path
   )
-  
+
   writeLines(
     c(
       "Vessel Name: Test Plate 2,,,",
@@ -335,7 +335,7 @@ test_that("load_results_Incucyte works as expected", {
     ),
     file_csv_2_na_path
   )
-  
+
   writeLines(c(
     paste("Vessel Name\tTest Plate 3\t\t"),
     paste("Barcode\tPLATE_003_TSV\t\t"),
@@ -345,7 +345,7 @@ test_that("load_results_Incucyte works as expected", {
     paste("8/18/25 9:02", "6", "510", "610", sep = "\t")
   ),
   file_tsv_3_path)
-  
+
   xlsx_df <- data.frame(
     V1 = c(
       "Vessel Name",
@@ -361,7 +361,7 @@ test_that("load_results_Incucyte works as expected", {
     stringsAsFactors = FALSE
   )
   openxlsx::write.xlsx(xlsx_df, file_xlsx_4_path, colNames = FALSE)
-  
+
   writeLines(
     c(
       "Vessel Name: Bad Plate,,",
@@ -371,7 +371,7 @@ test_that("load_results_Incucyte works as expected", {
     ),
     file_bad_header_path
   )
-  
+
   writeLines(
     c(
       "Vessel Name: Bad Barcode Plate,,,",
@@ -381,7 +381,7 @@ test_that("load_results_Incucyte works as expected", {
     ),
     file_bad_barcode_path
   )
-  
+
   writeLines(
     c(
       "Vessel,PLATE_CUSTOM",
@@ -392,17 +392,17 @@ test_that("load_results_Incucyte works as expected", {
     ),
     file_custom_header_path
   )
-  
+
   writeLines(
     c(
-      "Vessel Name: Colon Test,,", 
-      sprintf("%s:,%s", bcode_name, "PLATE_COLON_TEST,"), 
-      "Date Time,Elapsed,A1", 
+      "Vessel Name: Colon Test,,",
+      sprintf("%s:,%s", bcode_name, "PLATE_COLON_TEST,"),
+      "Date Time,Elapsed,A1",
       "8/18/25 3:02,0,999"
     ),
     file_colon_header_path
   )
-  
+
   on.exit(unlink(
     c(
       file_csv_1_path,
@@ -414,54 +414,54 @@ test_that("load_results_Incucyte works as expected", {
       file_custom_header_path
     )
   ))
-  
+
   dt_csv <- load_results_Incucyte(file_csv_1_path, headers)
-  
+
   expect_s3_class(dt_csv, "data.table")
   expect_equal(nrow(dt_csv), 4)
-  
+
   expect_true(all(
     c(bcode_name, d_name, well_rname, well_cname, "ReadoutValue") %in% names(dt_csv)
   ))
   expect_false(any(c("Well", "Elapsed") %in% names(dt_csv)))
-  
+
   expect_equal(unique(dt_csv[[bcode_name]]), "PLATE_001_CSV")
   expect_equal(sort(unique(dt_csv[[d_name]])), c(0, 6))
   expect_equal(sort(dt_csv$ReadoutValue), c(100, 110, 200, 210))
   expect_equal(sort(unique(dt_csv[[well_rname]])), "A")
   expect_equal(sort(unique(dt_csv[[well_cname]])), c("1", "2"))
-  
+
   dt_tsv <- load_results_Incucyte(file_tsv_3_path, headers)
-  
+
   expect_s3_class(dt_tsv, "data.table")
   expect_equal(nrow(dt_tsv), 4)
-  
+
   expect_equal(unique(dt_tsv[[bcode_name]]), "PLATE_003_TSV")
   expect_equal(sort(dt_tsv$ReadoutValue), c(500, 510, 600, 610))
   expect_equal(sort(unique(dt_tsv[[well_rname]])), "C")
   expect_equal(sort(unique(dt_tsv[[well_cname]])), c("1", "2"))
-  
+
   dt_xlsx <- load_results_Incucyte(file_xlsx_4_path, headers)
-  
+
   expect_s3_class(dt_xlsx, "data.table")
   expect_equal(nrow(dt_xlsx), 4)
-  
+
   expect_equal(unique(dt_xlsx[[bcode_name]]), "PLATE_004_XLSX")
   expect_equal(sort(dt_xlsx$ReadoutValue), c(700, 710, 800, 810))
   expect_equal(sort(unique(dt_xlsx[[well_rname]])), "D")
   expect_equal(sort(unique(dt_xlsx[[well_cname]])), c("1", "2"))
-  
+
   all_files <-
     c(file_csv_1_path,
       file_csv_2_na_path,
       file_tsv_3_path,
       file_xlsx_4_path)
   dt_all <- load_results_Incucyte(all_files, headers)
-  
+
   expect_s3_class(dt_all, "data.table")
-  
+
   expect_equal(nrow(dt_all), 17)
-  
+
   expect_equal(
     sort(unique(dt_all[[bcode_name]])),
     c(
@@ -471,44 +471,44 @@ test_that("load_results_Incucyte works as expected", {
       "PLATE_004_XLSX"
     )
   )
-  
+
   expect_false(any(is.na(dt_all$ReadoutValue)))
   expect_false(any(is.na(dt_all[[d_name]])))
-  
+
   missing_file <- "/non/existent/file.csv"
   expect_error(
     load_results_Incucyte(missing_file, headers),
     "Error reading /non/existent/file.csv"
   )
-  
+
   expect_error(
     load_results_Incucyte(file_bad_header_path, headers),
     "Invalid header in the result file: (missing 'Date Time' column)",
     fixed = TRUE
   )
-  
+
   expect_error(
     load_results_Incucyte(file_bad_barcode_path, headers),
     "Invalid header in the result file: (missing 'Barcode' column)",
     fixed = TRUE
   )
-  
+
   dt_colon <- load_results_Incucyte(file_colon_header_path, headers)
-  
+
   expect_s3_class(dt_colon, "data.table")
   expect_equal(unique(dt_colon[[bcode_name]]), "PLATE_COLON_TEST")
   expect_equal(dt_colon$ReadoutValue, 999)
-  
+
 })
 
 test_that("load_results_EnVision_new works as expected", {
   headers <- gDRutils::get_env_identifiers()
   bcode_name <- headers$barcode[1]
-  
+
   file_envision_multi <- tempfile(fileext = ".csv")
   file_envision_error <- tempfile(fileext = ".csv")
   file_envision_xlsx <- tempfile(fileext = ".xlsx")
-  
+
   writeLines(
     c(
       "Instrument Results from;;;;;;",
@@ -526,7 +526,7 @@ test_that("load_results_EnVision_new works as expected", {
       "Measurement Information;;;;;;",
       "Measurement GUID;;747f1a39-507e-4049;;;;",
       "Result of Fluorescence Intensity Filter 1;;;;;;",
-      "Plate Barcode;Loop;Repeat;Point X;Point Y;Exc WL[nm];", 
+      "Plate Barcode;Loop;Repeat;Point X;Point Y;Exc WL[nm];",
       "P02;;1;;;485 / 20;",
       ";;;;;;",
       ";1;2;3",
@@ -542,7 +542,7 @@ test_that("load_results_EnVision_new works as expected", {
     ),
     file_envision_multi
   )
-  
+
   writeLines(
     c(
       "Instrument Results from;;;;;;",
@@ -550,7 +550,7 @@ test_that("load_results_EnVision_new works as expected", {
     ),
     file_envision_error
   )
-  
+
   xlsx_df <- data.frame(
     V1 = c("Instrument Results from", "Protocol Name", NA, "Result of Fluorescence",
            "Plate Barcode", "P03", NA, NA, "A", "B", "C"),
@@ -562,44 +562,44 @@ test_that("load_results_EnVision_new works as expected", {
     stringsAsFactors = FALSE
   )
   openxlsx::write.xlsx(xlsx_df, file_envision_xlsx, colNames = FALSE)
-  
+
   on.exit(unlink(c(file_envision_multi, file_envision_error, file_envision_xlsx)))
-  
+
   dt_multi <- expect_warning(
     load_results_EnVision_new(file_envision_multi, headers),
     NA
   )
-  
+
   expect_s3_class(dt_multi, "data.table")
   expect_equal(nrow(dt_multi), 18)
-  
+
   expect_equal(unique(dt_multi[[bcode_name]]), c("P01", "P02"))
-  
+
   expect_true(all(c(bcode_name, "WellRow", "WellColumn", "ReadoutValue", "BackgroundValue") %in% names(dt_multi)))
-  
+
   plate1 <- dt_multi[dt_multi[[bcode_name]] == "P01", ]
   expect_equal(plate1[WellRow == "A" & WellColumn == 1, ReadoutValue], 10)
   expect_true(is.na(plate1[WellRow == "B" & WellColumn == 2, ReadoutValue]))
   expect_true(is.na(plate1[WellRow == "C" & WellColumn == 2, ReadoutValue]))
-  
+
   plate2 <- dt_multi[dt_multi[[bcode_name]] == "P02", ]
   expect_false(any(is.na(plate2$ReadoutValue)))
   expect_equal(plate2[WellRow == "A" & WellColumn == 1, ReadoutValue], 11)
   expect_equal(plate2[WellRow == "C" & WellColumn == 3, ReadoutValue], 91)
-  
+
   dt_xlsx <- expect_warning(
     load_results_EnVision_new(file_envision_xlsx, headers),
     NA
   )
-  
+
   expect_s3_class(dt_xlsx, "data.table")
   expect_equal(nrow(dt_xlsx), 9)
   expect_equal(unique(dt_xlsx[[bcode_name]]), "P03")
-  
+
   plate3 <- dt_xlsx[dt_xlsx[[bcode_name]] == "P03", ]
   expect_equal(plate3[WellRow == "A" & WellColumn == 1, ReadoutValue], 12)
   expect_equal(plate3[WellRow == "C" & WellColumn == 3, ReadoutValue], 92)
-  
+
   expect_error(
     load_results_EnVision_new(file_envision_error, headers),
     "Could not find data matrix header"

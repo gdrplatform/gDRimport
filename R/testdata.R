@@ -1,17 +1,17 @@
 #' get primary test data
 #'
-#' @examples 
+#' @examples
 #' get_test_data()
-#' 
+#'
 #' @keywords test_data_class
 #' @export
 #'
 #' @return object class "gdr_test_data" with with input data (manifest/template/result paths)
 #' and related reference data (qs2 file paths)
 get_test_data <- function() {
-    
+
     ddir <- system.file(package = "gDRimport", "extdata", "data1")
-    
+
     ## define manifest ref data
     bcode_tbl <- expand.grid(c("201904190", "201904197"), letters[seq_len(6)])
     bcode_v <- paste0(bcode_tbl$Var1, bcode_tbl$Var2)
@@ -24,7 +24,7 @@ get_test_data <- function() {
         Template = rep(templates_v, 6),
         clid = paste0("CL000", clids_n)
       )
-    
+
     new("gdr_test_data",
         manifest_path = file.path(ddir, "manifest.xlsx"),
         result_path =
@@ -47,7 +47,7 @@ get_test_data <- function() {
 
 #' get test Tecan data
 #'
-#' @examples 
+#' @examples
 #' get_test_Tecan_data()
 #
 #' @keywords test_data
@@ -72,7 +72,7 @@ get_test_Tecan_data <- function() {
 
 #' get test D300 data
 #'
-#' @examples 
+#' @examples
 #' get_test_D300_data()
 #
 #' @keywords test_data
@@ -104,7 +104,7 @@ get_test_D300_data <- function() {
 
 #' get test EnVision data
 #'
-#' @examples 
+#' @examples
 #' get_test_EnVision_data()
 #
 #' @keywords test_data
@@ -126,7 +126,7 @@ get_test_EnVision_data <- function() {
 
 #' get test tsv data
 #'
-#' @examples 
+#' @examples
 #' get_test_tsv_data()
 #
 #' @keywords test_data

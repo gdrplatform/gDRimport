@@ -1,4 +1,4 @@
-## 
+##
 
 # collaboration with BHKLab
 # co-author: Jermiah Joseph
@@ -30,7 +30,7 @@ gDRutils::convert_se_assay_to_dt(se[[1]],"RawTreated")
 gDRutils::convert_se_assay_to_dt(se[[1]],"Controls")
 
 ##########################################################
-# RUNNING EACH STEP SEPARATELY IF NEEDED. 
+# RUNNING EACH STEP SEPARATELY IF NEEDED.
 ##########################################################
 
 #############################

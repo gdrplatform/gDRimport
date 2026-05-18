@@ -82,7 +82,7 @@ test_that("correct_template_sheets works as expected", {
     openxlsx::write.xlsx(tfiles_empty[[x]], file.path(tempdir(), x))
   })
   correctedList <- correct_template_sheets(file.path(tempdir(), names(tfiles)))
-  
+
   tfilesCorrect <- list("template1.xlsx" = c("Gnumber", "Concentration", "Media"),
                  "template2.xlsx" = c("Gnumber", "Concentration"),
                  "template3.xlsx" = c("Gnumber", "Concentration", "Gnumber_2", "Concentration_2"),

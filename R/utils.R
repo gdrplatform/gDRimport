@@ -6,11 +6,11 @@
 #' @param dictionary a named array
 #' @keywords utils
 #'
-#' @examples 
+#' @examples
 #' standardize_record_values(c("Vehicle", "vehcle"))
-#' 
+#'
 #' @return a named array with updated names
-#' 
+#'
 #' @export
 #'
 standardize_record_values <- function(x, dictionary = DICTIONARY) {
@@ -53,17 +53,17 @@ read_ref_data <- function(inDir, prefix = "ref") {
 #' @param results_file path to results data
 #' @keywords utils
 #'
-#' @examples 
+#' @examples
 #' td2 <- get_test_Tecan_data()
 #' detect_file_format(td2$r_files[1])
-#' 
+#'
 #' @return string of the detected file format
-#' 
+#'
 #' @export
 detect_file_format <- function(results_file) {
   checkmate::assert_character(results_file)
   results_data <- rio::import(results_file, fill = TRUE)
-  
+
   if (all(c("System", "User", "Plate", "Plate-ID (Stacker)") %in% results_data[, 1])) {
     "Tecan"
   } else if (any(grepl("Instrument Results from", c(names(results_data)[1],
@@ -72,7 +72,7 @@ detect_file_format <- function(results_file) {
                  na.rm = TRUE)) {
     "EnVision_new"
   } else if ("Repeat Barcode" %in% c(
-    do.call(paste, results_data[, 2:3]), 
+    do.call(paste, results_data[, 2:3]),
     paste(names(results_data[, 2:3]), collapse = " ")
   ) || any(grepl("Repeat,Barcode", results_data[, 1]))) {
     "EnVision"

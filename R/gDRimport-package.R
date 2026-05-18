@@ -1,4 +1,4 @@
-#' @note To learn more about functions start with `help(package = "gDRimport")` 
+#' @note To learn more about functions start with `help(package = "gDRimport")`
 #' @keywords internal
 #' @return package help page
 "_PACKAGE"
