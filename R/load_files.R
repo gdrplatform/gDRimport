@@ -1585,7 +1585,7 @@ check_metadata_headers <- function(corrected_names, df_name) {
   # throw warning if close match and correct upper/lower case for consistency
   controlled_headers <- gDRutils::get_header("controlled")
   for (i in seq_along(controlled_headers)) {
-    grep_pattern <- paste(controlled_headers[[i]], "$", collapse = "|")
+    grep_pattern <- paste0(controlled_headers[[i]], "$", collapse = "|")
     exact_match_grep <- grep(grep_pattern, corrected_names)
 
     # To avoid cases when grep compare 'PLATE' to 'temPLATE'
