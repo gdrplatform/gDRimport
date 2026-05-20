@@ -32,49 +32,6 @@
 #'
 #' @export
 #'
-#' Build day0 treatment workbook with vehicle/empty wells
-#' @noRd
-.create_day0_workbook <- function(treatment, has_meta, idfs, destination_path) {
-  # Safely extract actual plate dimensions from the XML Dimension tag (e.g. "(8,12)")
-  dim_str <- treatment$Dimension[1]
-  dims <- as.integer(strsplit(gsub("\\(|\\)", "", dim_str), ",")[[1]])
-  nrow_plate <- dims[1]
-  ncol_plate <- dims[2]
-
-  # Fallback to absolute max if dimension string is somehow corrupt
-  if (is.na(nrow_plate) || is.na(ncol_plate)) {
-    nrow_plate <- max(as.numeric(treatment$Row), na.rm = TRUE)
-    ncol_plate <- max(as.numeric(treatment$Col), na.rm = TRUE)
-  }
-
-  wb <- openxlsx::createWorkbook()
-
-  # Initialize with empty strings
-  drug_mat <- matrix("", nrow = nrow_plate, ncol = ncol_plate)
-  conc_mat <- matrix("", nrow = nrow_plate, ncol = ncol_plate)
-
-  if (has_meta) {
-    # Legacy logic: fill full bounding box (Unit Tests expect this)
-    drug_mat[] <- idfs$untreated_tags[[1]]
-    conc_mat[] <- 0.0
-  } else {
-    # New logic: explicitly respect the outer edge blanking rule
-    inner_rows <- seq_len(nrow_plate)[c(-1, -nrow_plate)]
-    inner_cols <- seq_len(ncol_plate)[c(-1, -ncol_plate)]
-    drug_mat[inner_rows, inner_cols] <- idfs$untreated_tags[[1]]
-    conc_mat[inner_rows, inner_cols] <- 0.0
-  }
-
-  openxlsx::addWorksheet(wb, idfs$drug_identifier)
-  openxlsx::writeData(wb, sheet = 1, data.table::data.table(drug_mat), colNames = FALSE)
-
-  openxlsx::addWorksheet(wb, idfs$conc_identifier)
-  openxlsx::writeData(wb, sheet = 2, data.table::data.table(conc_mat), colNames = FALSE)
-
-  fname <- "trt_day0.xlsx"
-  openxlsx::saveWorkbook(wb, file.path(destination_path, fname), overwrite = TRUE)
-}
-
 import_D300 <- function(D300_file,
                         destination_path,
                         metadata_file = NULL,
@@ -110,7 +67,53 @@ import_D300 <- function(D300_file,
   }
 
   if (day0) {
-    .create_day0_workbook(treatment, has_meta, idfs, destination_path)
+    # Safely extract actual plate dimensions from the XML Dimension tag (e.g. "(8,12)")
+    # This works reliably regardless of whether metadata was merged or not.
+    dim_str <- treatment$Dimension[1]
+    dims <- as.integer(strsplit(gsub("\\(|\\)", "", dim_str), ",")[[1]])
+    nrow_plate <- dims[1]
+    ncol_plate <- dims[2]
+
+    # Fallback to absolute max if dimension string is somehow corrupt
+    if (is.na(nrow_plate) || is.na(ncol_plate)) {
+      nrow_plate <- max(as.numeric(treatment$Row), na.rm = TRUE)
+      ncol_plate <- max(as.numeric(treatment$Col), na.rm = TRUE)
+    }
+
+    wb <- openxlsx::createWorkbook()
+
+    # Initialize with empty strings
+    drug_mat <- matrix("", nrow = nrow_plate, ncol = ncol_plate)
+    conc_mat <- matrix("", nrow = nrow_plate, ncol = ncol_plate)
+
+    for (m in seq_len(nrow_plate)) {
+      for (n in seq_len(ncol_plate)) {
+        if (has_meta) {
+          # Legacy logic: fill full bounding box (Unit Tests expect this)
+          drug_mat[m, n] <- idfs$untreated_tags[[1]]
+          conc_mat[m, n] <- 0.0
+        } else {
+          # New logic: explicitly respect the outer edge blanking rule
+          is_edge <- (m == 1 || m == nrow_plate || n == 1 || n == ncol_plate)
+          if (is_edge) {
+            drug_mat[m, n] <- ""
+            conc_mat[m, n] <- ""
+          } else {
+            drug_mat[m, n] <- idfs$untreated_tags[[1]]
+            conc_mat[m, n] <- 0.0
+          }
+        }
+      }
+    }
+
+    openxlsx::addWorksheet(wb, idfs$drug_identifier)
+    openxlsx::writeData(wb, sheet = 1, data.table::data.table(drug_mat), colNames = FALSE)
+
+    openxlsx::addWorksheet(wb, idfs$conc_identifier)
+    openxlsx::writeData(wb, sheet = 2, data.table::data.table(conc_mat), colNames = FALSE)
+
+    fname <- "trt_day0.xlsx"
+    openxlsx::saveWorkbook(wb, file.path(destination_path, fname), overwrite = TRUE)
   }
 
   # Sort only the plate list numerically to ensure trt_1, trt_2 files generate in chronological order
@@ -161,71 +164,6 @@ import_D300 <- function(D300_file,
   }
 }
 
-#' Fill drug/conc matrices using metadata-based lookup
-#' @noRd
-.fill_matrices_with_metadata <- function(trt_info, trt_gnumber_conc, j, nrow, ncol, idfs) {
-  nwells <- nrow * ncol
-  conc_mat <- matrix(rep("", nwells), nrow = nrow, ncol = ncol)
-  drug_mat <- matrix(rep("", nwells), nrow = nrow, ncol = ncol)
-
-  for (m in seq_along(trt_info$row_idx)) {
-    for (n in seq_along(trt_info$col_idx)) {
-      drug_entry <- trt_gnumber_conc[[m, n]]
-      if (length(drug_entry) >= j) {
-        drug <- drug_entry[[j]][[1]]
-        conc <- drug_entry[[j]][[2]]
-        if (drug %in% idfs$untreated_tags) conc <- 0.0
-      } else {
-        drug <- idfs$untreated_tags[[1]]
-        conc <- 0.0
-      }
-      conc_mat[trt_info$row_idx[m], trt_info$col_idx[n]] <- conc
-      drug_mat[trt_info$row_idx[m], trt_info$col_idx[n]] <- drug
-    }
-  }
-  list(drug_mat = drug_mat, conc_mat = conc_mat)
-}
-
-#' Fill drug/conc matrices with full plate expansion (no metadata)
-#' @noRd
-.fill_matrices_no_metadata <- function(trt_info, trt_gnumber_conc, j, nrow, ncol, idfs) {
-  nwells <- nrow * ncol
-  conc_mat <- matrix(rep("", nwells), nrow = nrow, ncol = ncol)
-  drug_mat <- matrix(rep("", nwells), nrow = nrow, ncol = ncol)
-
-  for (m in seq_len(nrow)) {
-    for (n in seq_len(ncol)) {
-      r_idx <- which(trt_info$row_idx == m)
-      c_idx <- which(trt_info$col_idx == n)
-
-      if (length(r_idx) > 0 && length(c_idx) > 0) {
-        drug_entry <- trt_gnumber_conc[[r_idx, c_idx]]
-      } else {
-        drug_entry <- list()
-      }
-
-      if (length(drug_entry) >= j) {
-        drug <- drug_entry[[j]][[1]]
-        conc <- drug_entry[[j]][[2]]
-        if (drug %in% idfs$untreated_tags) conc <- 0.0
-      } else {
-        # Custom rule: inner gaps = vehicle, outer edges = empty
-        is_edge <- (m == 1 || m == nrow || n == 1 || n == ncol)
-        if (is_edge) {
-          drug <- ""
-          conc <- ""
-        } else {
-          drug <- idfs$untreated_tags[[1]]
-          conc <- 0.0
-        }
-      }
-      conc_mat[m, n] <- conc
-      drug_mat[m, n] <- drug
-    }
-  }
-  list(drug_mat = drug_mat, conc_mat = conc_mat)
-}
-
 #' for each drug create a Gnumber and Concentration information for each well
 #'
 #' @param trt_info list with treatment info
@@ -242,6 +180,7 @@ save_drug_info_per_well <-
     # Toggle dimensions based on metadata presence to preserve legacy unit tests
     nrow <- if (trt_info$has_metadata) max(trt_info$row_idx) else trt_info$plate_nrow
     ncol <- if (trt_info$has_metadata) max(trt_info$col_idx) else trt_info$plate_ncol
+    nwells <- nrow * ncol
 
     for (j in seq_len(trt_info$max_drugs_per_well)) {
 
@@ -252,14 +191,67 @@ save_drug_info_per_well <-
         conc_sname <- paste0(conc_sname, "_", j)
       }
 
+      # Initialize with empty strings to guarantee cells are created in Excel
+      conc_mat <- matrix(rep("", nwells), nrow = nrow, ncol = ncol)
+      drug_mat <- matrix(rep("", nwells), nrow = nrow, ncol = ncol)
+
       if (trt_info$has_metadata) {
-        mats <- .fill_matrices_with_metadata(trt_info, trt_gnumber_conc, j, nrow, ncol, idfs)
+        # -------------------------------------------------------------
+        # LEGACY LOGIC: Used for unit tests and when Metadata is supplied
+        # -------------------------------------------------------------
+        for (m in seq_along(trt_info$row_idx)) {
+          for (n in seq_along(trt_info$col_idx)) {
+            drug_entry <- trt_gnumber_conc[[m, n]]
+            if (length(drug_entry) >= j) {
+              drug <- drug_entry[[j]][[1]]
+              conc <- drug_entry[[j]][[2]]
+              if (drug %in% idfs$untreated_tags) conc <- 0.0
+            } else {
+              drug <- idfs$untreated_tags[[1]]
+              conc <- 0.0
+            }
+            conc_mat[trt_info$row_idx[m], trt_info$col_idx[n]] <- conc
+            drug_mat[trt_info$row_idx[m], trt_info$col_idx[n]] <- drug
+          }
+        }
       } else {
-        mats <- .fill_matrices_no_metadata(trt_info, trt_gnumber_conc, j, nrow, ncol, idfs)
+        # -------------------------------------------------------------
+        # NEW LOGIC: Full 96-well expansion when Metadata is NULL
+        # -------------------------------------------------------------
+        for (m in seq_len(nrow)) {
+          for (n in seq_len(ncol)) {
+            r_idx <- which(trt_info$row_idx == m)
+            c_idx <- which(trt_info$col_idx == n)
+
+            if (length(r_idx) > 0 && length(c_idx) > 0) {
+              drug_entry <- trt_gnumber_conc[[r_idx, c_idx]]
+            } else {
+              drug_entry <- list()
+            }
+
+            if (length(drug_entry) >= j) {
+              drug <- drug_entry[[j]][[1]]
+              conc <- drug_entry[[j]][[2]]
+              if (drug %in% idfs$untreated_tags) conc <- 0.0
+            } else {
+              # Custom rule: inner gaps = vehicle, outer edges = empty
+              is_edge <- (m == 1 || m == nrow || n == 1 || n == ncol)
+              if (is_edge) {
+                drug <- ""
+                conc <- ""
+              } else {
+                drug <- idfs$untreated_tags[[1]]
+                conc <- 0.0
+              }
+            }
+            conc_mat[m, n] <- conc
+            drug_mat[m, n] <- drug
+          }
+        }
       }
 
-      drug_data <- data.table::data.table(mats$drug_mat)
-      conc_data <- data.table::data.table(mats$conc_mat)
+      drug_data <- data.table::data.table(drug_mat)
+      conc_data <- data.table::data.table(conc_mat)
 
       openxlsx::addWorksheet(wb, drug_sname)
       openxlsx::writeData(wb, sheet = (j * 2) - 1, drug_data, colNames = FALSE)
