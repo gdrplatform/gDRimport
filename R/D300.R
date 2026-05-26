@@ -192,8 +192,8 @@ save_drug_info_per_well <-
       }
 
       # Initialize with empty strings to guarantee cells are created in Excel
-      conc_mat <- matrix(rep("", nwells), nrow = nrow, ncol = ncol)
-      drug_mat <- matrix(rep("", nwells), nrow = nrow, ncol = ncol)
+      conc_mat <- matrix("", nrow = nrow, ncol = ncol)
+      drug_mat <- matrix("", nrow = nrow, ncol = ncol)
 
       if (trt_info$has_metadata) {
         # -------------------------------------------------------------
