@@ -178,13 +178,13 @@
 * increase compression level - Tavor_2020.qs; < 5MB limit
 
 ## gDRimport 0.99.15 - 2023-06-22
-* replaced rds with qs
+* replace rds with qs
 
 ## gDRimport 0.99.14 - 2023-06-13
 * switch from `merge` to `[[`
 
 ## gDRimport 0.99.13 - 2023-06-05
-* replaced reshape2 functions by functions from data.table
+* replace reshape2 functions by functions from data.table
 
 ## gDRimport 0.99.12 - 2023-05-24
 * format the vignette with BiocStyle
@@ -208,11 +208,11 @@
 * add object S4 `gdr_test_data`
 
 ## gDRimport 0.99.5 - 2023-04-19
-* mocked PSets tests
+* mock PSets tests
 
 ## gDRimport 0.99.4 - 2023-04-17
 * add R 4.2 as dependency
-* bugfix for Pset-related tests and examples - reset identifiers
+* fix Pset-related tests and examples - reset identifiers
 
 ## gDRimport 0.99.3 - 2023-04-13
 * add minor improvements - BiocCheck compatibility
