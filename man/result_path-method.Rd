@@ -22,7 +22,7 @@ Method for object gdr_test_data - access to slot \code{result_path}
 \examples{
  td <- get_test_data()
  result_file_path <- result_path(td)
-  
+
 }
 \keyword{methods}
 \keyword{test_data_class}
