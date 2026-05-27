@@ -178,9 +178,9 @@ save_drug_info_per_well <-
   function(trt_info, trt_gnumber_conc, wb, idfs) {
 
     # Toggle dimensions based on metadata presence to preserve legacy unit tests
-    nrow <- if (trt_info$has_metadata) max(trt_info$row_idx) else trt_info$plate_nrow
-    ncol <- if (trt_info$has_metadata) max(trt_info$col_idx) else trt_info$plate_ncol
-    nwells <- nrow * ncol
+    n_rows <- if (trt_info$has_metadata) max(trt_info$row_idx) else trt_info$plate_nrow
+    n_cols <- if (trt_info$has_metadata) max(trt_info$col_idx) else trt_info$plate_ncol
+    nwells <- n_rows * n_cols
 
     for (j in seq_len(trt_info$max_drugs_per_well)) {
 
@@ -192,8 +192,8 @@ save_drug_info_per_well <-
       }
 
       # Initialize with empty strings to guarantee cells are created in Excel
-      conc_mat <- matrix("", nrow = nrow, ncol = ncol)
-      drug_mat <- matrix("", nrow = nrow, ncol = ncol)
+      conc_mat <- matrix("", nrow = n_rows, ncol = n_cols)
+      drug_mat <- matrix("", nrow = n_rows, ncol = n_cols)
 
       if (trt_info$has_metadata) {
         # -------------------------------------------------------------
@@ -218,8 +218,8 @@ save_drug_info_per_well <-
         # -------------------------------------------------------------
         # NEW LOGIC: Full 96-well expansion when Metadata is NULL
         # -------------------------------------------------------------
-        for (m in seq_len(nrow)) {
-          for (n in seq_len(ncol)) {
+        for (m in seq_len(n_rows)) {
+          for (n in seq_len(n_cols)) {
             r_idx <- which(trt_info$row_idx == m)
             c_idx <- which(trt_info$col_idx == n)
 
@@ -235,7 +235,7 @@ save_drug_info_per_well <-
               if (drug %in% idfs$untreated_tags) conc <- 0.0
             } else {
               # Custom rule: inner gaps = vehicle, outer edges = empty
-              is_edge <- (m == 1 || m == nrow || n == 1 || n == ncol)
+              is_edge <- (m == 1 || m == n_rows || n == 1 || n == n_cols)
               if (is_edge) {
                 drug <- ""
                 conc <- ""

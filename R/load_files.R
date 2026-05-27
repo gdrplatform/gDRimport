@@ -1557,10 +1557,9 @@ check_metadata_against_spaces <- function(corrected_names, df_name) {
     for (i in which(names_spaces)) {
       s <- strsplit(corrected_names[i], " ")[[1]]
       corrected_names[i] <-
-        paste(toupper(substring(s, 1, 1)),
-              substring(s, 2),
-              sep = "",
-              collapse = "")
+        paste0(toupper(substring(s, 1, 1)),
+               substring(s, 2),
+               collapse = "")
     }
     futile.logger::flog.warn(
       "Metadata field names for %s cannot contain spaces --> corrected to: %s",
