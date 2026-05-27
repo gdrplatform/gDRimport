@@ -173,7 +173,7 @@ test_that(".check_file_structure works as expected", {
   ml <- lapply(df_to_check, function(x) {
     is.na(suppressWarnings(as.numeric(x)))
   })
-  full_rows <- rowSums(do.call(cbind, ml)) != ncol(df_to_check)
+  full_rows <- rowSums(do.call(cbind, ml)) != NCOL(df_to_check)
   plate_row <- which(df[[1]] %in% "Plate information")
   spacer_rows <- unlist(lapply(plate_row, function(x) c(x + 1, x + 2, x + 4 + n_row)))
   data_rows <- unlist(lapply(plate_row, function(x) (x + 4):(x + 4 + n_row - 1)))
@@ -183,8 +183,8 @@ test_that(".check_file_structure works as expected", {
     min(which(full_rows)[(diff(which(full_rows)) > 20)] + 1, dim(df)[1])
   df <-
     df[full_rows_index[full_rows_index <= gaps], ]
-  if (ncol(df) < n_col) {
-    df[, (ncol(df) + 1):n_col] <- NA
+  if (NCOL(df) < n_col) {
+    df[, (NCOL(df) + 1):n_col] <- NA
   }
   iB <- 1
   iF <- 1
@@ -219,7 +219,7 @@ test_that(".fill_empty_wells works as expected", {
   ml <- lapply(df_to_check, function(x) {
     is.na(suppressWarnings(as.numeric(x)))
   })
-  full_rows <- rowSums(do.call(cbind, ml)) != ncol(df_to_check)
+  full_rows <- rowSums(do.call(cbind, ml)) != NCOL(df_to_check)
   plate_row <- which(df[[1]] %in% "Plate information")
   spacer_rows <- unlist(lapply(plate_row, function(x) c(x + 1, x + 2, x + 4 + n_row)))
   data_rows <- unlist(lapply(plate_row, function(x) (x + 4):(x + 4 + n_row - 1)))
@@ -418,7 +418,7 @@ test_that("load_results_Incucyte works as expected", {
   dt_csv <- load_results_Incucyte(file_csv_1_path, headers)
 
   expect_s3_class(dt_csv, "data.table")
-  expect_equal(nrow(dt_csv), 4)
+  expect_equal(NROW(dt_csv), 4)
 
   expect_true(all(
     c(bcode_name, d_name, well_rname, well_cname, "ReadoutValue") %in% names(dt_csv)
@@ -434,7 +434,7 @@ test_that("load_results_Incucyte works as expected", {
   dt_tsv <- load_results_Incucyte(file_tsv_3_path, headers)
 
   expect_s3_class(dt_tsv, "data.table")
-  expect_equal(nrow(dt_tsv), 4)
+  expect_equal(NROW(dt_tsv), 4)
 
   expect_equal(unique(dt_tsv[[bcode_name]]), "PLATE_003_TSV")
   expect_equal(sort(dt_tsv$ReadoutValue), c(500, 510, 600, 610))
@@ -444,7 +444,7 @@ test_that("load_results_Incucyte works as expected", {
   dt_xlsx <- load_results_Incucyte(file_xlsx_4_path, headers)
 
   expect_s3_class(dt_xlsx, "data.table")
-  expect_equal(nrow(dt_xlsx), 4)
+  expect_equal(NROW(dt_xlsx), 4)
 
   expect_equal(unique(dt_xlsx[[bcode_name]]), "PLATE_004_XLSX")
   expect_equal(sort(dt_xlsx$ReadoutValue), c(700, 710, 800, 810))
@@ -460,7 +460,7 @@ test_that("load_results_Incucyte works as expected", {
 
   expect_s3_class(dt_all, "data.table")
 
-  expect_equal(nrow(dt_all), 17)
+  expect_equal(NROW(dt_all), 17)
 
   expect_equal(
     sort(unique(dt_all[[bcode_name]])),
@@ -571,7 +571,7 @@ test_that("load_results_EnVision_new works as expected", {
   )
 
   expect_s3_class(dt_multi, "data.table")
-  expect_equal(nrow(dt_multi), 18)
+  expect_equal(NROW(dt_multi), 18)
 
   expect_equal(unique(dt_multi[[bcode_name]]), c("P01", "P02"))
 
@@ -593,7 +593,7 @@ test_that("load_results_EnVision_new works as expected", {
   )
 
   expect_s3_class(dt_xlsx, "data.table")
-  expect_equal(nrow(dt_xlsx), 9)
+  expect_equal(NROW(dt_xlsx), 9)
   expect_equal(unique(dt_xlsx[[bcode_name]]), "P03")
 
   plate3 <- dt_xlsx[dt_xlsx[[bcode_name]] == "P03", ]

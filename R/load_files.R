@@ -719,7 +719,7 @@ read_in_result_files <- function(results_file, results_filename, headers) {
         stop(sprintf(exception_data$sprintf_text, results_file[[iF]]))
       })
       # skip_empty_rows flag needs to be TRUE even if it ends up not skipping empty rows
-      if (ncol(df) == 1) {
+      if (NCOL(df) == 1) {
         tryCatch({
           # likely a csv file
           df <-
@@ -747,7 +747,7 @@ read_in_result_files <- function(results_file, results_filename, headers) {
       }
       if (!("BackgroundValue" %in% colnames(df))) {
         df$BackgroundValue <- 0
-        futile.logger::flog.info("File %s read; %d wells", results_filename[iF], nrow(df))
+        futile.logger::flog.info("File %s read; %d wells", results_filename[iF], NROW(df))
         futile.logger::flog.info("File done")
       }
       df
@@ -989,7 +989,7 @@ load_results_EnVision_new <- function(results_file, headers = gDRutils::get_env_
         melted_data[is_empty_or_na, ReadoutValue := NA_character_]
         melted_data[, ReadoutValue := as.numeric(ReadoutValue)]
 
-        futile.logger::flog.info("Plate %s read; %d wells", barcode, nrow(melted_data))
+        futile.logger::flog.info("Plate %s read; %d wells", barcode, NROW(melted_data))
 
         all_results <- rbind(all_results, melted_data)
       }
@@ -1037,7 +1037,7 @@ read_EnVision_xlsx <- function(results_file, results_sheet) {
       stop(sprintf(exception_data$sprintf_text, results_file, results_sheet))
     })
     colnames(df) <-
-      col_names <- paste0("x", seq_len(ncol(df)))
+      col_names <- paste0("x", seq_len(NCOL(df)))
   }
   # Find rows with data and drop empty columns
   colsRange <-
@@ -1199,11 +1199,11 @@ enhance_raw_edited_EnVision_df <- function(df, barcode_col, headers) {
 
   # don't consider the first columns as these may be metadata
   # if big gap, delete what is at the bottom (Protocol information)
-  gaps <- min(max(data_rows), nrow(df))
+  gaps <- min(max(data_rows), NROW(df))
   df <- df[full_rows_index[full_rows_index <= gaps], ]
 
   # add empty column to complete plate (assume left column is #1)
-  if (ncol(df) < n_col) df[, (ncol(df) + 1):n_col] <- NA
+  if (NCOL(df) < n_col) df[, (NCOL(df) + 1):n_col] <- NA
   df
 }
 
@@ -1308,14 +1308,14 @@ read_in_results_Tecan <- function(results_file, results_sheets, headers) {
 
     # find the indicator ("<>") that identifies where plate readings are
     ind <- which(df == "<>", arr.ind = TRUE)
-    dfm <- df[(ind[1]):nrow(df), ind[2]:ncol(df), with = FALSE] # remove text above "<>"
+    dfm <- df[(ind[1]):NROW(df), ind[2]:NCOL(df), with = FALSE] # remove text above "<>"
     # remove text after data matrix ends, as identified by first na value
     ind <- which(is.na(dfm), arr.ind = TRUE)[1]
-    dfm <- dfm[seq_len(ind) - 1, seq_len(ncol(dfm)), with = FALSE]
+    dfm <- dfm[seq_len(ind) - 1, seq_len(NCOL(dfm)), with = FALSE]
 
     # rows and columns in data matrix with row and col names
-    n_row <- nrow(dfm)
-    n_col <- ncol(dfm)
+    n_row <- NROW(dfm)
+    n_col <- NCOL(dfm)
     readout <- dfm[2:n_row, 2:n_col, with = FALSE]
     # get well identifiers (numbers and letters) from layout
     WellRow <- as.character(t(dfm[2:n_row, 1]))
@@ -1325,7 +1325,7 @@ read_in_results_Tecan <- function(results_file, results_sheets, headers) {
       Barcode = results_sheets[iS],
       WellRow = WellRow,
       WellColumn =  as.vector(t(matrix(
-        WellColumn, ncol(readout), nrow(readout)
+        WellColumn, NCOL(readout), NROW(readout)
       ))),
       ReadoutValue = as.numeric(as.vector(as.matrix(readout))),
       BackgroundValue = 0 ## Tecan users report negligible background readings, usually background is not recorded
@@ -1769,7 +1769,7 @@ get_EnVision_properties <- function(results.list, fname) {
 #' @return charvec with plate dims
 #'
 .get_plate_size <- function(df) {
-  n_col <- 1.5 * 2 ^ ceiling(log2((ncol(df) - 2) / 1.5))
+  n_col <- 1.5 * 2 ^ ceiling(log2((NCOL(df) - 2) / 1.5))
   n_row <- n_col / 1.5
   c(n_row, n_col)
 }
@@ -1813,8 +1813,8 @@ get_EnVision_properties <- function(results.list, fname) {
 #'
 .fill_empty_wells <- function(df, plate_rows, data_rows, exp_row, exp_col, numeric_regex = "^\\d+$") {
   all_rows <- Reduce(intersect, lapply(df, function(x) grep(numeric_regex, x)))
-  if (ncol(df) < exp_col) {
-    new_cols <- exp_col - ncol(df)
+  if (NCOL(df) < exp_col) {
+    new_cols <- exp_col - NCOL(df)
     df <- cbind(df, matrix("", ncol = new_cols))
     df[data_rows, rev(names(df))[seq_len(new_cols)]] <- NA
   }
