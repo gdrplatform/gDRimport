@@ -1,4 +1,4 @@
-## gDRimport 1.11.3 - 2026-05-18
+## gDRimport 1.11.3 - 2026-05-27
 * apply updated gDRstyle rules
 
 ## gDRimport 1.11.2 - 2026-05-04
