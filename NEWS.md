@@ -145,7 +145,7 @@
 * release Bioc 3.18
 
 ## gDRimport 1.0.0 - 2023-10-24
-* prerelease Bioc 3.18
+* prepare prerelease for Bioc 3.18
 
 ## gDRimport 0.99.25 - 2023-10-17
 * adjust NEWS to Bioc format
@@ -327,4 +327,4 @@
 * code refactor using lintr
 
 ## gDRimport 0.0.1 - 2021-06-22
-* initial release -  importing fucntions moved from gDRcore package
+* introduce initial release -  importing fucntions moved from gDRcore package
