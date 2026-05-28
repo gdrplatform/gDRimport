@@ -19,11 +19,11 @@ test_that("detect_file_format works as expected", {
   envision_path <- list.files(system.file(package = "gDRimport", "extdata", "data1"),
                            "^RawData", full.names = TRUE)
   expect_equal(unique(unlist(lapply(envision_path, detect_file_format))), "EnVision")
-  
+
   tecan_path <- list.files(system.file(package = "gDRimport", "extdata", "data2"),
                               "^RawData", full.names = TRUE)
   expect_equal(unique(unlist(lapply(tecan_path, detect_file_format))), "Tecan")
-  
+
   tsv_path <- list.files(system.file(package = "gDRimport", "extdata", "data1"),
                            "ref_RawData", full.names = TRUE)
   expect_equal(unique(unlist(lapply(tsv_path, detect_file_format))), "long_tsv")

@@ -31,9 +31,8 @@ PharmacoSet object
 Get PharmacoSet
 }
 \examples{
- 
 suppressMessages(getPSet(
-  "Tavor_2020", 
+  "Tavor_2020",
   psetDir = system.file("extdata/pset", package = "gDRimport"),
   use_local_PSets_list = TRUE
 ))

@@ -15,12 +15,12 @@ log_level <- futile.logger::flog.threshold("ERROR")
 
 # Overview
 
-The `gDRimport` package is a part of the gDR suite. It helps to prepare raw drug response data for downstream processing. It mainly contains helper functions for importing/loading/validating dose response data provided in different file formats. 
+The `gDRimport` package is a part of the gDR suite. It helps to prepare raw drug response data for downstream processing. It mainly contains helper functions for importing/loading/validating dose response data provided in different file formats.
 
 # Use Cases
 
-## Test Data 
-There are currently four test datasets that can be used to see what's the expected input data for the gDRimport. 
+## Test Data
+There are currently four test datasets that can be used to see what's the expected input data for the gDRimport.
 
 ```{r load-test-datasets}
 # primary test data
@@ -99,7 +99,7 @@ Replace "prism_data_path", "cell_line_data_path", and "treatment_data_path" with
 
 
 ## Package installation
-The function `installAllDeps` assists in installing package dependencies.  
+The function `installAllDeps` assists in installing package dependencies.
 
 # SessionInfo {-}
 

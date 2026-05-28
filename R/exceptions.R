@@ -6,12 +6,12 @@
 #' get_exception_data(1)
 #' get_exception_data()
 #' @keywords correction_exception
-#' 
+#'
 #' @return A data.table row with exception data or all exceptions
 #' @export
 get_exception_data <- function(status_code = NULL) {
   checkmate::assert_number(status_code, null.ok = TRUE)
-  
+
   #nolint start
   exception_table <- tibble::tribble(
     ~status_code, ~title, ~sprintf_text, ~type, ~input_type,
@@ -54,7 +54,7 @@ get_exception_data <- function(status_code = NULL) {
     "37", "Raw Data header", "Invalid header in the result file: (%s)", "error", "raw data",
   )
   #nolint end
-  
+
   res <- if (!is.null(status_code)) {
     checkmate::assert_choice(toString(status_code), exception_table$status_code)
 
@@ -62,6 +62,6 @@ get_exception_data <- function(status_code = NULL) {
   } else {
     exception_table
   }
-  
+
   data.table::as.data.table(res)
 }

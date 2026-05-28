@@ -21,7 +21,7 @@ Convert a PharmacoSet to a data.table that is prepare for input into gDR pipelin
 }
 \examples{
 pset <- suppressMessages(getPSet(
-  "Tavor_2020", 
+  "Tavor_2020",
   psetDir = system.file("extdata/pset", package = "gDRimport"),
   use_local_PSets_list = TRUE
 ))

@@ -153,7 +153,7 @@ read_in_manifest_file <- function(manifest_file, available_formats) {
     } else if (manifest_ext %in% c("text/tsv",
                                    "text/tab-separated-values",
                                    "tsv")) {
-      
+
       df <- tryCatch({
         stats::na.omit(data.table::fread(
           x, sep = "\t", header = TRUE, na.strings = c("", "NA")))
@@ -265,11 +265,11 @@ load_templates <- function(df_template_files) {
 #'
 load_results <-
   function(df_results_files, instrument = "EnVision", headers = gDRutils::get_env_identifiers()) {
-    
+
     stopifnot(any(inherits(df_results_files, "data.table"), checkmate::test_character(df_results_files)))
-    checkmate::assert_string(instrument, pattern = "^EnVision$|^long_tsv$|^Tecan$|^EnVision_new$|^Incucyte$") 
+    checkmate::assert_string(instrument, pattern = "^EnVision$|^long_tsv$|^Tecan$|^EnVision_new$|^Incucyte$")
     checkmate::assert_list(headers, null.ok = TRUE)
-    
+
     if (data.table::is.data.table(df_results_files)) {
       # for the shiny app
       results_file <- df_results_files$datapath
@@ -279,11 +279,11 @@ load_results <-
       results_filename <- basename(results_file)
     }
     checkmate::assert_file_exists(results_file)
-    
+
     if (all(endsWith(results_file, ".tsv"))) {
       instrument <- "long_tsv"
     }
-    
+
     if (instrument == "EnVision") {
       all_results <-
         load_results_EnVision(results_file, headers = headers)
@@ -683,7 +683,7 @@ load_results_tsv <-
     results_filename <- basename(results_file)
 
     all_results <- read_in_result_files(results_file, results_filename, headers)
-    
+
     cols_subset <- intersect(c(headers[["barcode"]], gDRutils::get_env_identifiers("well_position")),
                              names(all_results))
 
@@ -719,7 +719,7 @@ read_in_result_files <- function(results_file, results_filename, headers) {
         stop(sprintf(exception_data$sprintf_text, results_file[[iF]]))
       })
       # skip_empty_rows flag needs to be TRUE even if it ends up not skipping empty rows
-      if (ncol(df) == 1) {
+      if (NCOL(df) == 1) {
         tryCatch({
           # likely a csv file
           df <-
@@ -737,7 +737,7 @@ read_in_result_files <- function(results_file, results_filename, headers) {
           futile.logger::flog.error("%s needs to be a column of %s", coln, results_filename[iF])
         }
       }
-      
+
       cols_subset <- intersect(c(headers[["barcode"]], gDRutils::get_env_identifiers("well_position")),
                                names(df))
       if (dim(unique(df[, cols_subset, with = FALSE]))[1] !=
@@ -747,7 +747,7 @@ read_in_result_files <- function(results_file, results_filename, headers) {
       }
       if (!("BackgroundValue" %in% colnames(df))) {
         df$BackgroundValue <- 0
-        futile.logger::flog.info("File %s read; %d wells", results_filename[iF], nrow(df))
+        futile.logger::flog.info("File %s read; %d wells", results_filename[iF], NROW(df))
         futile.logger::flog.info("File done")
       }
       df
@@ -788,7 +788,7 @@ load_results_EnVision <-
           df <- read_EnVision_xlsx(results_file[[iF]], iS)
         }
 
-        barcode_col <- grep(paste0(headers[["barcode"]], collapse = "|"), df)[1]
+        barcode_col <- grep(paste(headers[["barcode"]], collapse = "|"), df)[1]
 
         if (isEdited) {
           # get the expected plate size
@@ -824,7 +824,7 @@ load_results_EnVision <-
 #' Load results from EnVision_new (CSV and XLSX)
 #'
 #' This functions loads and checks the results file(s) from a new Envision instrument
-#' in the CSV or XLSX format. Supports multiple plates in a single file or multiple 
+#' in the CSV or XLSX format. Supports multiple plates in a single file or multiple
 #' sheets in an Excel file by robustly checking the file structure.
 #'
 #' @param results_file character, file path(s) to result file(s)
@@ -834,22 +834,22 @@ load_results_EnVision <-
 #' @return data.table with results data
 #'
 load_results_EnVision_new <- function(results_file, headers = gDRutils::get_env_identifiers()) {
-  
+
   checkmate::assert_character(results_file)
   checkmate::assert_list(headers, null.ok = TRUE)
-  
+
   all_results <- data.table::data.table()
-  
+
   for (iF in seq_along(results_file)) {
     current_file <- results_file[iF]
     is_excel <- grepl("\\.xlsx?$", current_file, ignore.case = TRUE)
-    
+
     lines_list <- list()
-    
+
     if (is_excel) {
       futile.logger::flog.info("Reading EnVision_new Excel file %s", current_file)
       sheets <- readxl::excel_sheets(current_file)
-      
+
       for (sheet in sheets) {
         dt <- read_excel_to_dt(current_file, sheet = sheet, col_names = FALSE)
         dt_char <- dt[, lapply(.SD, function(x) {
@@ -863,19 +863,19 @@ load_results_EnVision_new <- function(results_file, headers = gDRutils::get_env_
       futile.logger::flog.info("Reading EnVision_new CSV file %s", current_file)
       lines_list[["csv"]] <- readLines(current_file, warn = FALSE)
     }
-    
+
     for (sheet_name in names(lines_list)) {
       lines <- lines_list[[sheet_name]]
-      
+
       if (is_excel) {
         futile.logger::flog.info("Processing sheet '%s' from %s", sheet_name, current_file)
       }
-      
+
       clean_lines <- gsub("^\"|\"$", "", lines)
       clean_lines <- gsub("\"", "", clean_lines)
-      
+
       data_header_idx <- grep("^[;, \t]*1[;, \t]+2[;, \t]+3", clean_lines)
-      
+
       if (length(data_header_idx) == 0) {
         if (is_excel) {
           futile.logger::flog.warn("Could not find data matrix header in file: %s, sheet: '%s'. Skipping.",
@@ -885,18 +885,18 @@ load_results_EnVision_new <- function(results_file, headers = gDRutils::get_env_
           stop(sprintf("Could not find data matrix header (e.g., ';1;2;3...') in file: %s", current_file))
         }
       }
-      
+
       for (idx in seq_along(data_header_idx)) {
         data_start_line <- data_header_idx[idx]
-        
+
         if (data_start_line > 1 && grepl("Plate Map", clean_lines[data_start_line - 1], ignore.case = TRUE)) {
           futile.logger::flog.info("Skipping 'Plate Map' matrix at line %d in file '%s'", data_start_line, current_file)
           next
         }
-        
+
         barcode <- NA
         search_limit <- max(1, data_start_line - 15)
-        
+
         for (r in seq(data_start_line - 1, search_limit, by = -1)) {
           if (grepl("^Plate Barcode[;,]Loop", clean_lines[r], ignore.case = TRUE)) {
             barcode_line <- clean_lines[r + 1]
@@ -904,7 +904,7 @@ load_results_EnVision_new <- function(results_file, headers = gDRutils::get_env_
             break
           }
         }
-        
+
         if (is.na(barcode) || barcode == "") {
           for (r in seq(data_start_line - 1, search_limit, by = -1)) {
             if (grepl("^Plate Barcode[;,]", clean_lines[r], ignore.case = TRUE)) {
@@ -917,14 +917,14 @@ load_results_EnVision_new <- function(results_file, headers = gDRutils::get_env_
             }
           }
         }
-        
+
         if (is.na(barcode) || barcode == "") {
           futile.logger::flog.info("Skipping matrix at line %d in file '%s':
                                    no associated 'Plate Barcode' found within 15 lines.",
                                    data_start_line, current_file)
           next
         }
-        
+
         n_rows <- 0
         for (r in (data_start_line + 1):length(clean_lines)) {
           if (grepl("^[A-Za-z]+[;,]", clean_lines[r])) {
@@ -933,72 +933,72 @@ load_results_EnVision_new <- function(results_file, headers = gDRutils::get_env_
             break
           }
         }
-        
-        if (n_rows == 0) n_rows <- 16 
-        
+
+        if (n_rows == 0) n_rows <- 16
+
         data_lines <- lines[data_start_line:(data_start_line + n_rows)]
-        
+
         tryCatch({
           raw_data <- data.table::fread(
-            text = data_lines, 
+            text = data_lines,
             header = TRUE,
             colClasses = "character",
             blank.lines.skip = FALSE
           )
         }, error = function(e) {
-          exception_data <- get_exception_data(21) 
+          exception_data <- get_exception_data(21)
           stop(sprintf(exception_data$sprintf_text, current_file))
         })
-        
+
         data.table::setnames(raw_data, old = names(raw_data)[1], new = "WellRow")
         raw_data <- raw_data[, lapply(.SD, as.character)]
-        
+
         melted_data <- data.table::melt(
           raw_data,
           id.vars = "WellRow",
           variable.name = "WellColumn",
           value.name = "ReadoutValue"
         )
-        
+
         melted_data[, WellColumn := gsub("^\"|\"$", "", WellColumn)]
         invalid_cols <- !grepl("^[0-9]+$", melted_data$WellColumn)
-        melted_data <- melted_data[!invalid_cols] 
-        
+        melted_data <- melted_data[!invalid_cols]
+
         melted_data[, WellColumn := as.integer(WellColumn)]
-        
+
         melted_data[, (headers[["barcode"]]) := barcode]
-        melted_data[, BackgroundValue := 0] 
-        
+        melted_data[, BackgroundValue := 0]
+
         melted_data[, ReadoutValue := trimws(ReadoutValue)]
-        
-        is_empty_or_na <- is.na(melted_data$ReadoutValue) | 
-          melted_data$ReadoutValue == "" | 
+
+        is_empty_or_na <- is.na(melted_data$ReadoutValue) |
+          melted_data$ReadoutValue == "" |
           toupper(melted_data$ReadoutValue) %in% c("NA", "NAN", "INF", "-INF")
-        
+
         num_regex <- "^[-+]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)([eE][-+]?[0-9]+)?$"
         valid_num_idx <- grepl(num_regex, melted_data$ReadoutValue)
-        
+
         invalid_idx <- !valid_num_idx & !is_empty_or_na
-        
+
         if (any(invalid_idx)) {
           futile.logger::flog.warn("Non-numeric readout values found and coerced to NA in plate %s of %s",
                                    barcode, current_file)
           melted_data[invalid_idx, ReadoutValue := NA_character_]
         }
-        
+
         melted_data[is_empty_or_na, ReadoutValue := NA_character_]
         melted_data[, ReadoutValue := as.numeric(ReadoutValue)]
-        
-        futile.logger::flog.info("Plate %s read; %d wells", barcode, nrow(melted_data))
-        
+
+        futile.logger::flog.info("Plate %s read; %d wells", barcode, NROW(melted_data))
+
         all_results <- rbind(all_results, melted_data)
       }
     }
   }
-  
+
   std_cols <- c(headers[["barcode"]], "WellRow", "WellColumn", "ReadoutValue", "BackgroundValue")
   data.table::setcolorder(all_results, intersect(std_cols, names(all_results)))
-  
+
   return(unique(all_results))
 }
 
@@ -1037,7 +1037,7 @@ read_EnVision_xlsx <- function(results_file, results_sheet) {
       stop(sprintf(exception_data$sprintf_text, results_file, results_sheet))
     })
     colnames(df) <-
-      col_names <- paste0("x", seq_len(ncol(df)))
+      col_names <- paste0("x", seq_len(NCOL(df)))
   }
   # Find rows with data and drop empty columns
   colsRange <-
@@ -1199,11 +1199,11 @@ enhance_raw_edited_EnVision_df <- function(df, barcode_col, headers) {
 
   # don't consider the first columns as these may be metadata
   # if big gap, delete what is at the bottom (Protocol information)
-  gaps <- min(max(data_rows), nrow(df))
+  gaps <- min(max(data_rows), NROW(df))
   df <- df[full_rows_index[full_rows_index <= gaps], ]
 
   # add empty column to complete plate (assume left column is #1)
-  if (ncol(df) < n_col) df[, (ncol(df) + 1):n_col] <- NA
+  if (NCOL(df) < n_col) df[, (NCOL(df) + 1):n_col] <- NA
   df
 }
 
@@ -1308,14 +1308,14 @@ read_in_results_Tecan <- function(results_file, results_sheets, headers) {
 
     # find the indicator ("<>") that identifies where plate readings are
     ind <- which(df == "<>", arr.ind = TRUE)
-    dfm <- df[(ind[1]):nrow(df), ind[2]:ncol(df), with = FALSE] # remove text above "<>"
+    dfm <- df[(ind[1]):NROW(df), ind[2]:NCOL(df), with = FALSE] # remove text above "<>"
     # remove text after data matrix ends, as identified by first na value
     ind <- which(is.na(dfm), arr.ind = TRUE)[1]
-    dfm <- dfm[seq_len(ind) - 1, seq_len(ncol(dfm)), with = FALSE]
+    dfm <- dfm[seq_len(ind) - 1, seq_len(NCOL(dfm)), with = FALSE]
 
     # rows and columns in data matrix with row and col names
-    n_row <- nrow(dfm)
-    n_col <- ncol(dfm)
+    n_row <- NROW(dfm)
+    n_col <- NCOL(dfm)
     readout <- dfm[2:n_row, 2:n_col, with = FALSE]
     # get well identifiers (numbers and letters) from layout
     WellRow <- as.character(t(dfm[2:n_row, 1]))
@@ -1325,7 +1325,7 @@ read_in_results_Tecan <- function(results_file, results_sheets, headers) {
       Barcode = results_sheets[iS],
       WellRow = WellRow,
       WellColumn =  as.vector(t(matrix(
-        WellColumn, ncol(readout), nrow(readout)
+        WellColumn, NCOL(readout), NROW(readout)
       ))),
       ReadoutValue = as.numeric(as.vector(as.matrix(readout))),
       BackgroundValue = 0 ## Tecan users report negligible background readings, usually background is not recorded
@@ -1358,15 +1358,15 @@ read_in_results_Tecan <- function(results_file, results_sheets, headers) {
 load_results_Incucyte <-
   function(results_file,
            headers = gDRutils::get_env_identifiers()) {
-    
+
     # identifiers
     bcode_name <- headers$barcode[1]
     bcode_names <- c(bcode_name, paste0(bcode_name, ":"))
     dur_name <- headers$duration
-    
+
     # Use lapply instead of for loop for better performance and idiomatic R style
     all_data_list <- lapply(results_file, function(iP) {
-      
+
       header_dt <- if (grepl(".xlsx$", iP)) {
         tryCatch({
           read_excel_to_dt(iP, n_max = 20)
@@ -1382,48 +1382,48 @@ load_results_Incucyte <-
           stop(sprintf(exception_data$sprintf_text, iP))
         })
       }
-      
+
       dstart_idx <- .find_header(header_dt, "Date Time", "missing 'Date Time' column")
-      barcode_idx <- .find_header(header_dt, bcode_names, sprintf("missing '%s' column", bcode_name)) 
+      barcode_idx <- .find_header(header_dt, bcode_names, sprintf("missing '%s' column", bcode_name))
       barcode <- header_dt[barcode_idx, 2][[1]]
-      
+
       dt_input <- if (grepl(".xlsx$", iP)) {
         read_excel_to_dt(iP, skip = dstart_idx)
       } else {
         data.table::fread(iP, skip = dstart_idx, header = TRUE)
       }
-      
+
       dt_input <- data.table::melt(
         dt_input[, -1],
         id.vars = 1,
         variable.name = "Well",
         value.name = "ReadoutValue"
       )
-      
+
       dt_input[[bcode_name]] <- barcode
-      
+
       return(dt_input)
     })
-    
+
     all_data <- data.table::rbindlist(all_data_list)
-    
+
     all_data[, (dur_name) := as.numeric(Elapsed)]
     all_data[, ReadoutValue := as.numeric(ReadoutValue)]
     all_data <- all_data[!is.na(get(dur_name)) & !is.na(ReadoutValue)]
-    
+
     well_rname <- headers$well_position[1]
     well_cname <- headers$well_position[2]
     all_data[[well_rname]] <- gsub("([A-Za-z]+).*", "\\1", all_data$Well)
     all_data[[well_cname]] <- gsub("[A-Za-z]+(.*)", "\\1", all_data$Well)
-    
+
     # Cleanup intermediate columns
     cols_to_remove <- c("Well", "Elapsed")
     all_data[, (cols_to_remove) := NULL]
-    
+
     return(all_data)
   }
 
-                                  
+
 #' check_metadata_names
 #'
 #' Check whether all metadata names are correct
@@ -1557,10 +1557,9 @@ check_metadata_against_spaces <- function(corrected_names, df_name) {
     for (i in which(names_spaces)) {
       s <- strsplit(corrected_names[i], " ")[[1]]
       corrected_names[i] <-
-        paste(toupper(substring(s, 1, 1)),
-              substring(s, 2),
-              sep = "",
-              collapse = "")
+        paste0(toupper(substring(s, 1, 1)),
+               substring(s, 2),
+               collapse = "")
     }
     futile.logger::flog.warn(
       "Metadata field names for %s cannot contain spaces --> corrected to: %s",
@@ -1686,7 +1685,7 @@ read_in_EnVision_file <- function(file, nrows, seps) {
 
   results.list <- list()
   current.line <- 1
-  
+
   while (length(line <- readLines(con, n = 1, warn = FALSE)) > 0 && current.line < nrows) {
     cleaned.line <- gsub("=\"([^\"]*)\"", "\\1", line)
     results.list[[current.line]] <- cleaned.line
@@ -1769,7 +1768,7 @@ get_EnVision_properties <- function(results.list, fname) {
 #' @return charvec with plate dims
 #'
 .get_plate_size <- function(df) {
-  n_col <- 1.5 * 2 ^ ceiling(log2((ncol(df) - 2) / 1.5))
+  n_col <- 1.5 * 2 ^ ceiling(log2((NCOL(df) - 2) / 1.5))
   n_row <- n_col / 1.5
   c(n_row, n_col)
 }
@@ -1813,8 +1812,8 @@ get_EnVision_properties <- function(results.list, fname) {
 #'
 .fill_empty_wells <- function(df, plate_rows, data_rows, exp_row, exp_col, numeric_regex = "^\\d+$") {
   all_rows <- Reduce(intersect, lapply(df, function(x) grep(numeric_regex, x)))
-  if (ncol(df) < exp_col) {
-    new_cols <- exp_col - ncol(df)
+  if (NCOL(df) < exp_col) {
+    new_cols <- exp_col - NCOL(df)
     df <- cbind(df, matrix("", ncol = new_cols))
     df[data_rows, rev(names(df))[seq_len(new_cols)]] <- NA
   }
