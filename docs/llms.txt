@@ -1,0 +1,176 @@
+# gDRimport
+
+Package for handling import of dose-response data
+
+# Website
+
+A package website is available under [this
+link](https://gdrplatform.github.io/gDRimport/).
+
+# Package index
+
+## Load files
+
+- [`enhance_raw_edited_EnVision_df()`](https://gdrplatform.github.io/gDRimport/reference/enhance_raw_edited_EnVision_df.md)
+  : Enhance raw edited EnVision data.table
+- [`get_EnVision_properties()`](https://gdrplatform.github.io/gDRimport/reference/get_EnVision_properties.md)
+  : Get properties of EnVision data
+- [`get_df_from_raw_edited_EnVision_df()`](https://gdrplatform.github.io/gDRimport/reference/get_df_from_raw_edited_EnVision_df.md)
+  : Get final results (as a data.table) from raw edited EnVision
+  data.table
+- [`get_df_from_raw_unedited_EnVision_df()`](https://gdrplatform.github.io/gDRimport/reference/get_df_from_raw_unedited_EnVision_df.md)
+  : Get final results (as a data.table) from raw unedited EnVision
+  data.table
+- [`get_excel_sheet_names()`](https://gdrplatform.github.io/gDRimport/reference/get_excel_sheet_names.md)
+  : get Excel sheets names for a charvec of files for non-Excel files
+  return 0
+- [`get_plate_info_from_template_xlsx()`](https://gdrplatform.github.io/gDRimport/reference/get_plate_info_from_template_xlsx.md)
+  : Get plate info from template xlsx
+- [`load_data()`](https://gdrplatform.github.io/gDRimport/reference/load_data.md)
+  : Load data
+- [`load_manifest()`](https://gdrplatform.github.io/gDRimport/reference/load_manifest.md)
+  : Load manifest
+- [`load_results()`](https://gdrplatform.github.io/gDRimport/reference/load_results.md)
+  : Load results
+- [`load_results_EnVision()`](https://gdrplatform.github.io/gDRimport/reference/load_results_EnVision.md)
+  : Load EnVision results from xlsx
+- [`load_results_EnVision_new()`](https://gdrplatform.github.io/gDRimport/reference/load_results_EnVision_new.md)
+  : Load results from EnVision_new (CSV and XLSX)
+- [`load_results_Incucyte()`](https://gdrplatform.github.io/gDRimport/reference/load_results_Incucyte.md)
+  : Load incucyte results from plain text
+- [`load_results_Tecan()`](https://gdrplatform.github.io/gDRimport/reference/load_results_Tecan.md)
+  : Load tecan results from xlsx
+- [`load_results_tsv()`](https://gdrplatform.github.io/gDRimport/reference/load_results_tsv.md)
+  : Load results from tsv
+- [`load_templates()`](https://gdrplatform.github.io/gDRimport/reference/load_templates.md)
+  : Load templates
+- [`load_templates_tsv()`](https://gdrplatform.github.io/gDRimport/reference/load_templates_tsv.md)
+  : Load templates from tsv
+- [`load_templates_xlsx()`](https://gdrplatform.github.io/gDRimport/reference/load_templates_xlsx.md)
+  : Load templates from xlsx
+- [`read_EnVision_delim()`](https://gdrplatform.github.io/gDRimport/reference/read_EnVision_delim.md)
+  : Read EnVision delimited text files
+- [`read_EnVision_xlsx()`](https://gdrplatform.github.io/gDRimport/reference/read_EnVision_xlsx.md)
+  : Read in single xlsx data from EnVision
+- [`read_in_EnVision_file()`](https://gdrplatform.github.io/gDRimport/reference/read_in_EnVision_file.md)
+  : Read EnVision file
+- [`read_in_manifest_file()`](https://gdrplatform.github.io/gDRimport/reference/read_in_manifest_file.md)
+  : read manifest files
+- [`read_in_result_files()`](https://gdrplatform.github.io/gDRimport/reference/read_in_result_files.md)
+  : Read in results files
+- [`read_in_results_Tecan()`](https://gdrplatform.github.io/gDRimport/reference/read_in_results_Tecan.md)
+  : read in Tecan data
+- [`read_in_template_sheet_xlsx()`](https://gdrplatform.github.io/gDRimport/reference/read_in_template_sheet_xlsx.md)
+  : Read in data from xlsx template sheet
+- [`read_in_template_xlsx()`](https://gdrplatform.github.io/gDRimport/reference/read_in_template_xlsx.md)
+  : Read in xlsx template files
+- [`read_in_tsv_template_files()`](https://gdrplatform.github.io/gDRimport/reference/read_in_tsv_template_files.md)
+  : read in tsv template files
+- [`validate_template_xlsx()`](https://gdrplatform.github.io/gDRimport/reference/validate_template_xlsx.md)
+  : Validate template xlsx data
+
+## Pset conversion
+
+- [`convert_MAE_to_PSet()`](https://gdrplatform.github.io/gDRimport/reference/convert_MAE_to_PSet.md)
+  : Convert MultiAssayExperiment to TreatmentResponseExperiment
+- [`convert_pset_to_df()`](https://gdrplatform.github.io/gDRimport/reference/convert_pset_to_df.md)
+  : Convert a PharmacoSet to a data.table that is prepare for input into
+  gDR pipeline
+- [`getPSet()`](https://gdrplatform.github.io/gDRimport/reference/getPSet.md)
+  : Get PharmacoSet
+- [`setEnvForPSet()`](https://gdrplatform.github.io/gDRimport/reference/setEnvForPSet.md)
+  : Adjust environment variables to meet gDR standards
+
+## PRISM conversion
+
+- [`convert_LEVEL5_prism_to_gDR_input()`](https://gdrplatform.github.io/gDRimport/reference/convert_LEVEL5_prism_to_gDR_input.md)
+  : Load, convert and process the level 5 PRISM data into a gDR input
+- [`convert_LEVEL6_prism_to_gDR_input()`](https://gdrplatform.github.io/gDRimport/reference/convert_LEVEL6_prism_to_gDR_input.md)
+  : Load, convert and process the level 6 PRISM data into a gDR input
+
+## Import D300
+
+- [`import_D300()`](https://gdrplatform.github.io/gDRimport/reference/import_D300.md)
+  : Import D300
+- [`parse_D300_xml()`](https://gdrplatform.github.io/gDRimport/reference/parse_D300_xml.md)
+  : Parse D300
+- [`save_drug_info_per_well()`](https://gdrplatform.github.io/gDRimport/reference/save_drug_info_per_well.md)
+  : for each drug create a Gnumber and Concentration information for
+  each well
+
+## Input data validation/correction
+
+- [`are_template_sheets_valid()`](https://gdrplatform.github.io/gDRimport/reference/are_template_sheets_valid.md)
+  : are template sheet valid?
+- [`check_metadata_against_spaces()`](https://gdrplatform.github.io/gDRimport/reference/check_metadata_against_spaces.md)
+  : Check metadata against spaces
+- [`check_metadata_field_names()`](https://gdrplatform.github.io/gDRimport/reference/check_metadata_field_names.md)
+  : Check metadata field names
+- [`check_metadata_headers()`](https://gdrplatform.github.io/gDRimport/reference/check_metadata_headers.md)
+  : Check whether metadata headers are correct and make fixes if needed
+- [`check_metadata_names()`](https://gdrplatform.github.io/gDRimport/reference/check_metadata_names.md)
+  : check_metadata_names
+- [`check_metadata_req_col_names()`](https://gdrplatform.github.io/gDRimport/reference/check_metadata_req_col_names.md)
+  : Check metadata for required column names
+- [`correct_template_sheets()`](https://gdrplatform.github.io/gDRimport/reference/correct_template_sheets.md)
+  : Correct names of the template sheets (if required)
+- [`.check_against_single_template_sheet()`](https://gdrplatform.github.io/gDRimport/reference/dot-check_against_single_template_sheet.md)
+  : Evaluate if template file with single sheet is present, if the name
+  of the sheet is correct and if it can be fixed
+- [`fix_typos_with_reference()`](https://gdrplatform.github.io/gDRimport/reference/fix_typos_with_reference.md)
+  : Fix typos using reference data
+- [`get_exception_data()`](https://gdrplatform.github.io/gDRimport/reference/get_exception_data.md)
+  : get exception data
+- [`get_expected_template_sheets()`](https://gdrplatform.github.io/gDRimport/reference/get_expected_template_sheets.md)
+  : Get names of the sheets expected in templates xlsx
+- [`get_xl_sheets()`](https://gdrplatform.github.io/gDRimport/reference/get_xl_sheets.md)
+  : Get Excel sheets
+- [`mgrepl()`](https://gdrplatform.github.io/gDRimport/reference/mgrepl.md)
+  : grep wrapper to support multiple patterns
+
+## Utils
+
+- [`detect_file_format()`](https://gdrplatform.github.io/gDRimport/reference/detect_file_format.md)
+  : Detect format of results data
+- [`is_readable_v()`](https://gdrplatform.github.io/gDRimport/reference/is_readable_v.md)
+  : is_readable_v Check if all paths in vector are readable
+- [`read_excel_to_dt()`](https://gdrplatform.github.io/gDRimport/reference/read_excel_to_dt.md)
+  : Read excel file and transorm it into data.table object
+- [`read_ref_data()`](https://gdrplatform.github.io/gDRimport/reference/read_ref_data.md)
+  : read_ref_data
+- [`standardize_record_values()`](https://gdrplatform.github.io/gDRimport/reference/standardize_record_values.md)
+  : standardize_record_values
+
+## Test data class
+
+- [`gdr_test_data-class`](https://gdrplatform.github.io/gDRimport/reference/gdr_test_data-class.md)
+  : gDR Test Data object
+- [`get_test_data()`](https://gdrplatform.github.io/gDRimport/reference/get_test_data.md)
+  : get primary test data
+- [`manifest_path()`](https://gdrplatform.github.io/gDRimport/reference/manifest_path-method.md)
+  : Method manifest_path
+- [`result_path()`](https://gdrplatform.github.io/gDRimport/reference/result_path-method.md)
+  : Method result_path
+- [`template_path()`](https://gdrplatform.github.io/gDRimport/reference/template_path-method.md)
+  : Method template_path
+
+## Test data
+
+- [`get_test_D300_data()`](https://gdrplatform.github.io/gDRimport/reference/get_test_D300_data.md)
+  : get test D300 data
+- [`get_test_EnVision_data()`](https://gdrplatform.github.io/gDRimport/reference/get_test_EnVision_data.md)
+  : get test EnVision data
+- [`get_test_Tecan_data()`](https://gdrplatform.github.io/gDRimport/reference/get_test_Tecan_data.md)
+  : get test Tecan data
+- [`get_test_tsv_data()`](https://gdrplatform.github.io/gDRimport/reference/get_test_tsv_data.md)
+  : get test tsv data
+
+# Articles
+
+### All vignettes
+
+- [Converting a gDR-generated MultiAssayExperiment object into a
+  PharmacoSet](https://gdrplatform.github.io/gDRimport/articles/ConvertingMAEtoPharmacoSet.md):
+- [Converting PharmacoSet Drug Response Data into gDR
+  object](https://gdrplatform.github.io/gDRimport/articles/ConvertingPharmacoSetToGDR.md):
+- [gDRimport](https://gdrplatform.github.io/gDRimport/articles/gDRimport.md):

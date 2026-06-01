@@ -1,249 +1,85 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/404.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/PULL_REQUEST_TEMPLATE.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/articles/ConvertingMAEtoPharmacoSet.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/articles/ConvertingPharmacoSetToGDR.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/articles/gDRimport.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/index.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/are_template_sheets_valid.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/check_metadata_against_spaces.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/check_metadata_field_names.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/check_metadata_headers.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/check_metadata_names.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/check_metadata_req_col_names.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/convert_LEVEL5_prism_to_gDR_input.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/convert_LEVEL6_prism_to_gDR_input.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/convert_MAE_to_PSet.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/convert_pset_to_df.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/correct_template_sheets.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/detect_file_format.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/dot-check_against_single_template_sheet.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/dot-check_file_structure.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/dot-createPseudoData.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/dot-extractDoseResponse.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/dot-extract_or_create_assay.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/dot-fill_empty_wells.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/dot-get_plate_size.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/dot-removeNegatives.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/dot-standardize_untreated_values.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/enhance_raw_edited_EnVision_df.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/fix_typos_with_reference.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/gDRimport-package.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/gdr_test_data-class.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/getPSet.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/get_EnVision_properties.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/get_df_from_raw_edited_EnVision_df.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/get_df_from_raw_unedited_EnVision_df.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/get_excel_sheet_names.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/get_exception_data.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/get_expected_template_sheets.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/get_plate_info_from_template_xlsx.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/get_test_D300_data.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/get_test_EnVision_data.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/get_test_Tecan_data.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/get_test_data.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/get_test_tsv_data.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/get_xl_sheets.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/import_D300.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/is_readable_v.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/load_data.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/load_manifest.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/load_results.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/load_results_EnVision.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/load_results_EnVision_new.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/load_results_Incucyte.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/load_results_Tecan.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/load_results_tsv.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/load_templates.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/load_templates_tsv.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/load_templates_xlsx.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/manifest_path-method.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/mgrepl.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/parse_D300_xml.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/read_EnVision_delim.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/read_EnVision_xlsx.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/read_excel_to_dt.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/read_in_EnVision_file.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/read_in_manifest_file.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/read_in_result_files.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/read_in_results_Tecan.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/read_in_template_sheet_xlsx.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/read_in_template_xlsx.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/read_in_tsv_template_files.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/read_ref_data.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/result_path-method.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/save_drug_info_per_well.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/setEnvForPSet.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/standardize_record_values.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/template_path-method.html</loc>
-  </url>
-  <url>
-    <loc>https://gdrplatform.github.io/gDRimport/reference/validate_template_xlsx.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://gdrplatform.github.io/gDRimport/404.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/PULL_REQUEST_TEMPLATE.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/articles/ConvertingMAEtoPharmacoSet.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/articles/ConvertingPharmacoSetToGDR.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/articles/gDRimport.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/articles/index.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/authors.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/index.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/news/index.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/are_template_sheets_valid.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/check_metadata_against_spaces.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/check_metadata_field_names.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/check_metadata_headers.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/check_metadata_names.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/check_metadata_req_col_names.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/convert_LEVEL5_prism_to_gDR_input.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/convert_LEVEL6_prism_to_gDR_input.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/convert_MAE_to_PSet.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/convert_pset_to_df.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/correct_template_sheets.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/detect_file_format.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/dot-check_against_single_template_sheet.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/dot-check_file_structure.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/dot-createPseudoData.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/dot-extractDoseResponse.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/dot-extract_or_create_assay.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/dot-fill_empty_wells.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/dot-get_plate_size.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/dot-removeNegatives.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/dot-standardize_untreated_values.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/enhance_raw_edited_EnVision_df.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/fix_typos_with_reference.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/gDRimport-package.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/gdr_test_data-class.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/getPSet.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/get_EnVision_properties.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/get_df_from_raw_edited_EnVision_df.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/get_df_from_raw_unedited_EnVision_df.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/get_excel_sheet_names.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/get_exception_data.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/get_expected_template_sheets.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/get_plate_info_from_template_xlsx.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/get_test_D300_data.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/get_test_EnVision_data.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/get_test_Tecan_data.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/get_test_data.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/get_test_tsv_data.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/get_xl_sheets.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/import_D300.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/index.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/is_readable_v.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/load_data.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/load_manifest.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/load_results.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/load_results_EnVision.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/load_results_EnVision_new.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/load_results_Incucyte.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/load_results_Tecan.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/load_results_tsv.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/load_templates.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/load_templates_tsv.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/load_templates_xlsx.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/manifest_path-method.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/mgrepl.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/parse_D300_xml.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/read_EnVision_delim.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/read_EnVision_xlsx.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/read_excel_to_dt.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/read_in_EnVision_file.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/read_in_manifest_file.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/read_in_result_files.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/read_in_results_Tecan.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/read_in_template_sheet_xlsx.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/read_in_template_xlsx.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/read_in_tsv_template_files.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/read_ref_data.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/result_path-method.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/save_drug_info_per_well.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/setEnvForPSet.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/standardize_record_values.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/template_path-method.html</loc></url>
+<url><loc>https://gdrplatform.github.io/gDRimport/reference/validate_template_xlsx.html</loc></url>
 </urlset>
+
