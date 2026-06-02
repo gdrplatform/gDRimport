@@ -133,7 +133,7 @@ str(dt)
 #>  $ DrugName             : chr  "Ivosidenib" "Ivosidenib" "Ivosidenib" "Ivosidenib" ...
 #>  $ Duration             : num  48 48 48 48 48 48 48 48 48 48 ...
 #>  $ ReferenceDivisionTime: logi  NA NA NA NA NA NA ...
-#>  - attr(*, ".internal.selfref")=<pointer: 0x559bfea4e110>
+#>  - attr(*, ".internal.selfref")=<pointer: 0x55c110e33110>
 ```
 
 ## Subsetting to extract relevant information
@@ -244,14 +244,14 @@ sessionInfo()
 #>  [17] XVector_0.52.0              caTools_1.18.3             
 #>  [19] promises_1.5.0              rmarkdown_2.31             
 #>  [21] ragg_1.5.2                  coop_0.6-3                 
-#>  [23] xfun_0.57                   MultiAssayExperiment_1.38.0
+#>  [23] xfun_0.58                   MultiAssayExperiment_1.38.0
 #>  [25] cachem_1.1.0                jsonlite_2.0.0             
 #>  [27] SnowballC_0.7.1             later_1.4.8                
 #>  [29] DelayedArray_0.38.2         BiocParallel_1.46.0        
 #>  [31] parallel_4.6.0              sets_1.0-25                
 #>  [33] cluster_2.1.8.2             R6_2.6.1                   
 #>  [35] stringi_1.8.7               bslib_0.11.0               
-#>  [37] RColorBrewer_1.1-3          limma_3.68.3               
+#>  [37] RColorBrewer_1.1-3          limma_3.68.4               
 #>  [39] boot_1.3-32                 brio_1.1.5                 
 #>  [41] jquerylib_0.1.4             assertthat_0.2.1           
 #>  [43] Rcpp_1.1.1-1.1              knitr_1.51                 

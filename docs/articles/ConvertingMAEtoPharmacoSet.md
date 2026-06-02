@@ -70,12 +70,12 @@ the name of the study.
 
 ``` r
 pset <- convert_MAE_to_PSet(mae, pset_name="Kyung2022")
-#> 2026-06-01 16:44:48 Building assay index...
-#> 2026-06-01 16:44:48 Joining rowData to assayIndex...
-#> 2026-06-01 16:44:48 Joining colData to assayIndex...
-#> 2026-06-01 16:44:49 Joining assays to assayIndex...
-#> 2026-06-01 16:44:50 Setting assayIndex key...
-#> 2026-06-01 16:44:51 Building LongTable...
+#> 2026-06-02 11:30:16 Building assay index...
+#> 2026-06-02 11:30:16 Joining rowData to assayIndex...
+#> 2026-06-02 11:30:17 Joining colData to assayIndex...
+#> 2026-06-02 11:30:17 Joining assays to assayIndex...
+#> 2026-06-02 11:30:19 Setting assayIndex key...
+#> 2026-06-02 11:30:19 Building LongTable...
 #> 
 ```
 
@@ -85,7 +85,7 @@ We can now view the `PharmacoSet` object.
 pset
 #> <PharmacoSet>
 #> Name: Kyung2022 
-#> Date Created: Mon Jun  1 16:44:51 2026 
+#> Date Created: Tue Jun  2 11:30:19 2026 
 #> Number of samples:  7 
 #> Molecular profiles: <MultiAssayExperiment> 
 #>    ExperimentList class object of length 1: 
@@ -1222,11 +1222,11 @@ sessionInfo()
 #> [13] crayon_1.5.3          fastmap_1.2.0         backports_1.5.1      
 #> [16] XVector_0.52.0        caTools_1.18.3        promises_1.5.0       
 #> [19] rmarkdown_2.31        ragg_1.5.2            coop_0.6-3           
-#> [22] xfun_0.57             cachem_1.1.0          jsonlite_2.0.0       
+#> [22] xfun_0.58             cachem_1.1.0          jsonlite_2.0.0       
 #> [25] SnowballC_0.7.1       later_1.4.8           DelayedArray_0.38.2  
 #> [28] BiocParallel_1.46.0   parallel_4.6.0        sets_1.0-25          
 #> [31] cluster_2.1.8.2       R6_2.6.1              stringi_1.8.7        
-#> [34] bslib_0.11.0          RColorBrewer_1.1-3    limma_3.68.3         
+#> [34] bslib_0.11.0          RColorBrewer_1.1-3    limma_3.68.4         
 #> [37] boot_1.3-32           jquerylib_0.1.4       Rcpp_1.1.1-1.1       
 #> [40] knitr_1.51            downloader_0.4.1      httpuv_1.6.17        
 #> [43] Matrix_1.7-5          igraph_2.3.2          tidyselect_1.2.1     

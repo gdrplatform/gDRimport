@@ -19,42 +19,42 @@ reference data (qs2 file paths)
 get_test_D300_data()
 #> $f_96w
 #> $f_96w$d300
-#> [1] "/tmp/RtmpW1W92u/temp_libpath287971bdee5e/gDRimport/extdata/data3/D300_96_well_plate_example.tdd"
+#> [1] "/tmp/Rtmpmo65P0/temp_libpath1be42133826f/gDRimport/extdata/data3/D300_96_well_plate_example.tdd"
 #> 
 #> $f_96w$Gnum
-#> [1] "/tmp/RtmpW1W92u/temp_libpath287971bdee5e/gDRimport/extdata/data3/Gnumber_D300_96_well_plate.xlsx"
+#> [1] "/tmp/Rtmpmo65P0/temp_libpath1be42133826f/gDRimport/extdata/data3/Gnumber_D300_96_well_plate.xlsx"
 #> 
 #> $f_96w$dest_path
-#> [1] "/tmp/RtmpW1W92u/temp_libpath287971bdee5e/gDRimport/extdata/data3/output_files_96w/output"
+#> [1] "/tmp/Rtmpmo65P0/temp_libpath1be42133826f/gDRimport/extdata/data3/output_files_96w/output"
 #> 
 #> $f_96w$ref_d300
-#> [1] "/tmp/RtmpW1W92u/temp_libpath287971bdee5e/gDRimport/extdata/data3/ref_D300_96_well_plate_example.qs2"
+#> [1] "/tmp/Rtmpmo65P0/temp_libpath1be42133826f/gDRimport/extdata/data3/ref_D300_96_well_plate_example.qs2"
 #> 
 #> $f_96w$ref_Gnum
-#> [1] "/tmp/RtmpW1W92u/temp_libpath287971bdee5e/gDRimport/extdata/data3/ref_Gnumber_D300_96_well_plate.qs2"
+#> [1] "/tmp/Rtmpmo65P0/temp_libpath1be42133826f/gDRimport/extdata/data3/ref_Gnumber_D300_96_well_plate.qs2"
 #> 
 #> $f_96w$ref_output_path
-#> [1] "/tmp/RtmpW1W92u/temp_libpath287971bdee5e/gDRimport/extdata/data3/output_files_96w/reference"
+#> [1] "/tmp/Rtmpmo65P0/temp_libpath1be42133826f/gDRimport/extdata/data3/output_files_96w/reference"
 #> 
 #> 
 #> $f_384w
 #> $f_384w$d300
-#> [1] "/tmp/RtmpW1W92u/temp_libpath287971bdee5e/gDRimport/extdata/data3/D300_384_well_plate_example.tdd"
+#> [1] "/tmp/Rtmpmo65P0/temp_libpath1be42133826f/gDRimport/extdata/data3/D300_384_well_plate_example.tdd"
 #> 
 #> $f_384w$Gnum
-#> [1] "/tmp/RtmpW1W92u/temp_libpath287971bdee5e/gDRimport/extdata/data3/Gnumber_D300_384_well_plate.xlsx"
+#> [1] "/tmp/Rtmpmo65P0/temp_libpath1be42133826f/gDRimport/extdata/data3/Gnumber_D300_384_well_plate.xlsx"
 #> 
 #> $f_384w$ref_Gnum
-#> [1] "/tmp/RtmpW1W92u/temp_libpath287971bdee5e/gDRimport/extdata/data3/ref_Gnumber_D300_384_well_plate.qs2"
+#> [1] "/tmp/Rtmpmo65P0/temp_libpath1be42133826f/gDRimport/extdata/data3/ref_Gnumber_D300_384_well_plate.qs2"
 #> 
 #> $f_384w$ref_d300
-#> [1] "/tmp/RtmpW1W92u/temp_libpath287971bdee5e/gDRimport/extdata/data3/ref_D300_384_well_plate_example.qs2"
+#> [1] "/tmp/Rtmpmo65P0/temp_libpath1be42133826f/gDRimport/extdata/data3/ref_D300_384_well_plate_example.qs2"
 #> 
 #> $f_384w$dest_path
-#> [1] "/tmp/RtmpW1W92u/temp_libpath287971bdee5e/gDRimport/extdata/data3/output_files_384w/output"
+#> [1] "/tmp/Rtmpmo65P0/temp_libpath1be42133826f/gDRimport/extdata/data3/output_files_384w/output"
 #> 
 #> $f_384w$ref_output_path
-#> [1] "/tmp/RtmpW1W92u/temp_libpath287971bdee5e/gDRimport/extdata/data3/output_files_384w/reference"
+#> [1] "/tmp/Rtmpmo65P0/temp_libpath1be42133826f/gDRimport/extdata/data3/output_files_384w/reference"
 #> 
 #> 
 ```

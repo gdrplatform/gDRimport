@@ -250,7 +250,7 @@ sessionInfo()
     ## [53] pkgdown_2.2.0               pillar_1.11.1              
     ## [55] bslib_0.11.0                data.table_1.18.4          
     ## [57] glue_1.8.1                  systemfonts_1.3.2          
-    ## [59] GenomicRanges_1.64.0        xfun_0.57                  
+    ## [59] GenomicRanges_1.64.0        xfun_0.58                  
     ## [61] tibble_3.3.1                MatrixGenerics_1.24.0      
     ## [63] knitr_1.51                  htmltools_0.5.9            
     ## [65] rmarkdown_2.31              compiler_4.6.0             
