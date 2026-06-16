@@ -26,6 +26,10 @@
 #' @export
 convert_MAE_to_PSet <- function(mae,
                                 pset_name) {
+    if (!requireNamespace("CoreGx", quietly = TRUE))
+      stop("Package 'CoreGx' is required for this function. Install it with: BiocManager::install('CoreGx')")
+    if (!requireNamespace("PharmacoGx", quietly = TRUE))
+      stop("Package 'PharmacoGx' is required for this function. Install it with: BiocManager::install('PharmacoGx')")
     checkmate::assert_class(mae, "MultiAssayExperiment")
     checkmate::assert_string(pset_name)
 

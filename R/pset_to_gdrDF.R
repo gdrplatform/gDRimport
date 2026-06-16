@@ -23,6 +23,8 @@
 convert_pset_to_df <- function(pharmacoset,
                            run_parallel = TRUE,
                            workers = 2L) {
+  if (!requireNamespace("PharmacoGx", quietly = TRUE))
+    stop("Package 'PharmacoGx' is required for this function. Install it with: BiocManager::install('PharmacoGx')")
   assertthat::assert_that(is.logical(run_parallel),
                           msg = "run_parallel must be a logical.")
   assertthat::assert_that(inherits(pharmacoset, "PharmacoSet"),
