@@ -1,5 +1,5 @@
 ## gDRimport 1.11.4 - 2026-06-16
-* fall back to Background section barcode when Plate header barcode is missing in EnVision files
+* resolve missing barcode in EnVision files by reading from Background section
 
 ## gDRimport 1.11.3 - 2026-05-27
 * apply updated gDRstyle rules
