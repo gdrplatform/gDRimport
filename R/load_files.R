@@ -1113,6 +1113,10 @@ get_df_from_raw_edited_EnVision_df <-
       .check_file_structure(df, fname, sheet_name, readout_offset, n_row, n_col, iB, barcode_col)
 
       Barcode <- as.character(df[iB + 1, barcode_col, with = FALSE])
+      if (is.na(Barcode) && ref_bckgrd > 0) {
+        bg_row <- iB + ref_bckgrd + 1
+        Barcode <- as.character(df[bg_row, barcode_col, with = FALSE])
+      }
       if (is.na(Barcode)) return(NULL)
       readout <- as.matrix(df[iB + ref_bckgrd + seq_len(n_row) + 1,
                               seq_len(n_col), with = FALSE])
