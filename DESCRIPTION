@@ -1,8 +1,8 @@
 Package: gDRimport
 Type: Package
 Title: Package for handling the import of dose-response data
-Version: 1.11.4
-Date: 2026-06-16
+Version: 1.11.5
+Date: 2026-08-11
 Authors@R: c(
     person("Arkadiusz", "Gladki", role=c("aut", "cre"), email="gladki.arkadiusz@gmail.com",
            comment = c(ORCID = "0000-0002-7059-6378")),
@@ -59,7 +59,7 @@ biocViews: Software, Infrastructure, DataImport
 VignetteBuilder: knitr
 ByteCompile: TRUE
 Roxygen: list(markdown = TRUE) 
-RoxygenNote: 7.3.3
 SwitchrLibrary: gDRimport
 DeploySubPath: gDRimport
 Encoding: UTF-8
+Config/roxygen2/version: 8.0.0
