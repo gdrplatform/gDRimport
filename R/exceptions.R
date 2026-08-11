@@ -52,6 +52,7 @@ get_exception_data <- function(status_code = NULL) {
     "35", "Missing cell line annotation", "The following cell line IDs are missing: '%s'. <br>Don't worry, cell line names will be used for them.", "warning", "submit tab",
     "36", "Invalid averaged data", "Averaged dose-response data for the selected cell line and drug: '%s' can be considered invalid. Please check your data in the module 'Manage Data' or contact gdrplatform team via 'gdr-support-d@gene.com'.", "error", "assay data",
     "37", "Raw Data header", "Invalid header in the result file: (%s)", "error", "raw data",
+    "38", "Long table columns", "The long table does not contain all required columns. Missing column(s): %s. Please correct your file or change the identifiers.", "error", "long table",
   )
   #nolint end
 
