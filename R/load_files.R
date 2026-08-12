@@ -139,6 +139,11 @@ load_long_table <- function(long_table_file) {
     gDRutils::get_env_identifiers("concentration"),
     readout_col
   )
+  # combo concentration is optional; validate it as numeric only when present
+  combo_conc_col <- gDRutils::get_env_identifiers("concentration2")
+  if (combo_conc_col %in% colnames(dt)) {
+    numeric_cols <- c(numeric_cols, combo_conc_col)
+  }
   for (col in numeric_cols) {
     original <- dt[[col]]
     coerced <- suppressWarnings(as.numeric(original))
