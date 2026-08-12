@@ -1,5 +1,3 @@
-library(testthat)
-
 make_long_table <- function(...) {
   dt <- data.table::data.table(
     Gnumber = c("G1", "G1", "G2"),
@@ -62,11 +60,11 @@ test_that("load_long_table errors on empty table", {
 })
 
 test_that("load_long_table validates input arguments", {
-  expect_error(gDRimport::load_long_table(123), "must be a character")
+  expect_error(gDRimport::load_long_table(123), "Must be of type 'character'")
 
   path <- tempfile(fileext = ".csv")
   data.table::fwrite(make_long_table(), path)
-  expect_error(gDRimport::load_long_table(c(path, path)), "single file path")
+  expect_error(gDRimport::load_long_table(c(path, path)), "length 1")
 })
 
 test_that("load_long_table accepts optional combination columns", {
