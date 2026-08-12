@@ -52,6 +52,42 @@ test_that("load_long_table errors on non-numeric readout", {
   expect_error(gDRimport::load_long_table(path), "ReadoutValue")
 })
 
+test_that("load_long_table errors on non-numeric duration", {
+  path <- tempfile(fileext = ".csv")
+  dt <- make_long_table()
+  dt$Duration <- c("72", "72", "later")
+  data.table::fwrite(dt, path)
+
+  expect_error(gDRimport::load_long_table(path), "Duration")
+})
+
+test_that("load_long_table errors on non-numeric concentration", {
+  path <- tempfile(fileext = ".csv")
+  dt <- make_long_table()
+  dt$Concentration <- c("0", "1", "lots")
+  data.table::fwrite(dt, path)
+
+  expect_error(gDRimport::load_long_table(path), "Concentration")
+})
+
+test_that("load_long_table errors on non-numeric combination concentration", {
+  path <- tempfile(fileext = ".csv")
+  dt <- make_long_table(Gnumber_2 = "G3", Concentration_2 = c("0", "0.5", "some"))
+  data.table::fwrite(dt, path)
+
+  expect_error(gDRimport::load_long_table(path), "Concentration_2")
+})
+
+test_that("load_long_table surfaces a parse error for an unparsable file", {
+  # a directory is readable but data.table::fread cannot parse it, so the
+  # tryCatch around fread rethrows as the long-table parse exception
+  path <- tempfile()
+  dir.create(path)
+  on.exit(unlink(path, recursive = TRUE))
+
+  expect_error(gDRimport::load_long_table(path), "long table could not be parsed")
+})
+
 test_that("load_long_table errors on empty table", {
   path <- tempfile(fileext = ".csv")
   data.table::fwrite(make_long_table()[0], path)
@@ -76,4 +112,5 @@ test_that("load_long_table accepts optional combination columns", {
 
   obs <- gDRimport::load_long_table(path)
   expect_true(all(c("Gnumber_2", "Concentration_2") %in% colnames(obs)))
+  expect_type(obs$Concentration_2, "double")
 })
