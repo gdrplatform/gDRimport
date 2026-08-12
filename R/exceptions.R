@@ -53,6 +53,7 @@ get_exception_data <- function(status_code = NULL) {
     "36", "Invalid averaged data", "Averaged dose-response data for the selected cell line and drug: '%s' can be considered invalid. Please check your data in the module 'Manage Data' or contact gdrplatform team via 'gdr-support-d@gene.com'.", "error", "assay data",
     "37", "Raw Data header", "Invalid header in the result file: (%s)", "error", "raw data",
     "38", "Long table columns", "The long table does not contain all required columns. Missing column(s): %s. Please correct your file or change the identifiers.", "error", "long table",
+    "39", "Long table parsing", "The long table could not be parsed. Check error message below:\n```\n%s\n```", "error", "long table",
   )
   #nolint end
 

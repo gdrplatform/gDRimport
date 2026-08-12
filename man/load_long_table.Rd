@@ -22,7 +22,11 @@ the shape of the \code{data_imported} object used downstream.
 }
 \details{
 Required columns follow the current gDR identifiers: \code{Gnumber},
-\code{clid}, \code{Duration}, \code{Concentration} and \code{ReadoutValue}.
+\code{clid}, \code{Duration} and \code{Concentration}. The readout column is
+the fixed header \code{ReadoutValue}: there is no \code{"readout"} identifier
+in \code{gDRutils}, so this name is not customisable via
+\code{get_env_identifiers()}, matching how \code{ReadoutValue} is used across
+the rest of gDRimport.
 Combination data may add \code{Gnumber_2} and \code{Concentration_2}.
 \code{Duration}, \code{Concentration} and \code{ReadoutValue} must be numeric.
 }
