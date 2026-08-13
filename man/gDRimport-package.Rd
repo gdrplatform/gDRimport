@@ -28,6 +28,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Arkadiusz Gladki \email{gladki.arkadiusz@gmail.com} (\href{https://orcid.org/0000-0002-7059-6378}{ORCID})
   \item Bartosz Czech (\href{https://orcid.org/0000-0002-9908-3007}{ORCID})
   \item Marc Hafner (\href{https://orcid.org/0000-0003-1337-7598}{ORCID})
   \item Sergiu Mocanu

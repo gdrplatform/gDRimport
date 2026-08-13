@@ -69,6 +69,96 @@ load_data <-
   }
 
 
+#' Load long table
+#'
+#' Loads a long/tidy \code{data.table} from a delimited text file (CSV/TSV) and
+#' checks that it contains the columns required by the gDR pipeline. This offers
+#' an input path that does not rely on GeneDataScreeneR: the data can come from a
+#' custom export or be provided directly by the user in tabular form, matching
+#' the shape of the \code{data_imported} object used downstream.
+#'
+#' Required columns follow the current gDR identifiers: \code{Gnumber},
+#' \code{clid}, \code{Duration} and \code{Concentration}. The readout column is
+#' the fixed header \code{ReadoutValue}: there is no \code{"readout"} identifier
+#' in \code{gDRutils}, so this name is not customisable via
+#' \code{get_env_identifiers()}, matching how \code{ReadoutValue} is used across
+#' the rest of gDRimport.
+#' Combination data may add \code{Gnumber_2} and \code{Concentration_2}.
+#' \code{Duration}, \code{Concentration} and \code{ReadoutValue} must be numeric.
+#'
+#' @param long_table_file character, path to a single CSV/TSV file with the long
+#' table. The field separator is detected automatically.
+#' @keywords load_files
+#'
+#' @examples
+#'  path <- tempfile(fileext = ".csv")
+#'  dt <- data.table::data.table(Gnumber = "G1", clid = "CL1", Duration = 72,
+#'                               Concentration = 1, ReadoutValue = 1000)
+#'  data.table::fwrite(dt, path)
+#'  load_long_table(path)
+#'
+#' @export
+#'
+#' @return a \code{data.table} with the validated long table
+#'
+load_long_table <- function(long_table_file) {
+  checkmate::assert_character(long_table_file, len = 1L, any.missing = FALSE)
+  # is_readable_v: gDRimport helper asserting each path exists and is readable
+  is_readable_v(long_table_file)
+
+  # ReadoutValue is a fixed gDR header, not a customisable identifier (see @details)
+  readout_col <- "ReadoutValue"
+
+  dt <- tryCatch(
+    data.table::fread(long_table_file),
+    error = function(e) {
+      exception_data <- get_exception_data(39)
+      stop(sprintf(exception_data$sprintf_text, conditionMessage(e)))
+    }
+  )
+
+  if (NROW(dt) == 0L) {
+    stop(sprintf("The long table read from '%s' is empty.", long_table_file))
+  }
+
+  req_cols <- c(
+    gDRutils::get_env_identifiers("drug"),
+    gDRutils::get_env_identifiers("cellline"),
+    gDRutils::get_env_identifiers("duration"),
+    gDRutils::get_env_identifiers("concentration"),
+    readout_col
+  )
+  missing_cols <- setdiff(req_cols, colnames(dt))
+  if (length(missing_cols) > 0L) {
+    exception_data <- get_exception_data(38)
+    stop(sprintf(exception_data$sprintf_text, toString(missing_cols)))
+  }
+
+  numeric_cols <- c(
+    gDRutils::get_env_identifiers("duration"),
+    gDRutils::get_env_identifiers("concentration"),
+    readout_col
+  )
+  # combo concentration is optional; validate it as numeric only when present
+  combo_conc_col <- gDRutils::get_env_identifiers("concentration2")
+  if (combo_conc_col %in% colnames(dt)) {
+    numeric_cols <- c(numeric_cols, combo_conc_col)
+  }
+  for (col in numeric_cols) {
+    original <- dt[[col]]
+    coerced <- suppressWarnings(as.numeric(original))
+    bad <- is.na(coerced) & !is.na(original) & trimws(as.character(original)) != ""
+    if (any(bad)) {
+      stop(sprintf("Column '%s' must be numeric; non-numeric value(s) found in row(s): %s",
+                   col, toString(utils::head(which(bad), 5))))
+    }
+    data.table::set(dt, j = col, value = coerced)
+  }
+
+  dt
+}
+
+
 #' Load manifest
 #'
 #' This functions loads and checks the manifest file(s)
