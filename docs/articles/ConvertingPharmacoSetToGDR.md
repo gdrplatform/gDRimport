@@ -133,7 +133,7 @@ str(dt)
 #>  $ DrugName             : chr  "Ivosidenib" "Ivosidenib" "Ivosidenib" "Ivosidenib" ...
 #>  $ Duration             : num  48 48 48 48 48 48 48 48 48 48 ...
 #>  $ ReferenceDivisionTime: logi  NA NA NA NA NA NA ...
-#>  - attr(*, ".internal.selfref")=<pointer: 0x55c110e33110>
+#>  - attr(*, ".internal.selfref")=<pointer: 0x55a1866fa050>
 ```
 
 ## Subsetting to extract relevant information
@@ -202,7 +202,7 @@ str(gDRutils::convert_se_assay_to_dt(se[[1]], "Metrics"))
 
 ``` r
 sessionInfo()
-#> R version 4.6.0 (2026-04-24)
+#> R version 4.6.1 (2026-06-24)
 #> Platform: x86_64-pc-linux-gnu
 #> Running under: Ubuntu 24.04.4 LTS
 #> 
@@ -224,7 +224,7 @@ sessionInfo()
 #> [8] base     
 #> 
 #> other attached packages:
-#>  [1] gDRimport_1.11.3            PharmacoGx_3.16.0          
+#>  [1] gDRimport_1.11.5            PharmacoGx_3.16.0          
 #>  [3] CoreGx_2.16.0               SummarizedExperiment_1.42.0
 #>  [5] Biobase_2.72.0              GenomicRanges_1.64.0       
 #>  [7] Seqinfo_1.2.0               IRanges_2.46.0             
@@ -233,56 +233,56 @@ sessionInfo()
 #> [13] generics_0.1.4             
 #> 
 #> loaded via a namespace (and not attached):
-#>   [1] bitops_1.0-9                testthat_3.3.2             
-#>   [3] rlang_1.2.0                 magrittr_2.0.5             
+#>   [1] bitops_1.1-0                testthat_3.3.2             
+#>   [3] rlang_1.3.0                 magrittr_2.0.5             
 #>   [5] shinydashboard_0.7.3        otel_0.2.0                 
-#>   [7] compiler_4.6.0              systemfonts_1.3.2          
+#>   [7] compiler_4.6.1              systemfonts_1.3.2          
 #>   [9] vctrs_0.7.3                 reshape2_1.4.5             
-#>  [11] relations_0.6-17            stringr_1.6.0              
+#>  [11] relations_0.6-18            stringr_1.6.0              
 #>  [13] pkgconfig_2.0.3             crayon_1.5.3               
 #>  [15] fastmap_1.2.0               backports_1.5.1            
-#>  [17] XVector_0.52.0              caTools_1.18.3             
+#>  [17] XVector_0.52.0              caTools_1.18.4             
 #>  [19] promises_1.5.0              rmarkdown_2.31             
 #>  [21] ragg_1.5.2                  coop_0.6-3                 
-#>  [23] xfun_0.58                   MultiAssayExperiment_1.38.0
+#>  [23] xfun_0.60                   MultiAssayExperiment_1.38.0
 #>  [25] cachem_1.1.0                jsonlite_2.0.0             
 #>  [27] SnowballC_0.7.1             later_1.4.8                
 #>  [29] DelayedArray_0.38.2         BiocParallel_1.46.0        
-#>  [31] parallel_4.6.0              sets_1.0-25                
+#>  [31] parallel_4.6.1              sets_1.0-25                
 #>  [33] cluster_2.1.8.2             R6_2.6.1                   
-#>  [35] stringi_1.8.7               bslib_0.11.0               
-#>  [37] RColorBrewer_1.1-3          limma_3.68.4               
+#>  [35] stringi_1.8.9               bslib_0.12.0               
+#>  [37] RColorBrewer_1.1-3          limma_3.68.5               
 #>  [39] boot_1.3-32                 brio_1.1.5                 
 #>  [41] jquerylib_0.1.4             assertthat_0.2.1           
-#>  [43] Rcpp_1.1.1-1.1              knitr_1.51                 
+#>  [43] Rcpp_1.1.2                  knitr_1.51                 
 #>  [45] downloader_0.4.1            httpuv_1.6.17              
-#>  [47] Matrix_1.7-5                igraph_2.3.2               
+#>  [47] Matrix_1.7-5                igraph_2.3.3               
 #>  [49] tidyselect_1.2.1            abind_1.4-8                
-#>  [51] yaml_2.3.12                 stringfish_0.19.0          
+#>  [51] yaml_2.3.12                 stringfish_0.19.2          
 #>  [53] gplots_3.3.0                codetools_0.2-20           
 #>  [55] plyr_1.8.9                  lattice_0.22-9             
-#>  [57] tibble_3.3.1                withr_3.0.2                
-#>  [59] shiny_1.13.0                BumpyMatrix_1.20.0         
+#>  [57] tibble_3.3.1                withr_3.0.3                
+#>  [59] shiny_1.14.0                BumpyMatrix_1.20.0         
 #>  [61] S7_0.2.2                    evaluate_1.0.5             
-#>  [63] desc_1.4.3                  RcppParallel_5.1.11-2      
+#>  [63] desc_1.4.3                  RcppParallel_6.2.0         
 #>  [65] bench_1.1.4                 pillar_1.11.1              
 #>  [67] lsa_0.73.4                  KernSmooth_2.23-26         
 #>  [69] checkmate_2.3.4             DT_0.34.0                  
 #>  [71] shinyjs_2.1.1               piano_2.28.0               
 #>  [73] ggplot2_4.0.3               scales_1.4.0               
 #>  [75] gtools_3.9.5                xtable_1.8-8               
-#>  [77] marray_1.90.0               qs2_0.2.1                  
-#>  [79] glue_1.8.1                  slam_0.1-55                
-#>  [81] tools_4.6.0                 data.table_1.18.4          
+#>  [77] marray_1.90.0               qs2_0.2.2                  
+#>  [79] glue_1.8.1                  slam_0.1-56                
+#>  [81] tools_4.6.1                 data.table_1.18.4          
 #>  [83] gDRutils_1.10.0             fgsea_1.38.0               
 #>  [85] fs_2.1.0                    visNetwork_2.1.4           
 #>  [87] fastmatch_1.1-8             cowplot_1.2.0              
-#>  [89] grid_4.6.0                  cli_3.6.6                  
+#>  [89] grid_4.6.1                  cli_3.6.6                  
 #>  [91] textshaping_1.0.5           S4Arrays_1.12.0            
 #>  [93] dplyr_1.2.1                 gtable_0.3.6               
 #>  [95] sass_0.4.10                 digest_0.6.39              
 #>  [97] SparseArray_1.12.2          htmlwidgets_1.6.4          
 #>  [99] farver_2.1.2                htmltools_0.5.9            
-#> [101] pkgdown_2.2.0               lifecycle_1.0.5            
+#> [101] pkgdown_2.2.1               lifecycle_1.0.5            
 #> [103] statmod_1.5.2               mime_0.13
 ```

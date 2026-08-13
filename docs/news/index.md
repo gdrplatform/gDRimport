@@ -1,5 +1,15 @@
 # Changelog
 
+## gDRimport 1.11.5 - 2026-08-11
+
+- add load_long_table to read and validate tidy long-table input from
+  CSV/TSV
+
+## gDRimport 1.11.4 - 2026-06-16
+
+- resolve missing barcode in EnVision files by reading from Background
+  section
+
 ## gDRimport 1.11.3 - 2026-05-27
 
 - apply updated gDRstyle rules

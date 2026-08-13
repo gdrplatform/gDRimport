@@ -70,12 +70,12 @@ the name of the study.
 
 ``` r
 pset <- convert_MAE_to_PSet(mae, pset_name="Kyung2022")
-#> 2026-06-02 11:30:16 Building assay index...
-#> 2026-06-02 11:30:16 Joining rowData to assayIndex...
-#> 2026-06-02 11:30:17 Joining colData to assayIndex...
-#> 2026-06-02 11:30:17 Joining assays to assayIndex...
-#> 2026-06-02 11:30:19 Setting assayIndex key...
-#> 2026-06-02 11:30:19 Building LongTable...
+#> 2026-08-13 06:17:56 Building assay index...
+#> 2026-08-13 06:17:56 Joining rowData to assayIndex...
+#> 2026-08-13 06:17:57 Joining colData to assayIndex...
+#> 2026-08-13 06:17:57 Joining assays to assayIndex...
+#> 2026-08-13 06:17:58 Setting assayIndex key...
+#> 2026-08-13 06:17:59 Building LongTable...
 #> 
 ```
 
@@ -85,7 +85,7 @@ We can now view the `PharmacoSet` object.
 pset
 #> <PharmacoSet>
 #> Name: Kyung2022 
-#> Date Created: Tue Jun  2 11:30:19 2026 
+#> Date Created: Thu Aug 13 06:17:59 2026 
 #> Number of samples:  7 
 #> Molecular profiles: <MultiAssayExperiment> 
 #>    ExperimentList class object of length 1: 
@@ -1184,7 +1184,7 @@ head(assay(tre, "Metrics"),3)
 
 ``` r
 sessionInfo()
-#> R version 4.6.0 (2026-04-24)
+#> R version 4.6.1 (2026-06-24)
 #> Platform: x86_64-pc-linux-gnu
 #> Running under: Ubuntu 24.04.4 LTS
 #> 
@@ -1206,7 +1206,7 @@ sessionInfo()
 #> [8] base     
 #> 
 #> other attached packages:
-#>  [1] MultiAssayExperiment_1.38.0 gDRimport_1.11.3           
+#>  [1] MultiAssayExperiment_1.38.0 gDRimport_1.11.5           
 #>  [3] PharmacoGx_3.16.0           CoreGx_2.16.0              
 #>  [5] SummarizedExperiment_1.42.0 Biobase_2.72.0             
 #>  [7] GenomicRanges_1.64.0        Seqinfo_1.2.0              
@@ -1215,37 +1215,37 @@ sessionInfo()
 #> [13] BiocGenerics_0.58.1         generics_0.1.4             
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] bitops_1.0-9          rlang_1.2.0           magrittr_2.0.5       
-#>  [4] shinydashboard_0.7.3  otel_0.2.0            compiler_4.6.0       
-#>  [7] systemfonts_1.3.2     vctrs_0.7.3           reshape2_1.4.5       
-#> [10] relations_0.6-17      stringr_1.6.0         pkgconfig_2.0.3      
-#> [13] crayon_1.5.3          fastmap_1.2.0         backports_1.5.1      
-#> [16] XVector_0.52.0        caTools_1.18.3        promises_1.5.0       
-#> [19] rmarkdown_2.31        ragg_1.5.2            coop_0.6-3           
-#> [22] xfun_0.58             cachem_1.1.0          jsonlite_2.0.0       
-#> [25] SnowballC_0.7.1       later_1.4.8           DelayedArray_0.38.2  
-#> [28] BiocParallel_1.46.0   parallel_4.6.0        sets_1.0-25          
-#> [31] cluster_2.1.8.2       R6_2.6.1              stringi_1.8.7        
-#> [34] bslib_0.11.0          RColorBrewer_1.1-3    limma_3.68.4         
-#> [37] boot_1.3-32           jquerylib_0.1.4       Rcpp_1.1.1-1.1       
-#> [40] knitr_1.51            downloader_0.4.1      httpuv_1.6.17        
-#> [43] Matrix_1.7-5          igraph_2.3.2          tidyselect_1.2.1     
-#> [46] abind_1.4-8           yaml_2.3.12           stringfish_0.19.0    
-#> [49] gplots_3.3.0          codetools_0.2-20      plyr_1.8.9           
-#> [52] lattice_0.22-9        tibble_3.3.1          shiny_1.13.0         
-#> [55] BumpyMatrix_1.20.0    S7_0.2.2              evaluate_1.0.5       
-#> [58] desc_1.4.3            RcppParallel_5.1.11-2 bench_1.1.4          
-#> [61] pillar_1.11.1         lsa_0.73.4            KernSmooth_2.23-26   
-#> [64] checkmate_2.3.4       DT_0.34.0             shinyjs_2.1.1        
-#> [67] piano_2.28.0          ggplot2_4.0.3         scales_1.4.0         
-#> [70] gtools_3.9.5          xtable_1.8-8          marray_1.90.0        
-#> [73] qs2_0.2.1             glue_1.8.1            slam_0.1-55          
-#> [76] tools_4.6.0           data.table_1.18.4     gDRutils_1.10.0      
-#> [79] fgsea_1.38.0          fs_2.1.0              visNetwork_2.1.4     
-#> [82] fastmatch_1.1-8       cowplot_1.2.0         grid_4.6.0           
-#> [85] cli_3.6.6             textshaping_1.0.5     S4Arrays_1.12.0      
-#> [88] dplyr_1.2.1           gtable_0.3.6          sass_0.4.10          
-#> [91] digest_0.6.39         SparseArray_1.12.2    htmlwidgets_1.6.4    
-#> [94] farver_2.1.2          htmltools_0.5.9       pkgdown_2.2.0        
-#> [97] lifecycle_1.0.5       statmod_1.5.2         mime_0.13
+#>  [1] bitops_1.1-0         rlang_1.3.0          magrittr_2.0.5      
+#>  [4] shinydashboard_0.7.3 otel_0.2.0           compiler_4.6.1      
+#>  [7] systemfonts_1.3.2    vctrs_0.7.3          reshape2_1.4.5      
+#> [10] relations_0.6-18     stringr_1.6.0        pkgconfig_2.0.3     
+#> [13] crayon_1.5.3         fastmap_1.2.0        backports_1.5.1     
+#> [16] XVector_0.52.0       caTools_1.18.4       promises_1.5.0      
+#> [19] rmarkdown_2.31       ragg_1.5.2           coop_0.6-3          
+#> [22] xfun_0.60            cachem_1.1.0         jsonlite_2.0.0      
+#> [25] SnowballC_0.7.1      later_1.4.8          DelayedArray_0.38.2 
+#> [28] BiocParallel_1.46.0  parallel_4.6.1       sets_1.0-25         
+#> [31] cluster_2.1.8.2      R6_2.6.1             stringi_1.8.9       
+#> [34] bslib_0.12.0         RColorBrewer_1.1-3   limma_3.68.5        
+#> [37] boot_1.3-32          jquerylib_0.1.4      Rcpp_1.1.2          
+#> [40] knitr_1.51           downloader_0.4.1     httpuv_1.6.17       
+#> [43] Matrix_1.7-5         igraph_2.3.3         tidyselect_1.2.1    
+#> [46] abind_1.4-8          yaml_2.3.12          stringfish_0.19.2   
+#> [49] gplots_3.3.0         codetools_0.2-20     plyr_1.8.9          
+#> [52] lattice_0.22-9       tibble_3.3.1         shiny_1.14.0        
+#> [55] BumpyMatrix_1.20.0   S7_0.2.2             evaluate_1.0.5      
+#> [58] desc_1.4.3           RcppParallel_6.2.0   bench_1.1.4         
+#> [61] pillar_1.11.1        lsa_0.73.4           KernSmooth_2.23-26  
+#> [64] checkmate_2.3.4      DT_0.34.0            shinyjs_2.1.1       
+#> [67] piano_2.28.0         ggplot2_4.0.3        scales_1.4.0        
+#> [70] gtools_3.9.5         xtable_1.8-8         marray_1.90.0       
+#> [73] qs2_0.2.2            glue_1.8.1           slam_0.1-56         
+#> [76] tools_4.6.1          data.table_1.18.4    gDRutils_1.10.0     
+#> [79] fgsea_1.38.0         fs_2.1.0             visNetwork_2.1.4    
+#> [82] fastmatch_1.1-8      cowplot_1.2.0        grid_4.6.1          
+#> [85] cli_3.6.6            textshaping_1.0.5    S4Arrays_1.12.0     
+#> [88] dplyr_1.2.1          gtable_0.3.6         sass_0.4.10         
+#> [91] digest_0.6.39        SparseArray_1.12.2   htmlwidgets_1.6.4   
+#> [94] farver_2.1.2         htmltools_0.5.9      pkgdown_2.2.1       
+#> [97] lifecycle_1.0.5      statmod_1.5.2        mime_0.13
 ```

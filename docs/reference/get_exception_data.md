@@ -71,6 +71,8 @@ get_exception_data()
 #> 35:          35             Missing cell line annotation
 #> 36:          36                    Invalid averaged data
 #> 37:          37                          Raw Data header
+#> 38:          38                       Long table columns
+#> 39:          39                       Long table parsing
 #>     status_code                                    title
 #>          <char>                                   <char>
 #>                                                                                                                                                                                                      sprintf_text
@@ -112,6 +114,8 @@ get_exception_data()
 #> 35:                                                                                                        The following cell line IDs are missing: '%s'. <br>Don't worry, cell line names will be used for them.
 #> 36: Averaged dose-response data for the selected cell line and drug: '%s' can be considered invalid. Please check your data in the module 'Manage Data' or contact gdrplatform team via 'gdr-support-d@gene.com'.
 #> 37:                                                                                                                                                                       Invalid header in the result file: (%s)
+#> 38:                                                                              The long table does not contain all required columns. Missing column(s): %s. Please correct your file or change the identifiers.
+#> 39:                                                                                                                                  The long table could not be parsed. Check error message below:\n```\n%s\n```
 #>                                                                                                                                                                                                      sprintf_text
 #>                                                                                                                                                                                                            <char>
 #>        type   input_type
@@ -153,6 +157,8 @@ get_exception_data()
 #> 35: warning   submit tab
 #> 36:   error   assay data
 #> 37:   error     raw data
+#> 38:   error   long table
+#> 39:   error   long table
 #>        type   input_type
 #>      <char>       <char>
 ```

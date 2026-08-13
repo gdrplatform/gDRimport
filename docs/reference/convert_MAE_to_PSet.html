@@ -9,7 +9,7 @@ PharmacoGx package. The resulting PharmacoSet can be used for pharmacogenomic an
 
     <a class="navbar-brand me-2" href="../index.html">gDRimport</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,7 +37,7 @@ PharmacoGx package. The resulting PharmacoSet can be used for pharmacogenomic an
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Convert MultiAssayExperiment to TreatmentResponseExperiment</h1>
-      <small class="dont-index">Source: <a href="https://github.com/gdrplatform/gDRimport/blob/test_ci_pkgdown/R/MAE_to_PSet.R" class="external-link"><code>R/MAE_to_PSet.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/gdrplatform/gDRimport/blob/main/R/MAE_to_PSet.R" class="external-link"><code>R/MAE_to_PSet.R</code></a></small>
       <div class="d-none name"><code>convert_MAE_to_PSet.Rd</code></div>
     </div>
 
@@ -81,16 +81,16 @@ PharmacoGx package. The resulting PharmacoSet can be used for pharmacogenomic an
 <span class="r-in"><span>                                                 colData <span class="op">=</span> <span class="fu">S4Vectors</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/DataFrame-class.html" class="external-link">DataFrame</a></span><span class="op">(</span><span class="va">cnames</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">mae</span> <span class="op">&lt;-</span> <span class="fu">MultiAssayExperiment</span><span class="fu">::</span><span class="fu"><a href="https://github.com/waldronlab/MultiAssayExperiment/reference/MultiAssayExperiment.html" class="external-link">MultiAssayExperiment</a></span><span class="op">(</span>experiments <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"single-agent"</span> <span class="op">=</span> <span class="va">se</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">convert_MAE_to_PSet</span><span class="op">(</span><span class="va">mae</span>, <span class="st">"my_pset"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00; font-weight: bold;">2026-06-02 11:29:51 Building assay index...</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00; font-weight: bold;">2026-06-02 11:29:51 Joining rowData to assayIndex...</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00; font-weight: bold;">2026-06-02 11:29:51 Joining colData to assayIndex...</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00; font-weight: bold;">2026-06-02 11:29:52 Joining assays to assayIndex...</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00; font-weight: bold;">2026-06-02 11:29:53 Setting assayIndex key...</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00; font-weight: bold;">2026-06-02 11:29:53 Building LongTable...</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00; font-weight: bold;">2026-08-13 06:17:28 Building assay index...</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00; font-weight: bold;">2026-08-13 06:17:28 Joining rowData to assayIndex...</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00; font-weight: bold;">2026-08-13 06:17:29 Joining colData to assayIndex...</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00; font-weight: bold;">2026-08-13 06:17:30 Joining assays to assayIndex...</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00; font-weight: bold;">2026-08-13 06:17:31 Setting assayIndex key...</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00; font-weight: bold;">2026-08-13 06:17:31 Building LongTable...</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00; font-weight: bold; font-style: italic;">&lt;PharmacoSet&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00; font-weight: bold; font-style: italic;">Name: </span><span style="color: #00BB00;">my_pset</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00; font-weight: bold; font-style: italic;">Date Created: </span><span style="color: #00BB00;">Tue Jun  2 11:29:54 2026</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00; font-weight: bold; font-style: italic;">Date Created: </span><span style="color: #00BB00;">Thu Aug 13 06:17:32 2026</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00; font-weight: bold; font-style: italic;">Number of samples: </span> <span style="color: #00BB00;">10</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00; font-weight: bold; font-style: italic;">Molecular profiles: &lt;MultiAssayExperiment&gt; </span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #BBBB00; font-weight: bold;">ExperimentList class object of length 1: </span></span>
@@ -115,7 +115,7 @@ PharmacoGx package. The resulting PharmacoSet can be used for pharmacogenomic an
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

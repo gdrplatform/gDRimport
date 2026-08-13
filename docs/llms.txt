@@ -28,6 +28,8 @@ link](https://gdrplatform.github.io/gDRimport/).
   : Get plate info from template xlsx
 - [`load_data()`](https://gdrplatform.github.io/gDRimport/reference/load_data.md)
   : Load data
+- [`load_long_table()`](https://gdrplatform.github.io/gDRimport/reference/load_long_table.md)
+  : Load long table
 - [`load_manifest()`](https://gdrplatform.github.io/gDRimport/reference/load_manifest.md)
   : Load manifest
 - [`load_results()`](https://gdrplatform.github.io/gDRimport/reference/load_results.md)

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gDRimport</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,7 +35,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Load results</h1>
-      <small class="dont-index">Source: <a href="https://github.com/gdrplatform/gDRimport/blob/test_ci_pkgdown/R/load_files.R" class="external-link"><code>R/load_files.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/gdrplatform/gDRimport/blob/main/R/load_files.R" class="external-link"><code>R/load_files.R</code></a></small>
       <div class="d-none name"><code>load_results.Rd</code></div>
     </div>
 
@@ -78,7 +78,7 @@ or character with file path of results file(s)</p></dd>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span> <span class="va">td</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_test_data.html">get_test_data</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span> <span class="va">r_df</span> <span class="op">&lt;-</span> <span class="fu">load_results</span><span class="op">(</span><span class="fu"><a href="result_path-method.html">result_path</a></span><span class="op">(</span><span class="va">td</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> INFO [2026-06-02 11:30:02] Reading file /tmp/Rtmpmo65P0/temp_libpath1be42133826f/gDRimport/extdata/data1/RawData_day0.xlsx, sheet Readout_0077vs0068_day7</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> INFO [2026-08-13 06:17:42] Reading file /tmp/RtmppUXNua/temp_libpath282139094257/gDRimport/extdata/data1/RawData_day0.xlsx, sheet Readout_0077vs0068_day7</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> New names:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `` -&gt; `...1`</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `` -&gt; `...2`</span>
@@ -105,14 +105,14 @@ or character with file path of results file(s)</p></dd>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `` -&gt; `...23`</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `` -&gt; `...24`</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `` -&gt; `...25`</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> INFO [2026-06-02 11:30:02] Plate 1 read; 384 wells</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> INFO [2026-06-02 11:30:02] Plate 2 read; 384 wells</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> INFO [2026-06-02 11:30:02] Plate 3 read; 384 wells</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> INFO [2026-06-02 11:30:02] Plate 4 read; 384 wells</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> INFO [2026-06-02 11:30:02] Plate 5 read; 384 wells</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> INFO [2026-06-02 11:30:02] Plate 6 read; 384 wells</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> INFO [2026-06-02 11:30:02] File done</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> INFO [2026-06-02 11:30:02] Reading file /tmp/Rtmpmo65P0/temp_libpath1be42133826f/gDRimport/extdata/data1/RawData_day7.xlsx, sheet Readout_0077vs0068_day7</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> INFO [2026-08-13 06:17:42] Plate 1 read; 384 wells</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> INFO [2026-08-13 06:17:42] Plate 2 read; 384 wells</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> INFO [2026-08-13 06:17:42] Plate 3 read; 384 wells</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> INFO [2026-08-13 06:17:42] Plate 4 read; 384 wells</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> INFO [2026-08-13 06:17:42] Plate 5 read; 384 wells</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> INFO [2026-08-13 06:17:42] Plate 6 read; 384 wells</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> INFO [2026-08-13 06:17:42] File done</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> INFO [2026-08-13 06:17:42] Reading file /tmp/RtmppUXNua/temp_libpath282139094257/gDRimport/extdata/data1/RawData_day7.xlsx, sheet Readout_0077vs0068_day7</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> New names:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `` -&gt; `...1`</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `` -&gt; `...2`</span>
@@ -139,13 +139,13 @@ or character with file path of results file(s)</p></dd>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `` -&gt; `...23`</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `` -&gt; `...24`</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `` -&gt; `...25`</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> INFO [2026-06-02 11:30:02] Plate 1 read; 384 wells</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> INFO [2026-06-02 11:30:02] Plate 2 read; 384 wells</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> INFO [2026-06-02 11:30:02] Plate 3 read; 384 wells</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> INFO [2026-06-02 11:30:02] Plate 4 read; 384 wells</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> INFO [2026-06-02 11:30:02] Plate 5 read; 384 wells</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> INFO [2026-06-02 11:30:02] Plate 6 read; 384 wells</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> INFO [2026-06-02 11:30:02] File done</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> INFO [2026-08-13 06:17:42] Plate 1 read; 384 wells</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> INFO [2026-08-13 06:17:42] Plate 2 read; 384 wells</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> INFO [2026-08-13 06:17:42] Plate 3 read; 384 wells</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> INFO [2026-08-13 06:17:42] Plate 4 read; 384 wells</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> INFO [2026-08-13 06:17:42] Plate 5 read; 384 wells</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> INFO [2026-08-13 06:17:42] Plate 6 read; 384 wells</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> INFO [2026-08-13 06:17:42] File done</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
@@ -158,7 +158,7 @@ or character with file path of results file(s)</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>
