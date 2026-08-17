@@ -84,7 +84,7 @@ convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
            data.table::tstrsplit(data$pert_dose, separator, fixed = TRUE, type.convert = TRUE)]
   }
 
-  data <- meta[, .SD, .SDcols =  c("ModelID",
+  data <- meta[, .SD, .SDcols = c("ModelID",
                                    "CCLEName",
                                    "OncotreeLineage")][data, on = .(CCLEName = ccle_name)]
 
@@ -120,7 +120,7 @@ convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
   # combo columns
   if (all(raw_data[[idfs$drug]] == raw_data[[idfs$drug2]]) &&
       all(raw_data[[idfs$concentration]] == raw_data[[idfs$concentration2]])) {
-    raw_data[,  unlist(idfs[c("drug2", "concentration2")]) := NULL]
+    raw_data[, unlist(idfs[c("drug2", "concentration2")]) := NULL]
   }
 
   # control data

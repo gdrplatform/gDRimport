@@ -1418,7 +1418,7 @@ read_in_results_Tecan <- function(results_file, results_sheets, headers) {
     df_results <- data.table::data.table(
       Barcode = results_sheets[iS],
       WellRow = WellRow,
-      WellColumn =  as.vector(t(matrix(
+      WellColumn = as.vector(t(matrix(
         WellColumn, NCOL(readout), NROW(readout)
       ))),
       ReadoutValue = as.numeric(as.vector(as.matrix(readout))),
@@ -1835,7 +1835,7 @@ get_EnVision_properties <- function(results.list, fname) {
       n_row <- min(n_row[n_row > 1]) - 7
     }
     if (length(n_row) != 1 ||
-        abs(log2(1.5 * n_row / n_col)) > 0.5)  {
+        abs(log2(1.5 * n_row / n_col)) > 0.5) {
       exception_data <- get_exception_data(30)
       stop(sprintf(exception_data$sprintf_text, fname))
     }
@@ -1845,7 +1845,7 @@ get_EnVision_properties <- function(results.list, fname) {
     n_row <- sum(vapply(results.list[5:which(vapply(results.list, function(x) {
       grepl("Basic assay information", x[1])}, logical(1)))],
       length, integer(1)) == n_col)
-    if (log2(1.5 * n_row / n_col) != 0)  {
+    if (log2(1.5 * n_row / n_col) != 0) {
       exception_data <- get_exception_data(30)
       stop(sprintf(exception_data$sprintf_text, fname))
     }

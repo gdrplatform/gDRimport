@@ -1,3 +1,7 @@
+## gDRimport 1.11.6 - 2026-08-17
+
+* remove alignment whitespace flagged by the gDRstyle linter
+
 ## gDRimport 1.11.5 - 2026-08-11
 * add load_long_table to read and validate tidy long-table input from CSV/TSV
 

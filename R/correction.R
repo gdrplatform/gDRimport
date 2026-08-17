@@ -245,7 +245,7 @@ fix_typos_with_reference <-
 #'
 #' @return list of charvec with grep output
 #'
-mgrepl <- function(patterns, x, do_unlist = TRUE,  ...) {
+mgrepl <- function(patterns, x, do_unlist = TRUE, ...) {
   checkmate::assert_character(patterns)
   checkmate::assert_character(x)
   checkmate::assert_flag(do_unlist)
