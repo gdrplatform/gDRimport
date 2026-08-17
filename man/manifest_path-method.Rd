@@ -24,5 +24,6 @@ Method for object gdr_test_data - access to slot \code{manifest_path}
  manifest_file_path <- manifest_path(td)
 
 }
+\keyword{internal}
 \keyword{methods}
 \keyword{test_data_class}

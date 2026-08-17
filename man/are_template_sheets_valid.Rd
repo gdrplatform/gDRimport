@@ -19,3 +19,4 @@ are template sheet valid?
 get_xl_sheets
 }
 \keyword{correction_exception}
+\keyword{internal}

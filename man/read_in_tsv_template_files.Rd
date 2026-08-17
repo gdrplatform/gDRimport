@@ -19,4 +19,5 @@ data.table with templates data
 \description{
 read in tsv template files
 }
+\keyword{internal}
 \keyword{load_files}

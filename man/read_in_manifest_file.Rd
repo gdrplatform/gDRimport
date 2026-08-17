@@ -17,4 +17,5 @@ a data.table with manifest data
 \description{
 read manifest files
 }
+\keyword{internal}
 \keyword{load_files}

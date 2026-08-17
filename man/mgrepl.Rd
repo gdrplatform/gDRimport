@@ -22,3 +22,4 @@ list of charvec with grep output
 grep wrapper to support multiple patterns
 }
 \keyword{correction_exception}
+\keyword{internal}

@@ -16,3 +16,4 @@ charvec with paths to corrected sheet names
 Correct names of the template sheets (if required)
 }
 \keyword{correction_exception}
+\keyword{internal}

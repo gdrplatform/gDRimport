@@ -17,4 +17,5 @@ list with EnVision propertiesa
 \description{
 This function return properties of EnVision data
 }
+\keyword{internal}
 \keyword{load_files}

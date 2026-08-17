@@ -8,6 +8,7 @@
 #' @return named list where names are the excel filenames
 #' and the values are the sheets within each file
 #'
+#' @keywords internal
 get_xl_sheets <- function(files) {
   checkmate::assert_character(files)
   template_sheets <- lapply(files, readxl::excel_sheets)
@@ -25,6 +26,7 @@ get_xl_sheets <- function(files) {
 #'
 #' @return logical flag
 #'
+#' @keywords internal
 .check_against_single_template_sheet <- function(ts) {
 
   checkmate::assert_list(ts)
@@ -53,6 +55,7 @@ get_xl_sheets <- function(files) {
 #' @keywords correction_exception
 #'
 #' @return charvec with paths to corrected sheet names
+#' @keywords internal
 correct_template_sheets <- function(tfiles) {
 
   checkmate::assert_character(tfiles)
@@ -139,6 +142,7 @@ get_expected_template_sheets <-
 #' @seealso get_xl_sheets
 #'
 #' @return logical flag
+#' @keywords internal
 are_template_sheets_valid <- function(ts) {
 
   checkmate::assert_list(ts)
@@ -245,6 +249,7 @@ fix_typos_with_reference <-
 #'
 #' @return list of charvec with grep output
 #'
+#' @keywords internal
 mgrepl <- function(patterns, x, do_unlist = TRUE, ...) {
   checkmate::assert_character(patterns)
   checkmate::assert_character(x)

@@ -31,6 +31,7 @@ standardize_record_values <- function(x, dictionary = DICTIONARY) {
 #'
 #' @return a list of reference data
 #'
+#' @keywords internal
 read_ref_data <- function(inDir, prefix = "ref") {
   # Assertions:
   checkmate::assert_string(inDir)

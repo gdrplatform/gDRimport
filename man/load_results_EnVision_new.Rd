@@ -22,4 +22,5 @@ This functions loads and checks the results file(s) from a new Envision instrume
 in the CSV or XLSX format. Supports multiple plates in a single file or multiple
 sheets in an Excel file by robustly checking the file structure.
 }
+\keyword{internal}
 \keyword{load_files}

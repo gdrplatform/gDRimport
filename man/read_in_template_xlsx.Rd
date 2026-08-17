@@ -19,4 +19,5 @@ data.table with templates data
 \description{
 Read in xlsx template files
 }
+\keyword{internal}
 \keyword{load_files}

@@ -19,4 +19,5 @@ data.table derived from EnVision data
 \description{
 Enhance raw edited EnVision data.table
 }
+\keyword{internal}
 \keyword{load_files}
