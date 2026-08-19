@@ -17,4 +17,5 @@ data.table with results data
 \description{
 Read in single xlsx data from EnVision
 }
+\keyword{internal}
 \keyword{load_files}

@@ -61,6 +61,7 @@ setGeneric("manifest_path", function(x) standardGeneric("manifest_path"))
 #' @aliases manifest_path,gdr_test_data-method
 #' @rdname manifest_path-method
 #' @keywords test_data_class
+#' @keywords internal
 setMethod("manifest_path", "gdr_test_data", function(x) x@manifest_path)
 
 #' Method result_path
@@ -84,6 +85,7 @@ setGeneric("result_path", function(x) standardGeneric("result_path"))
 #' @aliases result_path,gdr_test_data-method
 #' @rdname result_path-method
 #' @keywords test_data_class
+#' @keywords internal
 setMethod("result_path", "gdr_test_data", function(x) x@result_path)
 
 #' Method template_path
@@ -107,4 +109,5 @@ setGeneric("template_path", function(x) standardGeneric("template_path"))
 
 #' @aliases template_path,gdr_test_data-method
 #' @rdname template_path-method
+#' @keywords internal
 setMethod("template_path", "gdr_test_data", function(x) x@template_path)

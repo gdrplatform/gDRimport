@@ -149,7 +149,7 @@ import_D300 <- function(D300_file,
     dims <- as.integer(strsplit(gsub("\\(|\\)", "", dim_str), ",")[[1]])
 
     trt_info <- list(
-      max_drugs_per_well =  max(trt_n_drugs),
+      max_drugs_per_well = max(trt_n_drugs),
       col_idx = strtoi(colnames(trt_gnumber_conc)),
       row_idx = strtoi(rownames_trt_gnumber_conc),
       plate_nrow = dims[1],
@@ -310,7 +310,7 @@ parse_D300_xml <- function(D300_file) {
 
   # Safely retrieve units (prevents UseMethod error if node is missing).
   node_vol <- top[["VolumeUnit"]]
-  vol_unit  <- if (!is.null(node_vol)) XML::xmlValue(node_vol) else NA
+  vol_unit <- if (!is.null(node_vol)) XML::xmlValue(node_vol) else NA
 
   node_conc <- top[["ConcentrationUnit"]]
   conc_unit <- if (!is.null(node_conc)) XML::xmlValue(node_conc) else NA

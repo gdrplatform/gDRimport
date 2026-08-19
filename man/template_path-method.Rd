@@ -24,5 +24,6 @@ Method for object gdr_test_data - access to slot \code{template_path}
  template_file_path <- template_path(td)
 
 }
+\keyword{internal}
 \keyword{methods}
 \keyword{test_data_class}

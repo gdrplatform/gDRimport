@@ -5,7 +5,7 @@ test_that("convert_MAE_to_PSet works as expected", {
   cnames <- letters[1:n]
 
   # Normal matrix.
-  ref_gr_value <-  matrix(runif(m * n), nrow = m, ncol = n, dimnames = list(rnames, cnames))
+  ref_gr_value <- matrix(runif(m * n), nrow = m, ncol = n, dimnames = list(rnames, cnames))
   se <- SummarizedExperiment::SummarizedExperiment(assays = list(RefGRvalue = ref_gr_value),
                                                    rowData = S4Vectors::DataFrame(rnames),
                                                    colData = S4Vectors::DataFrame(cnames))

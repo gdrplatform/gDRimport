@@ -40,7 +40,7 @@ get_test_data <- function() {
         ref_m_df = ref_m_df,
         ref_r1_r2 = file.path(ddir, "ref_RawData_day0_day7_xlsx.csv"),
         ref_r1 = file.path(ddir, "ref_RawData_day0_xlsx.csv"),
-        ref_t1_t2 =  file.path(ddir, "ref_template_treated_untreated_xlsx.csv"),
+        ref_t1_t2 = file.path(ddir, "ref_template_treated_untreated_xlsx.csv"),
         ref_t1 = file.path(ddir, "ref_template_treated_xlsx.csv")
     )
   }

@@ -19,4 +19,5 @@ data.table derived from Tecan data
 \description{
 read in Tecan data
 }
+\keyword{internal}
 \keyword{load_files}

@@ -226,6 +226,7 @@ load_manifest <- function(manifest_file) {
 #'
 #' @return a data.table with manifest data
 #'
+#' @keywords internal
 read_in_manifest_file <- function(manifest_file, available_formats) {
 
   manifest_data <- lapply(manifest_file, function(x) {
@@ -461,6 +462,7 @@ load_templates_tsv <-
 #'
 #' @return data.table with templates data
 #'
+#' @keywords internal
 read_in_tsv_template_files <- function(template_file, template_filename, templates) {
     metadata_fields <- NULL
     tmpl_l <- lapply(seq_along(template_file), function(iF) {
@@ -561,6 +563,7 @@ load_templates_xlsx <-
 #'
 #' @return data.table with templates data
 #'
+#' @keywords internal
 read_in_template_xlsx <- function(template_file, template_filename, template_sheets) {
 
     metadata_fields <- NULL
@@ -602,6 +605,7 @@ read_in_template_xlsx <- function(template_file, template_filename, template_she
 #'
 #' @return data.table with template data
 #'
+#' @keywords internal
 read_in_template_sheet_xlsx <- function(template_file, template_sheets, idx, plate_info) {
   metadata_fields <- NULL
   # need to adapt for 1536 well plates
@@ -659,6 +663,7 @@ read_in_template_sheet_xlsx <- function(template_file, template_sheets, idx, pla
 #'
 #' @return list with plate info
 #'
+#' @keywords internal
 get_plate_info_from_template_xlsx <- function(template_file, Gnumber_idx, idx) {
 
       tryCatch({
@@ -708,6 +713,7 @@ get_plate_info_from_template_xlsx <- function(template_file, Gnumber_idx, idx) {
 #'
 #' @return \code{NULL} invisibly.
 #'
+#' @keywords internal
 validate_template_xlsx <- function(template_file, template_filename, template_sheets, idx) {
 
       # first check that the sheet names are ok
@@ -795,6 +801,7 @@ load_results_tsv <-
 #'
 #' @return data.table with results data
 #'
+#' @keywords internal
 read_in_result_files <- function(results_file, results_filename, headers) {
 
     # read all files
@@ -923,6 +930,7 @@ load_results_EnVision <-
 #'
 #' @return data.table with results data
 #'
+#' @keywords internal
 load_results_EnVision_new <- function(results_file, headers = gDRutils::get_env_identifiers()) {
 
   checkmate::assert_character(results_file)
@@ -1101,6 +1109,7 @@ load_results_EnVision_new <- function(results_file, headers = gDRutils::get_env_
 #'
 #' @return data.table with results data
 #'
+#' @keywords internal
 read_EnVision_xlsx <- function(results_file, results_sheet) {
 
   # expect an Excel spreadsheet
@@ -1146,6 +1155,7 @@ read_EnVision_xlsx <- function(results_file, results_sheet) {
 #' @return list with one element per file with
 #' sheet names or 0 (for non-Excel file)
 #'
+#' @keywords internal
 get_excel_sheet_names <- function(fls) {
 
   # results_file is a string or a vector of strings
@@ -1248,6 +1258,7 @@ get_df_from_raw_edited_EnVision_df <-
 #'
 #' @return data.table derived from EnVision data
 #'
+#' @keywords internal
 enhance_raw_edited_EnVision_df <- function(df, barcode_col, headers) {
 
   # not empty rows; before discarding the rows: move ''Background information'' in the next row
@@ -1386,6 +1397,7 @@ load_results_Tecan <-
 #'
 #' @return data.table derived from Tecan data
 #'
+#' @keywords internal
 read_in_results_Tecan <- function(results_file, results_sheets, headers) {
   all_results <- data.table::data.table()
   for (iS in seq_along(results_sheets)) {
@@ -1418,7 +1430,7 @@ read_in_results_Tecan <- function(results_file, results_sheets, headers) {
     df_results <- data.table::data.table(
       Barcode = results_sheets[iS],
       WellRow = WellRow,
-      WellColumn =  as.vector(t(matrix(
+      WellColumn = as.vector(t(matrix(
         WellColumn, NCOL(readout), NROW(readout)
       ))),
       ReadoutValue = as.numeric(as.vector(as.matrix(readout))),
@@ -1564,6 +1576,7 @@ check_metadata_names <-
 #'
 #' @return \code{NULL} invisibly.
 #'
+#' @keywords internal
 check_metadata_req_col_names <- function(col_df, df_name, df_type) {
   # first check for required column names
   if (!is.null(df_type)) {
@@ -1620,6 +1633,7 @@ check_metadata_req_col_names <- function(col_df, df_name, df_type) {
 #'
 #' @return a charvec with corrected colnames of df
 #'
+#' @keywords internal
 check_metadata_field_names <- function(corrected_names, df_name) {
   # check for wrong metadata field names (including dash, starting with number, ... )
   bad_names <-
@@ -1644,6 +1658,7 @@ check_metadata_field_names <- function(corrected_names, df_name) {
 #'
 #' @return a charvec with corrected colnames of df
 #'
+#' @keywords internal
 check_metadata_against_spaces <- function(corrected_names, df_name) {
   # remove spaces and convert to WordUppercase
   names_spaces <- regexpr("\\s", corrected_names) > 0
@@ -1672,6 +1687,7 @@ check_metadata_against_spaces <- function(corrected_names, df_name) {
 #'
 #' @return a charvec with corrected colnames of df
 #'
+#' @keywords internal
 check_metadata_headers <- function(corrected_names, df_name) {
 
   # common headers that are written in a specific way
@@ -1725,6 +1741,7 @@ check_metadata_headers <- function(corrected_names, df_name) {
 #'
 #' @return a list containing the data table, n_col, n_row, and if is edited
 #'
+#' @keywords internal
 read_EnVision_delim <- function(file,
                          nrows = 10000,
                          seps = c(",", "\t")) {
@@ -1772,6 +1789,7 @@ read_EnVision_delim <- function(file,
 #'
 #' @return list with one element per EnVisoin input file
 #'
+#' @keywords internal
 read_in_EnVision_file <- function(file, nrows, seps) {
 
   con <- file(file)
@@ -1813,6 +1831,7 @@ read_in_EnVision_file <- function(file, nrows, seps) {
 #'
 #' @return list with EnVision propertiesa
 #'
+#' @keywords internal
 get_EnVision_properties <- function(results.list, fname) {
 
   # has been open/saved in a spreadsheet software --> first line is padded with empty columns
@@ -1835,7 +1854,7 @@ get_EnVision_properties <- function(results.list, fname) {
       n_row <- min(n_row[n_row > 1]) - 7
     }
     if (length(n_row) != 1 ||
-        abs(log2(1.5 * n_row / n_col)) > 0.5)  {
+        abs(log2(1.5 * n_row / n_col)) > 0.5) {
       exception_data <- get_exception_data(30)
       stop(sprintf(exception_data$sprintf_text, fname))
     }
@@ -1845,7 +1864,7 @@ get_EnVision_properties <- function(results.list, fname) {
     n_row <- sum(vapply(results.list[5:which(vapply(results.list, function(x) {
       grepl("Basic assay information", x[1])}, logical(1)))],
       length, integer(1)) == n_col)
-    if (log2(1.5 * n_row / n_col) != 0)  {
+    if (log2(1.5 * n_row / n_col) != 0) {
       exception_data <- get_exception_data(30)
       stop(sprintf(exception_data$sprintf_text, fname))
     }

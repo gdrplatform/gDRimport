@@ -18,3 +18,4 @@ a charvec with corrected colnames of df
 Check metadata field names
 }
 \keyword{correction_exception}
+\keyword{internal}

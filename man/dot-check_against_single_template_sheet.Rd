@@ -17,3 +17,4 @@ logical flag
 get sheets for given set of XLS files
 }
 \keyword{correction_exception}
+\keyword{internal}
