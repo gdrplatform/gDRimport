@@ -133,7 +133,7 @@ str(dt)
 #>  $ DrugName             : chr  "Ivosidenib" "Ivosidenib" "Ivosidenib" "Ivosidenib" ...
 #>  $ Duration             : num  48 48 48 48 48 48 48 48 48 48 ...
 #>  $ ReferenceDivisionTime: logi  NA NA NA NA NA NA ...
-#>  - attr(*, ".internal.selfref")=<pointer: 0x55a1866fa050>
+#>  - attr(*, ".internal.selfref")=<pointer: 0x558e1948d050>
 ```
 
 ## Subsetting to extract relevant information
@@ -224,7 +224,7 @@ sessionInfo()
 #> [8] base     
 #> 
 #> other attached packages:
-#>  [1] gDRimport_1.11.5            PharmacoGx_3.16.0          
+#>  [1] gDRimport_1.11.6            PharmacoGx_3.16.0          
 #>  [3] CoreGx_2.16.0               SummarizedExperiment_1.42.0
 #>  [5] Biobase_2.72.0              GenomicRanges_1.64.0       
 #>  [7] Seqinfo_1.2.0               IRanges_2.46.0             

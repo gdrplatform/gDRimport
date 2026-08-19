@@ -26,13 +26,13 @@ Source:
 
 Gladki A, Czech B, Hafner M, Mocanu S, Scigocki D, Vuong A, Gerosa L,
 Smola J (2026). *gDRimport: Package for handling the import of
-dose-response data*. R package version 1.11.5,
+dose-response data*. R package version 1.11.6,
 <https://github.com/gdrplatform/gDRimport>.
 
     @Manual{,
       title = {gDRimport: Package for handling the import of dose-response data},
       author = {Arkadiusz Gladki and Bartosz Czech and Marc Hafner and Sergiu Mocanu and Dariusz Scigocki and Allison Vuong and Luca Gerosa and Janina Smola},
       year = {2026},
-      note = {R package version 1.11.5},
+      note = {R package version 1.11.6},
       url = {https://github.com/gdrplatform/gDRimport},
     }

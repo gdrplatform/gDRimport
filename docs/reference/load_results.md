@@ -36,7 +36,7 @@ data.table with results' data
 ``` r
  td <- get_test_data()
  r_df <- load_results(result_path(td))
-#> INFO [2026-08-13 06:17:42] Reading file /tmp/RtmppUXNua/temp_libpath282139094257/gDRimport/extdata/data1/RawData_day0.xlsx, sheet Readout_0077vs0068_day7
+#> INFO [2026-08-19 11:16:08] Reading file /tmp/RtmpUkSU5c/temp_libpath1ae074ba296b/gDRimport/extdata/data1/RawData_day0.xlsx, sheet Readout_0077vs0068_day7
 #> New names:
 #> • `` -> `...1`
 #> • `` -> `...2`
@@ -63,14 +63,14 @@ data.table with results' data
 #> • `` -> `...23`
 #> • `` -> `...24`
 #> • `` -> `...25`
-#> INFO [2026-08-13 06:17:42] Plate 1 read; 384 wells
-#> INFO [2026-08-13 06:17:42] Plate 2 read; 384 wells
-#> INFO [2026-08-13 06:17:42] Plate 3 read; 384 wells
-#> INFO [2026-08-13 06:17:42] Plate 4 read; 384 wells
-#> INFO [2026-08-13 06:17:42] Plate 5 read; 384 wells
-#> INFO [2026-08-13 06:17:42] Plate 6 read; 384 wells
-#> INFO [2026-08-13 06:17:42] File done
-#> INFO [2026-08-13 06:17:42] Reading file /tmp/RtmppUXNua/temp_libpath282139094257/gDRimport/extdata/data1/RawData_day7.xlsx, sheet Readout_0077vs0068_day7
+#> INFO [2026-08-19 11:16:08] Plate 1 read; 384 wells
+#> INFO [2026-08-19 11:16:08] Plate 2 read; 384 wells
+#> INFO [2026-08-19 11:16:08] Plate 3 read; 384 wells
+#> INFO [2026-08-19 11:16:08] Plate 4 read; 384 wells
+#> INFO [2026-08-19 11:16:08] Plate 5 read; 384 wells
+#> INFO [2026-08-19 11:16:08] Plate 6 read; 384 wells
+#> INFO [2026-08-19 11:16:08] File done
+#> INFO [2026-08-19 11:16:08] Reading file /tmp/RtmpUkSU5c/temp_libpath1ae074ba296b/gDRimport/extdata/data1/RawData_day7.xlsx, sheet Readout_0077vs0068_day7
 #> New names:
 #> • `` -> `...1`
 #> • `` -> `...2`
@@ -97,11 +97,11 @@ data.table with results' data
 #> • `` -> `...23`
 #> • `` -> `...24`
 #> • `` -> `...25`
-#> INFO [2026-08-13 06:17:42] Plate 1 read; 384 wells
-#> INFO [2026-08-13 06:17:42] Plate 2 read; 384 wells
-#> INFO [2026-08-13 06:17:42] Plate 3 read; 384 wells
-#> INFO [2026-08-13 06:17:42] Plate 4 read; 384 wells
-#> INFO [2026-08-13 06:17:42] Plate 5 read; 384 wells
-#> INFO [2026-08-13 06:17:42] Plate 6 read; 384 wells
-#> INFO [2026-08-13 06:17:42] File done
+#> INFO [2026-08-19 11:16:08] Plate 1 read; 384 wells
+#> INFO [2026-08-19 11:16:08] Plate 2 read; 384 wells
+#> INFO [2026-08-19 11:16:08] Plate 3 read; 384 wells
+#> INFO [2026-08-19 11:16:08] Plate 4 read; 384 wells
+#> INFO [2026-08-19 11:16:08] Plate 5 read; 384 wells
+#> INFO [2026-08-19 11:16:08] Plate 6 read; 384 wells
+#> INFO [2026-08-19 11:16:08] File done
 ```
