@@ -306,6 +306,7 @@ test_that("load_results_Incucyte works as expected", {
   file_bad_barcode_path <- tempfile(fileext = ".csv")
   file_custom_header_path <- tempfile(fileext = ".csv")
   file_colon_header_path <- tempfile(fileext = ".csv")
+  file_unpadded_path <- tempfile(fileext = ".csv")
 
   writeLines(
     c(
@@ -403,6 +404,24 @@ test_that("load_results_Incucyte works as expected", {
     file_colon_header_path
   )
 
+  # preamble as the instrument writes it: one field per line, no trailing
+  # separators, so the field count does not match the data block
+  writeLines(
+    c(
+      "Label: MN20160421_X01",
+      "Metric: total (H2B-mCh) Count (1/Well)",
+      sprintf("%s,%s", bcode_name, "PLATE_006_UNPADDED"),
+      "Cell Type: ",
+      "Notes: two lines of notes",
+      "spilling over as the instrument writes them",
+      "",
+      "Date Time,Elapsed,A1,A2",
+      "4/20/2016 1:00:00 PM,0,614,676",
+      "4/20/2016 5:00:00 PM,4,649,621"
+    ),
+    file_unpadded_path
+  )
+
   on.exit(unlink(
     c(
       file_csv_1_path,
@@ -498,6 +517,37 @@ test_that("load_results_Incucyte works as expected", {
   expect_s3_class(dt_colon, "data.table")
   expect_equal(unique(dt_colon[[bcode_name]]), "PLATE_COLON_TEST")
   expect_equal(dt_colon$ReadoutValue, 999)
+
+  # every other fixture pads its preamble with trailing separators, which no
+  # instrument does; without padding fread drops the preamble and the markers
+  # with it
+  dt_unpadded <- load_results_Incucyte(file_unpadded_path, headers)
+
+  expect_s3_class(dt_unpadded, "data.table")
+  expect_equal(NROW(dt_unpadded), 4)
+  expect_equal(unique(dt_unpadded[[bcode_name]]), "PLATE_006_UNPADDED")
+  expect_equal(sort(unique(dt_unpadded[[d_name]])), c(0, 4))
+  expect_equal(sort(dt_unpadded$ReadoutValue), c(614, 621, 649, 676))
+  expect_equal(unique(dt_unpadded[[well_rname]]), "A")
+  expect_equal(sort(unique(dt_unpadded[[well_cname]])), c("1", "2"))
+
+  # the barcode row stays mandatory: a plate labelled only with Label is rejected
+  file_label_only_path <- tempfile(fileext = ".csv")
+  on.exit(unlink(file_label_only_path), add = TRUE)
+  writeLines(
+    c(
+      "Label: MN20160421_X02",
+      "Metric: total (H2B-mCh) Count (1/Well)",
+      "Date Time,Elapsed,A1",
+      "4/20/2016 1:00:00 PM,0,614"
+    ),
+    file_label_only_path
+  )
+  expect_error(
+    load_results_Incucyte(file_label_only_path, headers),
+    sprintf("Invalid header in the result file: (missing '%s' column)", bcode_name),
+    fixed = TRUE
+  )
 
 })
 

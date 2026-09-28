@@ -1,3 +1,7 @@
+## gDRimport 1.11.7 - 2026-09-28
+* locate the Incucyte data block on the raw lines so an unpadded metadata preamble no longer hides it
+* document that a barcode row is required in plain-text Incucyte exports
+
 ## gDRimport 1.11.6 - 2026-08-17
 * remove alignment whitespace flagged by the gDRstyle linter
 * document internal helper functions with @keywords internal

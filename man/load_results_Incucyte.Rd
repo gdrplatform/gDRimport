@@ -17,4 +17,11 @@ data.table derived from Incucyte data
 \description{
 This functions loads incucyte time-course cell count file
 }
+\details{
+The export has to carry a row whose first cell is the barcode identifier
+(\code{Barcode} or \code{Barcode:}), followed by the plate barcode. Instruments
+that label the plate only with \code{Label} or \code{Vessel Name} are not
+accepted; add the barcode row before importing. The metadata preamble itself
+needs no editing, and its lines may hold fewer fields than the data block.
+}
 \keyword{load_files}

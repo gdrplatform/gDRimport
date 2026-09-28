@@ -1451,9 +1451,64 @@ read_in_results_Tecan <- function(results_file, results_sheets, headers) {
   idx
 }
 
+.detect_incucyte_separator <- function(line) {
+  seps <- c("\t", ",", ";", "|")
+  fields <- vapply(seps, function(sep) length(strsplit(line, sep, fixed = TRUE)[[1]]), integer(1))
+  seps[[which.max(fields)]]
+}
+
+#' Locate the data block of a plain-text Incucyte export
+#'
+#' Incucyte writes a metadata preamble in which every line holds a single field,
+#' followed by a data block with one column per well. \code{data.table::fread()}
+#' resolves that field-count mismatch by dropping the preamble, so the markers it
+#' should find are gone by the time they are looked up. The markers are therefore
+#' located on the raw lines instead.
+#'
+#' @param file_path string: path to a plain-text result file
+#' @param bcode_names charvec: accepted spellings of the barcode marker
+#' @param bcode_name string: barcode identifier, used in the error message
+#' @keywords internal
+#'
+#' @return list with \code{skip} (number of lines preceding the data block) and \code{barcode}
+.locate_incucyte_header <- function(file_path, bcode_names, bcode_name) {
+  # an unreadable connection warns before it errors, and the error is what we report
+  lines <- tryCatch({
+    sub("\r$", "", suppressWarnings(readLines(file_path, n = 20L, warn = FALSE)))
+  }, error = function(e) {
+    exception_data <- get_exception_data(21)
+    stop(sprintf(exception_data$sprintf_text, file_path))
+  })
+
+  dstart_idx <- grep("^Date Time[,;\t|]", lines)
+  if (length(dstart_idx) == 0) {
+    exception_data <- get_exception_data(37)
+    stop(sprintf(exception_data$sprintf_text, "missing 'Date Time' column"))
+  }
+  dstart_idx <- dstart_idx[[1]]
+
+  sep <- .detect_incucyte_separator(lines[[dstart_idx]])
+  preamble <- strsplit(lines[seq_len(dstart_idx - 1L)], sep, fixed = TRUE)
+  markers <- vapply(preamble, function(x) if (length(x)) x[[1]] else NA_character_, character(1))
+
+  barcode_idx <- which(markers %in% bcode_names)
+  if (length(barcode_idx) == 0) {
+    exception_data <- get_exception_data(37)
+    stop(sprintf(exception_data$sprintf_text, sprintf("missing '%s' column", bcode_name)))
+  }
+
+  list(skip = dstart_idx - 1L, barcode = preamble[[barcode_idx[[1]]]][[2]])
+}
+
 #' Load incucyte results from plain text
 #'
 #' This functions loads incucyte time-course cell count file
+#'
+#' The export has to carry a row whose first cell is the barcode identifier
+#' (\code{Barcode} or \code{Barcode:}), followed by the plate barcode. Instruments
+#' that label the plate only with \code{Label} or \code{Vessel Name} are not
+#' accepted; add the barcode row before importing. The metadata preamble itself
+#' needs no editing, and its lines may hold fewer fields than the data block.
 #'
 #' @param results_file list of strings: file paths to result paths from individual plates
 #' @param headers list of headers identified in the manifest
@@ -1473,30 +1528,21 @@ load_results_Incucyte <-
     # Use lapply instead of for loop for better performance and idiomatic R style
     all_data_list <- lapply(results_file, function(iP) {
 
-      header_dt <- if (grepl(".xlsx$", iP)) {
-        tryCatch({
+      if (grepl(".xlsx$", iP)) {
+        header_dt <- tryCatch({
           read_excel_to_dt(iP, n_max = 20)
         }, error = function(e) {
           exception_data <- get_exception_data(22)
           stop(sprintf(exception_data$sprintf_text, iP))
         })
+        dstart_idx <- .find_header(header_dt, "Date Time", "missing 'Date Time' column")
+        barcode_idx <- .find_header(header_dt, bcode_names, sprintf("missing '%s' column", bcode_name))
+        barcode <- header_dt[barcode_idx, 2][[1]]
+        dt_input <- read_excel_to_dt(iP, skip = dstart_idx)
       } else {
-        tryCatch({
-          data.table::fread(iP, nrows = 20, header = TRUE)
-        }, error = function(e) {
-          exception_data <- get_exception_data(21)
-          stop(sprintf(exception_data$sprintf_text, iP))
-        })
-      }
-
-      dstart_idx <- .find_header(header_dt, "Date Time", "missing 'Date Time' column")
-      barcode_idx <- .find_header(header_dt, bcode_names, sprintf("missing '%s' column", bcode_name))
-      barcode <- header_dt[barcode_idx, 2][[1]]
-
-      dt_input <- if (grepl(".xlsx$", iP)) {
-        read_excel_to_dt(iP, skip = dstart_idx)
-      } else {
-        data.table::fread(iP, skip = dstart_idx, header = TRUE)
+        located <- .locate_incucyte_header(iP, bcode_names, bcode_name)
+        barcode <- located$barcode
+        dt_input <- data.table::fread(iP, skip = located$skip, header = TRUE)
       }
 
       dt_input <- data.table::melt(
