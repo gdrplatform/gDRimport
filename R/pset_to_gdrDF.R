@@ -8,7 +8,7 @@
 #'
 #' @return data.table of PharmacoSet's dose response data with column names aligned with gDR standard
 #'
-#' @examples
+#' @examplesIf requireNamespace("CoreGx", quietly = TRUE) && requireNamespace("PharmacoGx", quietly = TRUE)
 #' pset <- suppressMessages(getPSet(
 #'   "Tavor_2020",
 #'   psetDir = system.file("extdata/pset", package = "gDRimport"),
@@ -23,6 +23,9 @@
 convert_pset_to_df <- function(pharmacoset,
                            run_parallel = TRUE,
                            workers = 2L) {
+  # CoreGx is needed for `$` on the TreatmentResponseExperiment held in the PSet,
+  # PharmacoGx for the PharmacoSet class itself.
+  .assert_suggested_packages(c("CoreGx", "PharmacoGx"), "Converting a PharmacoSet to a data.table")
   assertthat::assert_that(is.logical(run_parallel),
                           msg = "run_parallel must be a logical.")
   assertthat::assert_that(inherits(pharmacoset, "PharmacoSet"),
@@ -83,7 +86,7 @@ setEnvForPSet <- function() {
 #'
 #' @keywords pset_conversion
 #'
-#' @examples
+#' @examplesIf requireNamespace("PharmacoGx", quietly = TRUE)
 #' suppressMessages(getPSet(
 #'   "Tavor_2020",
 #'   psetDir = system.file("extdata/pset", package = "gDRimport"),
@@ -98,6 +101,7 @@ getPSet <- function(pset_name,
                     timeout = 600,
                     use_local_PSets_list = FALSE) {
 
+  .assert_suggested_packages("PharmacoGx", "Fetching a PharmacoSet")
   assertthat::assert_that(is.character(pset_name),
                           msg = "pset_name parameter must be a character vector.")
 

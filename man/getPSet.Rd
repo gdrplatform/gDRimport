@@ -31,11 +31,12 @@ PharmacoSet object
 Get PharmacoSet
 }
 \examples{
+\dontshow{if (requireNamespace("PharmacoGx", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 suppressMessages(getPSet(
   "Tavor_2020",
   psetDir = system.file("extdata/pset", package = "gDRimport"),
   use_local_PSets_list = TRUE
 ))
-
+\dontshow{\}) # examplesIf}
 }
 \keyword{pset_conversion}

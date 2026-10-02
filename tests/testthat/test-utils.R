@@ -29,6 +29,27 @@ test_that("detect_file_format works as expected", {
   expect_equal(unique(unlist(lapply(tsv_path, detect_file_format))), "long_tsv")
 })
 
+test_that(".assert_suggested_packages works as expected", {
+  # The PharmacoSet entry points are guarded by this, and on any machine where
+  # CoreGx and PharmacoGx are installed the guard never runs - so exercise it
+  # directly against a package that cannot exist.
+  expect_null(.assert_suggested_packages("checkmate", "Testing"))
+
+  expect_error(
+    .assert_suggested_packages("notAnInstalledPackage", "Testing"),
+    "notAnInstalledPackage"
+  )
+  expect_error(
+    .assert_suggested_packages("notAnInstalledPackage", "Testing"),
+    "suggests rather than imports"
+  )
+  # A missing package among installed ones is still reported, and only that one.
+  expect_error(
+    .assert_suggested_packages(c("checkmate", "notAnInstalledPackage"), "Testing"),
+    "Testing requires notAnInstalledPackage"
+  )
+})
+
 test_that("read_excel_to_dt works as expected", {
   datasets <- readxl::readxl_example("datasets.xlsx")
   dt <- read_excel_to_dt(datasets)
