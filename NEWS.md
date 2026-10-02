@@ -1,3 +1,7 @@
+## gDRimport 1.11.7 - 2026-10-02
+* move CoreGx and PharmacoGx from Imports to Suggests
+* ensure the PharmacoSet conversion functions fail informatively when those packages are absent
+
 ## gDRimport 1.11.6 - 2026-08-17
 * remove alignment whitespace flagged by the gDRstyle linter
 * document internal helper functions with @keywords internal

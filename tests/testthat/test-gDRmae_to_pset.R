@@ -1,3 +1,6 @@
+skip_if_not_installed("CoreGx")
+skip_if_not_installed("PharmacoGx")
+
 test_that("convert_MAE_to_PSet works as expected", {
   m <- 20
   n <- 10

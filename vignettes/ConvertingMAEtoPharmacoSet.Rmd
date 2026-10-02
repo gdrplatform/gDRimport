@@ -13,11 +13,23 @@ vignette: >
 ---
 
 ```{r knitr-options, include = FALSE}
+# CoreGx and PharmacoGx are suggested, not imported, so this vignette has to build
+# without them - the code is shown but not evaluated when they are absent.
+pset_pkgs_available <- requireNamespace("CoreGx", quietly = TRUE) &&
+  requireNamespace("PharmacoGx", quietly = TRUE)
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  warning = FALSE
+  warning = FALSE,
+  eval = pset_pkgs_available
 )
+```
+
+```{r pset-pkgs-note, echo = FALSE, eval = TRUE, results = "asis"}
+if (!pset_pkgs_available) {
+  cat("**Note:** this vignette needs the suggested packages `CoreGx` and `PharmacoGx`.",
+      "They are not installed, so the code below is shown but not run.\n")
+}
 ```
 
 ```{r load-libraries, include=FALSE}

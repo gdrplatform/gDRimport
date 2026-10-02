@@ -49,6 +49,37 @@ read_ref_data <- function(inDir, prefix = "ref") {
   lFiles
 }
 
+#' Assert that suggested packages required by a function are installed
+#'
+#' The PharmacoSet conversion functions are the only part of gDRimport that needs
+#' CoreGx and PharmacoGx, and those two carry 37 further dependencies, so they are
+#' suggested rather than imported. Call this before touching their API.
+#'
+#' @param pkgs character vector of package names.
+#' @param purpose a short description of the functionality, used in the error message.
+#' @keywords internal
+#'
+#' @return \code{NULL} invisibly.
+#'
+.assert_suggested_packages <- function(pkgs, purpose) {
+  checkmate::assert_character(pkgs, min.len = 1)
+  checkmate::assert_string(purpose)
+
+  installed <- vapply(pkgs, requireNamespace, logical(1), quietly = TRUE)
+  if (!all(installed)) {
+    missing_pkgs <- pkgs[!installed]
+    stop(
+      sprintf(
+        "%s requires %s, which gDRimport suggests rather than imports. Install with BiocManager::install().",
+        purpose,
+        toString(missing_pkgs)
+      ),
+      call. = FALSE
+    )
+  }
+  invisible(NULL)
+}
+
 #' Detect format of results data
 #'
 #' @param results_file path to results data

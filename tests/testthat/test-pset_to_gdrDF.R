@@ -1,6 +1,9 @@
 
 context("PSets")
 
+skip_if_not_installed("CoreGx")
+skip_if_not_installed("PharmacoGx")
+
 # in tests we used mocked availablePSets in case of lack of internet connection.
 # to prepare new mock data:
 # qs2::qs_save(PharmacoGx::availablePSets(canonical = FALSE),

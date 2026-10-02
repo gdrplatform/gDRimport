@@ -10,7 +10,7 @@
 #'
 #' @return A PharmacoSet object.
 #'
-#' @examples
+#' @examplesIf requireNamespace("CoreGx", quietly = TRUE) && requireNamespace("PharmacoGx", quietly = TRUE)
 #' # Convert a MultiAssayExperiment object to a PharmacoSet object
 #' m <- 20
 #' n <- 10
@@ -26,6 +26,7 @@
 #' @export
 convert_MAE_to_PSet <- function(mae,
                                 pset_name) {
+    .assert_suggested_packages(c("CoreGx", "PharmacoGx"), "Converting a MultiAssayExperiment to a PharmacoSet")
     checkmate::assert_class(mae, "MultiAssayExperiment")
     checkmate::assert_string(pset_name)
 
