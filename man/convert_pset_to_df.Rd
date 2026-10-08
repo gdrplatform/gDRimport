@@ -20,7 +20,7 @@ data.table of PharmacoSet's dose response data with column names aligned with gD
 Convert a PharmacoSet to a data.table that is prepare for input into gDR pipeline
 }
 \examples{
-\dontshow{if (requireNamespace("CoreGx", quietly = TRUE) && requireNamespace("PharmacoGx", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (requireNamespace("CoreGx", quietly = TRUE) && requireNamespace("PharmacoGx", quietly = TRUE)) withAutoprint(\{ # examplesIf}
 pset <- suppressMessages(getPSet(
   "Tavor_2020",
   psetDir = system.file("extdata/pset", package = "gDRimport"),
