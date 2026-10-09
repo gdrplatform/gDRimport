@@ -35,7 +35,7 @@ Authors:
   \item Dariusz Scigocki
   \item Allison Vuong
   \item Luca Gerosa (\href{https://orcid.org/0000-0001-6805-9410}{ORCID})
-  \item Janina Smola
+  \item Janina Smola (\href{https://orcid.org/0009-0007-4347-7748}{ORCID})
 }
 
 }

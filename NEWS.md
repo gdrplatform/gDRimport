@@ -1,3 +1,6 @@
+## gDRimport 1.11.8 - 2026-10-08
+* update authors data
+
 ## gDRimport 1.11.7 - 2026-10-02
 * move CoreGx and PharmacoGx from Imports to Suggests
 * ensure the PharmacoSet conversion functions fail informatively when those packages are absent

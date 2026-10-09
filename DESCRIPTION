@@ -1,8 +1,8 @@
 Package: gDRimport
 Type: Package
 Title: Package for handling the import of dose-response data
-Version: 1.11.7
-Date: 2026-10-02
+Version: 1.11.8
+Date: 2026-10-08
 Authors@R: c(
     person("Arkadiusz", "Gladki", role=c("aut", "cre"), email="gladki.arkadiusz@gmail.com",
            comment = c(ORCID = "0000-0002-7059-6378")),
@@ -15,7 +15,8 @@ Authors@R: c(
     person("Allison", "Vuong", role="aut"),
     person("Luca", "Gerosa", role="aut",
            comment = c(ORCID = "0000-0001-6805-9410")),
-    person("Janina", "Smola", role="aut"))
+    person("Janina", "Smola", role=c("aut"),
+           comment = c(ORCID = "0009-0007-4347-7748")))
 Description: The package is a part of the gDR suite. It helps to prepare raw drug response data for downstream processing. It mainly contains helper functions for importing/loading/validating dose-response data provided in different file formats. 
 License: Artistic-2.0
 LazyLoad: yes
