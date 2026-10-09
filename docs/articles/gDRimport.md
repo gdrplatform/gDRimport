@@ -218,11 +218,11 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] gDRimport_1.11.7 BiocStyle_2.40.0
+    ## [1] gDRimport_1.11.8 BiocStyle_2.41.0
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] sass_0.4.10                 generics_0.1.4             
-    ##  [3] SparseArray_1.12.3          futile.options_1.0.1       
+    ##  [3] SparseArray_1.13.4          futile.options_1.0.1       
     ##  [5] stringi_1.8.9               lattice_0.22-9             
     ##  [7] rematch_2.0.0               digest_0.6.39              
     ##  [9] magrittr_2.0.5              grid_4.6.1                 
@@ -233,25 +233,25 @@ sessionInfo()
     ## [19] BiocManager_1.30.27         textshaping_1.0.5          
     ## [21] jquerylib_0.1.4             abind_1.4-8                
     ## [23] cli_3.6.6                   rlang_1.3.0                
-    ## [25] XVector_0.52.0              futile.logger_1.4.9        
-    ## [27] Biobase_2.72.0              DelayedArray_0.38.2        
+    ## [25] XVector_0.53.0              futile.logger_1.4.9        
+    ## [27] Biobase_2.73.2              DelayedArray_0.39.8        
     ## [29] cachem_1.1.0                yaml_2.3.12                
-    ## [31] otel_0.2.0                  S4Arrays_1.12.1            
+    ## [31] otel_0.2.0                  S4Arrays_1.13.2            
     ## [33] tools_4.6.1                 checkmate_2.3.4            
-    ## [35] SummarizedExperiment_1.42.0 lambda.r_1.2.4             
-    ## [37] gDRutils_1.10.0             BiocGenerics_0.58.1        
+    ## [35] SummarizedExperiment_1.43.0 lambda.r_1.2.4             
+    ## [37] gDRutils_1.11.15            BiocGenerics_0.59.12       
     ## [39] assertthat_0.2.1            vctrs_0.7.3                
     ## [41] R6_2.6.1                    matrixStats_1.5.0          
     ## [43] stats4_4.6.1                lifecycle_1.0.5            
-    ## [45] Seqinfo_1.2.0               S4Vectors_0.50.3           
+    ## [45] Seqinfo_1.3.2               S4Vectors_0.51.10          
     ## [47] fs_2.1.0                    htmlwidgets_1.6.4          
-    ## [49] IRanges_2.46.0              ragg_1.5.2                 
+    ## [49] IRanges_2.47.5              ragg_1.5.2                 
     ## [51] pkgconfig_2.0.3             desc_1.4.3                 
     ## [53] pkgdown_2.2.1               pillar_1.11.1              
     ## [55] bslib_0.12.0                data.table_1.18.6.1        
     ## [57] glue_1.8.1                  systemfonts_1.3.2          
-    ## [59] GenomicRanges_1.64.0        xfun_0.61                  
-    ## [61] tibble_3.3.1                MatrixGenerics_1.24.0      
+    ## [59] GenomicRanges_1.65.4        xfun_0.61                  
+    ## [61] tibble_3.3.1                MatrixGenerics_1.25.0      
     ## [63] knitr_1.52                  htmltools_0.5.9            
     ## [65] rmarkdown_2.32              compiler_4.6.1             
     ## [67] readxl_1.5.0.1

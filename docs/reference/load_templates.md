@@ -24,9 +24,9 @@ data.table with templates data
 ``` r
  td <- get_test_data()
  t_df <- load_templates(template_path(td))
-#> INFO [2026-10-02 13:04:32] Reading Template_7daytreated.xlsx with load_templates_xlsx
-#> INFO [2026-10-02 13:04:32] Reading Template_Untreated.xlsx with load_templates_xlsx
-#> INFO [2026-10-02 13:04:32] Loading Template_7daytreated.xlsx
-#> INFO [2026-10-02 13:04:33] Loading Template_Untreated.xlsx
-#> INFO [2026-10-02 13:04:33] Templates loaded successfully!
+#> INFO [2026-10-09 06:22:29] Reading Template_7daytreated.xlsx with load_templates_xlsx
+#> INFO [2026-10-09 06:22:29] Reading Template_Untreated.xlsx with load_templates_xlsx
+#> INFO [2026-10-09 06:22:29] Loading Template_7daytreated.xlsx
+#> INFO [2026-10-09 06:22:29] Loading Template_Untreated.xlsx
+#> INFO [2026-10-09 06:22:29] Templates loaded successfully!
 ```
