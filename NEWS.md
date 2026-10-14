@@ -1,3 +1,6 @@
+## gDRimport 1.11.10 - 2026-10-19
+* use the instrument passed to load_results() for .tsv files, only the default EnVision switches to long_tsv
+
 ## gDRimport 1.11.9 - 2026-10-15
 * add a record of the input files, their md5, the reader and the automatic corrections to the loaded data
 
@@ -348,3 +351,4 @@
 
 ## gDRimport 0.0.1 - 2021-06-22
 * introduce initial release -  importing fucntions moved from gDRcore package
+

@@ -402,7 +402,8 @@ load_results <-
     }
     checkmate::assert_file_exists(results_file)
 
-    if (all(endsWith(results_file, ".tsv"))) {
+    # only the default gives way to the extension, any other instrument is a choice
+    if (instrument == "EnVision" && all(endsWith(results_file, ".tsv"))) {
       instrument <- "long_tsv"
     }
     .note_import("instrument", value = instrument)
