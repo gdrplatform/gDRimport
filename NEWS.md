@@ -1,3 +1,6 @@
+## gDRimport 1.11.9 - 2026-10-15
+* add a record of the input files, their md5, the reader and the automatic corrections to the loaded data
+
 ## gDRimport 1.11.8 - 2026-10-08
 * update authors data
 
