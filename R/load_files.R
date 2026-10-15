@@ -41,11 +41,37 @@ load_data <-
       is_readable_v(template_filename)
     }
 
-    manifest_list <- load_manifest(manifest_file)
+    # the corrections made while loading go to the import log (see import_provenance.R)
+    loaded <- .with_import_log({
+      manifest_list <- load_manifest(manifest_file)
+      list(
+        manifest_list = manifest_list,
+        treatments = load_templates(df_template_files),
+        data = load_results(results_file, instrument, headers = manifest_list$headers)
+      )
+    })
+    manifest_list <- loaded$value$manifest_list
     manifest <- manifest_list$data
     headers <- manifest_list$headers
-    treatments <- load_templates(df_template_files)
-    data <- load_results(results_file, instrument, headers = headers)
+    treatments <- loaded$value$treatments
+    data <- loaded$value$data
+
+    template_paths <- if (data.table::is.data.table(df_template_files)) template_file else template_filename
+    results <- if (data.table::is.data.table(results_file)) {
+      list(path = results_file$datapath, name = results_file$name)
+    } else {
+      list(path = results_file, name = basename(results_file))
+    }
+    instruments <- Filter(function(e) identical(e$type, "instrument"), loaded$events)
+    data.table::setattr(data, "gDR_import", .import_record(
+      files = list(
+        .import_files("manifest", manifest_file),
+        .import_files("template", template_paths, basename(template_filename)),
+        .import_files("results", results$path, results$name)
+      ),
+      instrument = if (length(instruments) > 0L) instruments[[length(instruments)]]$value else instrument,
+      events = loaded$events
+    ))
 
     # check the all template files are available
     if (!all(unique(manifest[[headers[["template"]]]][manifest[[headers[["barcode"]]]] %in%
@@ -155,6 +181,11 @@ load_long_table <- function(long_table_file) {
     data.table::set(dt, j = col, value = coerced)
   }
 
+  data.table::setattr(dt, "gDR_import", .import_record(
+    files = list(.import_files("long_table", long_table_file)),
+    instrument = "long_table",
+    events = list()
+  ))
   dt
 }
 
@@ -374,6 +405,7 @@ load_results <-
     if (all(endsWith(results_file, ".tsv"))) {
       instrument <- "long_tsv"
     }
+    .note_import("instrument", value = instrument)
 
     if (instrument == "EnVision") {
       all_results <-
@@ -1932,10 +1964,13 @@ get_EnVision_properties <- function(results.list, fname) {
   }
   if (length(all_rows) / exp_row != length(plate_rows)) {
     fill_rows <- intersect(which(apply(df, 1, function(x) all(is.na(x)))), data_rows)
+    n_filled <- length(fill_rows) * NCOL(df)
     df[fill_rows, ] <- "0"
 
     #fill up data_rows
+    n_filled <- n_filled + sum(is.na(df[data_rows, ]))
     df[data_rows, ] <- lapply(df[data_rows, ], function(x) ifelse(is.na(x), "0", x))
+    .note_import("cells_filled", n = n_filled)
   }
   df
 }
@@ -1948,6 +1983,13 @@ get_EnVision_properties <- function(results.list, fname) {
 #'
 .standardize_untreated_values <- function(df) {
   untreated_tags <- gDRutils::get_env_identifiers("untreated_tag")
+
+  # values written differently from the first untreated tag (e.g. "dmso" for "DMSO")
+  n_changed <- sum(vapply(df, function(x) {
+    x <- as.character(x)
+    sum(toupper(x) %in% toupper(untreated_tags) & x != untreated_tags[[1]], na.rm = TRUE)
+  }, numeric(1)))
+  if (n_changed > 0L) .note_import("untreated_standardized", n = n_changed)
 
   data.table::as.data.table(lapply(df, function(x) {
     if (is.factor(x)) x <- as.character(x)
