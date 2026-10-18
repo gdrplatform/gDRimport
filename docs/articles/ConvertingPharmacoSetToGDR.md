@@ -136,7 +136,7 @@ str(dt)
 #>  $ DrugName             : chr  "Ivosidenib" "Ivosidenib" "Ivosidenib" "Ivosidenib" ...
 #>  $ Duration             : num  48 48 48 48 48 48 48 48 48 48 ...
 #>  $ ReferenceDivisionTime: logi  NA NA NA NA NA NA ...
-#>  - attr(*, ".internal.selfref")=<pointer: 0x561627509110>
+#>  - attr(*, ".internal.selfref")=<pointer: 0x556b4fe45110>
 ```
 
 ## Subsetting to extract relevant information
@@ -227,7 +227,7 @@ sessionInfo()
 #> [8] base     
 #> 
 #> other attached packages:
-#>  [1] gDRimport_1.11.8            PharmacoGx_3.17.0          
+#>  [1] gDRimport_1.11.9            PharmacoGx_3.17.0          
 #>  [3] CoreGx_2.17.0               SummarizedExperiment_1.43.0
 #>  [5] Biobase_2.73.2              GenomicRanges_1.65.4       
 #>  [7] Seqinfo_1.3.2               IRanges_2.47.5             
@@ -247,14 +247,14 @@ sessionInfo()
 #>  [17] XVector_0.53.0              caTools_1.18.4             
 #>  [19] promises_1.5.0              rmarkdown_2.32             
 #>  [21] ragg_1.5.2                  coop_0.6-3                 
-#>  [23] xfun_0.61                   MultiAssayExperiment_1.39.1
+#>  [23] xfun_0.62                   MultiAssayExperiment_1.39.1
 #>  [25] cachem_1.1.0                jsonlite_2.0.0             
 #>  [27] SnowballC_0.7.1             later_1.4.8                
 #>  [29] DelayedArray_0.39.8         BiocParallel_1.47.0        
 #>  [31] parallel_4.6.1              sets_1.0-25                
 #>  [33] cluster_2.1.8.2             R6_2.6.1                   
 #>  [35] stringi_1.8.9               bslib_0.12.0               
-#>  [37] RColorBrewer_1.1-3          limma_3.99.0               
+#>  [37] RColorBrewer_1.1-3          limma_3.99.2               
 #>  [39] boot_1.3-32                 brio_1.1.5                 
 #>  [41] jquerylib_0.1.4             assertthat_0.2.1           
 #>  [43] Rcpp_1.1.2                  knitr_1.52                 
@@ -277,7 +277,7 @@ sessionInfo()
 #>  [77] marray_1.91.0               qs2_0.3.1                  
 #>  [79] glue_1.8.1                  slam_0.1-56                
 #>  [81] tools_4.6.1                 data.table_1.18.6.1        
-#>  [83] gDRutils_1.11.15            fgsea_1.39.2               
+#>  [83] gDRutils_1.11.18            fgsea_1.39.2               
 #>  [85] fs_2.1.0                    visNetwork_2.1.4           
 #>  [87] fastmatch_1.1-8             cowplot_1.2.0              
 #>  [89] grid_4.6.1                  cli_3.6.6                  

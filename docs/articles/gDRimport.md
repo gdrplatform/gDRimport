@@ -218,7 +218,7 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] gDRimport_1.11.8 BiocStyle_2.41.0
+    ## [1] gDRimport_1.11.9 BiocStyle_2.41.0
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] sass_0.4.10                 generics_0.1.4             
@@ -238,8 +238,8 @@ sessionInfo()
     ## [29] cachem_1.1.0                yaml_2.3.12                
     ## [31] otel_0.2.0                  S4Arrays_1.13.2            
     ## [33] tools_4.6.1                 checkmate_2.3.4            
-    ## [35] SummarizedExperiment_1.43.0 lambda.r_1.2.4             
-    ## [37] gDRutils_1.11.15            BiocGenerics_0.59.12       
+    ## [35] SummarizedExperiment_1.43.0 lambda.r_1.2.6             
+    ## [37] gDRutils_1.11.18            BiocGenerics_0.59.12       
     ## [39] assertthat_0.2.1            vctrs_0.7.3                
     ## [41] R6_2.6.1                    matrixStats_1.5.0          
     ## [43] stats4_4.6.1                lifecycle_1.0.5            
@@ -250,7 +250,7 @@ sessionInfo()
     ## [53] pkgdown_2.2.1               pillar_1.11.1              
     ## [55] bslib_0.12.0                data.table_1.18.6.1        
     ## [57] glue_1.8.1                  systemfonts_1.3.2          
-    ## [59] GenomicRanges_1.65.4        xfun_0.61                  
+    ## [59] GenomicRanges_1.65.4        xfun_0.62                  
     ## [61] tibble_3.3.1                MatrixGenerics_1.25.0      
     ## [63] knitr_1.52                  htmltools_0.5.9            
     ## [65] rmarkdown_2.32              compiler_4.6.1             

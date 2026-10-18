@@ -24,6 +24,8 @@ link](https://gdrplatform.github.io/gDRimport/).
 - [`get_excel_sheet_names()`](https://gdrplatform.github.io/gDRimport/reference/get_excel_sheet_names.md)
   : get Excel sheets names for a charvec of files for non-Excel files
   return 0
+- [`get_import_provenance()`](https://gdrplatform.github.io/gDRimport/reference/get_import_provenance.md)
+  : Where gDR input data came from
 - [`get_plate_info_from_template_xlsx()`](https://gdrplatform.github.io/gDRimport/reference/get_plate_info_from_template_xlsx.md)
   : Get plate info from template xlsx
 - [`load_data()`](https://gdrplatform.github.io/gDRimport/reference/load_data.md)
