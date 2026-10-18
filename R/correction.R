@@ -93,7 +93,22 @@ correct_template_sheets <- function(tfiles) {
     }
   }
   stopifnot(are_template_sheets_valid(ts))
+  .note_renamed_sheets(get_xl_sheets(tfiles), ts)
   ts
+}
+
+
+# Log every sheet whose name correct_template_sheets() changed.
+#' @keywords internal
+.note_renamed_sheets <- function(original, corrected) {
+  for (file in names(corrected)) {
+    from <- original[[file]]
+    to <- corrected[[file]]
+    if (length(from) != length(to)) next
+    for (i in which(from != to)) {
+      .note_import("template_sheet_renamed", file = basename(file), from = from[[i]], to = to[[i]])
+    }
+  }
 }
 
 #' Get names of the sheets expected in templates xlsx

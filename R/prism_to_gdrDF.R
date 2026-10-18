@@ -149,7 +149,17 @@ convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
     dt_ctrl[, unlist(idfs[c("drug2", "concentration2")]) := NULL]
   }
   # final
-  rbind(raw_data, dt_ctrl)
+  out <- rbind(raw_data, dt_ctrl)
+  data.table::setattr(out, "gDR_import", .import_record(
+    files = list(
+      .import_files("prism_data", prism_data_path),
+      .import_files("meta_data", meta_data_path)
+    ),
+    instrument = NULL,
+    events = list(),
+    source = list(format = "PRISM LEVEL5", readout_min = readout_min)
+  ))
+  out
 }
 
 
@@ -313,5 +323,16 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
                                      "masked_tag")]))
 
   # final
+  data.table::setattr(merged_data, "gDR_import", .import_record(
+    files = list(
+      .import_files("prism_data", prism_data_path),
+      .import_files("cell_line_data", cell_line_data_path),
+      .import_files("treatment_data", treatment_data_path),
+      .import_files("meta_data", meta_data_path)
+    ),
+    instrument = NULL,
+    events = list(),
+    source = list(format = "PRISM LEVEL6", readout_min = readout_min)
+  ))
   merged_data
 }

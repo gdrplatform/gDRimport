@@ -89,6 +89,9 @@ test_that("load_templates with no untreated conditions works as expected", {
 
 test_that("load_data works as expected", {
 
+  # the references were stored before load_data() recorded the import provenance
+  without_import <- function(x) data.table::setattr(data.table::copy(x), "gDR_import", NULL)
+
   td1 <- get_test_data()
 
   l_tbl <- load_data(manifest_path(td1), template_path(td1), result_path(td1))
@@ -96,7 +99,7 @@ test_that("load_data works as expected", {
   ref_tbl <- .standardize_untreated_values(data.table::fread(td1@ref_t1_t2))
   expect_equal(l_tbl$treatments, ref_tbl)
   ref_tbl <- data.table::fread(td1@ref_r1_r2)
-  expect_equal(l_tbl$data, ref_tbl)
+  expect_equal(without_import(l_tbl$data), ref_tbl)
 
   td2 <- get_test_Tecan_data()
 
@@ -106,7 +109,7 @@ test_that("load_data works as expected", {
   ref_t_df <- .standardize_untreated_values(qs2::qs_read(td2$ref_t_df))
   expect_equal(ref_t_df, l_tbl2$treatments)
   ref_r_df <- qs2::qs_read(td2$ref_r_df)
-  expect_equal(l_tbl2$data, ref_r_df)
+  expect_equal(without_import(l_tbl2$data), ref_r_df)
 
   td4 <- get_test_EnVision_data()
   l_tbl4 <-
@@ -114,7 +117,7 @@ test_that("load_data works as expected", {
   ref_l <- qs2::qs_read(td4$ref_l_path)
   expect_equal(ref_l$manifest, l_tbl4$manifest)
   expect_equal(ref_l$treatments, l_tbl4$treatments)
-  expect_equal(ref_l$data, l_tbl4$data)
+  expect_equal(ref_l$data, without_import(l_tbl4$data))
 
   err_msg1 <- "'manifest_file' must be a readable path"
   expect_error(load_data("/non/existent_file", template_path(td1), result_path(td1)), err_msg1)
@@ -145,7 +148,7 @@ test_that("load_data works as expected", {
   ref_l <- qs2::qs_read(td5$ref_l_path)
   expect_equal(ref_l$manifest, l_tbl5$manifest)
   expect_equal(ref_l$treatments, l_tbl5$treatments)
-  expect_equal(ref_l$data, l_tbl5$data)
+  expect_equal(ref_l$data, without_import(l_tbl5$data))
 })
 
 test_that(".get_plate_size works as expected", {
