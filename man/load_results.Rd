@@ -14,7 +14,8 @@ load_results(
 \item{df_results_files}{data.table, with datapaths and names of results file(s)
 or character with file path of results file(s)}
 
-\item{instrument}{character}
+\item{instrument}{character; \code{.tsv} files with \code{"EnVision"} are read
+as \code{"long_tsv"}, whether it is passed or left as the default}
 
 \item{headers}{list of headers identified in the manifest file}
 }

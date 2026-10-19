@@ -373,7 +373,8 @@ load_templates <- function(df_template_files) {
 #'
 #' @param df_results_files  data.table, with datapaths and names of results file(s)
 #' or character with file path of results file(s)
-#' @param instrument character
+#' @param instrument character; \code{.tsv} files with \code{"EnVision"} are read
+#' as \code{"long_tsv"}, whether it is passed or left as the default
 #' @param headers list of headers identified in the manifest file
 #' @keywords load_files
 #'
@@ -402,7 +403,8 @@ load_results <-
     }
     checkmate::assert_file_exists(results_file)
 
-    if (all(endsWith(results_file, ".tsv"))) {
+    # auto-detect long_tsv only when instrument is left at its default
+    if (instrument == "EnVision" && all(endsWith(results_file, ".tsv"))) {
       instrument <- "long_tsv"
     }
     .note_import("instrument", value = instrument)

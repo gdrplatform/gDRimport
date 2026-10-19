@@ -441,6 +441,7 @@ test_that("load_results_Incucyte works as expected", {
 
   expect_equal(unique(dt_tsv[[bcode_name]]), "PLATE_003_TSV")
   expect_equal(sort(dt_tsv$ReadoutValue), c(500, 510, 600, 610))
+  expect_equal(load_results(file_tsv_3_path, instrument = "Incucyte", headers = headers), unique(dt_tsv))
   expect_equal(sort(unique(dt_tsv[[well_rname]])), "C")
   expect_equal(sort(unique(dt_tsv[[well_cname]])), c("1", "2"))
 
