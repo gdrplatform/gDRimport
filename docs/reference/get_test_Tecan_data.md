@@ -18,21 +18,21 @@ reference data (qs2 file paths)
 ``` r
 get_test_Tecan_data()
 #> $m_file
-#> [1] "/tmp/RtmpvAein1/temp_libpath287516d05254/gDRimport/extdata/data2/manifest_Tecan_96_well_plates.xlsx"
+#> [1] "/tmp/RtmppwSDv7/temp_libpath1a523af873c4/gDRimport/extdata/data2/manifest_Tecan_96_well_plates.xlsx"
 #> 
 #> $r_files
-#> [1] "/tmp/RtmpvAein1/temp_libpath287516d05254/gDRimport/extdata/data2/RawData_Tecan_96_well_plates.xlsx"
+#> [1] "/tmp/RtmppwSDv7/temp_libpath1a523af873c4/gDRimport/extdata/data2/RawData_Tecan_96_well_plates.xlsx"
 #> 
 #> $t_files
-#> [1] "/tmp/RtmpvAein1/temp_libpath287516d05254/gDRimport/extdata/data2/D300_trt_Tecan_96_well_plates.xlsx"
+#> [1] "/tmp/RtmppwSDv7/temp_libpath1a523af873c4/gDRimport/extdata/data2/D300_trt_Tecan_96_well_plates.xlsx"
 #> 
 #> $ref_m_df
-#> [1] "/tmp/RtmpvAein1/temp_libpath287516d05254/gDRimport/extdata/data2/ref_manifest_Tecan_96_well_plates.qs2"
+#> [1] "/tmp/RtmppwSDv7/temp_libpath1a523af873c4/gDRimport/extdata/data2/ref_manifest_Tecan_96_well_plates.qs2"
 #> 
 #> $ref_r_df
-#> [1] "/tmp/RtmpvAein1/temp_libpath287516d05254/gDRimport/extdata/data2/ref_RawData_Tecan_96_well_plates.qs2"
+#> [1] "/tmp/RtmppwSDv7/temp_libpath1a523af873c4/gDRimport/extdata/data2/ref_RawData_Tecan_96_well_plates.qs2"
 #> 
 #> $ref_t_df
-#> [1] "/tmp/RtmpvAein1/temp_libpath287516d05254/gDRimport/extdata/data2/ref_D300_trt_Tecan_96_well_plates.qs2"
+#> [1] "/tmp/RtmppwSDv7/temp_libpath1a523af873c4/gDRimport/extdata/data2/ref_D300_trt_Tecan_96_well_plates.qs2"
 #> 
 ```

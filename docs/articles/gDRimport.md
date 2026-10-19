@@ -218,7 +218,7 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] gDRimport_1.11.9 BiocStyle_2.41.0
+    ## [1] gDRimport_1.11.10 BiocStyle_2.41.0 
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] sass_0.4.10                 generics_0.1.4             
@@ -254,4 +254,4 @@ sessionInfo()
     ## [61] tibble_3.3.1                MatrixGenerics_1.25.0      
     ## [63] knitr_1.52                  htmltools_0.5.9            
     ## [65] rmarkdown_2.32              compiler_4.6.1             
-    ## [67] readxl_1.5.0.1
+    ## [67] readxl_1.6.0
