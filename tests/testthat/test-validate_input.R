@@ -160,7 +160,7 @@ test_that("validate_gdr_input checks identifier formats", {
 
   inputs <- copy_inputs(data5_inputs())
   edit_tsv(inputs[["Manifest.tsv"]], function(dt) {
-    dt$clid[dt$clid == "CL_B"] <- "CL_B "
+    dt$clid[dt$clid == "CL_B"] <- "CL_B\u00a0"
     dt
   })
   expect_finding(validate_gdr_input(inputs), "clid_format", "WARN")
