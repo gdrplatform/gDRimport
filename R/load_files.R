@@ -942,6 +942,12 @@ load_results_EnVision <-
           all_results <- rbind(all_results, df_results)
         } else {
           # proper original EnVision file
+          header_barcode <- as.character(unlist(df[3, barcode_col, with = FALSE]))
+          if (.is_missing_barcode(header_barcode)) {
+            .note_import("plate_barcode_missing", file = basename(results_file[[iF]]),
+                         plate = as.character(unlist(df[3, 1, with = FALSE])),
+                         header = header_barcode, used = header_barcode)
+          }
           df_results <- get_df_from_raw_unedited_EnVision_df(df, fInfo$n_row, fInfo$n_col, barcode_col)
           all_results <- rbind(all_results, df_results)
         }
@@ -1246,10 +1252,16 @@ get_df_from_raw_edited_EnVision_df <-
       # check the structure of file is ok
       .check_file_structure(df, fname, sheet_name, readout_offset, n_row, n_col, iB, barcode_col)
 
-      Barcode <- as.character(df[iB + 1, barcode_col, with = FALSE])
+      header_barcode <- as.character(df[iB + 1, barcode_col, with = FALSE])
+      Barcode <- header_barcode
       if (is.na(Barcode) && ref_bckgrd > 0) {
         bg_row <- iB + ref_bckgrd + 1
         Barcode <- as.character(df[bg_row, barcode_col, with = FALSE])
+      }
+      if (.is_missing_barcode(header_barcode)) {
+        .note_import("plate_barcode_missing", file = basename(fname),
+                     plate = as.character(df[iB + 1, 1, with = FALSE]),
+                     header = header_barcode, used = Barcode)
       }
       if (is.na(Barcode)) return(NULL)
       readout <- as.matrix(df[iB + ref_bckgrd + seq_len(n_row) + 1,

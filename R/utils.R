@@ -80,6 +80,14 @@ read_ref_data <- function(inDir, prefix = "ref") {
   invisible(NULL)
 }
 
+# TRUE for barcode values that stand for "no barcode": NA, empty, or the placeholders
+# plate readers and spreadsheets write in an empty cell ("N/A", "none", "-", ...).
+#' @keywords internal
+.is_missing_barcode <- function(x) {
+  x <- trimws(tolower(as.character(x)))
+  is.na(x) | x %in% c("", "n/a", "na", "nan", "null", "none", "-")
+}
+
 #' Detect format of results data
 #'
 #' @param results_file path to results data
