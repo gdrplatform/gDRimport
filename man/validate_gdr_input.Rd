@@ -9,7 +9,9 @@ validate_gdr_input(
   paths,
   type = c("auto", "bench", "prism", "mae", "pre_d300"),
   instrument = NULL,
-  id_patterns = list(drug = "^G[0-9]{8}", cellline = NULL)
+  id_patterns = list(drug = "^G[0-9]{8}", cellline = NULL),
+  fix = FALSE,
+  output_dir = NULL
 )
 
 \method{print}{gdr_validation}(x, ...)
@@ -33,6 +35,11 @@ with \code{\link{detect_file_format}}.}
 \code{cellline} the format of a cell line identifier (no default). An element set
 to \code{NULL} switches its check off; elements left out keep their default.}
 
+\item{fix}{logical, whether to repair copies of the files in \code{output_dir}.}
+
+\item{output_dir}{character, a new or empty directory for the repaired copies;
+required with \code{fix = TRUE}.}
+
 \item{x}{a \code{gdr_validation} object.}
 
 \item{...}{not used.}
@@ -52,7 +59,10 @@ files).}
 confirm with whoever made the files, \code{"C"} a decision about the experiment,
 \code{NA} when there is nothing to fix) and \code{status_code}, the matching row
 of \code{\link{get_exception_data}} (\code{NA} when there is none).}
-\item{fixes}{character, the repairs applied to the files; always empty for now.}
+\item{fixes}{character, one note per repair (empty without \code{fix}).}
+\item{output_dir}{the directory of the repaired copies, \code{NA} without
+\code{fix}. With \code{fix = TRUE}, \code{files} and \code{findings} describe
+the copies after the repairs.}
 }
 }
 \description{
@@ -68,13 +78,24 @@ input, processed MultiAssayExperiments and D300 files are recognised and checked
 too.
 }
 \details{
-The input files are only read, never modified.
+The input files are only read, never modified. With \code{fix = TRUE} they are copied
+to \code{output_dir}, the mechanical problems (fix tier \code{"A"}) are repaired in
+the copies, and the copies are validated again: files re-encoded as UTF-8, spaces
+trimmed from file names, long tables saved as \code{.tsv}, \code{Gnumber_1} and
+\code{Concentration_1} sheets renamed, \code{n/a} and \code{-99} cleared from
+templates, and manifest references that only differ from a template file by spaces
+or the extension rewritten. In xlsx files only the repaired cells change.
 }
 \examples{
 td <- get_test_data()
 res <- validate_gdr_input(c(manifest_path(td), template_path(td), result_path(td)))
 res$verdict
 res$findings
+
+# repair copies of the files instead of only reporting
+fixed <- validate_gdr_input(c(manifest_path(td), template_path(td), result_path(td)),
+                            fix = TRUE, output_dir = tempfile())
+fixed$fixes
 
 }
 \keyword{correction_exception}
