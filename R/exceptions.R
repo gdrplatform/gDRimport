@@ -54,6 +54,14 @@ get_exception_data <- function(status_code = NULL) {
     "37", "Raw Data header", "Invalid header in the result file: (%s)", "error", "raw data",
     "38", "Long table columns", "The long table does not contain all required columns. Missing column(s): %s. Please correct your file or change the identifiers.", "error", "long table",
     "39", "Long table parsing", "The long table could not be parsed. Check error message below:\n```\n%s\n```", "error", "long table",
+    "40", "Input file encoding", "File(s) %s are not valid UTF-8. Save them as UTF-8 before the import.", "error", "input files",
+    "41", "Empty input file", "File(s) %s are empty (0 bytes).", "error", "input files",
+    "42", "Long table format", "File(s) %s hold one row per well, which the loader reads only from tab-separated .tsv files.", "error", "input files",
+    "43", "Raw data not found", "No raw plate-reader data file was found.", "error", "raw data",
+    "44", "Non-numeric concentration", "Treatment file(s) have values in a Concentration sheet that are not numbers, so those wells would be dropped: %s", "error", "treatment",
+    "45", "Raw plate without barcode", "Plate(s) in the raw data have no barcode: %s", "error", "raw data",
+    "46", "Duplicated wells", "%s readout(s) repeat a barcode and well that is already in the data: %s", "error", "raw data",
+    "47", "Negative readouts", "%s readout value(s) are negative.", "error", "raw data",
   )
   #nolint end
 
@@ -66,4 +74,22 @@ get_exception_data <- function(status_code = NULL) {
   }
 
   data.table::as.data.table(res)
+}
+
+
+# The status code of a gDRimport error message, or NA. Every message raised from the
+# exception table is sprintf(sprintf_text, ...), so each text is turned into an anchored
+# pattern with %s matching anything. Several texts can match one message ("Error reading
+# %s" matches every "Error reading %s, sheet %s"), so the one with the most fixed
+# characters wins.
+#' @keywords internal
+.exception_code_from_message <- function(msg) {
+  checkmate::assert_string(msg)
+  tbl <- get_exception_data()
+  literal <- gsub("([][{}()+*?.^$|\\\\])", "\\\\\\1", tbl$sprintf_text)
+  patterns <- paste0("^", gsub("%s", "[\\s\\S]*?", literal, fixed = TRUE), "$")
+  hits <- which(vapply(patterns, grepl, logical(1), x = msg, perl = TRUE, USE.NAMES = FALSE))
+  if (length(hits) == 0L) return(NA_integer_)
+  fixed_chars <- nchar(gsub("%s", "", tbl$sprintf_text[hits], fixed = TRUE))
+  as.integer(tbl$status_code[hits[which.max(fixed_chars)]])
 }
