@@ -319,3 +319,39 @@ test_that("validate_gdr_input checks MAE and D300 input", {
   expect_identical(res$data_type, "pre_d300")
   expect_finding(res, "stage", "INFO")
 })
+
+test_that("validate_gdr_input validates bench input next to a .qs2", {
+  # data4 and data5 ship a reference ref_l.qs2 next to the bench files
+  for (d in c("data4", "data5")) {
+    res <- validate_gdr_input(system.file("extdata", d, package = "gDRimport"))
+    expect_identical(res$data_type, "bench")
+    expect_finding(res, "load_data", "PASS")
+    expect_match(res$findings$detail[res$findings$check == "files"], "ref_l.qs2", all = FALSE)
+  }
+})
+
+test_that("plates without a cell line are not compared for outliers", {
+  inputs <- copy_inputs(data5_inputs())
+  edit_tsv(inputs[["Manifest.tsv"]], function(dt) {
+    dt$clid <- NULL
+    dt$Duration <- "72"
+    dt
+  })
+  edit_tsv(inputs[["RawData.tsv"]], function(dt) {
+    plate1 <- dt$Barcode == "Plate1"
+    dt$ReadoutValue[plate1] <- as.character(as.numeric(dt$ReadoutValue[plate1]) * 20)
+    dt
+  })
+  expect_finding(validate_gdr_input(inputs), "plate_outliers", "INFO")
+})
+
+test_that("a small drop of the control wells at a longer Duration is not flagged", {
+  plates <- function(controls) {
+    data.table::data.table(barcode = paste0("P", 1:3), duration = c("72", "96", "120"),
+                           cellline = "CL1", control_median = controls)
+  }
+  # cells at confluence
+  expect_length(.check_duration_plausibility(plates(c(1000, 1500, 1490)))$check, 0L)
+  hit <- .check_duration_plausibility(plates(c(1000, 1500, 700)))
+  expect_identical(hit$check, "duration_plausibility")
+})
