@@ -108,3 +108,31 @@ test_that("fix = TRUE saves long tables as tsv", {
   expect_false(file.exists(file.path(res$output_dir, "Template_trt.xlsx")))
   expect_true(file.exists(long))
 })
+
+test_that("fix = TRUE keeps every value of a long table it converts", {
+  # a barcode column that is numeric for the first 1050 rows and text after them, and
+  # leading zeros, both of which type guessing would lose
+  n <- 1100L
+  long <- data.frame(Barcode = c(rep(1001, 1050), rep("P2-A", 50)), WellRow = "A",
+                     WellColumn = rep(seq_len(24), length.out = n), ReadoutValue = seq_len(n),
+                     Code = "0012", stringsAsFactors = FALSE)
+  path <- file.path(tempfile(), "raw_long.xlsx")
+  dir.create(dirname(path))
+  wb <- openxlsx::createWorkbook()
+  openxlsx::addWorksheet(wb, "raw")
+  openxlsx::writeData(wb, "raw", long[, -1])
+  openxlsx::writeData(wb, "raw", "Barcode", startCol = 6, startRow = 1)
+  openxlsx::writeData(wb, "raw", rep(1001, 1050), startCol = 6, startRow = 2)
+  openxlsx::writeData(wb, "raw", rep("P2-A", 50), startCol = 6, startRow = 1052)
+  openxlsx::saveWorkbook(wb, path)
+
+  out <- file.path(tempfile(), "fixed")
+  copies <- data.table::data.table(file = basename(path), path = path, role = "raw_long", format = NA_character_)
+  .prepare_output_dir(out)
+  file.copy(path, out)
+  copies$path <- file.path(out, basename(path))
+  step <- .fix_long_tables(copies)
+  fixed <- data.table::fread(step$files$path, colClasses = "character")
+  expect_identical(sum(fixed$Barcode == "P2-A"), 50L)
+  expect_identical(unique(fixed$Code), "0012")
+})

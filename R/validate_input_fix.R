@@ -111,10 +111,12 @@
     path <- files$path[i]
     new_path <- sub("\\.[^.]+$", ".tsv", path)
     if (file.exists(new_path)) next
+    # read as text, so the copy keeps every value as written (a column that turns from
+    # numbers to text after the first rows, leading zeros) and the loader parses it
     table <- if (.file_ext(path) %in% c("xlsx", "xls")) {
-      data.table::as.data.table(readxl::read_excel(path))
+      data.table::as.data.table(readxl::read_excel(path, col_types = "text"))
     } else {
-      data.table::fread(path)
+      data.table::fread(path, colClasses = "character")
     }
     data.table::fwrite(table, new_path, sep = "\t")
     file.remove(path)
