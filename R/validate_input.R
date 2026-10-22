@@ -422,7 +422,8 @@ print.gdr_validation <- function(x, ...) {
 .detect_data_type <- function(files) {
   roles <- files$role
   bench_roles <- c("manifest", "template", "template_long", "raw", "raw_long")
-  if (any(roles == "mae")) return("mae")
+  # a .qs2 next to bench files (a reference or results object) is not the input
+  if (any(roles == "mae") && !any(roles %in% bench_roles)) return("mae")
   if (any(startsWith(roles, "prism_"))) return("prism")
   if (any(roles == "d300") && !any(roles %in% c("template", "template_long"))) return("pre_d300")
   if (any(roles %in% bench_roles)) return("bench")
@@ -449,6 +450,13 @@ print.gdr_validation <- function(x, ...) {
   if (length(unknown) > 0L) {
     out <- c(out, list(.finding("files", "INFO", sprintf(
       "Not recognised as gDR input, so not used: %s", .head_list(unknown)
+    ))))
+  }
+  # e.g. a reference or results .qs2 saved next to the bench files
+  other <- files$file[!role %in% c("unknown", "manifest", "template", "template_long", "raw", "raw_long")]
+  if (length(other) > 0L) {
+    out <- c(out, list(.finding("files", "INFO", sprintf(
+      "Not bench input, so not used here: %s", .head_list(other)
     ))))
   }
   numbers <- unknown[.file_ext(unknown) == "numbers"]
@@ -1051,13 +1059,16 @@ print.gdr_validation <- function(x, ...) {
 
 
 # Plates whose median readout is more than 3.5 MADs from comparable plates: same
-# Duration and cell line, in groups of at least 4 plates.
+# Duration and cell line, in groups of at least 4 plates. Plates without a Duration or
+# a cell line in the manifest are left out, as in .check_duration_plausibility():
+# grouping them together would compare different cell lines.
 #' @keywords internal
 .check_plate_outliers <- function(plates) {
+  known <- !is.na(plates$duration) & nzchar(plates$duration) & !is.na(plates$cellline) & nzchar(plates$cellline)
   group <- paste(plates$duration, plates$cellline, sep = "|")
   scored <- FALSE
   outliers <- character(0)
-  for (g in split(seq_len(NROW(plates)), group)) {
+  for (g in split(which(known), group[known])) {
     if (length(g) < 4L) next
     med <- plates$median[g]
     spread <- stats::mad(med, na.rm = TRUE)
@@ -1080,9 +1091,10 @@ print.gdr_validation <- function(x, ...) {
 # Duration drives GR normalization, and a mislabelled plate (a day-0 plate labelled
 # 168) passes every other check while making GR values wrong. Two signals:
 #   1. a cell line whose set of Durations differs from the set most cell lines have;
-#   2. within a cell line, control wells reading lower at a longer Duration, when the
-#      cells had more time to grow. Only control wells are used: a potent drug can
-#      bring a treated plate below day 0 with correct labels.
+#   2. within a cell line, control wells reading more than 20% lower at a longer
+#      Duration, when the cells had more time to grow. Only control wells are used: a
+#      potent drug can bring a treated plate below day 0 with correct labels. A smaller
+#      drop is normal once the cells reach confluence.
 #' @keywords internal
 .check_duration_plausibility <- function(plates) {
   duration <- suppressWarnings(as.numeric(plates$duration))
@@ -1111,7 +1123,7 @@ print.gdr_validation <- function(x, ...) {
     by_duration <- tapply(control[i], duration[i], stats::median)
     if (length(by_duration) < 2L) next
     by_duration <- by_duration[order(as.numeric(names(by_duration)))]
-    if (is.unsorted(by_duration)) {
+    if (any(by_duration[-1] < 0.8 * by_duration[-length(by_duration)])) {
       falling <- c(falling, sprintf("%s (%s)", cl, paste(
         sprintf("%sh: %.0f", names(by_duration), by_duration), collapse = " -> "
       )))
@@ -1119,7 +1131,7 @@ print.gdr_validation <- function(x, ...) {
   }
   if (length(falling) > 0L) {
     out <- c(out, list(.finding("duration_plausibility", "WARN", sprintf(
-      "Control wells read lower at a longer Duration, so a plate may have the wrong Duration: %s",
+      "Control wells read more than 20%% lower at a longer Duration, so a plate may have the wrong Duration: %s",
       .head_list(falling, 5L)
     ), "C")))
   }
