@@ -21,7 +21,9 @@ validate_gdr_input(
   paths,
   type = c("auto", "bench", "prism", "mae", "pre_d300"),
   instrument = NULL,
-  id_patterns = list(drug = "^G[0-9]{8}", cellline = NULL)
+  id_patterns = list(drug = "^G[0-9]{8}", cellline = NULL),
+  fix = FALSE,
+  output_dir = NULL
 )
 
 # S3 method for class 'gdr_validation'
@@ -61,6 +63,15 @@ print(x, ...)
   default). An element set to `NULL` switches its check off; elements
   left out keep their default.
 
+- fix:
+
+  logical, whether to repair copies of the files in `output_dir`.
+
+- output_dir:
+
+  character, a new or empty directory for the repaired copies; required
+  with `fix = TRUE`.
+
 - x:
 
   a `gdr_validation` object.
@@ -99,11 +110,24 @@ An object of class `gdr_validation`, a list with
 
 - fixes:
 
-  character, the repairs applied to the files; always empty for now.
+  character, one note per repair (empty without `fix`).
+
+- output_dir:
+
+  the directory of the repaired copies, `NA` without `fix`. With
+  `fix = TRUE`, `files` and `findings` describe the copies after the
+  repairs.
 
 ## Details
 
-The input files are only read, never modified.
+The input files are only read, never modified. With `fix = TRUE` they
+are copied to `output_dir`, the mechanical problems (fix tier `"A"`) are
+repaired in the copies, and the copies are validated again: files
+re-encoded as UTF-8, spaces trimmed from file names, long tables saved
+as `.tsv`, `Gnumber_1` and `Concentration_1` sheets renamed, `n/a` and
+`-99` cleared from templates, and manifest references that only differ
+from a template file by spaces or the extension rewritten. In xlsx files
+only the repaired cells change.
 
 ## Examples
 
@@ -140,4 +164,10 @@ res$findings
 #> 5:     <NA>          NA
 #> 6:     <NA>          NA
 #> 7:     <NA>          NA
+
+# repair copies of the files instead of only reporting
+fixed <- validate_gdr_input(c(manifest_path(td), template_path(td), result_path(td)),
+                            fix = TRUE, output_dir = tempfile())
+fixed$fixes
+#> character(0)
 ```
