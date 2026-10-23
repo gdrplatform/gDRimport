@@ -102,6 +102,7 @@ get_import_provenance <- function(x) {
   renamed <- of_type("template_sheet_renamed")
   filled <- of_type("cells_filled")
   untreated <- of_type("untreated_standardized")
+  no_barcode <- of_type("plate_barcode_missing")
   out <- list(
     template_sheets_renamed = if (length(renamed) > 0L) {
       vapply(renamed, function(e) sprintf("%s: %s -> %s", e$file, e$from, e$to), character(1))
@@ -109,6 +110,17 @@ get_import_provenance <- function(x) {
     cells_filled_with_zero = if (length(filled) > 0L) sum(vapply(filled, `[[`, numeric(1), "n")),
     untreated_tags_standardized = if (length(untreated) > 0L) {
       sum(vapply(untreated, `[[`, numeric(1), "n"))
+    },
+    # one row per plate read without a barcode; `used` is the barcode the plate was
+    # imported under (NA when the plate was skipped)
+    plates_without_barcode = if (length(no_barcode) > 0L) {
+      data.frame(
+        file = vapply(no_barcode, `[[`, character(1), "file"),
+        plate = vapply(no_barcode, `[[`, character(1), "plate"),
+        header = vapply(no_barcode, `[[`, character(1), "header"),
+        used = vapply(no_barcode, `[[`, character(1), "used"),
+        stringsAsFactors = FALSE
+      )
     }
   )
   out <- out[!vapply(out, is.null, logical(1))]

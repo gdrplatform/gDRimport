@@ -60,6 +60,17 @@ l_tbl <-
 summary(l_tbl)
 ```
 
+## Validate input data
+`validate_gdr_input` checks a set of input files before the import and reports every problem it finds at once. It runs `load_data`, so a failure reported for `load_data` is the error the import would raise, and it also flags problems the loaders let through without an error: concentrations that are not numbers, raw plates without a barcode, duplicated wells, plates missing from the manifest or from the data, and Duration labels that do not fit the readouts of the control wells. The input files are only read.
+
+```{r validate-input}
+res <- validate_gdr_input(c(manifest_path(td1), template_path(td1), result_path(td1)))
+res$verdict
+res$findings[, c("check", "severity", "detail")]
+```
+
+Each finding has a `status_code` that points to `get_exception_data()` when the problem has one, and a `fix_tier`: `A` for a mechanical fix, `B` for a fix to confirm with whoever made the files, `C` for a decision about the experiment.
+
 # PRISM
 
 PRISM, the Multiplexed cancer cell line screening platform, facilitates rapid screening of a broad spectrum of drugs across more than 900 human cancer cell line models, employing a high-throughput, multiplexed approach. Publicly available PRISM data can be downloaded from the DepMap website ([DepMap](https://depmap.org/portal/download/all/)).

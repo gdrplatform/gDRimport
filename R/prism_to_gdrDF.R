@@ -1,3 +1,18 @@
+# Column names the LEVEL5 converter accepts for each column it needs; the first
+# synonym present in the data is renamed when the column itself is missing.
+# validate_gdr_input() checks PRISM files against the same list.
+#' @keywords internal
+.prism_level5_column_synonyms <- function() {
+  list(
+    LFC_cb = c("LFC_cb", "LFC.cb", "LFC", "l2fc"),
+    pert_iname = c("pert_iname", "pert_name"),
+    pert_time = c("pert_time", "day"),
+    pert2_iname = c("pert2_name", "pert2_iname", "drug2", "compound2"),
+    pert2_dose = c("pert2_dose", "concentration2", "dose2")
+  )
+}
+
+
 #' Load, convert and process the level 5 PRISM data into a gDR input
 #'
 #' @param prism_data_path path to PRISM LEVEL5 csv file with data
@@ -31,13 +46,7 @@ convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
                                            "OncotreeLineage"))
 
   # Define the mapping for old column names
-  column_mappings <- list(
-    LFC_cb = c("LFC_cb", "LFC.cb", "LFC", "l2fc"),
-    pert_iname = c("pert_iname", "pert_name"),
-    pert_time = c("pert_time", "day"),
-    pert2_iname = c("pert2_name", "pert2_iname", "drug2", "compound2"),
-    pert2_dose = c("pert2_dose", "concentration2", "dose2")
-  )
+  column_mappings <- .prism_level5_column_synonyms()
 
   # Rename columns based on mapping if default column is missing
   for (col in names(column_mappings)) {
