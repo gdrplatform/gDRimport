@@ -70,12 +70,12 @@ the name of the study.
 
 ``` r
 pset <- convert_MAE_to_PSet(mae, pset_name="Kyung2022")
-#> 2026-10-19 08:59:08 Building assay index...
-#> 2026-10-19 08:59:08 Joining rowData to assayIndex...
-#> 2026-10-19 08:59:09 Joining colData to assayIndex...
-#> 2026-10-19 08:59:09 Joining assays to assayIndex...
-#> 2026-10-19 08:59:10 Setting assayIndex key...
-#> 2026-10-19 08:59:11 Building LongTable...
+#> 2026-10-23 13:29:21 Building assay index...
+#> 2026-10-23 13:29:21 Joining rowData to assayIndex...
+#> 2026-10-23 13:29:21 Joining colData to assayIndex...
+#> 2026-10-23 13:29:22 Joining assays to assayIndex...
+#> 2026-10-23 13:29:23 Setting assayIndex key...
+#> 2026-10-23 13:29:24 Building LongTable...
 #> 
 ```
 
@@ -85,7 +85,7 @@ We can now view the `PharmacoSet` object.
 pset
 #> <PharmacoSet>
 #> Name: Kyung2022 
-#> Date Created: Mon Oct 19 08:59:11 2026 
+#> Date Created: Fri Oct 23 13:29:24 2026 
 #> Number of samples:  7 
 #> Molecular profiles: <MultiAssayExperiment> 
 #>    ExperimentList class object of length 1: 
@@ -1206,7 +1206,7 @@ sessionInfo()
 #> [8] base     
 #> 
 #> other attached packages:
-#>  [1] MultiAssayExperiment_1.39.1 gDRimport_1.11.10          
+#>  [1] MultiAssayExperiment_1.39.1 gDRimport_1.11.11          
 #>  [3] PharmacoGx_3.17.0           CoreGx_2.17.0              
 #>  [5] SummarizedExperiment_1.43.0 Biobase_2.73.2             
 #>  [7] GenomicRanges_1.65.4        Seqinfo_1.3.2              
@@ -1240,7 +1240,7 @@ sessionInfo()
 #> [67] piano_2.29.0         ggplot2_4.0.3        scales_1.4.0        
 #> [70] gtools_3.9.5         xtable_1.8-8         marray_1.91.0       
 #> [73] qs2_0.3.1            glue_1.8.1           slam_0.1-56         
-#> [76] tools_4.6.1          data.table_1.18.6.1  gDRutils_1.11.18    
+#> [76] tools_4.6.1          data.table_1.18.6.1  gDRutils_1.11.19    
 #> [79] fgsea_1.39.2         fs_2.1.0             visNetwork_2.1.4    
 #> [82] fastmatch_1.1-8      cowplot_1.2.0        grid_4.6.1          
 #> [85] cli_3.6.6            textshaping_1.0.5    S4Arrays_1.13.2     

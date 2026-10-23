@@ -73,6 +73,14 @@ get_exception_data()
 #> 37:          37                          Raw Data header
 #> 38:          38                       Long table columns
 #> 39:          39                       Long table parsing
+#> 40:          40                      Input file encoding
+#> 41:          41                         Empty input file
+#> 42:          42                        Long table format
+#> 43:          43                       Raw data not found
+#> 44:          44                Non-numeric concentration
+#> 45:          45                Raw plate without barcode
+#> 46:          46                         Duplicated wells
+#> 47:          47                        Negative readouts
 #>     status_code                                    title
 #>          <char>                                   <char>
 #>                                                                                                                                                                                                      sprintf_text
@@ -116,6 +124,14 @@ get_exception_data()
 #> 37:                                                                                                                                                                       Invalid header in the result file: (%s)
 #> 38:                                                                              The long table does not contain all required columns. Missing column(s): %s. Please correct your file or change the identifiers.
 #> 39:                                                                                                                                  The long table could not be parsed. Check error message below:\n```\n%s\n```
+#> 40:                                                                                                                                         File(s) %s are not valid UTF-8. Save them as UTF-8 before the import.
+#> 41:                                                                                                                                                                               File(s) %s are empty (0 bytes).
+#> 42:                                                                                                                  File(s) %s hold one row per well, which the loader reads only from tab-separated .tsv files.
+#> 43:                                                                                                                                                                      No raw plate-reader data file was found.
+#> 44:                                                                                              Treatment file(s) have values in a Concentration sheet that are not numbers, so those wells would be dropped: %s
+#> 45:                                                                                                                                                                  Plate(s) in the raw data have no barcode: %s
+#> 46:                                                                                                                                       %s readout(s) repeat a barcode and well that is already in the data: %s
+#> 47:                                                                                                                                                                             %s readout value(s) are negative.
 #>                                                                                                                                                                                                      sprintf_text
 #>                                                                                                                                                                                                            <char>
 #>        type   input_type
@@ -159,6 +175,14 @@ get_exception_data()
 #> 37:   error     raw data
 #> 38:   error   long table
 #> 39:   error   long table
+#> 40:   error  input files
+#> 41:   error  input files
+#> 42:   error  input files
+#> 43:   error     raw data
+#> 44:   error    treatment
+#> 45:   error     raw data
+#> 46:   error     raw data
+#> 47:   error     raw data
 #>        type   input_type
 #>      <char>       <char>
 ```

@@ -133,6 +133,53 @@ summary(l_tbl)
     ## treatments 7      data.table list
     ## data       5      data.table list
 
+### Validate input data
+
+`validate_gdr_input` checks a set of input files before the import and
+reports every problem it finds at once. It runs `load_data`, so a
+failure reported for `load_data` is the error the import would raise,
+and it also flags problems the loaders let through without an error:
+concentrations that are not numbers, raw plates without a barcode,
+duplicated wells, plates missing from the manifest or from the data, and
+Duration labels that do not fit the readouts of the control wells. The
+input files are only read.
+
+``` r
+res <- validate_gdr_input(c(manifest_path(td1), template_path(td1), result_path(td1)))
+res$verdict
+```
+
+    ## [1] "PASS"
+
+``` r
+res$findings[, c("check", "severity", "detail")]
+```
+
+    ##                 check severity
+    ##                <char>   <char>
+    ## 1:           manifest     PASS
+    ## 2:   combo_degenerate     INFO
+    ## 3:          load_data     PASS
+    ## 4: import_corrections     INFO
+    ## 5:    duplicate_wells     PASS
+    ## 6:   barcode_coverage     PASS
+    ## 7:     plate_outliers     INFO
+    ##                                                                                                                     detail
+    ##                                                                                                                     <char>
+    ## 1:                                                                                          Manifest loaded (12 plate(s)).
+    ## 2: Template(s) hold the second drug at a single dose, so the combination has no Drug 2 gradient: Template_7daytreated.xlsx
+    ## 3:                                                                           load_data() read 4608 readout(s) as EnVision.
+    ## 4:                                                                   load_data() changed the case of 320 untreated tag(s).
+    ## 5:                                                                                      No barcode and well is read twice.
+    ## 6:                                                          Every plate in the manifest has data, and the other way round.
+    ## 7:                                         Not checked: no group of 4 or more plates with the same Duration and cell line.
+
+Each finding has a `status_code` that points to
+[`get_exception_data()`](https://gdrplatform.github.io/gDRimport/reference/get_exception_data.md)
+when the problem has one, and a `fix_tier`: `A` for a mechanical fix,
+`B` for a fix to confirm with whoever made the files, `C` for a decision
+about the experiment.
+
 ## PRISM
 
 PRISM, the Multiplexed cancer cell line screening platform, facilitates
@@ -218,40 +265,42 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] gDRimport_1.11.10 BiocStyle_2.41.0 
+    ## [1] gDRimport_1.11.11 BiocStyle_2.41.0 
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] sass_0.4.10                 generics_0.1.4             
-    ##  [3] SparseArray_1.13.4          futile.options_1.0.1       
-    ##  [5] stringi_1.8.9               lattice_0.22-9             
-    ##  [7] rematch_2.0.0               digest_0.6.39              
-    ##  [9] magrittr_2.0.5              grid_4.6.1                 
-    ## [11] evaluate_1.0.5              bookdown_0.48              
-    ## [13] fastmap_1.2.0               Matrix_1.7-5               
-    ## [15] cellranger_1.1.0            jsonlite_2.0.0             
-    ## [17] backports_1.5.1             formatR_1.14               
-    ## [19] BiocManager_1.30.27         textshaping_1.0.5          
-    ## [21] jquerylib_0.1.4             abind_1.4-8                
-    ## [23] cli_3.6.6                   rlang_1.3.0                
-    ## [25] XVector_0.53.0              futile.logger_1.4.9        
-    ## [27] Biobase_2.73.2              DelayedArray_0.39.8        
-    ## [29] cachem_1.1.0                yaml_2.3.12                
-    ## [31] otel_0.2.0                  S4Arrays_1.13.2            
-    ## [33] tools_4.6.1                 checkmate_2.3.4            
-    ## [35] SummarizedExperiment_1.43.0 lambda.r_1.2.6             
-    ## [37] gDRutils_1.11.18            BiocGenerics_0.59.12       
-    ## [39] assertthat_0.2.1            vctrs_0.7.3                
-    ## [41] R6_2.6.1                    matrixStats_1.5.0          
-    ## [43] stats4_4.6.1                lifecycle_1.0.5            
-    ## [45] Seqinfo_1.3.2               S4Vectors_0.51.10          
-    ## [47] fs_2.1.0                    htmlwidgets_1.6.4          
-    ## [49] IRanges_2.47.5              ragg_1.5.2                 
-    ## [51] pkgconfig_2.0.3             desc_1.4.3                 
-    ## [53] pkgdown_2.2.1               pillar_1.11.1              
-    ## [55] bslib_0.12.0                data.table_1.18.6.1        
-    ## [57] glue_1.8.1                  systemfonts_1.3.2          
-    ## [59] GenomicRanges_1.65.4        xfun_0.62                  
-    ## [61] tibble_3.3.1                MatrixGenerics_1.25.0      
-    ## [63] knitr_1.52                  htmltools_0.5.9            
-    ## [65] rmarkdown_2.32              compiler_4.6.1             
-    ## [67] readxl_1.6.0
+    ##  [1] SummarizedExperiment_1.43.0 xfun_0.62                  
+    ##  [3] bslib_0.12.0                htmlwidgets_1.6.4          
+    ##  [5] Biobase_2.73.2              lattice_0.22-9             
+    ##  [7] vctrs_0.7.3                 tools_4.6.1                
+    ##  [9] generics_0.1.4              stats4_4.6.1               
+    ## [11] tibble_3.3.1                R.oo_1.27.1                
+    ## [13] pkgconfig_2.0.3             Matrix_1.7-5               
+    ## [15] data.table_1.18.6.1         checkmate_2.3.4            
+    ## [17] desc_1.4.3                  S4Vectors_0.51.10          
+    ## [19] gDRutils_1.11.19            readxl_1.6.0               
+    ## [21] assertthat_0.2.1            rematch_2.0.0              
+    ## [23] lifecycle_1.0.5             compiler_4.6.1             
+    ## [25] textshaping_1.0.5           Seqinfo_1.3.2              
+    ## [27] htmltools_0.5.9             sass_0.4.10                
+    ## [29] yaml_2.3.12                 pillar_1.11.1              
+    ## [31] pkgdown_2.2.1               jquerylib_0.1.4            
+    ## [33] R.utils_2.13.0              cachem_1.1.0               
+    ## [35] DelayedArray_0.39.8         abind_1.4-8                
+    ## [37] digest_0.6.39               stringi_1.8.9              
+    ## [39] bookdown_0.48               rio_1.3.0                  
+    ## [41] fastmap_1.2.0               grid_4.6.1                 
+    ## [43] cli_3.6.6                   SparseArray_1.13.4         
+    ## [45] magrittr_2.0.5              S4Arrays_1.13.2            
+    ## [47] backports_1.5.1             rmarkdown_2.32             
+    ## [49] lambda.r_1.2.6              XVector_0.53.0             
+    ## [51] matrixStats_1.5.0           otel_0.2.0                 
+    ## [53] futile.logger_1.4.9         cellranger_1.1.0           
+    ## [55] ragg_1.5.2                  R.methodsS3_1.8.2          
+    ## [57] evaluate_1.0.5              knitr_1.52                 
+    ## [59] GenomicRanges_1.65.4        IRanges_2.47.5             
+    ## [61] rlang_1.3.0                 futile.options_1.0.1       
+    ## [63] glue_1.8.1                  BiocManager_1.30.27        
+    ## [65] formatR_1.14                BiocGenerics_0.59.12       
+    ## [67] jsonlite_2.0.0              R6_2.6.1                   
+    ## [69] MatrixGenerics_1.25.0       systemfonts_1.3.2          
+    ## [71] fs_2.1.0

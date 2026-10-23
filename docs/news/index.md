@@ -1,5 +1,13 @@
 # Changelog
 
+## gDRimport 1.11.11 - 2026-10-20
+
+- add validate_gdr_input() to check bench, PRISM, MAE and D300 input
+  before the import
+- add status codes 40-47 for the input defects that validate_gdr_input()
+  reports
+- include plates read without a barcode in the import provenance record
+
 ## gDRimport 1.11.10 - 2026-10-19
 
 - use the instrument passed to load_results() for .tsv files, only the

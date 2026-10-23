@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gDRimport</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.10</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.11</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -115,6 +115,14 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 37:          37                          Raw Data header</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 38:          38                       Long table columns</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 39:          39                       Long table parsing</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40:          40                      Input file encoding</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41:          41                         Empty input file</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42:          42                        Long table format</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43:          43                       Raw data not found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44:          44                Non-numeric concentration</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45:          45                Raw plate without barcode</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 46:          46                         Duplicated wells</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47:          47                        Negative readouts</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     status_code                                    title</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;char&gt;                                   &lt;char&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                      sprintf_text</span>
@@ -158,6 +166,14 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 37:                                                                                                                                                                       Invalid header in the result file: (%s)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 38:                                                                              The long table does not contain all required columns. Missing column(s): %s. Please correct your file or change the identifiers.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 39:                                                                                                                                  The long table could not be parsed. Check error message below:\n```\n%s\n```</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40:                                                                                                                                         File(s) %s are not valid UTF-8. Save them as UTF-8 before the import.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41:                                                                                                                                                                               File(s) %s are empty (0 bytes).</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42:                                                                                                                  File(s) %s hold one row per well, which the loader reads only from tab-separated .tsv files.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43:                                                                                                                                                                      No raw plate-reader data file was found.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44:                                                                                              Treatment file(s) have values in a Concentration sheet that are not numbers, so those wells would be dropped: %s</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45:                                                                                                                                                                  Plate(s) in the raw data have no barcode: %s</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 46:                                                                                                                                       %s readout(s) repeat a barcode and well that is already in the data: %s</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47:                                                                                                                                                                             %s readout value(s) are negative.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                      sprintf_text</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                            &lt;char&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        type   input_type</span>
@@ -201,6 +217,14 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 37:   error     raw data</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 38:   error   long table</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 39:   error   long table</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40:   error  input files</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41:   error  input files</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42:   error  input files</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43:   error     raw data</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44:   error    treatment</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45:   error     raw data</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 46:   error     raw data</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47:   error     raw data</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        type   input_type</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      &lt;char&gt;       &lt;char&gt;</span>
 </code></pre></div>

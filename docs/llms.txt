@@ -131,6 +131,9 @@ link](https://gdrplatform.github.io/gDRimport/).
   : Get Excel sheets
 - [`mgrepl()`](https://gdrplatform.github.io/gDRimport/reference/mgrepl.md)
   : grep wrapper to support multiple patterns
+- [`validate_gdr_input()`](https://gdrplatform.github.io/gDRimport/reference/validate_gdr_input.md)
+  [`print(`*`<gdr_validation>`*`)`](https://gdrplatform.github.io/gDRimport/reference/validate_gdr_input.md)
+  : Validate gDR input data before import
 
 ## Utils
 

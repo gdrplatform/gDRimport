@@ -18,16 +18,16 @@ reference data (.qs2 file paths)
 ``` r
 get_test_tsv_data()
 #> $m_file
-#> [1] "/tmp/RtmppwSDv7/temp_libpath1a523af873c4/gDRimport/extdata/data5/Manifest.tsv"
+#> [1] "/tmp/RtmpNGd4FM/temp_libpath1c7fc588b81/gDRimport/extdata/data5/Manifest.tsv"
 #> 
 #> $r_files
-#> [1] "/tmp/RtmppwSDv7/temp_libpath1a523af873c4/gDRimport/extdata/data5/RawData.tsv"
+#> [1] "/tmp/RtmpNGd4FM/temp_libpath1c7fc588b81/gDRimport/extdata/data5/RawData.tsv"
 #> 
 #> $t_files
-#> [1] "/tmp/RtmppwSDv7/temp_libpath1a523af873c4/gDRimport/extdata/data5/Template_trt.tsv"  
-#> [2] "/tmp/RtmppwSDv7/temp_libpath1a523af873c4/gDRimport/extdata/data5/Template_untrt.tsv"
+#> [1] "/tmp/RtmpNGd4FM/temp_libpath1c7fc588b81/gDRimport/extdata/data5/Template_trt.tsv"  
+#> [2] "/tmp/RtmpNGd4FM/temp_libpath1c7fc588b81/gDRimport/extdata/data5/Template_untrt.tsv"
 #> 
 #> $ref_l_path
-#> [1] "/tmp/RtmppwSDv7/temp_libpath1a523af873c4/gDRimport/extdata/data5/ref_l.qs2"
+#> [1] "/tmp/RtmpNGd4FM/temp_libpath1c7fc588b81/gDRimport/extdata/data5/ref_l.qs2"
 #> 
 ```
