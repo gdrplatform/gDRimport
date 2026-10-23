@@ -1,3 +1,6 @@
+## gDRimport 1.11.12 - 2026-10-20
+* add fix and output_dir to validate_gdr_input() to repair copies of the input files and validate them again
+
 ## gDRimport 1.11.11 - 2026-10-20
 * add validate_gdr_input() to check bench, PRISM, MAE and D300 input before the import
 * add status codes 40-47 for the input defects that validate_gdr_input() reports

@@ -26,7 +26,13 @@
 #' input, processed MultiAssayExperiments and D300 files are recognised and checked
 #' too.
 #'
-#' The input files are only read, never modified.
+#' The input files are only read, never modified. With \code{fix = TRUE} they are copied
+#' to \code{output_dir}, the mechanical problems (fix tier \code{"A"}) are repaired in
+#' the copies, and the copies are validated again: files re-encoded as UTF-8, spaces
+#' trimmed from file names, long tables saved as \code{.tsv}, \code{Gnumber_1} and
+#' \code{Concentration_1} sheets renamed, \code{n/a} and \code{-99} cleared from
+#' templates, and manifest references that only differ from a template file by spaces
+#' or the extension rewritten. In xlsx files only the repaired cells change.
 #'
 #' @param paths character, paths to input files and/or directories. For a directory,
 #'   the files directly inside it are used, not those in its subdirectories.
@@ -42,6 +48,9 @@
 #'   (the default is the one \code{gDRutils::remove_drug_batch} uses), and
 #'   \code{cellline} the format of a cell line identifier (no default). An element set
 #'   to \code{NULL} switches its check off; elements left out keep their default.
+#' @param fix logical, whether to repair copies of the files in \code{output_dir}.
+#' @param output_dir character, a new or empty directory for the repaired copies;
+#'   required with \code{fix = TRUE}.
 #'
 #' @return An object of class \code{gdr_validation}, a list with
 #' \describe{
@@ -57,7 +66,10 @@
 #'     confirm with whoever made the files, \code{"C"} a decision about the experiment,
 #'     \code{NA} when there is nothing to fix) and \code{status_code}, the matching row
 #'     of \code{\link{get_exception_data}} (\code{NA} when there is none).}
-#'   \item{fixes}{character, the repairs applied to the files; always empty for now.}
+#'   \item{fixes}{character, one note per repair (empty without \code{fix}).}
+#'   \item{output_dir}{the directory of the repaired copies, \code{NA} without
+#'     \code{fix}. With \code{fix = TRUE}, \code{files} and \code{findings} describe
+#'     the copies after the repairs.}
 #' }
 #'
 #' @examples
@@ -66,25 +78,39 @@
 #' res$verdict
 #' res$findings
 #'
+#' # repair copies of the files instead of only reporting
+#' fixed <- validate_gdr_input(c(manifest_path(td), template_path(td), result_path(td)),
+#'                             fix = TRUE, output_dir = tempfile())
+#' fixed$fixes
+#'
 #' @keywords correction_exception
 #' @export
 #'
 validate_gdr_input <- function(paths,
                                type = c("auto", "bench", "prism", "mae", "pre_d300"),
                                instrument = NULL,
-                               id_patterns = list(drug = "^G[0-9]{8}", cellline = NULL)) {
+                               id_patterns = list(drug = "^G[0-9]{8}", cellline = NULL),
+                               fix = FALSE,
+                               output_dir = NULL) {
   checkmate::assert_character(paths, min.len = 1, any.missing = FALSE)
   type <- match.arg(type)
   checkmate::assert_choice(instrument, .supported_instruments(), null.ok = TRUE)
   checkmate::assert_list(id_patterns, types = c("character", "null"), names = "unique")
   checkmate::assert_subset(names(id_patterns), c("drug", "cellline"))
   id_patterns <- utils::modifyList(list(drug = "^G[0-9]{8}", cellline = NULL), id_patterns)
+  checkmate::assert_flag(fix)
+  checkmate::assert_string(output_dir, null.ok = TRUE)
+  if (fix && is.null(output_dir)) {
+    stop("'fix = TRUE' needs an 'output_dir' for the repaired copies; the input files are never changed.",
+         call. = FALSE)
+  }
   missing_paths <- paths[!file.exists(paths)]
   if (length(missing_paths) > 0L) {
     stop(sprintf("Path(s) not found: %s", toString(missing_paths)), call. = FALSE)
   }
 
   files <- .classify_input_files(.collect_input_files(paths))
+  if (fix) return(.validate_and_fix(files, type, instrument, id_patterns, output_dir))
   data_type <- if (type == "auto") .detect_data_type(files) else type
   findings <- .safely(switch(
     data_type,
@@ -112,6 +138,7 @@ print.gdr_validation <- function(x, ...) {
     cat(sprintf("  %-4s %-26s %s%s\n", f$severity[i], f$check[i], f$detail[i], code))
   }
   for (fix in x$fixes) cat(sprintf("  fixed: %s\n", fix))
+  if (!is.na(x$output_dir)) cat(sprintf("Repaired copies: %s\n", x$output_dir))
   counts <- table(factor(f$severity, levels = rev(.severity_levels())))
   cat(sprintf("VERDICT: %s (%s)\n", x$verdict, toString(paste(counts, names(counts)))))
   invisible(x)
@@ -186,7 +213,8 @@ print.gdr_validation <- function(x, ...) {
       data_type = data_type,
       files = files,
       findings = findings,
-      fixes = fixes
+      fixes = fixes,
+      output_dir = NA_character_
     ),
     class = c("gdr_validation", "list")
   )
