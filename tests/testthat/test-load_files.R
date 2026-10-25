@@ -609,3 +609,62 @@ test_that("load_results_EnVision_new works as expected", {
     "Could not find data matrix header"
   )
 })
+
+
+test_that("the EnVision barcode is read from the Barcode column whatever the manifest calls it", {
+  td <- get_test_data()
+  barcodes <- get_test_data()@ref_m_df$Barcode
+  # with the default identifiers ("Barcode" and "Plate") column 1 used to match first
+  r_default <- suppressMessages(load_results(result_path(td)))
+  expect_true(all(unique(r_default$Barcode) %in% barcodes))
+
+  headers <- suppressMessages(load_manifest(manifest_path(td)))$headers
+  headers$barcode <- "Plate"
+  r_plate <- suppressMessages(load_results(result_path(td), headers = headers))
+  expect_identical(names(r_plate)[1], "Plate")
+  expect_identical(sort(unique(r_plate$Plate)), sort(unique(r_default$Barcode)))
+
+  # an original EnVision csv names its column after the manifest too
+  r_csv <- suppressMessages(load_results(get_test_EnVision_data()$r_files[1], headers = headers))
+  expect_identical(names(r_csv)[1], "Plate")
+})
+
+
+test_that("load_data leaves out a plate whose barcode the manifest does not confirm", {
+  td <- get_test_data()
+  dir <- tempfile()
+  dir.create(dir)
+  file.copy(c(manifest_path(td), template_path(td), result_path(td)), dir)
+  raw <- file.path(dir, "RawData_day0.xlsx")
+  set_cell <- function(row, col, value) {
+    wb <- openxlsx::loadWorkbook(raw)
+    if (is.na(value)) {
+      openxlsx::deleteData(wb, 1, cols = col, rows = row, gridExpand = TRUE)
+    } else {
+      openxlsx::writeData(wb, 1, value, startCol = col, startRow = row)
+    }
+    openxlsx::saveWorkbook(wb, raw, overwrite = TRUE)
+  }
+  load <- function() {
+    suppressMessages(load_data(file.path(dir, basename(manifest_path(td))),
+                               file.path(dir, basename(template_path(td))),
+                               file.path(dir, basename(result_path(td)))))
+  }
+
+  # plate 1 has its barcode in C3; without it the Background section's Result cell (C7)
+  # gives a reading, which is not a barcode
+  set_cell(3, 3, NA)
+  l_data <- load()
+  expect_false("201904190a" %in% l_data$data$Barcode)
+  expect_false(any(.is_missing_barcode(l_data$data$Barcode)))
+  expect_false(anyDuplicated(l_data$data[, c("Barcode", "WellRow", "WellColumn")]) > 0)
+  missing <- get_import_provenance(l_data$data)$corrections$plates_without_barcode
+  expect_identical(missing$plate, "1")
+  expect_true(is.na(missing$used))
+
+  # some exports keep the barcode in that Result cell; then the plate is kept
+  set_cell(7, 3, "201904190a")
+  l_data <- load()
+  expect_true("201904190a" %in% l_data$data$Barcode)
+  expect_identical(get_import_provenance(l_data$data)$corrections$plates_without_barcode$used, "201904190a")
+})

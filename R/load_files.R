@@ -56,6 +56,12 @@ load_data <-
     treatments <- loaded$value$treatments
     data <- loaded$value$data
 
+    # plates read without a barcode keep the one they got only when the manifest has it
+    checked <- .drop_unconfirmed_barcodes(data, loaded$events, manifest[[headers[["barcode"]]]],
+                                          headers[["barcode"]])
+    data <- checked$data
+    loaded$events <- checked$events
+
     template_paths <- if (data.table::is.data.table(df_template_files)) template_file else template_filename
     results <- if (data.table::is.data.table(results_file)) {
       list(path = results_file$datapath, name = results_file$name)
@@ -93,6 +99,32 @@ load_data <-
       data = data
     ))
   }
+
+
+# A plate without a barcode in its header gets one from the Background section of the
+# EnVision export, where some exports keep it in the Result cell, or keeps a placeholder
+# such as "N/A". The Result cell usually holds a reading (often 0), so several plates
+# can end up under one made-up barcode. Such a barcode is kept only when the manifest
+# has it; otherwise its rows are left out and the plate is recorded as skipped. Nothing
+# downstream changes: merge_data() drops plates the manifest does not list.
+#' @keywords internal
+.drop_unconfirmed_barcodes <- function(data, events, manifest_barcodes, barcode_col) {
+  dropped <- character(0)
+  for (i in seq_along(events)) {
+    e <- events[[i]]
+    if (!identical(e$type, "plate_barcode_missing") || is.na(e$used) || e$used %in% manifest_barcodes) next
+    dropped <- c(dropped, e$used)
+    events[[i]]$used <- NA_character_
+  }
+  dropped <- unique(dropped)
+  if (length(dropped) > 0L && barcode_col %in% names(data)) {
+    keep <- !data[[barcode_col]] %in% dropped
+    data <- data[keep]
+    futile.logger::flog.warn("Plates without a barcode left out; the barcode they got is not in the manifest: %s",
+                             toString(dropped))
+  }
+  list(data = data, events = events)
+}
 
 
 #' Load long table
@@ -919,7 +951,11 @@ load_results_EnVision <-
           df <- read_EnVision_xlsx(results_file[[iF]], iS)
         }
 
-        barcode_col <- grep(paste(headers[["barcode"]], collapse = "|"), df)[1]
+        barcode <- .envision_barcode_col(df, headers)
+        barcode_col <- barcode$col
+        # the export's own name for the barcode column, which the manifest may not use
+        raw_headers <- headers
+        raw_headers[["barcode"]] <- barcode$header
 
         if (isEdited) {
           # get the expected plate size
@@ -927,9 +963,9 @@ load_results_EnVision <-
           n_row <- plate_dim[1]
           n_col <- plate_dim[2]
 
-          df <- enhance_raw_edited_EnVision_df(df, barcode_col, headers)
+          df <- enhance_raw_edited_EnVision_df(df, barcode_col, raw_headers)
           barcode_idx <- which(unlist(df[, barcode_col, with = FALSE])
-                               %in% headers[["barcode"]])
+                               %in% barcode$header)
           df_results <-
             get_df_from_raw_edited_EnVision_df(df,
                                                barcode_idx,
@@ -949,6 +985,8 @@ load_results_EnVision <-
                          header = header_barcode, used = header_barcode)
           }
           df_results <- get_df_from_raw_unedited_EnVision_df(df, fInfo$n_row, fInfo$n_col, barcode_col)
+          # named like the manifest's barcode column, as in the edited case
+          names(df_results)[1] <- headers[["barcode"]][1]
           all_results <- rbind(all_results, df_results)
         }
       }
@@ -957,6 +995,20 @@ load_results_EnVision <-
 
     all_results
   }
+
+
+# The column of the plate barcode in an EnVision export, and its header. The export
+# calls it "Barcode" whatever the manifest calls its barcode column. Searching for any
+# barcode identifier matched "Plate" in column 1 first, which holds the plate number,
+# so "Barcode" is looked for first, as an exact cell value.
+#' @keywords internal
+.envision_barcode_col <- function(df, headers) {
+  for (name in unique(c("Barcode", headers[["barcode"]]))) {
+    hit <- which(vapply(df, function(col) any(trimws(as.character(col)) %in% name), logical(1)))
+    if (length(hit) > 0L) return(list(col = hit[[1]], header = name))
+  }
+  list(col = grep(paste(headers[["barcode"]], collapse = "|"), df)[1], header = headers[["barcode"]])
+}
 
 #' Load results from EnVision_new (CSV and XLSX)
 #'

@@ -181,8 +181,11 @@ test_that("validate_gdr_input reports plates without a barcode", {
   ))
   for (i in 1:2) set_xlsx_cell(inputs[["RawData_day0.xlsx"]], 1, barcodes$row[i] + 1L, barcodes$col[i], "N/A")
   res <- validate_gdr_input(inputs)
-  expect_finding(res, "plate_barcode", "FAIL", status_code = 45L)
-  expect_finding(res, "duplicate_wells", "FAIL", status_code = 46L)
+  hit <- expect_finding(res, "plate_barcode", "FAIL", status_code = 45L)
+  expect_match(hit$detail, "skipped")
+  # load_data() leaves the "N/A" plates out, so they are not read as one plate
+  expect_finding(res, "barcode_coverage", "WARN", status_code = 6L)
+  expect_finding(res, "duplicate_wells", "PASS")
 })
 
 test_that("validate_gdr_input reports problems in the loaded data", {
