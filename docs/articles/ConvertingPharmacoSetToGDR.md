@@ -136,7 +136,7 @@ str(dt)
 #>  $ DrugName             : chr  "Ivosidenib" "Ivosidenib" "Ivosidenib" "Ivosidenib" ...
 #>  $ Duration             : num  48 48 48 48 48 48 48 48 48 48 ...
 #>  $ ReferenceDivisionTime: logi  NA NA NA NA NA NA ...
-#>  - attr(*, ".internal.selfref")=<pointer: 0x5647f967c110>
+#>  - attr(*, ".internal.selfref")=<pointer: 0x55d649b9c110>
 ```
 
 ## Subsetting to extract relevant information
@@ -227,7 +227,7 @@ sessionInfo()
 #> [8] base     
 #> 
 #> other attached packages:
-#>  [1] gDRimport_1.11.12           PharmacoGx_3.17.0          
+#>  [1] gDRimport_1.11.13           PharmacoGx_3.17.0          
 #>  [3] CoreGx_2.17.0               SummarizedExperiment_1.43.0
 #>  [5] Biobase_2.73.2              GenomicRanges_1.65.4       
 #>  [7] Seqinfo_1.3.2               IRanges_2.47.5             
@@ -254,7 +254,7 @@ sessionInfo()
 #>  [31] parallel_4.6.1              sets_1.0-25                
 #>  [33] cluster_2.1.8.2             R6_2.6.1                   
 #>  [35] stringi_1.8.9               bslib_0.12.0               
-#>  [37] RColorBrewer_1.1-3          limma_3.99.2               
+#>  [37] RColorBrewer_1.1-3          limma_3.99.3               
 #>  [39] boot_1.3-32                 brio_1.1.5                 
 #>  [41] jquerylib_0.1.4             assertthat_0.2.1           
 #>  [43] Rcpp_1.1.2                  knitr_1.52                 
@@ -277,7 +277,7 @@ sessionInfo()
 #>  [77] marray_1.91.0               qs2_0.3.1                  
 #>  [79] glue_1.8.1                  slam_0.1-56                
 #>  [81] tools_4.6.1                 data.table_1.18.6.1        
-#>  [83] gDRutils_1.11.19            fgsea_1.39.2               
+#>  [83] gDRutils_1.11.20            fgsea_1.39.2               
 #>  [85] fs_2.1.0                    visNetwork_2.1.4           
 #>  [87] fastmatch_1.1-8             cowplot_1.2.0              
 #>  [89] grid_4.6.1                  cli_3.6.6                  

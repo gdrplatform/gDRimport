@@ -107,17 +107,17 @@ summary(r_df)
 ```
 
     ##       Barcode          WellRow       WellColumn     ReadoutValue    
-    ##  Length   :4587   Length   :4587   Min.   : 1.00   Min.   :  12627  
-    ##  N.unique :   6   N.unique :  16   1st Qu.: 6.50   1st Qu.:  67905  
-    ##  N.blank  :   0   N.blank  :   0   Median :12.00   Median : 140865  
-    ##  Min.nchar:   1   Min.nchar:   1   Mean   :12.49   Mean   : 263996  
-    ##  Max.nchar:   1   Max.nchar:   1   3rd Qu.:18.00   3rd Qu.: 324707  
+    ##  Length   :4608   Length   :4608   Min.   : 1.00   Min.   :  12627  
+    ##  N.unique :  12   N.unique :  16   1st Qu.: 6.75   1st Qu.:  67906  
+    ##  N.blank  :   0   N.blank  :   0   Median :12.50   Median : 141014  
+    ##  Min.nchar:  10   Min.nchar:   1   Mean   :12.50   Mean   : 265403  
+    ##  Max.nchar:  10   Max.nchar:   1   3rd Qu.:18.25   3rd Qu.: 325330  
     ##                                    Max.   :24.00   Max.   :2423054  
     ##  BackgroundValue
     ##  Min.   :332.0  
     ##  1st Qu.:351.0  
-    ##  Median :374.0  
-    ##  Mean   :453.2  
+    ##  Median :384.5  
+    ##  Mean   :454.3  
     ##  3rd Qu.:570.0  
     ##  Max.   :704.0
 
@@ -265,7 +265,7 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] gDRimport_1.11.12 BiocStyle_2.41.0 
+    ## [1] gDRimport_1.11.13 BiocStyle_2.41.0 
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] SummarizedExperiment_1.43.0 xfun_0.62                  
@@ -277,7 +277,7 @@ sessionInfo()
     ## [13] pkgconfig_2.0.3             Matrix_1.7-5               
     ## [15] data.table_1.18.6.1         checkmate_2.3.4            
     ## [17] desc_1.4.3                  S4Vectors_0.51.10          
-    ## [19] gDRutils_1.11.19            readxl_1.6.0               
+    ## [19] gDRutils_1.11.20            readxl_1.6.0               
     ## [21] assertthat_0.2.1            rematch_2.0.0              
     ## [23] lifecycle_1.0.5             compiler_4.6.1             
     ## [25] textshaping_1.0.5           Seqinfo_1.3.2              
@@ -287,7 +287,7 @@ sessionInfo()
     ## [33] R.utils_2.13.0              cachem_1.1.0               
     ## [35] DelayedArray_0.39.8         abind_1.4-8                
     ## [37] digest_0.6.39               stringi_1.8.9              
-    ## [39] bookdown_0.48               rio_1.3.0                  
+    ## [39] bookdown_0.48               rio_1.3.1                  
     ## [41] fastmap_1.2.0               grid_4.6.1                 
     ## [43] cli_3.6.6                   SparseArray_1.13.4         
     ## [45] magrittr_2.0.5              S4Arrays_1.13.2            

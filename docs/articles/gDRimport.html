@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gDRimport</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.12</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.13</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -156,17 +156,17 @@ formats.</p>
 <code class="sourceCode R"><span><span class="va">r_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressMessages</a></span><span class="op">(</span><span class="fu"><a href="../reference/load_results.html">load_results</a></span><span class="op">(</span><span class="fu"><a href="../reference/result_path-method.html">result_path</a></span><span class="op">(</span><span class="va">td1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">r_df</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##       Barcode          WellRow       WellColumn     ReadoutValue    </span></span>
-<span><span class="co">##  Length   :4587   Length   :4587   Min.   : 1.00   Min.   :  12627  </span></span>
-<span><span class="co">##  N.unique :   6   N.unique :  16   1st Qu.: 6.50   1st Qu.:  67905  </span></span>
-<span><span class="co">##  N.blank  :   0   N.blank  :   0   Median :12.00   Median : 140865  </span></span>
-<span><span class="co">##  Min.nchar:   1   Min.nchar:   1   Mean   :12.49   Mean   : 263996  </span></span>
-<span><span class="co">##  Max.nchar:   1   Max.nchar:   1   3rd Qu.:18.00   3rd Qu.: 324707  </span></span>
+<span><span class="co">##  Length   :4608   Length   :4608   Min.   : 1.00   Min.   :  12627  </span></span>
+<span><span class="co">##  N.unique :  12   N.unique :  16   1st Qu.: 6.75   1st Qu.:  67906  </span></span>
+<span><span class="co">##  N.blank  :   0   N.blank  :   0   Median :12.50   Median : 141014  </span></span>
+<span><span class="co">##  Min.nchar:  10   Min.nchar:   1   Mean   :12.50   Mean   : 265403  </span></span>
+<span><span class="co">##  Max.nchar:  10   Max.nchar:   1   3rd Qu.:18.25   3rd Qu.: 325330  </span></span>
 <span><span class="co">##                                    Max.   :24.00   Max.   :2423054  </span></span>
 <span><span class="co">##  BackgroundValue</span></span>
 <span><span class="co">##  Min.   :332.0  </span></span>
 <span><span class="co">##  1st Qu.:351.0  </span></span>
-<span><span class="co">##  Median :374.0  </span></span>
-<span><span class="co">##  Mean   :453.2  </span></span>
+<span><span class="co">##  Median :384.5  </span></span>
+<span><span class="co">##  Mean   :454.3  </span></span>
 <span><span class="co">##  3rd Qu.:570.0  </span></span>
 <span><span class="co">##  Max.   :704.0</span></span></code></pre>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
@@ -300,7 +300,7 @@ package dependencies.</p>
 <span><span class="co">## [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
-<span><span class="co">## [1] gDRimport_1.11.12 BiocStyle_2.41.0 </span></span>
+<span><span class="co">## [1] gDRimport_1.11.13 BiocStyle_2.41.0 </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
 <span><span class="co">##  [1] SummarizedExperiment_1.43.0 xfun_0.62                  </span></span>
@@ -312,7 +312,7 @@ package dependencies.</p>
 <span><span class="co">## [13] pkgconfig_2.0.3             Matrix_1.7-5               </span></span>
 <span><span class="co">## [15] data.table_1.18.6.1         checkmate_2.3.4            </span></span>
 <span><span class="co">## [17] desc_1.4.3                  S4Vectors_0.51.10          </span></span>
-<span><span class="co">## [19] gDRutils_1.11.19            readxl_1.6.0               </span></span>
+<span><span class="co">## [19] gDRutils_1.11.20            readxl_1.6.0               </span></span>
 <span><span class="co">## [21] assertthat_0.2.1            rematch_2.0.0              </span></span>
 <span><span class="co">## [23] lifecycle_1.0.5             compiler_4.6.1             </span></span>
 <span><span class="co">## [25] textshaping_1.0.5           Seqinfo_1.3.2              </span></span>
@@ -322,7 +322,7 @@ package dependencies.</p>
 <span><span class="co">## [33] R.utils_2.13.0              cachem_1.1.0               </span></span>
 <span><span class="co">## [35] DelayedArray_0.39.8         abind_1.4-8                </span></span>
 <span><span class="co">## [37] digest_0.6.39               stringi_1.8.9              </span></span>
-<span><span class="co">## [39] bookdown_0.48               rio_1.3.0                  </span></span>
+<span><span class="co">## [39] bookdown_0.48               rio_1.3.1                  </span></span>
 <span><span class="co">## [41] fastmap_1.2.0               grid_4.6.1                 </span></span>
 <span><span class="co">## [43] cli_3.6.6                   SparseArray_1.13.4         </span></span>
 <span><span class="co">## [45] magrittr_2.0.5              S4Arrays_1.13.2            </span></span>

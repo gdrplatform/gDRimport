@@ -1,5 +1,12 @@
 # Changelog
 
+## gDRimport 1.11.13 - 2026-10-25
+
+- fix load_results() for EnVision files to read the plate barcode from
+  the Barcode column with any manifest header
+- drop plates read without a barcode when the barcode they got is not in
+  the manifest
+
 ## gDRimport 1.11.12 - 2026-10-20
 
 - add fix and output_dir to validate_gdr_input() to repair copies of the
