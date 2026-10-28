@@ -70,3 +70,37 @@ test_that("prism level6  data can be processed into gDR format ", {
     df_prism$result$Tissue,
     rep("Breast", 3))
 })
+
+test_that("prism level6 data in the DepMap OncRef layout can be processed into gDR format", {
+  dir <- tempfile()
+  dir.create(dir)
+  on.exit(unlink(dir, recursive = TRUE))
+  data.table::fwrite(data.table::data.table(
+    V1 = c("ACH-1", "ACH-2"),
+    `PRC-1::0.01::P1::P1` = c(-0.1, -0.2),
+    `PRC-1::0.1::P1::P1` = c(-0.5, -0.9)
+  ), file.path(dir, "lfc.csv"))
+  data.table::fwrite(data.table::data.table(
+    depmap_id = c("ACH-1", "ACH-2"), pool_id = "P1", analyte_id = c("A1", "A2"), cellset = "PR500", screen = "S1"
+  ), file.path(dir, "analytes.csv"))
+  data.table::fwrite(data.table::data.table(
+    CompoundName = "drug_a", SampleID = "PRC-1", CompoundPlate = "P1", Release = "OncRef 23Q2",
+    GeneSymbolOfTargets = "TARGET1", TargetOrMechanism = "inhibitor of TARGET1"
+  ), file.path(dir, "compounds.csv"))
+  data.table::fwrite(data.table::data.table(
+    ModelID = c("ACH-1", "ACH-2"), CCLEName = c("CL1_BREAST", "CL2_LUNG"), OncotreeLineage = c("Breast", "Lung")
+  ), file.path(dir, "model.csv"))
+
+  df_prism <- purrr::quietly(convert_LEVEL6_prism_to_gDR_input)(file.path(dir, "lfc.csv"),
+                                                                file.path(dir, "analytes.csv"),
+                                                                file.path(dir, "compounds.csv"),
+                                                                file.path(dir, "model.csv"))
+  trt <- df_prism$result[Gnumber != gDRutils::get_env_identifiers("untreated_tag")[1]]
+  expect_equal(NROW(trt), 4)
+  expect_equal(unique(trt$Gnumber), "PRC-1")
+  expect_equal(unique(trt$DrugName), "drug_a")
+  expect_equal(unique(trt$drug_moa), "TARGET1")
+  expect_type(trt$Concentration, "double")
+  expect_setequal(trt$Concentration, c(0.01, 0.1))
+  expect_setequal(trt$clid, c("CL1_BREAST", "CL2_LUNG"))
+})

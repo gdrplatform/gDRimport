@@ -225,6 +225,10 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
   } else {
     data.table::setnames(cell_lines, "row_id", "row_name", skip_absent = TRUE)
   }
+  # OncRef compound lists (DepMap 24Q4) have no broad_id; SampleID identifies the compound there
+  if (!"broad_id" %in% names(treatment) && "SampleID" %in% names(treatment)) {
+    treatment[, broad_id := SampleID]
+  }
   data.table::setnames(treatment,
                        c("profile_id", "SampleID", "CompoundName", "GeneSymbolOfTargets"),
                        c("column_name", "column_name", "name", "moa"),
@@ -242,6 +246,7 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
 
     if (all(grepl("::", res$column_name)) && !"dose" %in% names(treatment)) {
       res[, c("column_name", "dose") := data.table::tstrsplit(column_name, "::", keep = c(1, 2))]
+      res[, dose := as.numeric(dose)]
     }
   } else {
     data.table::setnames(res, c("row_id", "profile_id"), c("row_name", "column_name"))
