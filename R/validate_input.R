@@ -22,7 +22,9 @@
 #' The checks also flag problems the loaders let through without an error: values in a
 #' Concentration sheet that are not numbers (those wells are dropped), raw plates
 #' without a barcode, duplicated wells, plates missing from the manifest or from the
-#' data, and Duration labels that do not fit the readouts of the control wells. PRISM
+#' data, treated wells whose cell line and Duration have no control wells, drugs that
+#' appear only at concentration 0, and Duration labels that do not fit the readouts of
+#' the control wells. PRISM
 #' input, processed MultiAssayExperiments and D300 files are recognised and checked
 #' too.
 #'
@@ -573,6 +575,8 @@ print.gdr_validation <- function(x, ...) {
   })
   if (data.table::is.data.table(view)) return(.bind_findings(out, view))
   .bind_findings(out, list(
+    .safely(.check_control_wells(view$wells, headers)),
+    .safely(.check_zero_dose_drugs(view$wells, headers)),
     .safely(.check_readouts(view$wells, view$plates)),
     .safely(.check_plate_outliers(view$plates)),
     .safely(.check_duration_plausibility(view$plates))
@@ -950,9 +954,11 @@ print.gdr_validation <- function(x, ...) {
   treatments <- loaded$treatments
   drug_cols <- intersect(unlist(gDRutils::get_env_identifiers(c("drug", "drug2", "drug3"), simplify = FALSE)),
                          names(treatments))
+  conc_cols <- intersect(unlist(gDRutils::get_env_identifiers(
+    c("concentration", "concentration2", "concentration3"), simplify = FALSE)), names(treatments))
   masked <- intersect(gDRutils::get_env_identifiers("masked_tag"), names(treatments))
   if (template %in% names(wells) && all(c("Template", wp) %in% names(treatments))) {
-    treatments <- unique(treatments[, c("Template", wp, drug_cols, masked), with = FALSE],
+    treatments <- unique(treatments[, c("Template", wp, drug_cols, conc_cols, masked), with = FALSE],
                          by = c("Template", wp))
     treatments[, (wp) := lapply(.SD, as.character), .SDcols = wp]
     wells <- merge(wells, treatments, by.x = c(template, wp), by.y = c("Template", wp),
@@ -978,6 +984,70 @@ print.gdr_validation <- function(x, ...) {
   masked <- intersect(gDRutils::get_env_identifiers("masked_tag"), names(wells))
   if (length(masked) == 1L) control <- control & !(as.logical(wells[[masked]]) %in% TRUE)
   control
+}
+
+
+# Treated wells in a group (cell line and Duration) that has no control well on any
+# plate. The processing normalises a treated well with the controls of its group, so
+# without them its normalised values are all NA, or it stops with an error that points
+# elsewhere. Controls on another plate of the same group are enough.
+#' @keywords internal
+.check_control_wells <- function(wells, headers) {
+  drug <- gDRutils::get_env_identifiers("drug")
+  if (!drug %in% names(wells)) return(NULL)
+  control <- .is_control_well(wells)
+  masked <- intersect(gDRutils::get_env_identifiers("masked_tag"), names(wells))
+  is_masked <- if (length(masked) == 1L) as.logical(wells[[masked]]) %in% TRUE else FALSE
+  treated <- !control & !is_masked & !is.na(wells[[drug]]) & nzchar(wells[[drug]])
+  if (!any(treated)) return(NULL)
+
+  group_cols <- intersect(c(headers[["cellline"]], headers[["duration"]]), names(wells))
+  group <- if (length(group_cols) > 0L) {
+    do.call(paste, c(lapply(group_cols, function(col) as.character(wells[[col]])), sep = " at Duration "))
+  } else {
+    rep("all plates", NROW(wells))
+  }
+  n_control <- tapply(control, group, sum)
+  n_treated <- tapply(treated, group, sum)
+  bad <- names(n_treated)[n_treated > 0 & n_control == 0]
+  if (length(bad) == 0L) {
+    return(.finding("control_wells", "PASS", "Every cell line and Duration with treated wells has control wells."))
+  }
+  barcode <- as.character(wells[[headers[["barcode"]]]])
+  hits <- vapply(bad, function(g) {
+    sprintf("%s (%s)", g, .head_list(unique(barcode[group == g & treated]), 3L))
+  }, character(1))
+  .coded_finding(48L, "control_wells", "FAIL", "C", .head_list(hits, 12L))
+}
+
+
+# Drugs whose every well is at concentration 0. They are read as a treatment without
+# a dose series, and the processing stops on them with an error that points
+# elsewhere. They are usually controls written as a drug id instead of the untreated
+# tag; a real drug with a few wells at 0 is not flagged.
+#' @keywords internal
+.check_zero_dose_drugs <- function(wells, headers) {
+  drug <- gDRutils::get_env_identifiers("drug")
+  conc <- gDRutils::get_env_identifiers("concentration")
+  if (!all(c(drug, conc) %in% names(wells))) return(NULL)
+  untreated <- tolower(gDRutils::get_env_identifiers("untreated_tag"))
+  ids <- as.character(wells[[drug]])
+  dose <- suppressWarnings(as.numeric(wells[[conc]]))
+  keep <- !is.na(ids) & nzchar(ids) & !tolower(ids) %in% untreated & !is.na(dose)
+  if (!any(keep)) return(NULL)
+  max_dose <- tapply(dose[keep], ids[keep], max)
+  bad <- names(max_dose)[max_dose == 0]
+  if (length(bad) == 0L) return(NULL)
+  template <- headers[["template"]]
+  hits <- vapply(bad, function(id) {
+    in_files <- if (template %in% names(wells)) {
+      sprintf(" in %s", .head_list(unique(as.character(wells[[template]][keep & ids == id])), 3L))
+    } else {
+      ""
+    }
+    sprintf("%s (%d well(s)%s)", id, sum(keep & ids == id), in_files)
+  }, character(1))
+  .coded_finding(49L, "zero_dose_drug", "FAIL", "C", .head_list(hits, 12L))
 }
 
 

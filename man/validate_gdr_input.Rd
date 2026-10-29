@@ -73,7 +73,9 @@ failure reported for \code{load_data} is the error the import itself would raise
 The checks also flag problems the loaders let through without an error: values in a
 Concentration sheet that are not numbers (those wells are dropped), raw plates
 without a barcode, duplicated wells, plates missing from the manifest or from the
-data, and Duration labels that do not fit the readouts of the control wells. PRISM
+data, treated wells whose cell line and Duration have no control wells, drugs that
+appear only at concentration 0, and Duration labels that do not fit the readouts of
+the control wells. PRISM
 input, processed MultiAssayExperiments and D300 files are recognised and checked
 too.
 }
