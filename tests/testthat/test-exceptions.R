@@ -33,8 +33,8 @@ test_that("check get_exception_data works correctly", {
 
 test_that("the codes added for validate_gdr_input are in the table", {
   obs <- gDRimport::get_exception_data()
-  expect_true(all(as.character(40:47) %in% obs$status_code))
-  expect_identical(unique(obs$type[obs$status_code %in% as.character(40:47)]), "error")
+  expect_true(all(as.character(40:49) %in% obs$status_code))
+  expect_identical(unique(obs$type[obs$status_code %in% as.character(40:49)]), "error")
 })
 
 test_that(".exception_code_from_message finds the code of every message in the table", {

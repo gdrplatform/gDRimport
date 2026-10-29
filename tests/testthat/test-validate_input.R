@@ -11,6 +11,7 @@ test_that("validate_gdr_input passes the clean bench test data", {
   expect_identical(sort(res$files$role), c("manifest", "raw", "raw", "template", "template"))
   expect_no_warn_fail(res)
   expect_finding(res, "load_data", "PASS")
+  expect_finding(res, "control_wells", "PASS")
   # Concentration_2 of the treated template is {0, 0.15}
   expect_finding(res, "combo_degenerate", "INFO")
   # every Duration + cell line group has 1 plate
@@ -30,8 +31,11 @@ test_that("validate_gdr_input passes the Tecan, EnVision csv and tsv test data",
   # sheet names and 28 original EnVision csv files
   res4 <- validate_gdr_input(data4_inputs())
   expect_identical(as.vector(table(res4$files$role)[c("manifest", "raw", "template")]), c(1L, 28L, 2L))
-  # row O of every plate has annotated wells without a readout
-  expect_no_warn_fail(res4, allowed = "readout_values")
+  # row O of every plate has annotated wells without a readout; the treated plates
+  # (120 h) have no control wells and only the day-0 plates do, so nothing at 120 h
+  # can be normalised (the processing gives NA for all of it)
+  expect_no_warn_fail(res4, allowed = c("readout_values", "control_wells"))
+  expect_finding(res4, "control_wells", "FAIL", status_code = 48L)
 
   # data5: medians over all wells fall from 0 h to 72 h, those of the control wells do not
   res5 <- validate_gdr_input(data5_inputs())
@@ -228,6 +232,41 @@ test_that("validate_gdr_input reports problems in the loaded data", {
     dt
   })
   expect_finding(validate_gdr_input(inputs), "zero_readouts", "WARN")
+})
+
+test_that("validate_gdr_input reports missing control wells and drugs only at concentration 0", {
+  expect_no_finding(validate_gdr_input(data1_inputs()), "zero_dose_drug")
+
+  # the controls of the treated template written as a drug at concentration 0: the
+  # import passes, and the processing stops later
+  inputs <- copy_inputs(data1_inputs())
+  expect_gt(relabel_controls(inputs[["Template_7daytreated.xlsx"]]), 0L)
+  res <- validate_gdr_input(inputs)
+  hit <- expect_finding(res, "control_wells", "FAIL", status_code = 48L)
+  expect_identical(hit$fix_tier, "C")
+  expect_match(hit$detail, "CL00011 at Duration 168 (201904197a)", fixed = TRUE)
+  # the day-0 plates are all controls
+  expect_false(grepl("at Duration 0", hit$detail))
+  hit <- expect_finding(res, "zero_dose_drug", "FAIL", status_code = 49L)
+  expect_match(hit$detail, "G00000001 (", fixed = TRUE)
+  expect_match(hit$detail, "Template_7daytreated.xlsx")
+
+  # 201904197b loses its controls but has the cell line and Duration of 201904197a,
+  # whose controls the processing uses for it
+  inputs <- copy_inputs(data1_inputs())
+  no_controls <- file.path(dirname(inputs[[1]]), "Template_no_controls.xlsx")
+  file.copy(inputs[["Template_7daytreated.xlsx"]], no_controls)
+  relabel_controls(no_controls, drug = NA)
+  set_xlsx_cell(inputs[["manifest.xlsx"]], 1, 5, 3, "Template_no_controls.xlsx")
+  set_xlsx_cell(inputs[["manifest.xlsx"]], 1, 5, 4, "CL00011")
+  res <- validate_gdr_input(c(inputs, no_controls))
+  expect_finding(res, "control_wells", "PASS")
+  expect_no_finding(res, "zero_dose_drug")
+
+  # a real drug with a few wells at concentration 0 is not flagged
+  inputs <- copy_inputs(data1_inputs())
+  set_xlsx_cell(inputs[["Template_7daytreated.xlsx"]], "Gnumber", 1, 21, "G00002")
+  expect_no_finding(validate_gdr_input(inputs), "zero_dose_drug")
 })
 
 test_that("validate_gdr_input finds plates that read far from comparable plates", {

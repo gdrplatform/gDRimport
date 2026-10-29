@@ -42,6 +42,26 @@ set_xlsx_cell <- function(path, sheet, row, col, value) {
   openxlsx::saveWorkbook(wb, path, overwrite = TRUE)
 }
 
+# Write `drug` into every cell of the first drug sheet of a template that holds an
+# untreated tag, so the controls read as a drug at concentration 0 (NA clears them).
+relabel_controls <- function(path, drug = "G00000001") {
+  sheet <- gDRutils::get_env_identifiers("drug")
+  untreated <- tolower(gDRutils::get_env_identifiers("untreated_tag"))
+  wb <- openxlsx::loadWorkbook(path)
+  cells <- as.matrix(openxlsx::read.xlsx(wb, sheet, colNames = FALSE, skipEmptyRows = FALSE,
+                                         skipEmptyCols = FALSE))
+  hit <- which(matrix(tolower(cells) %in% untreated, NROW(cells)), arr.ind = TRUE)
+  for (k in seq_len(NROW(hit))) {
+    if (is.na(drug)) {
+      openxlsx::deleteData(wb, sheet, cols = hit[k, 2], rows = hit[k, 1], gridExpand = TRUE)
+    } else {
+      openxlsx::writeData(wb, sheet, drug, startRow = hit[k, 1], startCol = hit[k, 2], colNames = FALSE)
+    }
+  }
+  openxlsx::saveWorkbook(wb, path, overwrite = TRUE)
+  NROW(hit)
+}
+
 # Apply `fn` to a tab-separated table and write it back.
 edit_tsv <- function(path, fn) {
   dt <- data.table::fread(path, sep = "\t", colClasses = "character")
