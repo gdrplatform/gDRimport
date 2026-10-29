@@ -1,5 +1,12 @@
 # Changelog
 
+## gDRimport 1.11.14 - 2026-10-28
+
+- fix convert_LEVEL6_prism_to_gDR_input() for DepMap OncRef compound
+  lists, which have SampleID instead of broad_id
+- fix convert_LEVEL6_prism_to_gDR_input() reading doses from the LFC
+  matrix header as text, which made every fit fail
+
 ## gDRimport 1.11.13 - 2026-10-25
 
 - fix load_results() for EnVision files to read the plate barcode from

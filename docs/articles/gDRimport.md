@@ -265,7 +265,7 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] gDRimport_1.11.13 BiocStyle_2.41.0 
+    ## [1] gDRimport_1.11.14 BiocStyle_2.41.0 
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] SummarizedExperiment_1.43.0 xfun_0.62                  
@@ -277,7 +277,7 @@ sessionInfo()
     ## [13] pkgconfig_2.0.3             Matrix_1.7-5               
     ## [15] data.table_1.18.6.1         checkmate_2.3.4            
     ## [17] desc_1.4.3                  S4Vectors_0.51.10          
-    ## [19] gDRutils_1.11.20            readxl_1.6.0               
+    ## [19] gDRutils_1.11.22            readxl_1.6.0               
     ## [21] assertthat_0.2.1            rematch_2.0.0              
     ## [23] lifecycle_1.0.5             compiler_4.6.1             
     ## [25] textshaping_1.0.5           Seqinfo_1.3.2              

@@ -23,5 +23,5 @@ list with manifest data.table and headers
 ``` r
  td <- get_test_data()
  ml <- load_manifest(manifest_path(td))
-#> INFO [2026-10-26 10:24:44] Manifest loaded successfully
+#> INFO [2026-10-29 08:46:49] Manifest loaded successfully
 ```
