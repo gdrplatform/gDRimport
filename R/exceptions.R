@@ -62,6 +62,8 @@ get_exception_data <- function(status_code = NULL) {
     "45", "Raw plate without barcode", "Plate(s) in the raw data have no barcode: %s", "error", "raw data",
     "46", "Duplicated wells", "%s readout(s) repeat a barcode and well that is already in the data: %s", "error", "raw data",
     "47", "Negative readouts", "%s readout value(s) are negative.", "error", "raw data",
+    "48", "No control wells", "Cell line(s) and Duration(s) have treated wells but no control wells (untreated tag in the drug column), so they cannot be normalised: %s", "error", "treatment",
+    "49", "Drug only at concentration 0", "Drug(s) appear only at concentration 0, so they are read as a treatment without a dose series; controls need the untreated tag: %s", "error", "treatment",
   )
   #nolint end
 
