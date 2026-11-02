@@ -1,5 +1,10 @@
 # Changelog
 
+## gDRimport 1.11.15 - 2026-10-29
+
+- add checks to validate_gdr_input() for missing control wells and for
+  drugs only at concentration 0
+
 ## gDRimport 1.11.14 - 2026-10-28
 
 - fix convert_LEVEL6_prism_to_gDR_input() for DepMap OncRef compound

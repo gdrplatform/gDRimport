@@ -6,7 +6,9 @@ failure reported for load_data is the error the import itself would raise.
 The checks also flag problems the loaders let through without an error: values in a
 Concentration sheet that are not numbers (those wells are dropped), raw plates
 without a barcode, duplicated wells, plates missing from the manifest or from the
-data, and Duration labels that do not fit the readouts of the control wells. PRISM
+data, treated wells whose cell line and Duration have no control wells, drugs that
+appear only at concentration 0, and Duration labels that do not fit the readouts of
+the control wells. PRISM
 input, processed MultiAssayExperiments and D300 files are recognised and checked
 too."><meta property="og:description" content="Checks a set of input files and reports every problem it finds, from unreadable
 files to plate-level anomalies in the readouts. Bench input (a manifest, treatment
@@ -15,7 +17,9 @@ failure reported for load_data is the error the import itself would raise.
 The checks also flag problems the loaders let through without an error: values in a
 Concentration sheet that are not numbers (those wells are dropped), raw plates
 without a barcode, duplicated wells, plates missing from the manifest or from the
-data, and Duration labels that do not fit the readouts of the control wells. PRISM
+data, treated wells whose cell line and Duration have no control wells, drugs that
+appear only at concentration 0, and Duration labels that do not fit the readouts of
+the control wells. PRISM
 input, processed MultiAssayExperiments and D300 files are recognised and checked
 too."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -25,7 +29,7 @@ too."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">gDRimport</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.15</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -65,7 +69,9 @@ failure reported for <code>load_data</code> is the error the import itself would
 The checks also flag problems the loaders let through without an error: values in a
 Concentration sheet that are not numbers (those wells are dropped), raw plates
 without a barcode, duplicated wells, plates missing from the manifest or from the
-data, and Duration labels that do not fit the readouts of the control wells. PRISM
+data, treated wells whose cell line and Duration have no control wells, drugs that
+appear only at concentration 0, and Duration labels that do not fit the readouts of
+the control wells. PRISM
 input, processed MultiAssayExperiments and D300 files are recognised and checked
 too.</p>
     </div>
@@ -190,7 +196,8 @@ or the extension rewritten. In xlsx files only the repaired cells change.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4: import_corrections     INFO</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5:    duplicate_wells     PASS</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6:   barcode_coverage     PASS</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7:     plate_outliers     INFO</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7:      control_wells     PASS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8:     plate_outliers     INFO</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                     detail</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                     &lt;char&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1:                                                                                          Manifest loaded (12 plate(s)).</span>
@@ -199,7 +206,8 @@ or the extension rewritten. In xlsx files only the repaired cells change.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4:                                                                   load_data() changed the case of 320 untreated tag(s).</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5:                                                                                      No barcode and well is read twice.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6:                                                          Every plate in the manifest has data, and the other way round.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7:                                         Not checked: no group of 4 or more plates with the same Duration and cell line.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7:                                                      Every cell line and Duration with treated wells has control wells.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8:                                         Not checked: no group of 4 or more plates with the same Duration and cell line.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    fix_tier status_code</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      &lt;char&gt;       &lt;int&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1:     &lt;NA&gt;          NA</span>
@@ -209,6 +217,7 @@ or the extension rewritten. In xlsx files only the repaired cells change.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5:     &lt;NA&gt;          NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6:     &lt;NA&gt;          NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 7:     &lt;NA&gt;          NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8:     &lt;NA&gt;          NA</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># repair copies of the files instead of only reporting</span></span></span>
 <span class="r-in"><span><span class="va">fixed</span> <span class="op">&lt;-</span> <span class="fu">validate_gdr_input</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="manifest_path-method.html">manifest_path</a></span><span class="op">(</span><span class="va">td</span><span class="op">)</span>, <span class="fu"><a href="template_path-method.html">template_path</a></span><span class="op">(</span><span class="va">td</span><span class="op">)</span>, <span class="fu"><a href="result_path-method.html">result_path</a></span><span class="op">(</span><span class="va">td</span><span class="op">)</span><span class="op">)</span>,</span></span>

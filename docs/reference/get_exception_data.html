@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gDRimport</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.15</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -123,6 +123,8 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 45:          45                Raw plate without barcode</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 46:          46                         Duplicated wells</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 47:          47                        Negative readouts</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 48:          48                         No control wells</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49:          49             Drug only at concentration 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     status_code                                    title</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;char&gt;                                   &lt;char&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                      sprintf_text</span>
@@ -174,6 +176,8 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 45:                                                                                                                                                                  Plate(s) in the raw data have no barcode: %s</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 46:                                                                                                                                       %s readout(s) repeat a barcode and well that is already in the data: %s</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 47:                                                                                                                                                                             %s readout value(s) are negative.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 48:                                                                     Cell line(s) and Duration(s) have treated wells but no control wells (untreated tag in the drug column), so they cannot be normalised: %s</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49:                                                                            Drug(s) appear only at concentration 0, so they are read as a treatment without a dose series; controls need the untreated tag: %s</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                      sprintf_text</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                            &lt;char&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        type   input_type</span>
@@ -225,6 +229,8 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 45:   error     raw data</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 46:   error     raw data</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 47:   error     raw data</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 48:   error    treatment</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49:   error    treatment</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        type   input_type</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      &lt;char&gt;       &lt;char&gt;</span>
 </code></pre></div>

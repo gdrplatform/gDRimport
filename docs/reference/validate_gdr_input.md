@@ -9,10 +9,11 @@ so a failure reported for `load_data` is the error the import itself
 would raise. The checks also flag problems the loaders let through
 without an error: values in a Concentration sheet that are not numbers
 (those wells are dropped), raw plates without a barcode, duplicated
-wells, plates missing from the manifest or from the data, and Duration
-labels that do not fit the readouts of the control wells. PRISM input,
-processed MultiAssayExperiments and D300 files are recognised and
-checked too.
+wells, plates missing from the manifest or from the data, treated wells
+whose cell line and Duration have no control wells, drugs that appear
+only at concentration 0, and Duration labels that do not fit the
+readouts of the control wells. PRISM input, processed
+MultiAssayExperiments and D300 files are recognised and checked too.
 
 ## Usage
 
@@ -145,7 +146,8 @@ res$findings
 #> 4: import_corrections     INFO
 #> 5:    duplicate_wells     PASS
 #> 6:   barcode_coverage     PASS
-#> 7:     plate_outliers     INFO
+#> 7:      control_wells     PASS
+#> 8:     plate_outliers     INFO
 #>                                                                                                                     detail
 #>                                                                                                                     <char>
 #> 1:                                                                                          Manifest loaded (12 plate(s)).
@@ -154,7 +156,8 @@ res$findings
 #> 4:                                                                   load_data() changed the case of 320 untreated tag(s).
 #> 5:                                                                                      No barcode and well is read twice.
 #> 6:                                                          Every plate in the manifest has data, and the other way round.
-#> 7:                                         Not checked: no group of 4 or more plates with the same Duration and cell line.
+#> 7:                                                      Every cell line and Duration with treated wells has control wells.
+#> 8:                                         Not checked: no group of 4 or more plates with the same Duration and cell line.
 #>    fix_tier status_code
 #>      <char>       <int>
 #> 1:     <NA>          NA
@@ -164,6 +167,7 @@ res$findings
 #> 5:     <NA>          NA
 #> 6:     <NA>          NA
 #> 7:     <NA>          NA
+#> 8:     <NA>          NA
 
 # repair copies of the files instead of only reporting
 fixed <- validate_gdr_input(c(manifest_path(td), template_path(td), result_path(td)),

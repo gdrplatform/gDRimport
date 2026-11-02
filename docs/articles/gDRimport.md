@@ -163,7 +163,8 @@ res$findings[, c("check", "severity", "detail")]
     ## 4: import_corrections     INFO
     ## 5:    duplicate_wells     PASS
     ## 6:   barcode_coverage     PASS
-    ## 7:     plate_outliers     INFO
+    ## 7:      control_wells     PASS
+    ## 8:     plate_outliers     INFO
     ##                                                                                                                     detail
     ##                                                                                                                     <char>
     ## 1:                                                                                          Manifest loaded (12 plate(s)).
@@ -172,7 +173,8 @@ res$findings[, c("check", "severity", "detail")]
     ## 4:                                                                   load_data() changed the case of 320 untreated tag(s).
     ## 5:                                                                                      No barcode and well is read twice.
     ## 6:                                                          Every plate in the manifest has data, and the other way round.
-    ## 7:                                         Not checked: no group of 4 or more plates with the same Duration and cell line.
+    ## 7:                                                      Every cell line and Duration with treated wells has control wells.
+    ## 8:                                         Not checked: no group of 4 or more plates with the same Duration and cell line.
 
 Each finding has a `status_code` that points to
 [`get_exception_data()`](https://gdrplatform.github.io/gDRimport/reference/get_exception_data.md)
@@ -244,7 +246,7 @@ dependencies.
 sessionInfo()
 ```
 
-    ## R version 4.6.1 (2026-06-24)
+    ## R version 4.6.2 (2026-10-29)
     ## Platform: x86_64-pc-linux-gnu
     ## Running under: Ubuntu 24.04.5 LTS
     ## 
@@ -265,21 +267,21 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] gDRimport_1.11.14 BiocStyle_2.41.0 
+    ## [1] gDRimport_1.11.15 BiocStyle_2.41.0 
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] SummarizedExperiment_1.43.0 xfun_0.62                  
     ##  [3] bslib_0.12.0                htmlwidgets_1.6.4          
-    ##  [5] Biobase_2.73.2              lattice_0.22-9             
-    ##  [7] vctrs_0.7.3                 tools_4.6.1                
-    ##  [9] generics_0.1.4              stats4_4.6.1               
+    ##  [5] Biobase_2.73.2              lattice_0.23-1             
+    ##  [7] vctrs_0.7.3                 tools_4.6.2                
+    ##  [9] generics_0.1.4              stats4_4.6.2               
     ## [11] tibble_3.3.1                R.oo_1.27.1                
-    ## [13] pkgconfig_2.0.3             Matrix_1.7-5               
+    ## [13] pkgconfig_2.0.3             Matrix_1.7-6               
     ## [15] data.table_1.18.6.1         checkmate_2.3.4            
     ## [17] desc_1.4.3                  S4Vectors_0.51.10          
     ## [19] gDRutils_1.11.22            readxl_1.6.0               
     ## [21] assertthat_0.2.1            rematch_2.0.0              
-    ## [23] lifecycle_1.0.5             compiler_4.6.1             
+    ## [23] lifecycle_1.0.5             compiler_4.6.2             
     ## [25] textshaping_1.0.5           Seqinfo_1.3.2              
     ## [27] htmltools_0.5.9             sass_0.4.10                
     ## [29] yaml_2.3.12                 pillar_1.11.1              
@@ -288,7 +290,7 @@ sessionInfo()
     ## [35] DelayedArray_0.39.8         abind_1.4-8                
     ## [37] digest_0.6.39               stringi_1.8.9              
     ## [39] bookdown_0.48               rio_1.3.1                  
-    ## [41] fastmap_1.2.0               grid_4.6.1                 
+    ## [41] fastmap_1.2.0               grid_4.6.2                 
     ## [43] cli_3.6.6                   SparseArray_1.13.4         
     ## [45] magrittr_2.0.5              S4Arrays_1.13.2            
     ## [47] backports_1.5.1             rmarkdown_2.32             

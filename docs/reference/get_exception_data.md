@@ -81,6 +81,8 @@ get_exception_data()
 #> 45:          45                Raw plate without barcode
 #> 46:          46                         Duplicated wells
 #> 47:          47                        Negative readouts
+#> 48:          48                         No control wells
+#> 49:          49             Drug only at concentration 0
 #>     status_code                                    title
 #>          <char>                                   <char>
 #>                                                                                                                                                                                                      sprintf_text
@@ -132,6 +134,8 @@ get_exception_data()
 #> 45:                                                                                                                                                                  Plate(s) in the raw data have no barcode: %s
 #> 46:                                                                                                                                       %s readout(s) repeat a barcode and well that is already in the data: %s
 #> 47:                                                                                                                                                                             %s readout value(s) are negative.
+#> 48:                                                                     Cell line(s) and Duration(s) have treated wells but no control wells (untreated tag in the drug column), so they cannot be normalised: %s
+#> 49:                                                                            Drug(s) appear only at concentration 0, so they are read as a treatment without a dose series; controls need the untreated tag: %s
 #>                                                                                                                                                                                                      sprintf_text
 #>                                                                                                                                                                                                            <char>
 #>        type   input_type
@@ -183,6 +187,8 @@ get_exception_data()
 #> 45:   error     raw data
 #> 46:   error     raw data
 #> 47:   error     raw data
+#> 48:   error    treatment
+#> 49:   error    treatment
 #>        type   input_type
 #>      <char>       <char>
 ```
