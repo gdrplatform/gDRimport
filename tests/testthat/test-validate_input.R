@@ -274,6 +274,16 @@ test_that("validate_gdr_input reports missing control wells and drugs only at co
   wells$Gnumber[wells$Gnumber == "vehicle"] <- "G00000001"
   expect_identical(.check_control_wells(wells, headers)$severity, "FAIL")
 
+  # control wells for the plate medians: a background drug on every well of a plate
+  # leaves them controls, a drug 2 given at several doses does not
+  wells$Gnumber <- rep(c("vehicle", "vehicle", "G00000002", "G00000002"), 2L)
+  wells$Concentration_2 <- 0.5
+  plates <- wells$Barcode
+  expect_identical(.is_control_well(wells, plates), wells$Gnumber == "vehicle")
+  expect_false(any(.is_control_well(wells)))
+  wells$Concentration_2[wells$Barcode == "P2"] <- c(0.1, 0.5, 0.1, 0.5)
+  expect_identical(.is_control_well(wells, plates), wells$Gnumber == "vehicle" & wells$Barcode == "P1")
+
   # a real drug with a few wells at concentration 0 is not flagged
   inputs <- copy_inputs(data1_inputs())
   set_xlsx_cell(inputs[["Template_7daytreated.xlsx"]], "Gnumber", 1, 21, "G00002")

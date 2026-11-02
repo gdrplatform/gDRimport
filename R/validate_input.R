@@ -968,18 +968,31 @@ print.gdr_validation <- function(x, ...) {
 }
 
 
-# Control wells: the first drug is an untreated tag, any other drug is empty or
-# untreated, and the well is not masked.
+# Control wells: the first drug is an untreated tag, any other drug is empty, untreated
+# or a background drug, and the well is not masked. With `barcode`, a drug column counts
+# as background on a plate where every well has the same drug in it at the same
+# concentration (a cotreatment); without it, only empty or untreated count.
 #' @keywords internal
-.is_control_well <- function(wells) {
+.is_control_well <- function(wells, barcode = NULL) {
   untreated <- tolower(gDRutils::get_env_identifiers("untreated_tag"))
-  drug_cols <- intersect(unlist(gDRutils::get_env_identifiers(c("drug", "drug2", "drug3"), simplify = FALSE)),
-                         names(wells))
-  if (length(drug_cols) == 0L) return(rep(FALSE, NROW(wells)))
+  ids <- c("drug", "drug2", "drug3")
+  drug_cols <- unlist(gDRutils::get_env_identifiers(ids, simplify = FALSE))
+  conc_cols <- unlist(gDRutils::get_env_identifiers(
+    c("concentration", "concentration2", "concentration3"), simplify = FALSE))
+  present <- drug_cols %in% names(wells)
+  if (!present[1]) return(rep(FALSE, NROW(wells)))
   control <- tolower(wells[[drug_cols[1]]]) %in% untreated
-  for (col in drug_cols[-1]) {
-    v <- tolower(wells[[col]])
-    control <- control & (is.na(v) | v %in% untreated)
+  for (k in which(present)[-1]) {
+    v <- as.character(wells[[drug_cols[k]]])
+    ok <- is.na(v) | tolower(v) %in% untreated
+    if (!is.null(barcode)) {
+      dose <- if (conc_cols[k] %in% names(wells)) as.character(wells[[conc_cols[k]]]) else rep("", NROW(wells))
+      key <- paste(v, dose, sep = "\r")
+      n_key <- tapply(key, barcode, function(x) data.table::uniqueN(x))
+      background <- !is.na(v) & as.vector(n_key[barcode]) == 1L
+      ok <- ok | background
+    }
+    control <- control & ok
   }
   masked <- intersect(gDRutils::get_env_identifiers("masked_tag"), names(wells))
   if (length(masked) == 1L) control <- control & !(as.logical(wells[[masked]]) %in% TRUE)
@@ -1060,8 +1073,8 @@ print.gdr_validation <- function(x, ...) {
 #' @keywords internal
 .plate_table <- function(wells, headers) {
   readout <- suppressWarnings(as.numeric(wells$ReadoutValue))
-  control <- .is_control_well(wells)
   barcode <- as.character(wells[[headers[["barcode"]]]])
+  control <- .is_control_well(wells, barcode)
   plates <- unique(barcode)
   rows <- split(seq_len(NROW(wells)), factor(barcode, levels = plates))
   first_value <- function(col) {
