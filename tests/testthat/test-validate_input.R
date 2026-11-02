@@ -263,6 +263,17 @@ test_that("validate_gdr_input reports missing control wells and drugs only at co
   expect_finding(res, "control_wells", "PASS")
   expect_no_finding(res, "zero_dose_drug")
 
+  # a background drug in the second drug column of every well, controls included
+  wells <- data.table::data.table(
+    Barcode = rep(c("P1", "P2"), each = 4L), clid = "CL1", Duration = 72,
+    Gnumber = rep(c("vehicle", "vehicle", "G00000002", "G00000002"), 2L),
+    Gnumber_2 = "G00000003"
+  )
+  headers <- list(barcode = "Barcode", cellline = "clid", duration = "Duration")
+  expect_identical(.check_control_wells(wells, headers)$severity, "PASS")
+  wells$Gnumber[wells$Gnumber == "vehicle"] <- "G00000001"
+  expect_identical(.check_control_wells(wells, headers)$severity, "FAIL")
+
   # a real drug with a few wells at concentration 0 is not flagged
   inputs <- copy_inputs(data1_inputs())
   set_xlsx_cell(inputs[["Template_7daytreated.xlsx"]], "Gnumber", 1, 21, "G00002")

@@ -990,15 +990,19 @@ print.gdr_validation <- function(x, ...) {
 # Treated wells in a group (cell line and Duration) that has no control well on any
 # plate. The processing normalises a treated well with the controls of its group, so
 # without them its normalised values are all NA, or it stops with an error that points
-# elsewhere. Controls on another plate of the same group are enough.
+# elsewhere. Controls on another plate of the same group are enough. Only the first
+# drug column decides: a background drug in the other drug columns of every well
+# (controls included) is processed fine. The price is that a combination without a
+# single well untreated in every drug column passes.
 #' @keywords internal
 .check_control_wells <- function(wells, headers) {
   drug <- gDRutils::get_env_identifiers("drug")
   if (!drug %in% names(wells)) return(NULL)
-  control <- .is_control_well(wells)
   masked <- intersect(gDRutils::get_env_identifiers("masked_tag"), names(wells))
   is_masked <- if (length(masked) == 1L) as.logical(wells[[masked]]) %in% TRUE else FALSE
-  treated <- !control & !is_masked & !is.na(wells[[drug]]) & nzchar(wells[[drug]])
+  untreated <- tolower(wells[[drug]]) %in% tolower(gDRutils::get_env_identifiers("untreated_tag"))
+  control <- untreated & !is_masked
+  treated <- !untreated & !is_masked & !is.na(wells[[drug]]) & nzchar(wells[[drug]])
   if (!any(treated)) return(NULL)
 
   group_cols <- intersect(c(headers[["cellline"]], headers[["duration"]]), names(wells))
