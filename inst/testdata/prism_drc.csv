@@ -1,0 +1,5 @@
+pool_id,depmap_id,lua,cell_set,growth_condition,pert_type,pert_name,pert_id,day,x_project_id,pert_plate,pert_vehicle,fit_name,lower_limit,upper_limit,slope,inflection,mse,mad,frac_var_explained,successful_fit,auc_riemann,minimum_dose,maximum_dose,auc,log2_auc,log2_ic50,ic50,screen
+P1,ACH-000004,LUA-0001,CS1,Suspension,trt_cp,G00106,PRC-000000001-001-01,5,TEST_PROJECT,PLATE1,DMSO,drc_drm_constrained,0.21,0.98,-1.4,0.85,0.011,0.08,0.91,TRUE,0.58,0.00046,10,0.6012,-0.7341,0.1043,1.0750,TEST_SCREEN
+P1,ACH-000005,LUA-0002,CS1,Suspension,trt_cp,G00106,PRC-000000001-001-01,5,TEST_PROJECT,PLATE1,DMSO,dr4pl_initL_constrained,0.35,1.01,-0.9,2.4,0.014,0.09,0.77,TRUE,0.71,0.00046,10,0.7208,-0.4723,NA,NA,TEST_SCREEN
+P2,ACH-000005,LUA-0003,CS1,Suspension,trt_cp,G00106,PRC-000000001-001-01,5,TEST_PROJECT,PLATE2,DMSO,drc_drm_unconstrained,0.29,0.96,-1.1,1.7,0.012,0.07,0.83,TRUE,0.66,0.00046,10,0.6705,-0.5767,0.9543,1.9378,TEST_SCREEN
+P1,ACH-000006,LUA-0004,CS1,Suspension,trt_cp,G00106,PRC-000000001-001-01,5,TEST_PROJECT,PLATE1,DMSO,,NA,NA,NA,NA,NA,NA,NA,FALSE,0.97,0.00046,10,NA,NA,NA,NA,TEST_SCREEN

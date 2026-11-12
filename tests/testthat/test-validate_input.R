@@ -352,6 +352,12 @@ test_that("validate_gdr_input checks PRISM input", {
   expect_finding(validate_gdr_input(c(testdata("prism_collapsed_LOGFC.csv"), testdata("prism_model.csv"))),
                  "prism_data", "FAIL")
 
+  # a DRC table next to the LFC data is recognised, not taken for a cell line file
+  res <- validate_gdr_input(c(testdata("prism_sa.csv"), testdata("prism_model.csv"), testdata("prism_drc.csv")))
+  expect_identical(res$files$role[res$files$file == "prism_drc.csv"], "prism_drc")
+  expect_identical(res$verdict, "PASS")
+  expect_finding(res, "prism_drc", "INFO")
+
   # the converter's synonyms count as the columns they stand for
   inputs <- copy_inputs(c(testdata("prism_sa.csv"), testdata("prism_model.csv")))
   dt <- data.table::fread(inputs[["prism_sa.csv"]])
