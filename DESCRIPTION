@@ -1,8 +1,8 @@
 Package: gDRimport
 Type: Package
 Title: Package for handling the import of dose-response data
-Version: 1.11.15
-Date: 2026-10-29
+Version: 1.11.16
+Date: 2026-11-12
 Authors@R: c(
     person("Arkadiusz", "Gladki", role=c("aut", "cre"), email="gladki.arkadiusz@gmail.com",
            comment = c(ORCID = "0000-0002-7059-6378")),
@@ -28,7 +28,7 @@ Imports:
     checkmate,
     data.table,
     futile.logger,
-    gDRutils (>= 1.7.1),
+    gDRutils (>= 1.11.18),
     magrittr,
     methods,
     MultiAssayExperiment,
