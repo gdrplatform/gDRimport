@@ -28,7 +28,7 @@ Imports:
     checkmate,
     data.table,
     futile.logger,
-    gDRutils (>= 1.11.18),
+    gDRutils (>= 1.7.1),
     magrittr,
     methods,
     MultiAssayExperiment,

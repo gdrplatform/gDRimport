@@ -1,7 +1,6 @@
 ## gDRimport 1.11.16 - 2026-11-12
-* add `add_PRISM_metrics()` to import the curve fits of a PRISM DRC table into Metrics with fit_source PRISM
+* add `read_PRISM_drc()` to read the curve fits of a PRISM DRC table with the cell line and Duration of the import
 * add the PRISM DRC table to the files `validate_gdr_input()` recognises
-* bump the gDRutils requirement to 1.11.18, which records the fit provenance
 
 ## gDRimport 1.11.15 - 2026-10-29
 * add checks to validate_gdr_input() for missing control wells and for drugs only at concentration 0

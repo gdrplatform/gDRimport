@@ -1284,7 +1284,7 @@ print.gdr_validation <- function(x, ...) {
 }
 
 
-# A PRISM DRC table is not part of the import: add_PRISM_metrics() adds its curves to the
+# A PRISM DRC table is not part of the import: read_PRISM_drc() reads its curves for the
 # processed data. Check that it has what that function reads.
 #' @keywords internal
 .check_prism_drc <- function(path) {
@@ -1297,7 +1297,7 @@ print.gdr_validation <- function(x, ...) {
     ), "C"))
   }
   .finding("prism_drc", "INFO", sprintf(
-    "%s is a PRISM DRC table; add_PRISM_metrics() adds its curves to the processed data.", basename(path)
+    "%s is a PRISM DRC table; read_PRISM_drc() reads its curves for the processed data.", basename(path)
   ))
 }
 
