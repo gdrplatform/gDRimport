@@ -6,17 +6,20 @@
 \usage{
 convert_LEVEL6_prism_to_gDR_input(
   prism_data_path,
-  cell_line_data_path,
+  cell_line_data_path = NULL,
   treatment_data_path,
   meta_data_path,
-  readout_min = 1.03
+  readout_min = 1.03,
+  dose_units = "uM"
 )
 }
 \arguments{
 \item{prism_data_path}{path to PRISM LEVEL6 csv file with collapsed
 log fold change data}
 
-\item{cell_line_data_path}{path to cell line info data}
+\item{cell_line_data_path}{path to cell line info data, or \code{NULL}. Cell lines
+are taken from the LFC data, so the file is only recorded in the import provenance;
+the sequencing readout of DepMap OncRef comes without one.}
 
 \item{treatment_data_path}{path to collapsed treatment info data}
 
@@ -24,12 +27,27 @@ log fold change data}
 which are referenced by a dataset contained within the DepMap portal}
 
 \item{readout_min}{minimum ReadoutValue}
+
+\item{dose_units}{dose units to keep when the data has a \code{pert_dose_unit}
+column (DepMap OncRef from 25Q2 has antibodies and ADCs in ug/mL), or \code{NULL}
+to keep all. gDR expects concentrations in uM.}
 }
 \value{
 \code{data.table} object with input data for gDR pipeline
 }
 \description{
-Load, convert and process the level 6 PRISM data into a gDR input
+Reads collapsed log fold changes from the PRISM Repurposing screens (LFC matrix
+or long \code{row_id}/\code{profile_id} table) and from the DepMap PRISM
+Oncology Reference (LFC matrix up to 24Q4, long \code{LFCCollapsed} tables of the
+Luminex and sequencing readouts from 25Q2).
+}
+\details{
+Cell lines are matched to \code{ModelID} in the model metadata by their DepMap
+ID. Cell lines that failed STR profiling (\code{_FAILED_STR} in the ID) and cell
+lines missing from the model metadata are dropped. The cell line ID is the
+\code{CCLEName}, or the \code{ModelID} for models without one. Measurements that
+DepMap flags as outliers are kept with \code{masked = TRUE}. Everything dropped or
+masked is listed in \code{get_import_provenance(x)$corrections}.
 }
 \examples{
  prism_data_path <- system.file("testdata/prism_collapsed_LOGFC.csv", package = "gDRimport")

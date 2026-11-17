@@ -1,3 +1,8 @@
+## gDRimport 1.11.16 - 2026-11-17
+* read long DepMap OncRef LFC tables, the 23Q4 compound list and pool-prefixed cell IDs in PRISM LEVEL6 import
+* drop PRISM cell lines that failed STR or are not in Model.csv, and use ModelID when CCLEName is empty
+* add dose_units (uM by default), mask DepMap outliers and take drug_moa from TargetOrMechanism in PRISM LEVEL6
+
 ## gDRimport 1.11.15 - 2026-10-29
 * add checks to validate_gdr_input() for missing control wells and for drugs only at concentration 0
 
