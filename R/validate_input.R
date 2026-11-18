@@ -1234,7 +1234,8 @@ print.gdr_validation <- function(x, ...) {
 #' @keywords internal
 .prism_role <- function(cols) {
   synonyms <- .prism_level5_column_synonyms()
-  has_lfc <- any(synonyms$LFC_cb %in% cols)
+  level6 <- .prism_level6_column_synonyms()$data
+  has_lfc <- any(c(synonyms$LFC_cb, level6$LFC) %in% cols)
   if ("ModelID" %in% cols && any(c("CCLEName", "OncotreeLineage") %in% cols)) return("prism_meta")
   # the curve fits PRISM delivers; it also has depmap_id, so it goes before the cell line file
   if (all(.prism_drc_fit_columns() %in% cols)) return("prism_drc")
@@ -1242,7 +1243,8 @@ print.gdr_validation <- function(x, ...) {
     return("prism_data")
   }
   if (length(cols) > 1L && cols[1] == "V1" && !all(grepl("^V[0-9]+$", cols))) return("prism_data")
-  if (has_lfc && any(c("row_id", "row_name") %in% cols) && any(c("profile_id", "column_name") %in% cols)) {
+  if (has_lfc && any(c("row_name", level6$row_name) %in% cols) &&
+        any(c("column_name", level6$column_name) %in% cols)) {
     return("prism_data")
   }
   if (!has_lfc && any(c("row_name", "row_id", "depmap_id") %in% cols)) return("prism_cell_lines")
@@ -1276,8 +1278,7 @@ print.gdr_validation <- function(x, ...) {
     return(.bind_findings(out, .finding("prism_data", "FAIL", "No PRISM LFC data file was found.", "C")))
   }
   for (path in data_files) {
-    out <- c(out, list(.check_prism_data(path, has_cell_lines = any(files$role == "prism_cell_lines"),
-                                         has_treatment = any(files$role == "prism_treatment"))))
+    out <- c(out, list(.check_prism_data(path, has_treatment = any(files$role == "prism_treatment"))))
   }
   for (path in path_of("prism_drc")) out <- c(out, list(.check_prism_drc(path)))
   .bind_findings(out)
@@ -1305,7 +1306,7 @@ print.gdr_validation <- function(x, ...) {
 # Check a PRISM data file against what the LEVEL5 or LEVEL6 converter requires, after
 # the converter's own column synonyms.
 #' @keywords internal
-.check_prism_data <- function(path, has_cell_lines, has_treatment) {
+.check_prism_data <- function(path, has_treatment) {
   cols <- .peek_columns(path)
   synonyms <- .prism_level5_column_synonyms()
   for (target in names(synonyms)) {
@@ -1322,13 +1323,13 @@ print.gdr_validation <- function(x, ...) {
       }
     ))
   }
-  if ((length(cols) > 1L && cols[1] == "V1") ||
-        ("LFC_cb" %in% cols && all(c("row_id", "profile_id") %in% cols))) {
+  level6 <- .prism_level6_column_synonyms()$data
+  is_long6 <- any(c("LFC_cb", level6$LFC) %in% cols) && any(level6$row_name %in% cols) &&
+    any(level6$column_name %in% cols)
+  if ((length(cols) > 1L && cols[1] == "V1") || is_long6) {
+    # the LEVEL6 converter takes cell lines from the LFC data, so no cell line file is needed
     return(.bind_findings(
       .finding("prism_level", "PASS", sprintf("%s is PRISM LEVEL6 data.", file)),
-      if (!has_cell_lines) {
-        .finding("prism_data", "FAIL", "LEVEL6 data needs a cell line file (row_name or depmap_id).", "C")
-      },
       if (!has_treatment) {
         .finding("prism_data", "FAIL", "LEVEL6 data needs a treatment file (column_name or profile_id).", "C")
       }
