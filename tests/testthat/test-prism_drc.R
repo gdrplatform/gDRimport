@@ -33,6 +33,10 @@ test_that("read_PRISM_drc leaves the cell line NA without a CCLE name and uses c
   drc_ccle <- file.path(dir, "drc.csv")
   data.table::fwrite(drc, drc_ccle)
   expect_identical(read_PRISM_drc(drc_ccle)[[gDRutils::get_env_identifiers("cellline")]], drc$ccle_name)
+  # without depmap_id
+  data.table::fwrite(drc[, -"depmap_id"], drc_ccle)
+  expect_no_warning(curves <- read_PRISM_drc(drc_ccle))
+  expect_identical(curves[[gDRutils::get_env_identifiers("cellline")]], drc$ccle_name)
 })
 
 test_that("read_PRISM_drc checks its input", {

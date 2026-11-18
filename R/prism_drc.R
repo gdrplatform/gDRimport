@@ -33,7 +33,9 @@ read_PRISM_drc <- function(drc_path, meta_data_path = NULL) {
   checkmate::assert_file_exists(drc_path)
   if (!is.null(meta_data_path)) checkmate::assert_file_exists(meta_data_path)
 
-  drc <- data.table::fread(drc_path, colClasses = list(character = c("pert_name", "depmap_id")))
+  # identifiers read as text; depmap_id is optional when the table has ccle_name
+  id_cols <- intersect(c("pert_name", "depmap_id"), names(data.table::fread(drc_path, nrows = 0L)))
+  drc <- data.table::fread(drc_path, colClasses = list(character = id_cols))
   checkmate::assert_names(names(drc), must.include = c(
     .prism_drc_fit_columns(), "pert_name", "day", "fit_name", "frac_var_explained", "maximum_dose"
   ))
