@@ -1,3 +1,7 @@
+## gDRimport 1.11.17 - 2026-11-18
+* add `read_PRISM_drc()` to read the curve fits of a PRISM DRC table with the cell line and Duration of the import
+* add the PRISM DRC table to the files `validate_gdr_input()` recognises
+
 ## gDRimport 1.11.16 - 2026-11-17
 * read long DepMap OncRef LFC tables, the 23Q4 compound list and pool-prefixed cell IDs in PRISM LEVEL6 import
 * drop PRISM cell lines that failed STR or are not in Model.csv, and use ModelID when CCLEName is empty

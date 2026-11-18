@@ -318,7 +318,7 @@ print.gdr_validation <- function(x, ...) {
 
 
 # One row per file with its role: manifest, template, template_long, raw, raw_long,
-# prism_data, prism_meta, prism_cell_lines, prism_treatment, mae, d300 or unknown.
+# prism_data, prism_meta, prism_cell_lines, prism_treatment, prism_drc, mae, d300 or unknown.
 # Manifests are found first, so the templates they reference are recognised by name
 # even when they cannot be loaded on their own (a template that holds only the
 # untreated wells, or one whose sheets are misnamed).
@@ -1237,6 +1237,8 @@ print.gdr_validation <- function(x, ...) {
   level6 <- .prism_level6_column_synonyms()$data
   has_lfc <- any(c(synonyms$LFC_cb, level6$LFC) %in% cols)
   if ("ModelID" %in% cols && any(c("CCLEName", "OncotreeLineage") %in% cols)) return("prism_meta")
+  # the curve fits PRISM delivers; it also has depmap_id, so it goes before the cell line file
+  if (all(.prism_drc_fit_columns() %in% cols)) return("prism_drc")
   if (has_lfc && any(c("ccle_name", "depmap_id") %in% cols) && any(synonyms$pert_iname %in% cols)) {
     return("prism_data")
   }
@@ -1278,7 +1280,26 @@ print.gdr_validation <- function(x, ...) {
   for (path in data_files) {
     out <- c(out, list(.check_prism_data(path, has_treatment = any(files$role == "prism_treatment"))))
   }
+  for (path in path_of("prism_drc")) out <- c(out, list(.check_prism_drc(path)))
   .bind_findings(out)
+}
+
+
+# A PRISM DRC table is not part of the import: read_PRISM_drc() reads its curves for the
+# processed data. Check that it has what that function reads.
+#' @keywords internal
+.check_prism_drc <- function(path) {
+  missing <- setdiff(c(.prism_drc_fit_columns(), "pert_name", "day", "fit_name", "frac_var_explained",
+                       "maximum_dose"), .peek_columns(path))
+  if (!any(c("depmap_id", "ccle_name") %in% .peek_columns(path))) missing <- c(missing, "depmap_id or ccle_name")
+  if (length(missing) > 0L) {
+    return(.finding("prism_drc", "WARN", sprintf(
+      "%s looks like a PRISM DRC table but misses column(s) %s.", basename(path), toString(missing)
+    ), "C"))
+  }
+  .finding("prism_drc", "INFO", sprintf(
+    "%s is a PRISM DRC table; read_PRISM_drc() reads its curves for the processed data.", basename(path)
+  ))
 }
 
 
