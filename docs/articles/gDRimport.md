@@ -248,11 +248,11 @@ sessionInfo()
 
     ## R version 4.6.2 (2026-10-29)
     ## Platform: x86_64-pc-linux-gnu
-    ## Running under: Ubuntu 24.04.5 LTS
+    ## Running under: Ubuntu 26.04.1 LTS
     ## 
     ## Matrix products: default
     ## BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
-    ## LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0
+    ## LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.32.so;  LAPACK version 3.12.0
     ## 
     ## locale:
     ##  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
@@ -267,7 +267,7 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] gDRimport_1.11.15 BiocStyle_2.41.0 
+    ## [1] gDRimport_1.11.16 BiocStyle_2.41.0 
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] SummarizedExperiment_1.43.0 xfun_0.62                  
@@ -279,7 +279,7 @@ sessionInfo()
     ## [13] pkgconfig_2.0.3             Matrix_1.7-6               
     ## [15] data.table_1.18.6.1         checkmate_2.3.4            
     ## [17] desc_1.4.3                  S4Vectors_0.51.10          
-    ## [19] gDRutils_1.11.22            readxl_1.6.0               
+    ## [19] gDRutils_1.11.26            readxl_1.6.0               
     ## [21] assertthat_0.2.1            rematch_2.0.0              
     ## [23] lifecycle_1.0.5             compiler_4.6.2             
     ## [25] textshaping_1.0.5           Seqinfo_1.3.2              
@@ -291,18 +291,18 @@ sessionInfo()
     ## [37] digest_0.6.39               stringi_1.8.9              
     ## [39] bookdown_0.48               rio_1.3.1                  
     ## [41] fastmap_1.2.0               grid_4.6.2                 
-    ## [43] cli_3.6.6                   SparseArray_1.13.4         
+    ## [43] cli_3.6.6                   SparseArray_1.13.5         
     ## [45] magrittr_2.0.5              S4Arrays_1.13.2            
     ## [47] backports_1.5.1             rmarkdown_2.32             
     ## [49] lambda.r_1.2.6              XVector_0.53.0             
-    ## [51] matrixStats_1.5.0           otel_0.2.0                 
+    ## [51] matrixStats_1.5.0           otel_0.3.0                 
     ## [53] futile.logger_1.4.9         cellranger_1.1.0           
     ## [55] ragg_1.5.2                  R.methodsS3_1.8.2          
     ## [57] evaluate_1.0.5              knitr_1.52                 
     ## [59] GenomicRanges_1.65.4        IRanges_2.47.5             
     ## [61] rlang_1.3.0                 futile.options_1.0.1       
     ## [63] glue_1.8.1                  BiocManager_1.30.27        
-    ## [65] formatR_1.14                BiocGenerics_0.59.12       
+    ## [65] formatR_1.14                BiocGenerics_0.59.13       
     ## [67] jsonlite_2.0.0              R6_2.6.1                   
-    ## [69] MatrixGenerics_1.25.0       systemfonts_1.3.2          
+    ## [69] MatrixGenerics_1.25.0       systemfonts_1.3.3          
     ## [71] fs_2.1.0

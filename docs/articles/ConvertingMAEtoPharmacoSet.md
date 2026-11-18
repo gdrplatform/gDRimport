@@ -70,12 +70,12 @@ the name of the study.
 
 ``` r
 pset <- convert_MAE_to_PSet(mae, pset_name="Kyung2022")
-#> 2026-11-02 12:24:14 Building assay index...
-#> 2026-11-02 12:24:14 Joining rowData to assayIndex...
-#> 2026-11-02 12:24:15 Joining colData to assayIndex...
-#> 2026-11-02 12:24:15 Joining assays to assayIndex...
-#> 2026-11-02 12:24:17 Setting assayIndex key...
-#> 2026-11-02 12:24:17 Building LongTable...
+#> 2026-11-18 13:39:04 Building assay index...
+#> 2026-11-18 13:39:04 Joining rowData to assayIndex...
+#> 2026-11-18 13:39:04 Joining colData to assayIndex...
+#> 2026-11-18 13:39:05 Joining assays to assayIndex...
+#> 2026-11-18 13:39:06 Setting assayIndex key...
+#> 2026-11-18 13:39:07 Building LongTable...
 #> 
 ```
 
@@ -85,7 +85,7 @@ We can now view the `PharmacoSet` object.
 pset
 #> <PharmacoSet>
 #> Name: Kyung2022 
-#> Date Created: Mon Nov  2 12:24:17 2026 
+#> Date Created: Wed Nov 18 13:39:07 2026 
 #> Number of samples:  7 
 #> Molecular profiles: <MultiAssayExperiment> 
 #>    ExperimentList class object of length 1: 
@@ -1186,11 +1186,11 @@ head(assay(tre, "Metrics"),3)
 sessionInfo()
 #> R version 4.6.2 (2026-10-29)
 #> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.5 LTS
+#> Running under: Ubuntu 26.04.1 LTS
 #> 
 #> Matrix products: default
 #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
-#> LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0
+#> LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.32.so;  LAPACK version 3.12.0
 #> 
 #> locale:
 #>  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
@@ -1206,18 +1206,18 @@ sessionInfo()
 #> [8] base     
 #> 
 #> other attached packages:
-#>  [1] MultiAssayExperiment_1.39.1 gDRimport_1.11.15          
+#>  [1] MultiAssayExperiment_1.39.1 gDRimport_1.11.16          
 #>  [3] PharmacoGx_3.17.0           CoreGx_2.17.0              
 #>  [5] SummarizedExperiment_1.43.0 Biobase_2.73.2             
 #>  [7] GenomicRanges_1.65.4        Seqinfo_1.3.2              
 #>  [9] IRanges_2.47.5              S4Vectors_0.51.10          
 #> [11] MatrixGenerics_1.25.0       matrixStats_1.5.0          
-#> [13] BiocGenerics_0.59.12        generics_0.1.4             
+#> [13] BiocGenerics_0.59.13        generics_0.1.4             
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] bitops_1.1-0         rlang_1.3.0          magrittr_2.0.5      
-#>  [4] shinydashboard_0.7.3 otel_0.2.0           compiler_4.6.2      
-#>  [7] systemfonts_1.3.2    vctrs_0.7.3          reshape2_1.4.5      
+#>  [4] shinydashboard_0.7.3 otel_0.3.0           compiler_4.6.2      
+#>  [7] systemfonts_1.3.3    vctrs_0.7.3          reshape2_1.4.5      
 #> [10] relations_0.6-18     stringr_1.6.0        pkgconfig_2.0.3     
 #> [13] crayon_1.5.3         fastmap_1.2.0        backports_1.5.1     
 #> [16] XVector_0.53.0       caTools_1.18.4       promises_1.5.0      
@@ -1226,26 +1226,26 @@ sessionInfo()
 #> [25] SnowballC_0.7.1      later_1.4.8          DelayedArray_0.39.8 
 #> [28] BiocParallel_1.47.0  parallel_4.6.2       sets_1.0-25         
 #> [31] cluster_2.1.8.3      R6_2.6.1             stringi_1.8.9       
-#> [34] bslib_0.12.0         RColorBrewer_1.1-3   limma_3.99.3        
+#> [34] bslib_0.12.0         RColorBrewer_1.1-3   limma_3.99.5        
 #> [37] boot_1.3-32          jquerylib_0.1.4      Rcpp_1.1.2          
-#> [40] knitr_1.52           downloader_0.4.1     httpuv_1.6.17       
-#> [43] Matrix_1.7-6         igraph_2.3.4         tidyselect_1.2.1    
-#> [46] abind_1.4-8          yaml_2.3.12          stringfish_0.19.2   
+#> [40] knitr_1.52           charport_0.2.0       downloader_0.4.1    
+#> [43] httpuv_1.6.17        Matrix_1.7-6         igraph_2.3.4        
+#> [46] tidyselect_1.2.1     abind_1.4-8          yaml_2.3.12         
 #> [49] gplots_3.3.0         codetools_0.2-20     plyr_1.8.9          
 #> [52] lattice_0.23-1       tibble_3.3.1         shiny_1.14.0        
 #> [55] BumpyMatrix_1.21.0   S7_0.2.2             evaluate_1.0.5      
 #> [58] desc_1.4.3           RcppParallel_6.2.1   bench_1.1.4         
 #> [61] pillar_1.11.1        lsa_0.73.4           KernSmooth_2.23-27  
 #> [64] checkmate_2.3.4      DT_0.34.0            shinyjs_2.1.1       
-#> [67] piano_2.29.0         ggplot2_4.0.3        scales_1.4.0        
+#> [67] piano_2.29.0         ggplot2_4.0.4        scales_1.4.0        
 #> [70] gtools_3.9.5         xtable_1.8-8         marray_1.91.0       
-#> [73] qs2_0.3.1            glue_1.8.1           slam_0.1-56         
-#> [76] tools_4.6.2          data.table_1.18.6.1  gDRutils_1.11.22    
+#> [73] qs2_0.4.0            glue_1.8.1           slam_0.1-56         
+#> [76] tools_4.6.2          data.table_1.18.6.1  gDRutils_1.11.26    
 #> [79] fgsea_1.39.2         fs_2.1.0             visNetwork_2.1.4    
 #> [82] fastmatch_1.1-8      cowplot_1.2.0        grid_4.6.2          
 #> [85] cli_3.6.6            textshaping_1.0.5    S4Arrays_1.13.2     
 #> [88] dplyr_1.2.1          gtable_0.3.6         sass_0.4.10         
-#> [91] digest_0.6.39        SparseArray_1.13.4   htmlwidgets_1.6.4   
+#> [91] digest_0.6.39        SparseArray_1.13.5   htmlwidgets_1.6.4   
 #> [94] farver_2.1.2         htmltools_0.5.9      pkgdown_2.2.1       
 #> [97] lifecycle_1.0.5      statmod_1.5.2        mime_0.13
 ```

@@ -1,16 +1,20 @@
 # Load, convert and process the level 6 PRISM data into a gDR input
 
-Load, convert and process the level 6 PRISM data into a gDR input
+Reads collapsed log fold changes from the PRISM Repurposing screens (LFC
+matrix or long `row_id`/`profile_id` table) and from the DepMap PRISM
+Oncology Reference (LFC matrix up to 24Q4, long `LFCCollapsed` tables of
+the Luminex and sequencing readouts from 25Q2).
 
 ## Usage
 
 ``` r
 convert_LEVEL6_prism_to_gDR_input(
   prism_data_path,
-  cell_line_data_path,
+  cell_line_data_path = NULL,
   treatment_data_path,
   meta_data_path,
-  readout_min = 1.03
+  readout_min = 1.03,
+  dose_units = "uM"
 )
 ```
 
@@ -22,7 +26,9 @@ convert_LEVEL6_prism_to_gDR_input(
 
 - cell_line_data_path:
 
-  path to cell line info data
+  path to cell line info data, or `NULL`. Cell lines are taken from the
+  LFC data, so the file is only recorded in the import provenance; the
+  sequencing readout of DepMap OncRef comes without one.
 
 - treatment_data_path:
 
@@ -37,9 +43,25 @@ convert_LEVEL6_prism_to_gDR_input(
 
   minimum ReadoutValue
 
+- dose_units:
+
+  dose units to keep when the data has a `pert_dose_unit` column (DepMap
+  OncRef from 25Q2 has antibodies and ADCs in ug/mL), or `NULL` to keep
+  all. gDR expects concentrations in uM.
+
 ## Value
 
 `data.table` object with input data for gDR pipeline
+
+## Details
+
+Cell lines are matched to `ModelID` in the model metadata by their
+DepMap ID. Cell lines that failed STR profiling (`_FAILED_STR` in the
+ID) and cell lines missing from the model metadata are dropped. The cell
+line ID is the `CCLEName`, or the `ModelID` for models without one.
+Measurements that DepMap flags as outliers are kept with
+`masked = TRUE`. Everything dropped or masked is listed in
+`get_import_provenance(x)$corrections`.
 
 ## Examples
 

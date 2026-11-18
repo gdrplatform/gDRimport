@@ -37,7 +37,7 @@ data.table with results' data
 ``` r
  td <- get_test_data()
  r_df <- load_results(result_path(td))
-#> INFO [2026-11-02 12:23:56] Reading file /tmp/RtmpfHmRzy/temp_libpath2759671a7861/gDRimport/extdata/data1/RawData_day0.xlsx, sheet Readout_0077vs0068_day7
+#> INFO [2026-11-18 13:38:46] Reading file /tmp/RtmpU5Skwb/temp_libpath27864c8b366/gDRimport/extdata/data1/RawData_day0.xlsx, sheet Readout_0077vs0068_day7
 #> New names:
 #> • `` -> `...1`
 #> • `` -> `...2`
@@ -64,14 +64,14 @@ data.table with results' data
 #> • `` -> `...23`
 #> • `` -> `...24`
 #> • `` -> `...25`
-#> INFO [2026-11-02 12:23:57] Plate 201904190a read; 384 wells
-#> INFO [2026-11-02 12:23:57] Plate 201904190b read; 384 wells
-#> INFO [2026-11-02 12:23:57] Plate 201904190c read; 384 wells
-#> INFO [2026-11-02 12:23:57] Plate 201904190d read; 384 wells
-#> INFO [2026-11-02 12:23:57] Plate 201904190e read; 384 wells
-#> INFO [2026-11-02 12:23:57] Plate 201904190f read; 384 wells
-#> INFO [2026-11-02 12:23:57] File done
-#> INFO [2026-11-02 12:23:57] Reading file /tmp/RtmpfHmRzy/temp_libpath2759671a7861/gDRimport/extdata/data1/RawData_day7.xlsx, sheet Readout_0077vs0068_day7
+#> INFO [2026-11-18 13:38:46] Plate 201904190a read; 384 wells
+#> INFO [2026-11-18 13:38:46] Plate 201904190b read; 384 wells
+#> INFO [2026-11-18 13:38:46] Plate 201904190c read; 384 wells
+#> INFO [2026-11-18 13:38:46] Plate 201904190d read; 384 wells
+#> INFO [2026-11-18 13:38:46] Plate 201904190e read; 384 wells
+#> INFO [2026-11-18 13:38:46] Plate 201904190f read; 384 wells
+#> INFO [2026-11-18 13:38:46] File done
+#> INFO [2026-11-18 13:38:46] Reading file /tmp/RtmpU5Skwb/temp_libpath27864c8b366/gDRimport/extdata/data1/RawData_day7.xlsx, sheet Readout_0077vs0068_day7
 #> New names:
 #> • `` -> `...1`
 #> • `` -> `...2`
@@ -98,11 +98,11 @@ data.table with results' data
 #> • `` -> `...23`
 #> • `` -> `...24`
 #> • `` -> `...25`
-#> INFO [2026-11-02 12:23:57] Plate 201904197a read; 384 wells
-#> INFO [2026-11-02 12:23:57] Plate 201904197b read; 384 wells
-#> INFO [2026-11-02 12:23:57] Plate 201904197c read; 384 wells
-#> INFO [2026-11-02 12:23:57] Plate 201904197d read; 384 wells
-#> INFO [2026-11-02 12:23:57] Plate 201904197e read; 384 wells
-#> INFO [2026-11-02 12:23:57] Plate 201904197f read; 384 wells
-#> INFO [2026-11-02 12:23:57] File done
+#> INFO [2026-11-18 13:38:46] Plate 201904197a read; 384 wells
+#> INFO [2026-11-18 13:38:46] Plate 201904197b read; 384 wells
+#> INFO [2026-11-18 13:38:46] Plate 201904197c read; 384 wells
+#> INFO [2026-11-18 13:38:46] Plate 201904197d read; 384 wells
+#> INFO [2026-11-18 13:38:46] Plate 201904197e read; 384 wells
+#> INFO [2026-11-18 13:38:46] Plate 201904197f read; 384 wells
+#> INFO [2026-11-18 13:38:46] File done
 ```
