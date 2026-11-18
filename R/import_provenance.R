@@ -103,6 +103,12 @@ get_import_provenance <- function(x) {
   filled <- of_type("cells_filled")
   untreated <- of_type("untreated_standardized")
   no_barcode <- of_type("plate_barcode_missing")
+  ids_of <- function(type) {
+    ids <- unlist(lapply(of_type(type), `[[`, "ids"))
+    if (length(ids) > 0L) sort(unique(ids))
+  }
+  units <- of_type("prism_dose_units_dropped")
+  outliers <- of_type("prism_outliers_masked")
   out <- list(
     template_sheets_renamed = if (length(renamed) > 0L) {
       vapply(renamed, function(e) sprintf("%s: %s -> %s", e$file, e$from, e$to), character(1))
@@ -121,7 +127,15 @@ get_import_provenance <- function(x) {
         used = vapply(no_barcode, `[[`, character(1), "used"),
         stringsAsFactors = FALSE
       )
-    }
+    },
+    # PRISM LEVEL6: cell lines and compounds left out, and outliers kept as masked
+    prism_failed_str_dropped = ids_of("prism_failed_str_dropped"),
+    prism_cell_lines_unmapped = ids_of("prism_cell_lines_unmapped"),
+    prism_compounds_dropped_by_unit = if (length(units) > 0L) {
+      list(units = sort(unique(unlist(lapply(units, `[[`, "units")))),
+           compounds = sort(unique(unlist(lapply(units, `[[`, "compounds")))))
+    },
+    prism_outliers_masked = if (length(outliers) > 0L) sum(vapply(outliers, `[[`, numeric(1), "n"))
   )
   out <- out[!vapply(out, is.null, logical(1))]
   if (length(out) == 0L) NULL else out

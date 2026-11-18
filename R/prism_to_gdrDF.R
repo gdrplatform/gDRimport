@@ -173,15 +173,79 @@ convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
 
 
 
+# Column names the LEVEL6 converter accepts in the LFC data and in the treatment
+# file; the first synonym present is renamed when the column itself is missing.
+# Long LFC tables come as row_id/profile_id (Repurposing) or depmap_id/SampleID/pert_dose
+# (DepMap OncRef from 25Q2, Luminex and sequencing readouts).
+#' @keywords internal
+.prism_level6_column_synonyms <- function() {
+  list(
+    data = list(
+      row_name = c("row_id", "depmap_id"),
+      column_name = c("profile_id", "SampleID"),
+      dose = "pert_dose",
+      LFC = c("LFC", "median_l2fc")
+    ),
+    treatment = list(
+      column_name = c("profile_id", "SampleID", "pert_mfc_id"),
+      name = c("CompoundName", "Compound name"),
+      moa = c("TargetOrMechanism", "Target/ mechanism")
+    )
+  )
+}
+
+
+# Rename the first synonym present to its target, unless the target is already there.
+#' @keywords internal
+.rename_synonyms <- function(dt, synonyms) {
+  for (target in names(synonyms)) {
+    present <- intersect(synonyms[[target]], names(dt))
+    if (!target %in% names(dt) && length(present) > 0L) {
+      data.table::setnames(dt, present[1], target)
+    }
+  }
+  dt
+}
+
+
+# DepMap model ID (ACH-...) from a PRISM cell line ID such as "ACH-000007",
+# "PR500_ACH-000007" or "ACH-000007::P103::PR500A::REP1M"; IDs without an ACH
+# number are returned without the "::" suffix.
+#' @keywords internal
+.prism_model_id <- function(x) {
+  x <- sub("::.*", "", x)
+  has_ach <- grepl("ACH-[0-9]+", x)
+  x[has_ach] <- sub(".*(ACH-[0-9]+).*", "\\1", x[has_ach])
+  x
+}
+
+
 #' Load, convert and process the level 6 PRISM data into a gDR input
+#'
+#' Reads collapsed log fold changes from the PRISM Repurposing screens (LFC matrix
+#' or long \code{row_id}/\code{profile_id} table) and from the DepMap PRISM
+#' Oncology Reference (LFC matrix up to 24Q4, long \code{LFCCollapsed} tables of the
+#' Luminex and sequencing readouts from 25Q2).
+#'
+#' Cell lines are matched to \code{ModelID} in the model metadata by their DepMap
+#' ID. Cell lines that failed STR profiling (\code{_FAILED_STR} in the ID) and cell
+#' lines missing from the model metadata are dropped. The cell line ID is the
+#' \code{CCLEName}, or the \code{ModelID} for models without one. Measurements that
+#' DepMap flags as outliers are kept with \code{masked = TRUE}. Everything dropped or
+#' masked is listed in \code{get_import_provenance(x)$corrections}.
 #'
 #' @param prism_data_path path to PRISM LEVEL6 csv file with collapsed
 #' log fold change data
-#' @param cell_line_data_path path to cell line info data
+#' @param cell_line_data_path path to cell line info data, or \code{NULL}. Cell lines
+#' are taken from the LFC data, so the file is only recorded in the import provenance;
+#' the sequencing readout of DepMap OncRef comes without one.
 #' @param treatment_data_path path to collapsed treatment info data
 #' @param meta_data_path path to metadata file describing all cancer models/cell lines
 #' which are referenced by a dataset contained within the DepMap portal
 #' @param readout_min minimum ReadoutValue
+#' @param dose_units dose units to keep when the data has a \code{pert_dose_unit}
+#' column (DepMap OncRef from 25Q2 has antibodies and ADCs in ug/mL), or \code{NULL}
+#' to keep all. gDR expects concentrations in uM.
 #'
 #' @return \code{data.table} object with input data for gDR pipeline
 #'
@@ -196,21 +260,23 @@ convert_LEVEL5_prism_to_gDR_input <- function(prism_data_path,
 #'
 #' @export
 convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
-                                              cell_line_data_path,
+                                              cell_line_data_path = NULL,
                                               treatment_data_path,
                                               meta_data_path,
-                                              readout_min = 1.03) {
+                                              readout_min = 1.03,
+                                              dose_units = "uM") {
 
   checkmate::assert_file_exists(prism_data_path)
-  checkmate::assert_file_exists(cell_line_data_path)
-
+  if (!is.null(cell_line_data_path)) checkmate::assert_file_exists(cell_line_data_path)
   checkmate::assert_file_exists(treatment_data_path)
   checkmate::assert_file_exists(meta_data_path)
+  checkmate::assert_character(dose_units, null.ok = TRUE)
 
   gDRutils::reset_env_identifiers()
   idfs <- gDRutils::get_env_identifiers()
+  synonyms <- .prism_level6_column_synonyms()
+  events <- list()
 
-  cell_lines <- data.table::fread(cell_line_data_path)
   treatment <- data.table::fread(treatment_data_path)
   res <- data.table::fread(prism_data_path)
   meta <- data.table::fread(meta_data_path)
@@ -219,26 +285,14 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
                           must.include = c("ModelID",
                                            "CCLEName",
                                            "OncotreeLineage"))
-  # rename cell_lines and treatment
-  if ("depmap_id" %in% names(cell_lines)) {
-    data.table::setnames(cell_lines, "depmap_id", "row_name", skip_absent = TRUE)
-  } else {
-    data.table::setnames(cell_lines, "row_id", "row_name", skip_absent = TRUE)
-  }
-  # OncRef compound lists (DepMap 24Q4) have no broad_id; SampleID identifies the compound there
-  if (!"broad_id" %in% names(treatment) && "SampleID" %in% names(treatment)) {
-    treatment[, broad_id := SampleID]
-  }
-  data.table::setnames(treatment,
-                       c("profile_id", "SampleID", "CompoundName", "GeneSymbolOfTargets"),
-                       c("column_name", "column_name", "name", "moa"),
-                       skip_absent = TRUE)
 
-  checkmate::assert_names(names(cell_lines), must.include = "row_name")
+  treatment <- .rename_synonyms(treatment, synonyms$treatment)
   checkmate::assert_names(names(treatment), must.include = "column_name")
+  # OncRef compound lists have no broad_id; their sample ID identifies the compound
+  if (!"broad_id" %in% names(treatment)) treatment[, broad_id := column_name]
 
-  if (!"LFC" %in% names(res)) {
-    checkmate::assert_names(names(res), must.include = "V1")
+  if (names(res)[1] %in% c("", "V1") && !any(synonyms$data$LFC %in% names(res))) {
+    data.table::setnames(res, 1, "V1")
     res <- data.table::melt(res, id.vars = "V1")
     data.table::setnames(res,
                          c("V1", "variable"),
@@ -249,43 +303,56 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
       res[, dose := as.numeric(dose)]
     }
   } else {
-    data.table::setnames(res, c("row_id", "profile_id"), c("row_name", "column_name"))
+    res <- .rename_synonyms(res, synonyms$data)
+    checkmate::assert_names(names(res), must.include = c("row_name", "column_name", "LFC"))
+    if ("dose" %in% names(res) && "dose" %in% names(treatment)) treatment[, dose := NULL]
   }
 
-  # add meta data to cell_line
-  cell_lines <- meta[, .SD, .SDcols = c("ModelID",
-                                        "CCLEName",
-                                        "OncotreeLineage")][cell_lines, on = .(ModelID = row_name)]
+  if (!is.null(dose_units) && "pert_dose_unit" %in% names(res)) {
+    other_units <- !res$pert_dose_unit %in% dose_units
+    if (any(other_units)) {
+      events <- c(events, list(list(
+        type = "prism_dose_units_dropped",
+        units = sort(unique(res$pert_dose_unit[other_units])),
+        compounds = sort(unique(as.character(res$column_name[other_units])))
+      )))
+      res <- res[!other_units]
+    }
+  }
+
+  # cell lines: DepMap model ID from the data, names and lineage from the model metadata
+  failed_str <- grepl("FAILED_STR", res$row_name)
+  if (any(failed_str)) {
+    events <- c(events, list(list(type = "prism_failed_str_dropped",
+                                  ids = sort(unique(res$row_name[failed_str])))))
+    res <- res[!failed_str]
+  }
+  res[, row_name := .prism_model_id(row_name)]
+  unmapped <- setdiff(unique(res$row_name), meta$ModelID)
+  if (length(unmapped) > 0L) {
+    events <- c(events, list(list(type = "prism_cell_lines_unmapped", ids = sort(unmapped))))
+    res <- res[!row_name %in% unmapped]
+  }
+
+  cell_lines <- unique(meta[ModelID %in% res$row_name, c("ModelID", "CCLEName", "OncotreeLineage")],
+                       by = "ModelID")
+  cell_lines[, CCLEName := data.table::fifelse(is.na(CCLEName) | CCLEName == "", ModelID, CCLEName)]
   cell_lines[, unlist(idfs[c("cellline_parental_identifier", "cellline_subtype", "cellline_ref_div_time")]) :=
                list("unknown", "unknown", as.numeric(NA))]
   cell_lines[, (idfs[["cellline_name"]]) := CCLEName]
-  cell_lines[, OncotreeLineage := data.table::fcoalesce(OncotreeLineage, "unknown")]
-  # rename cell_lines
+  cell_lines[, OncotreeLineage := data.table::fifelse(is.na(OncotreeLineage) | OncotreeLineage == "",
+                                                      "unknown", OncotreeLineage)]
   data.table::setnames(cell_lines,
                        c("CCLEName", "OncotreeLineage"),
                        unlist(idfs[c("cellline", "cellline_tissue")]))
 
-  # merge results with cell_line data
-  res$row_name <- gsub("::.*", "", res$row_name)
+  full_data <- merge(res, cell_lines, by.x = "row_name", by.y = "ModelID")
 
-  full_data <- merge(res,
-                     unique(cell_lines[, c("ModelID",
-                                           unlist(idfs[c("cellline",
-                                                         "cellline_name",
-                                                         "cellline_tissue",
-                                                         "cellline_parental_identifier",
-                                                         "cellline_subtype",
-                                                         "cellline_ref_div_time")])), with = FALSE]),
-                     all.x = TRUE,
-                     by.x = "row_name",
-                     by.y = "ModelID")
-
-
-  # merge results with treatment data
+  # merge results with treatment data; one row per compound so the merge adds no rows
   full_data <- merge(full_data,
                      unique(treatment[, intersect(names(treatment),
                                                   c("column_name", "name", "dose", "broad_id", "moa")),
-                                      with = FALSE]),
+                                      with = FALSE], by = "column_name"),
                      all.x = TRUE,
                      by = "column_name")
   value_col <- if ("LFC" %in% names(full_data)) {
@@ -295,6 +362,15 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
   }
   full_data$value <- pmin(readout_min, 2 ^ full_data[[value_col]])
   full_data <- full_data[!(is.na(name) | is.na(value))]
+
+  full_data$masked <- if ("outlier" %in% names(full_data)) {
+    data.table::fcoalesce(as.logical(full_data$outlier), FALSE)
+  } else {
+    FALSE
+  }
+  if (any(full_data$masked)) {
+    events <- c(events, list(list(type = "prism_outliers_masked", n = sum(full_data$masked))))
+  }
 
   # data for conc = 0
   untrt_tag <- gDRutils::get_env_identifiers("untreated_tag")[1]
@@ -313,7 +389,7 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
                                                     "cellline_ref_div_time")]), with = FALSE]), all.x = TRUE)
 
   # data for treatment
-  ls_col <- intersect(c("clid", "name", "broad_id", "moa", "dose", "value",
+  ls_col <- intersect(c("clid", "name", "broad_id", "moa", "dose", "value", "masked",
                         unlist(idfs[c("cellline", "cellline_name", "cellline_tissue",
                                       "cellline_parental_identifier", "cellline_subtype",
                                       "cellline_ref_div_time")])),
@@ -324,7 +400,6 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
                        old = c("broad_id", "name", "moa", "dose", "value"),
                        new = c("Gnumber", "DrugName", "drug_moa", "Concentration", "ReadoutValue"))
   dt_trt$Duration <- NA_real_
-  dt_trt$masked <- FALSE
   data.table::setcolorder(dt_trt, neworder = colnames(dt_ctrl))
 
   # merge treatment and control
@@ -345,8 +420,8 @@ convert_LEVEL6_prism_to_gDR_input <- function(prism_data_path,
       .import_files("meta_data", meta_data_path)
     ),
     instrument = NULL,
-    events = list(),
-    source = list(format = "PRISM LEVEL6", readout_min = readout_min)
+    events = events,
+    source = list(format = "PRISM LEVEL6", readout_min = readout_min, dose_units = dose_units)
   ))
   merged_data
 }
