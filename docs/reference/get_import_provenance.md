@@ -30,13 +30,13 @@ The record (a list), or `NULL` when `x` carries none.
 ``` r
 td <- get_test_data()
 l_data <- load_data(manifest_path(td), template_path(td), result_path(td))
-#> INFO [2026-11-18 13:38:42] Manifest loaded successfully
-#> INFO [2026-11-18 13:38:42] Reading Template_7daytreated.xlsx with load_templates_xlsx
-#> INFO [2026-11-18 13:38:42] Reading Template_Untreated.xlsx with load_templates_xlsx
-#> INFO [2026-11-18 13:38:42] Loading Template_7daytreated.xlsx
-#> INFO [2026-11-18 13:38:42] Loading Template_Untreated.xlsx
-#> INFO [2026-11-18 13:38:42] Templates loaded successfully!
-#> INFO [2026-11-18 13:38:42] Reading file /tmp/RtmpU5Skwb/temp_libpath27864c8b366/gDRimport/extdata/data1/RawData_day0.xlsx, sheet Readout_0077vs0068_day7
+#> INFO [2026-11-18 17:06:32] Manifest loaded successfully
+#> INFO [2026-11-18 17:06:32] Reading Template_7daytreated.xlsx with load_templates_xlsx
+#> INFO [2026-11-18 17:06:32] Reading Template_Untreated.xlsx with load_templates_xlsx
+#> INFO [2026-11-18 17:06:32] Loading Template_7daytreated.xlsx
+#> INFO [2026-11-18 17:06:32] Loading Template_Untreated.xlsx
+#> INFO [2026-11-18 17:06:32] Templates loaded successfully!
+#> INFO [2026-11-18 17:06:32] Reading file /tmp/RtmpKXDN4Q/temp_libpath19b61b37d04f/gDRimport/extdata/data1/RawData_day0.xlsx, sheet Readout_0077vs0068_day7
 #> New names:
 #> • `` -> `...1`
 #> • `` -> `...2`
@@ -63,14 +63,14 @@ l_data <- load_data(manifest_path(td), template_path(td), result_path(td))
 #> • `` -> `...23`
 #> • `` -> `...24`
 #> • `` -> `...25`
-#> INFO [2026-11-18 13:38:42] Plate 201904190a read; 384 wells
-#> INFO [2026-11-18 13:38:42] Plate 201904190b read; 384 wells
-#> INFO [2026-11-18 13:38:42] Plate 201904190c read; 384 wells
-#> INFO [2026-11-18 13:38:42] Plate 201904190d read; 384 wells
-#> INFO [2026-11-18 13:38:42] Plate 201904190e read; 384 wells
-#> INFO [2026-11-18 13:38:42] Plate 201904190f read; 384 wells
-#> INFO [2026-11-18 13:38:42] File done
-#> INFO [2026-11-18 13:38:42] Reading file /tmp/RtmpU5Skwb/temp_libpath27864c8b366/gDRimport/extdata/data1/RawData_day7.xlsx, sheet Readout_0077vs0068_day7
+#> INFO [2026-11-18 17:06:32] Plate 201904190a read; 384 wells
+#> INFO [2026-11-18 17:06:32] Plate 201904190b read; 384 wells
+#> INFO [2026-11-18 17:06:32] Plate 201904190c read; 384 wells
+#> INFO [2026-11-18 17:06:32] Plate 201904190d read; 384 wells
+#> INFO [2026-11-18 17:06:32] Plate 201904190e read; 384 wells
+#> INFO [2026-11-18 17:06:32] Plate 201904190f read; 384 wells
+#> INFO [2026-11-18 17:06:32] File done
+#> INFO [2026-11-18 17:06:32] Reading file /tmp/RtmpKXDN4Q/temp_libpath19b61b37d04f/gDRimport/extdata/data1/RawData_day7.xlsx, sheet Readout_0077vs0068_day7
 #> New names:
 #> • `` -> `...1`
 #> • `` -> `...2`
@@ -97,13 +97,13 @@ l_data <- load_data(manifest_path(td), template_path(td), result_path(td))
 #> • `` -> `...23`
 #> • `` -> `...24`
 #> • `` -> `...25`
-#> INFO [2026-11-18 13:38:42] Plate 201904197a read; 384 wells
-#> INFO [2026-11-18 13:38:42] Plate 201904197b read; 384 wells
-#> INFO [2026-11-18 13:38:42] Plate 201904197c read; 384 wells
-#> INFO [2026-11-18 13:38:42] Plate 201904197d read; 384 wells
-#> INFO [2026-11-18 13:38:42] Plate 201904197e read; 384 wells
-#> INFO [2026-11-18 13:38:42] Plate 201904197f read; 384 wells
-#> INFO [2026-11-18 13:38:42] File done
+#> INFO [2026-11-18 17:06:32] Plate 201904197a read; 384 wells
+#> INFO [2026-11-18 17:06:32] Plate 201904197b read; 384 wells
+#> INFO [2026-11-18 17:06:32] Plate 201904197c read; 384 wells
+#> INFO [2026-11-18 17:06:33] Plate 201904197d read; 384 wells
+#> INFO [2026-11-18 17:06:33] Plate 201904197e read; 384 wells
+#> INFO [2026-11-18 17:06:33] Plate 201904197f read; 384 wells
+#> INFO [2026-11-18 17:06:33] File done
 get_import_provenance(l_data$data)$files
 #>       role                      name  size                              md5
 #> 1 manifest             manifest.xlsx  9072 9cde387345bf776b4dfa1ea1d50d96d4

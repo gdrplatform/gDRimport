@@ -1,5 +1,15 @@
 # Changelog
 
+## gDRimport 1.11.17 - 2026-11-18
+
+- add
+  [`read_PRISM_drc()`](https://gdrplatform.github.io/gDRimport/reference/read_PRISM_drc.md)
+  to read the curve fits of a PRISM DRC table with the cell line and
+  Duration of the import
+- add the PRISM DRC table to the files
+  [`validate_gdr_input()`](https://gdrplatform.github.io/gDRimport/reference/validate_gdr_input.md)
+  recognises
+
 ## gDRimport 1.11.16 - 2026-11-17
 
 - read long DepMap OncRef LFC tables, the 23Q4 compound list and

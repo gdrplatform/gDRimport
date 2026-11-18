@@ -82,6 +82,8 @@
   : Load, convert and process the level 5 PRISM data into a gDR input
 - [`convert_LEVEL6_prism_to_gDR_input()`](https://gdrplatform.github.io/gDRimport/reference/convert_LEVEL6_prism_to_gDR_input.md)
   : Load, convert and process the level 6 PRISM data into a gDR input
+- [`read_PRISM_drc()`](https://gdrplatform.github.io/gDRimport/reference/read_PRISM_drc.md)
+  : Read the curve fits delivered by PRISM
 
 ## Import D300
 
