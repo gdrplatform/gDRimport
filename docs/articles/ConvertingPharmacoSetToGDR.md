@@ -136,7 +136,7 @@ str(dt)
 #>  $ DrugName             : chr  "Ivosidenib" "Ivosidenib" "Ivosidenib" "Ivosidenib" ...
 #>  $ Duration             : num  48 48 48 48 48 48 48 48 48 48 ...
 #>  $ ReferenceDivisionTime: logi  NA NA NA NA NA NA ...
-#>  - attr(*, ".internal.selfref")=<pointer: 0x5745fd41c390>
+#>  - attr(*, ".internal.selfref")=<pointer: 0x58cd8613e390>
 ```
 
 ## Subsetting to extract relevant information
@@ -227,7 +227,7 @@ sessionInfo()
 #> [8] base     
 #> 
 #> other attached packages:
-#>  [1] gDRimport_1.11.17           PharmacoGx_3.17.0          
+#>  [1] gDRimport_1.13.1            PharmacoGx_3.17.0          
 #>  [3] CoreGx_2.17.0               SummarizedExperiment_1.43.0
 #>  [5] Biobase_2.73.2              GenomicRanges_1.65.4       
 #>  [7] Seqinfo_1.3.2               IRanges_2.47.5             
@@ -239,7 +239,7 @@ sessionInfo()
 #>   [1] bitops_1.1-0                testthat_3.3.2             
 #>   [3] rlang_1.3.0                 magrittr_2.0.5             
 #>   [5] shinydashboard_0.7.3        otel_0.3.0                 
-#>   [7] compiler_4.6.2              systemfonts_1.3.3          
+#>   [7] compiler_4.6.2              systemfonts_1.3.4          
 #>   [9] vctrs_0.7.3                 reshape2_1.4.5             
 #>  [11] relations_0.6-18            stringr_1.6.0              
 #>  [13] pkgconfig_2.0.3             crayon_1.5.3               
@@ -265,8 +265,8 @@ sessionInfo()
 #>  [53] gplots_3.3.0                codetools_0.2-20           
 #>  [55] plyr_1.8.9                  lattice_0.23-1             
 #>  [57] tibble_3.3.1                withr_3.0.3                
-#>  [59] shiny_1.14.0                BumpyMatrix_1.21.0         
-#>  [61] S7_0.2.2                    evaluate_1.0.5             
+#>  [59] shiny_1.15.0                BumpyMatrix_1.21.0         
+#>  [61] S7_1.0.0                    evaluate_1.0.5             
 #>  [63] desc_1.4.3                  RcppParallel_6.2.1         
 #>  [65] bench_1.1.4                 pillar_1.11.1              
 #>  [67] lsa_0.73.4                  KernSmooth_2.23-27         
@@ -281,9 +281,9 @@ sessionInfo()
 #>  [85] fs_2.1.0                    visNetwork_2.1.4           
 #>  [87] fastmatch_1.1-8             cowplot_1.2.0              
 #>  [89] grid_4.6.2                  cli_3.6.6                  
-#>  [91] textshaping_1.0.5           S4Arrays_1.13.2            
+#>  [91] textshaping_1.1.0           S4Arrays_1.13.3            
 #>  [93] dplyr_1.2.1                 gtable_0.3.6               
-#>  [95] sass_0.4.10                 digest_0.6.39              
+#>  [95] sass_0.5.0                  digest_0.6.39              
 #>  [97] SparseArray_1.13.5          htmlwidgets_1.6.4          
 #>  [99] farver_2.1.2                htmltools_0.5.9            
 #> [101] pkgdown_2.2.1               lifecycle_1.0.5            

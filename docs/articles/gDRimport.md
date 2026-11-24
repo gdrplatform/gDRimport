@@ -267,7 +267,7 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] gDRimport_1.11.17 BiocStyle_2.41.0 
+    ## [1] gDRimport_1.13.1 BiocStyle_2.41.0
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] SummarizedExperiment_1.43.0 xfun_0.62                  
@@ -282,8 +282,8 @@ sessionInfo()
     ## [19] gDRutils_1.11.26            readxl_1.6.0               
     ## [21] assertthat_0.2.1            rematch_2.0.0              
     ## [23] lifecycle_1.0.5             compiler_4.6.2             
-    ## [25] textshaping_1.0.5           Seqinfo_1.3.2              
-    ## [27] htmltools_0.5.9             sass_0.4.10                
+    ## [25] textshaping_1.1.0           Seqinfo_1.3.2              
+    ## [27] htmltools_0.5.9             sass_0.5.0                 
     ## [29] yaml_2.3.12                 pillar_1.11.1              
     ## [31] pkgdown_2.2.1               jquerylib_0.1.4            
     ## [33] R.utils_2.13.0              cachem_1.1.0               
@@ -292,7 +292,7 @@ sessionInfo()
     ## [39] bookdown_0.48               rio_1.3.1                  
     ## [41] fastmap_1.2.0               grid_4.6.2                 
     ## [43] cli_3.6.6                   SparseArray_1.13.5         
-    ## [45] magrittr_2.0.5              S4Arrays_1.13.2            
+    ## [45] magrittr_2.0.5              S4Arrays_1.13.3            
     ## [47] backports_1.5.1             rmarkdown_2.32             
     ## [49] lambda.r_1.2.6              XVector_0.53.0             
     ## [51] matrixStats_1.5.0           otel_0.3.0                 
@@ -304,5 +304,5 @@ sessionInfo()
     ## [63] glue_1.8.1                  BiocManager_1.30.27        
     ## [65] formatR_1.14                BiocGenerics_0.59.13       
     ## [67] jsonlite_2.0.0              R6_2.6.1                   
-    ## [69] MatrixGenerics_1.25.0       systemfonts_1.3.3          
+    ## [69] MatrixGenerics_1.25.0       systemfonts_1.3.4          
     ## [71] fs_2.1.0

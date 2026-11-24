@@ -70,12 +70,12 @@ the name of the study.
 
 ``` r
 pset <- convert_MAE_to_PSet(mae, pset_name="Kyung2022")
-#> 2026-11-18 17:06:56 Building assay index...
-#> 2026-11-18 17:06:56 Joining rowData to assayIndex...
-#> 2026-11-18 17:06:57 Joining colData to assayIndex...
-#> 2026-11-18 17:06:57 Joining assays to assayIndex...
-#> 2026-11-18 17:06:59 Setting assayIndex key...
-#> 2026-11-18 17:06:59 Building LongTable...
+#> 2026-11-24 10:13:39 Building assay index...
+#> 2026-11-24 10:13:39 Joining rowData to assayIndex...
+#> 2026-11-24 10:13:39 Joining colData to assayIndex...
+#> 2026-11-24 10:13:40 Joining assays to assayIndex...
+#> 2026-11-24 10:13:41 Setting assayIndex key...
+#> 2026-11-24 10:13:41 Building LongTable...
 #> 
 ```
 
@@ -85,7 +85,7 @@ We can now view the `PharmacoSet` object.
 pset
 #> <PharmacoSet>
 #> Name: Kyung2022 
-#> Date Created: Wed Nov 18 17:06:59 2026 
+#> Date Created: Tue Nov 24 10:13:41 2026 
 #> Number of samples:  7 
 #> Molecular profiles: <MultiAssayExperiment> 
 #>    ExperimentList class object of length 1: 
@@ -1206,7 +1206,7 @@ sessionInfo()
 #> [8] base     
 #> 
 #> other attached packages:
-#>  [1] MultiAssayExperiment_1.39.1 gDRimport_1.11.17          
+#>  [1] MultiAssayExperiment_1.39.1 gDRimport_1.13.1           
 #>  [3] PharmacoGx_3.17.0           CoreGx_2.17.0              
 #>  [5] SummarizedExperiment_1.43.0 Biobase_2.73.2             
 #>  [7] GenomicRanges_1.65.4        Seqinfo_1.3.2              
@@ -1217,7 +1217,7 @@ sessionInfo()
 #> loaded via a namespace (and not attached):
 #>  [1] bitops_1.1-0         rlang_1.3.0          magrittr_2.0.5      
 #>  [4] shinydashboard_0.7.3 otel_0.3.0           compiler_4.6.2      
-#>  [7] systemfonts_1.3.3    vctrs_0.7.3          reshape2_1.4.5      
+#>  [7] systemfonts_1.3.4    vctrs_0.7.3          reshape2_1.4.5      
 #> [10] relations_0.6-18     stringr_1.6.0        pkgconfig_2.0.3     
 #> [13] crayon_1.5.3         fastmap_1.2.0        backports_1.5.1     
 #> [16] XVector_0.53.0       caTools_1.18.4       promises_1.5.0      
@@ -1232,8 +1232,8 @@ sessionInfo()
 #> [43] httpuv_1.6.17        Matrix_1.7-6         igraph_2.3.4        
 #> [46] tidyselect_1.2.1     abind_1.4-8          yaml_2.3.12         
 #> [49] gplots_3.3.0         codetools_0.2-20     plyr_1.8.9          
-#> [52] lattice_0.23-1       tibble_3.3.1         shiny_1.14.0        
-#> [55] BumpyMatrix_1.21.0   S7_0.2.2             evaluate_1.0.5      
+#> [52] lattice_0.23-1       tibble_3.3.1         shiny_1.15.0        
+#> [55] BumpyMatrix_1.21.0   S7_1.0.0             evaluate_1.0.5      
 #> [58] desc_1.4.3           RcppParallel_6.2.1   bench_1.1.4         
 #> [61] pillar_1.11.1        lsa_0.73.4           KernSmooth_2.23-27  
 #> [64] checkmate_2.3.4      DT_0.34.0            shinyjs_2.1.1       
@@ -1243,8 +1243,8 @@ sessionInfo()
 #> [76] tools_4.6.2          data.table_1.18.6.1  gDRutils_1.11.26    
 #> [79] fgsea_1.39.2         fs_2.1.0             visNetwork_2.1.4    
 #> [82] fastmatch_1.1-8      cowplot_1.2.0        grid_4.6.2          
-#> [85] cli_3.6.6            textshaping_1.0.5    S4Arrays_1.13.2     
-#> [88] dplyr_1.2.1          gtable_0.3.6         sass_0.4.10         
+#> [85] cli_3.6.6            textshaping_1.1.0    S4Arrays_1.13.3     
+#> [88] dplyr_1.2.1          gtable_0.3.6         sass_0.5.0          
 #> [91] digest_0.6.39        SparseArray_1.13.5   htmlwidgets_1.6.4   
 #> [94] farver_2.1.2         htmltools_0.5.9      pkgdown_2.2.1       
 #> [97] lifecycle_1.0.5      statmod_1.5.2        mime_0.13
