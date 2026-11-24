@@ -48,3 +48,48 @@ test_that("read_PRISM_drc checks its input", {
   data.table::fwrite(data.table::fread(drc_path)[, -"inflection"], path)
   expect_error(read_PRISM_drc(path, model_path), "inflection")
 })
+
+l2fc_path <- system.file("testdata/prism_l2fc.csv", package = "gDRimport")
+
+test_that("read_PRISM_l2fc keeps every replicate point uncapped, with cell line and Duration", {
+  points <- read_PRISM_l2fc(l2fc_path, model_path)
+  raw <- data.table::fread(l2fc_path, colClasses = list(character = c("pert_name", "depmap_id", "pool_id",
+                                                                        "lua", "pert_id")))
+  idfs <- gDRutils::get_env_identifiers()
+
+  expect_identical(NROW(points), NROW(raw))
+  expect_equal(points[, names(raw), with = FALSE], raw, check.attributes = FALSE)
+  # no cap: the import caps 2^l2fc at 1.03
+  expect_gt(max(2^points$l2fc), 1.03)
+  model <- data.table::fread(model_path)
+  expect_identical(points[[idfs$cellline]], model$CCLEName[match(raw$depmap_id, model$ModelID)])
+  expect_identical(unique(points[[idfs$duration]]), 120)
+  expect_identical(data.table::uniqueN(points$lua), 4L)
+
+  record <- get_import_provenance(points)
+  expect_identical(record$source$format, "PRISM l2fc")
+  expect_identical(record$files$role, c("prism_l2fc", "meta_data"))
+  expect_identical(record$files$md5[1], unname(tools::md5sum(l2fc_path)))
+})
+
+test_that("read_PRISM_l2fc accepts the LEVEL5 column names and leaves out missing values", {
+  dir <- tempfile()
+  dir.create(dir)
+  raw <- data.table::fread(l2fc_path)
+  raw$l2fc[1] <- NA
+  data.table::setnames(raw, c("l2fc", "pert_name", "day"), c("LFC", "pert_iname", "pert_time"))
+  path <- file.path(dir, "level5.csv")
+  data.table::fwrite(raw, path)
+
+  points <- read_PRISM_l2fc(path, model_path)
+  expect_true(all(c("l2fc", "pert_name", "day") %in% names(points)))
+  expect_identical(NROW(points), NROW(raw) - 1L)
+
+  expect_error(read_PRISM_l2fc(l2fc_path), "meta_data_path")
+  data.table::fwrite(raw[, -"pert_dose"], path)
+  expect_error(read_PRISM_l2fc(path, model_path), "pert_dose")
+})
+
+test_that("the PRISM replicate-level data stay an input of the LEVEL5 import", {
+  expect_identical(.prism_role(names(data.table::fread(l2fc_path, nrows = 0L))), "prism_data")
+})

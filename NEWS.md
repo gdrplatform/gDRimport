@@ -1,3 +1,6 @@
+## gDRimport 1.13.2 - 2026-11-24
+* add `read_PRISM_l2fc()` to read PRISM's replicate-level log2 fold changes, uncapped, for a refit
+
 ## gDRimport 1.13.1 - 2026-11-24
 * synchronize Bioconductor and GitHub versioning
 
