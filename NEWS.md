@@ -1,3 +1,6 @@
+## gDRimport 1.13.1 - 2026-11-24
+* synchronize Bioconductor and GitHub versioning
+
 ## gDRimport 1.11.17 - 2026-11-18
 * add `read_PRISM_drc()` to read the curve fits of a PRISM DRC table with the cell line and Duration of the import
 * add the PRISM DRC table to the files `validate_gdr_input()` recognises
