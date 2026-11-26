@@ -123,3 +123,11 @@ test_that("fill_NA works as expected", {
   expect_equal(obs2$b, df$b)
   expect_equal(obs2$a, df$a)
 })
+
+test_that("get_conversion_factor converts nL, microlitres and mL to microlitres", {
+  expect_equal(get_conversion_factor("nL"), 1e-3)
+  expect_equal(get_conversion_factor(get_muL()), 1)
+  expect_equal(get_conversion_factor("mL"), 1e3)
+  expect_equal(convert_units("20", from = get_muL(), to = get_muL()), 20)
+  expect_error(get_conversion_factor("L"), "unsupported conversion factor")
+})
