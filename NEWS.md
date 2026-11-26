@@ -1,3 +1,6 @@
+## gDRimport 1.13.2 - 2026-11-26
+* fix the D300 import of volumes given in microlitres
+
 ## gDRimport 1.13.1 - 2026-11-24
 * synchronize Bioconductor and GitHub versioning
 
