@@ -80,6 +80,25 @@ test_that("load_templates works as expected", {
   expect_error(load_templates(c(template_path(td1)[1], "/non/existent_file")), err_msg1)
 })
 
+test_that("load_templates reads a TSV template with untreated wells only", {
+  untreated <- gDRutils::get_env_identifiers("untreated_tag")
+  drug_col <- gDRutils::get_env_identifiers("drug")
+  write_template <- function(drugs) {
+    path <- withr::local_tempfile(fileext = ".tsv", .local_envir = parent.frame())
+    dt <- data.table::data.table(WellRow = "C", WellColumn = seq_along(drugs), drug = drugs)
+    data.table::setnames(dt, "drug", drug_col)
+    data.table::fwrite(dt, path, sep = "\t")
+    path
+  }
+
+  t_tbl <- load_templates(write_template(c(untreated[[1]], untreated[[2]], NA)))
+  expect_true(all(t_tbl[[drug_col]] %in% c(untreated, NA)))
+
+  # a drug in a template without concentrations is still rejected
+  expect_error(load_templates(write_template(c(untreated[[1]], "G00000001"))),
+               "entries must be")
+})
+
 test_that("load_templates with no untreated conditions works as expected", {
   err_msg <- "No untreated controls were found in the treatment. Please upload the appropriate treatment."
   expect_error(load_templates(system.file("extdata/data_for_unittests/Template_7daytreated.xlsx",

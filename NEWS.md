@@ -1,3 +1,6 @@
+## gDRimport 1.13.2 - 2026-11-26
+* fix loading a TSV template that has untreated wells only and no concentration column
+
 ## gDRimport 1.13.1 - 2026-11-24
 * synchronize Bioconductor and GitHub versioning
 
