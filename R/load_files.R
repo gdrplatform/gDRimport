@@ -544,8 +544,9 @@ read_in_tsv_template_files <- function(template_file, template_filename, templat
           exception_data <- get_exception_data(17)
           stop(sprintf(exception_data$sprintf_text, template_file[[iF]], gDRutils::get_env_identifiers("drug")))
         }
-        df <- templates[[iF]][, gDRutils::get_env_identifiers("drug")]
-        if (!(all(toupper(df)[!is.na(df)]) %in% toupper(gDRutils::get_env_identifiers("untreated_tag")))) {
+        drugs <- templates[[iF]][[Gnumber_idx[1]]]
+        drugs <- toupper(drugs[!is.na(drugs)])
+        if (!all(drugs %in% toupper(gDRutils::get_env_identifiers("untreated_tag")))) {
           exception_data <- get_exception_data(18)
           stop(sprintf(exception_data$sprintf_text, template_file[[iF]],
             paste(gDRutils::get_env_identifiers("untreated_tag"), collapse = " or ")))
