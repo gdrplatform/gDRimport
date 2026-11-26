@@ -468,13 +468,12 @@ get_conversion_factor <- function(from, to = get_muL()) {
     stop(sprintf("conversion to unit '%s' not supported", to))
   }
 
-  muL <- get_muL()
-  switch(from,
-         "nL" = 1e-3,
-         muL = 1,
-         "mL" = 1e3,
-         stop(sprintf("unsupported conversion factor: '%s'", from))
-  )
+  # the microlitre name has a non-ASCII character, so it cannot be a switch() label
+  factors <- stats::setNames(c(1e-3, 1, 1e3), c("nL", get_muL(), "mL"))
+  if (!from %in% names(factors)) {
+    stop(sprintf("unsupported conversion factor: '%s'", from))
+  }
+  factors[[from]]
 }
 
 
